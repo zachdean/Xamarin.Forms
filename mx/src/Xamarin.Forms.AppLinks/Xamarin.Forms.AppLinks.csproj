@@ -1,0 +1,142 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <!--<ProjectTypeGuids>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>-->
+    <!--VS project type is a function of the first ProjectTypeGuids found in the text of the project file-->
+  </PropertyGroup>
+  <!--
+  
+    Properties
+  -->
+  <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildProjectDirectory)\, .pre.props))\.pre.props" />
+  <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), .props))\.props" />
+  <!--
+    ======
+    SOURCE
+    ======
+  -->
+  <ItemGroup>
+    <!--compile-->
+    <Compile Include="Resources\Resource.designer.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="AndroidAppLinks.cs" />
+    <!--none-->
+    <None Include="nuspec.props" />
+    <None Include="Resources\AboutResources.txt" />
+  </ItemGroup>
+  <!--
+  
+    Hierarchy
+  -->
+  <ItemGroup>
+    <!--all E { pack }-->
+    <PlatformGroup Include="$(AllPlatformId)">
+      <Platforms>$(PackPlatformId);$(AndroidLibraryPlatformId)</Platforms>
+    </PlatformGroup>
+    <!--android E { monodroid }-->
+    <PlatformGroup Include="$(AndroidMobilePlatformId)">
+      <Platforms>$(AndroidLibraryPlatformId)</Platforms>
+    </PlatformGroup>
+    <!--monodroid E { monodroid7.0 }-->
+    <PlatformGroup Include="$(AndroidLibraryPlatformId)">
+      <Platforms>$(AndroidLibraryPlatformId-7_0)</Platforms>
+    </PlatformGroup>
+  </ItemGroup>
+  <!--
+  
+    Universal
+  -->
+  <PropertyGroup Condition=" '$(Platform)' == '[none]' " />
+  <PropertyGroup>
+    <OutputType>Library</OutputType>
+    <ProjectGuid>{A3F22767-213E-46F4-B639-5565668AE2FF}</ProjectGuid>
+    <RootNamespace>Xamarin.Forms.AppLinks</RootNamespace>
+  </PropertyGroup>
+  <!--
+  
+    Library
+  -->
+  <ItemGroup>
+    <Compile Include="$(ExtIdDir)\GlobalBuildInfo.cs">
+      <Link>Properties\GlobalBuildInfo.cs</Link>
+      <IsMxbuildTemplate>true</IsMxbuildTemplate>
+    </Compile>
+    <Compile Include="$(ExtIdDir)BuildInfo.cs">
+      <DependentUpon>BuildInfo.t.cs</DependentUpon>
+      <Link>Properties\BuildInfo.cs</Link>
+    </Compile>
+    <None Include="$(ExtIdDir)BuildInfo.t.cs">
+      <IsMxbuildTemplate>true</IsMxbuildTemplate>
+      <Link>Properties\BuildInfo.t.cs</Link>
+      <CompileOutput>BuildInfo.cs</CompileOutput>
+    </None>
+    <Compile Include="$(ExtPackDir)\GlobalPackageInfo.cs">
+      <Link>Properties\GlobalPackageInfo.cs</Link>
+      <IsMxbuildTemplate>true</IsMxbuildTemplate>
+    </Compile>
+    <Compile Include="$(ExtPackDir)PackageInfo.cs">
+      <Link>Properties\PackageInfo.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <!--
+  
+    Nuget Pack
+  -->
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'debug|pack' " />
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'release|pack' " />
+  <PropertyGroup Condition=" '$(Plat)' == '$(PackPlatformId)' " />
+  <Import Project="nuspec.props" Condition=" '$(Plat)' == '$(PackPlatformId)' " />
+  <ItemGroup Condition="'$(Plat)' == '$(PackPlatformId)' ">
+    <SelfReference Include="$(AndroidLibraryPlatformId)" />
+    <!--
+      content
+    -->
+    <None Include="$(ExtPackDir)Package.nuspec">
+      <CopyTargetName>$(NuspecName)</CopyTargetName>
+      <IsMxbuildTemplate>true</IsMxbuildTemplate>
+      <Type>xml</Type>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Link>Package.nuspec</Link>
+    </None>
+  </ItemGroup>
+  <!--
+  
+    Android
+  -->
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'debug|monoDroid' " />
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'release|monoDroid' " />
+  <PropertyGroup Condition=" '$(MobilePlatform)' == '$(AndroidMobilePlatformId)' ">
+    <AndroidCodeGenTarget>XAJavaInterop1</AndroidCodeGenTarget>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <AndroidUseLatestPlatformSdk>True</AndroidUseLatestPlatformSdk>
+    <TargetFrameworkVersion>v7.0</TargetFrameworkVersion>
+    <MonoAndroidAssetsPrefix>Assets</MonoAndroidAssetsPrefix>
+    <MonoAndroidResourcePrefix>Resources</MonoAndroidResourcePrefix>
+    <AndroidResgenClass>Resource</AndroidResgenClass>
+    <AndroidResgenFile>Resources\Resource.designer.cs</AndroidResgenFile>
+    <ProjectGuid>{A3F22767-213E-46F4-B639-5565668AE2FF}</ProjectGuid>
+  </PropertyGroup>
+  <ImportGroup Condition=" '$(MobilePlatform)' == '$(AndroidMobilePlatformId)' ">
+    <Import Project="$(NugetAndroidSupportV4Shim)" />
+    <Import Project="$(NugetGooglePlayServicesBasementShim)" />
+    <Import Project="$(NugetGooglePlayServicesBaseShim)" />
+    <Import Project="$(NugetGooglePlayAppIndexingShim)" />
+  </ImportGroup>
+  <ItemGroup Condition=" '$(MobilePlatform)' == '$(AndroidMobilePlatformId)' ">
+    <AndroidResource Include="Resources\values\Strings.xml" />
+    <!--references-->
+    <Reference Include="System" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Core" />
+    <Reference Include="Mono.Android" />
+    <NugetProjectReference Include="..\Xamarin.Forms\Xamarin.Forms.csproj">
+      <Project>{67F9D3A8-F71E-4428-913F-C37AE82CDB24}</Project>
+      <Name>Xamarin.Forms</Name>
+    </NugetProjectReference>
+  </ItemGroup>
+  <!--
+
+    Targets
+  -->
+  <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), .targets))\.targets" />
+</Project>

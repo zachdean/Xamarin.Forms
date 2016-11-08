@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <!--
+
+    Properties
+  -->
+  <PropertyGroup>
+    <NuspecId>Xamarin.Forms.Maps</NuspecId>
+    <NuspecTags>$(NuspecTags) maps xamarinformsmaps xamarin.forms.maps</NuspecTags>
+    <NuspecDescription>Maps models and renderers for Xamarin.Forms</NuspecDescription>
+  </PropertyGroup>
+  <!--
+
+    Release Notes
+  -->
+  <PropertyGroup>
+    <NuspecReleaseNotes>
+      <![CDATA[]]>
+    </NuspecReleaseNotes>
+  </PropertyGroup>
+</Project>

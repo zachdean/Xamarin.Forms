@@ -1,0 +1,11 @@
+;= tools
+ts=touch %SrcDir%*.sln
+
+;= aliases
+cor=pushd %SrcDir%Xamarin.Forms.Core
+
+;= bat files
+cpy=call %RootDir%cpy\copySrc
+
+;= scorch
+scorch=git clean -fdX -e !lfx -e !packages

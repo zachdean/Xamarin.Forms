@@ -1,0 +1,9 @@
+lfx
+bld
+drp
+/packages
+build.txt
+build.log
+build.pp
+!project.lock.json
+!*.designer.cs

@@ -161,11 +161,17 @@
     <Compile Include="..\Xamarin.Forms.Platform.WinRT\NativeBindingExtensions.cs">
       <Link>NativeBindingExtensions.cs</Link>
     </Compile>
+    <Compile Include="..\Xamarin.Forms.Platform.WinRT\NativeBindingService.cs">
+      <Link>NativeBindingService.cs</Link>
+    </Compile>
     <Compile Include="..\Xamarin.Forms.Platform.WinRT\NativeEventWrapper.cs">
       <Link>NativeEventWrapper.cs</Link>
     </Compile>
     <Compile Include="..\Xamarin.Forms.Platform.WinRT\NativePropertyListener.cs">
       <Link>NativePropertyListener.cs</Link>
+    </Compile>
+    <Compile Include="..\Xamarin.Forms.Platform.WinRT\NativeValueConverterService.cs">
+      <Link>NativeValueConverterService.cs</Link>
     </Compile>
     <Compile Include="..\Xamarin.Forms.Platform.WinRT\NativeViewWrapper.cs">
       <Link>NativeViewWrapper.cs</Link>
@@ -190,8 +196,6 @@
     </Compile>
     <Compile Include="FormsPresenter.cs" />
     <Compile Include="IToolBarForegroundBinder.cs" />
-    <Compile Include="NativeBindingService.cs" />
-    <Compile Include="NativeValueConverterService.cs" />
     <Compile Include="SearchBarRenderer.cs" />
     <Compile Include="..\Xamarin.Forms.Platform.WinRT\TextAlignmentToHorizontalAlignmentConverter.cs">
       <Link>TextAlignmentToHorizontalAlignmentConverter.cs</Link>
@@ -203,19 +207,19 @@
     <Compile Include="..\Xamarin.Forms.Core\Properties\GlobalAssemblyInfo.cs">
       <Link>Properties\GlobalAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="..\Xamarin.Forms.Platform.WinRT.Tablet\Forms.cs">
+    <Compile Include="..\Xamarin.Forms.Platform.WinRT\Forms.cs">
       <Link>Forms.cs</Link>
     </Compile>
-    <Compile Include="..\Xamarin.Forms.Platform.WinRT.Tablet\WindowsPage.cs">
+    <Compile Include="..\Xamarin.Forms.Platform.WinRT\WindowsPage.cs">
       <Link>WindowsPage.cs</Link>
     </Compile>
-    <Compile Include="..\Xamarin.Forms.Platform.WinRT.Tablet\WindowsPlatform.cs">
+    <Compile Include="..\Xamarin.Forms.Platform.WinRT\WindowsPlatform.cs">
       <Link>WindowsPlatform.cs</Link>
     </Compile>
-    <Compile Include="..\Xamarin.Forms.Platform.WinRT.Tablet\WindowsPlatformServices.cs">
+    <Compile Include="..\Xamarin.Forms.Platform.WinRT\WindowsPlatformServices.cs">
       <Link>WindowsPlatformServices.cs</Link>
     </Compile>
-    <Compile Include="..\Xamarin.Forms.Platform.WinRT.Tablet\WindowsResourcesProvider.cs">
+    <Compile Include="..\Xamarin.Forms.Platform.WinRT\WindowsResourcesProvider.cs">
       <Link>WindowsResourcesProvider.cs</Link>
     </Compile>
     <Compile Include="..\Xamarin.Forms.Platform.WinRT\ActivityIndicatorRenderer.cs">

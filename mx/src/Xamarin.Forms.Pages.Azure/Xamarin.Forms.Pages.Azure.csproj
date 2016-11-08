@@ -1,0 +1,111 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <!--<ProjectTypeGuids>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>-->
+    <!--VS project type is a function of the first ProjectTypeGuids found in the text of the project file-->
+    <ProjectGuid>{5CC7C14B-C702-444A-9403-2DADF6BA8603}</ProjectGuid>
+  </PropertyGroup>
+  <!--
+  
+    Properties
+  -->
+  <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildProjectDirectory)\, .pre.props))\.pre.props" />
+  <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), .props))\.props" />
+  <Import Project="$(ExtXfDir)\xf.dotnet.hierarchy.props" />
+  <!--
+    ======
+    SOURCE
+    ======
+  -->
+  <ItemGroup>
+    <Compile Include="AzureDataSource.cs" />
+    <Compile Include="AzureEasyTableSource.cs" />
+    <Compile Include="AzureSource.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <None Include="nuspec.props" />
+  </ItemGroup>
+  <!--
+  
+    Universal
+  -->
+  <PropertyGroup Condition=" '$(Platform)' == '[none]' " />
+  <PropertyGroup>
+    <OutputType>Library</OutputType>
+    <RootNamespace>Xamarin.Forms.Pages.Azure</RootNamespace>
+    <Project>{57B8B73D-C3B5-4C42-869E-7B2F17D354AC}</Project>
+  </PropertyGroup>
+  <!--
+  
+    Library
+  -->
+  <ItemGroup>
+    <Compile Include="$(ExtIdDir)\GlobalBuildInfo.cs">
+      <Link>Properties\GlobalBuildInfo.cs</Link>
+      <IsMxbuildTemplate>true</IsMxbuildTemplate>
+    </Compile>
+    <Compile Include="$(ExtIdDir)BuildInfo.cs">
+      <DependentUpon>BuildInfo.t.cs</DependentUpon>
+      <Link>Properties\BuildInfo.cs</Link>
+    </Compile>
+    <None Include="$(ExtIdDir)BuildInfo.t.cs">
+      <IsMxbuildTemplate>true</IsMxbuildTemplate>
+      <Link>Properties\BuildInfo.t.cs</Link>
+      <CompileOutput>BuildInfo.cs</CompileOutput>
+    </None>
+    <Compile Include="$(ExtPackDir)\GlobalPackageInfo.cs">
+      <Link>Properties\GlobalPackageInfo.cs</Link>
+      <IsMxbuildTemplate>true</IsMxbuildTemplate>
+    </Compile>
+    <Compile Include="$(ExtPackDir)PackageInfo.cs">
+      <Link>Properties\PackageInfo.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <!--
+  
+    Nuget Pack
+  -->
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'debug|pack' " />
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'release|pack' " />
+  <PropertyGroup Condition=" '$(Plat)' == '$(PackPlatformId)' " />
+  <Import Project="nuspec.props" Condition=" '$(Plat)' == '$(PackPlatformId)' " />
+  <ItemGroup Condition="'$(Plat)' == '$(PackPlatformId)' ">
+    <SelfReference Include="$(DotNetLibraryPlatformId)" />
+    <!--
+      content
+    -->
+    <None Include="$(ExtPackDir)Package.nuspec">
+      <CopyTargetName>$(NuspecName)</CopyTargetName>
+      <IsMxbuildTemplate>true</IsMxbuildTemplate>
+      <Type>xml</Type>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Link>Package.nuspec</Link>
+    </None>
+  </ItemGroup>
+  <!--
+  
+    Portable
+  -->
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'debug|dotnet' " />
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'release|dotnet' " />
+  <ImportGroup Condition=" '$(LibraryPlatform)' == '$(DotNetLibraryPlatformId)' ">
+    <Import Project="$(NugetNewtonsoftJsonShim)" />
+    <Import Project="$(NugetMicrosoftSystemShim)" />
+    <Import Project="$(NugetMicrosoftAzureMobileShim)" />
+    <Import Project="$(NugetXamarinFormsXamlShim)" />
+  </ImportGroup>
+  <ItemGroup Condition=" '$(LibraryPlatform)' == '$(DotNetLibraryPlatformId)' ">
+    <NugetProjectReference Include="..\Xamarin.Forms\Xamarin.Forms.csproj">
+      <Project>{67F9D3A8-F71E-4428-913F-C37AE82CDB24}</Project>
+      <Name>Xamarin.Forms</Name>
+    </NugetProjectReference>
+    <NugetProjectReference Include="..\Xamarin.Forms.Pages\Xamarin.Forms.Pages.csproj">
+      <Project>{D6133DBD-6C60-4BD5-BEA2-07E0A3927C31}</Project>
+      <Name>Xamarin.Forms.Pages</Name>
+    </NugetProjectReference>
+  </ItemGroup>
+  <!--
+
+    Targets
+  -->
+  <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), .targets))\.targets" />
+</Project>
