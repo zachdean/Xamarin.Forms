@@ -39,6 +39,23 @@ namespace Xamarin.Forms.Platform.UWP
 			_dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => action()).WatchForError();
 		}
 
+		public void BeginInvokeOnMainThread(Action action, Guid windowId)
+		{
+			if (Forms.Dispatchers.TryGetValue(windowId, out CoreDispatcher dispatcher))
+			{
+				dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => action()).WatchForError();
+			}
+			else
+			{
+				throw new Exception("Unable to locate the dispatcher for the informed Window.");
+			}
+		}
+
+		public void BeginInvokeOnMainThread(Action action, BindableObject bindableObject)
+		{
+			this.BeginInvokeOnMainThread(action, bindableObject.WindowId);
+		}
+
 		public Ticker CreateTicker()
 		{
 			return new WindowsTicker();
@@ -117,9 +134,10 @@ namespace Xamarin.Forms.Platform.UWP
 		// "Each view or window has its own dispatcher. In assigned access mode, you should not use the MainView dispatcher, 
 		// instead you should use the CurrentView dispatcher." Checking to see if this isn't null (i.e. the current window is
 		// running above lock) calls through GetCurrentView(), and otherwise through MainView.
-		public bool IsInvokeRequired => LockApplicationHost.GetForCurrentView() != null
+		public bool IsInvokeRequired => Forms.Dispatchers.Count == 1
+			? (LockApplicationHost.GetForCurrentView() != null
 			? !CoreApplication.GetCurrentView().Dispatcher.HasThreadAccess
-			: !CoreApplication.MainView.CoreWindow.Dispatcher.HasThreadAccess;
+			: !CoreApplication.MainView.CoreWindow.Dispatcher.HasThreadAccess) : true;
 
 		public string RuntimePlatform => Device.UWP;
 

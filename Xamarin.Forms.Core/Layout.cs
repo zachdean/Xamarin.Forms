@@ -358,8 +358,7 @@ namespace Xamarin.Forms
 			if (!s_relayoutInProgress)
 			{
 				s_relayoutInProgress = true;
-				Device.BeginInvokeOnMainThread(() =>
-				{
+				
 					// if thread safety mattered we would need to lock this and compareexchange above
 					IList<KeyValuePair<Layout, int>> copy = s_resolutionList;
 					s_resolutionList = new List<KeyValuePair<Layout, int>>();
@@ -371,10 +370,13 @@ namespace Xamarin.Forms
 						double width = layout.Width, height = layout.Height;
 						if (!layout._allocatedFlag && width >= 0 && height >= 0)
 						{
-							layout.SizeAllocated(width, height);
+							Device.BeginInvokeOnMainThread(() =>
+							{
+								layout.SizeAllocated(width, height);
+							}, layout.WindowId);
 						}
 					}
-				});
+				
 			}
 		}
 

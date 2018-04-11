@@ -103,7 +103,17 @@ namespace Xamarin.Forms
 			PlatformServices.BeginInvokeOnMainThread(action);
 		}
 
-        public static double GetNamedSize(NamedSize size, Element targetElement)
+		public static void BeginInvokeOnMainThread(Action action, Guid windowId)
+		{
+			PlatformServices.BeginInvokeOnMainThread(action, windowId);
+		}
+
+		public static void BeginInvokeOnMainThread(Action action, BindableObject bindableObject)
+		{
+			PlatformServices.BeginInvokeOnMainThread(action, bindableObject);
+		}
+
+		public static double GetNamedSize(NamedSize size, Element targetElement)
         {
             return GetNamedSize(size, targetElement.GetType());
         }

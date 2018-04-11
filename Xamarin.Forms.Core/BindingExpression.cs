@@ -609,7 +609,14 @@ namespace Xamarin.Forms
 					}
 				}
 
-				Device.BeginInvokeOnMainThread(() => _expression.Apply());
+				Guid windowId = Guid.Empty;
+				if (_expression._weakTarget.TryGetTarget(out BindableObject obj))
+				{
+					windowId = obj.WindowId;
+				}
+
+				Device.BeginInvokeOnMainThread(() => _expression.Apply(), windowId);
+
 			}
 
 			public bool TryGetValue(object source, out object value)

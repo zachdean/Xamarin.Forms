@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -21,7 +22,9 @@ namespace Xamarin.Forms
 		static ApplicationExecutionState s_state;
 
 		public static bool IsInitialized { get; private set; }
-		
+
+		public static ConcurrentDictionary<Guid, CoreDispatcher> Dispatchers = new ConcurrentDictionary<Guid, CoreDispatcher>();
+
 		public static void Init(IActivatedEventArgs launchActivatedEventArgs, IEnumerable<Assembly> rendererAssemblies = null)
 		{
 			if (IsInitialized)

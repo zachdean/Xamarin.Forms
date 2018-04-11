@@ -11,6 +11,7 @@ namespace Xamarin.Forms
 {
 	public class Application : Element, IResourcesProvider, IApplicationController, IElementConfiguration<Application>
 	{
+		[ThreadStatic]
 		static Application s_current;
 		Task<IDictionary<string, object>> _propertiesTask;
 		readonly Lazy<PlatformConfigurationRegistry<Application>> _platformConfigurationRegistry;
@@ -30,6 +31,7 @@ namespace Xamarin.Forms
 				Loader.Load();
 			NavigationProxy = new NavigationImpl(this);
 			SetCurrentApplication(this);
+			WindowId = Guid.NewGuid();
 
 			SystemResources = DependencyService.Get<ISystemResourcesProvider>().GetSystemResources();
 			SystemResources.ValuesChanged += OnParentResourcesChanged;
@@ -92,6 +94,7 @@ namespace Xamarin.Forms
 				if (_mainPage != null)
 				{
 					_mainPage.Parent = this;
+					_mainPage.WindowId = this.WindowId;
 					_mainPage.NavigationProxy.Inner = NavigationProxy;
 					InternalChildren.Add(_mainPage);
 				}
@@ -191,7 +194,7 @@ namespace Xamarin.Forms
 		{
 			if (Device.IsInvokeRequired)
 			{
-				Device.BeginInvokeOnMainThread(SaveProperties);
+				Device.BeginInvokeOnMainThread(SaveProperties, this.WindowId);
 			}
 			else
 			{
@@ -204,7 +207,7 @@ namespace Xamarin.Forms
 		{
 			if (Device.IsInvokeRequired)
 			{
-				Device.BeginInvokeOnMainThread(SaveProperties);
+				Device.BeginInvokeOnMainThread(SaveProperties, this.WindowId);
 			}
 			else
 			{

@@ -363,6 +363,10 @@ namespace Xamarin.Forms
 
 		protected virtual void OnChildAdded(Element child)
 		{
+
+			WindowId = Application.Current.WindowId;
+			child.WindowId = WindowId;
+
 			child.Parent = this;
 			if (Platform != null)
 				child.Platform = Platform;
