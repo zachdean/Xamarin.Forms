@@ -215,14 +215,28 @@ namespace Xamarin.Forms
 				sync.Callback(ProxiedEnumerable, sync.Context, () =>
 				{
 					e = e.WithCount(Count);
-					Device.BeginInvokeOnMainThread(action, (_listView as BindableObject).WindowId);
+					if (_listView != null)
+					{
+						Device.BeginInvokeOnMainThread(action, (_listView as BindableObject).WindowId);
+					}
+					else
+					{
+						Device.BeginInvokeOnMainThread(action);
+					}
 				}, false);
 			}
 			else
 			{
 				e = e.WithCount(Count);
 				if (Device.IsInvokeRequired)
-					Device.BeginInvokeOnMainThread(action, (_listView as BindableObject).WindowId);
+					if (_listView != null)
+					{
+						Device.BeginInvokeOnMainThread(action, (_listView as BindableObject).WindowId);
+					}
+					else
+					{
+						Device.BeginInvokeOnMainThread(action);
+					}
 				else
 					action();
 			}
