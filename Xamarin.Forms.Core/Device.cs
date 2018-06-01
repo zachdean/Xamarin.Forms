@@ -103,16 +103,14 @@ namespace Xamarin.Forms
 			PlatformServices.BeginInvokeOnMainThread(action);
 		}
 
-		public static void BeginInvokeOnMainThread(Action action, Guid windowId)
+		internal static IDispatcher GetDispatcher(Element element)
 		{
-			PlatformServices.BeginInvokeOnMainThread(action, windowId);
+			return PlatformServices.GetDispatcher(element);
 		}
-
-		public static void BeginInvokeOnMainThread(Action action, BindableObject bindableObject)
+		internal static IDispatcher GetDispatcher(Guid windowId)
 		{
-			PlatformServices.BeginInvokeOnMainThread(action, bindableObject);
+			return PlatformServices.GetDispatcher(windowId);
 		}
-
 		public static double GetNamedSize(NamedSize size, Element targetElement)
         {
             return GetNamedSize(size, targetElement.GetType());

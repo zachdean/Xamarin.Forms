@@ -15,10 +15,6 @@ namespace Xamarin.Forms.Internals
 
 		void BeginInvokeOnMainThread(Action action);
 
-		void BeginInvokeOnMainThread(Action action, Guid windowId);
-
-		void BeginInvokeOnMainThread(Action action, BindableObject bindableObject);
-
 		Ticker CreateTicker();
 
 		Assembly[] GetAssemblies();
@@ -36,6 +32,9 @@ namespace Xamarin.Forms.Internals
 		void StartTimer(TimeSpan interval, Func<bool> callback);
 
 		string RuntimePlatform { get; }
+
+		IDispatcher GetDispatcher(Element element);
+		IDispatcher GetDispatcher(Guid windowId);
 
 		void QuitApplication();
 	}

@@ -373,10 +373,10 @@ namespace Xamarin.Forms
 						double width = layout.Width, height = layout.Height;
 						if (!layout._allocatedFlag && width >= 0 && height >= 0)
 						{
-							Device.BeginInvokeOnMainThread(() =>
+							layout.Dispatcher.BeginInvokeOnMainThread(() =>
 							{
 								layout.SizeAllocated(width, height);
-							}, layout.WindowId);
+							});
 						}
 					}
 

@@ -11,7 +11,17 @@ namespace Xamarin.Forms
 {
 	public abstract partial class Element : BindableObject, IElement, INameScope, IElementController
 	{
+		IDispatcher _dispatcher;
+		public virtual IDispatcher Dispatcher
+		{
+			get
+			{
+				if (_dispatcher == null)
+					_dispatcher = Device.GetDispatcher(this);
 
+				return _dispatcher;
+			}
+		}
 		public static readonly BindableProperty MenuProperty = BindableProperty.CreateAttached(nameof(Menu), typeof(Menu), typeof(Element), null);
 
 		public static Menu GetMenu(BindableObject bindable)
@@ -363,9 +373,6 @@ namespace Xamarin.Forms
 
 		protected virtual void OnChildAdded(Element child)
 		{
-
-			WindowId = Application.Current.WindowId;
-			child.WindowId = WindowId;
 
 			child.Parent = this;
 			if (Platform != null)

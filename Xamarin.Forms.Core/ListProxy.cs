@@ -217,7 +217,7 @@ namespace Xamarin.Forms
 					e = e.WithCount(Count);
 					if (_listView != null)
 					{
-						Device.BeginInvokeOnMainThread(action, (_listView as BindableObject).WindowId);
+						(_listView as Element).Dispatcher.BeginInvokeOnMainThread(action);
 					}
 					else
 					{
@@ -231,7 +231,7 @@ namespace Xamarin.Forms
 				if (Device.IsInvokeRequired)
 					if (_listView != null)
 					{
-						Device.BeginInvokeOnMainThread(action, (_listView as BindableObject).WindowId);
+						(_listView as Element).Dispatcher.BeginInvokeOnMainThread(action);
 					}
 					else
 					{

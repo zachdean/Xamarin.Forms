@@ -28,18 +28,12 @@ namespace Xamarin.Forms.Platform.UWP
 				throw new ArgumentNullException("application");
 
 			_application = application;
-			RegisterDispatcher(_application);
 			Application.SetCurrentApplication(application);
 			Platform = CreatePlatform();
 			Platform.SetPage(_application.MainPage);
 			application.PropertyChanged += OnApplicationPropertyChanged;
 
 			_application.SendStart();
-		}
-
-		void RegisterDispatcher(Application application)
-		{
-			Forms.Dispatchers.AddOrUpdate(application.WindowId, this.Dispatcher, (key, oldValue) => this.Dispatcher);
 		}
 
 		void OnApplicationPropertyChanged(object sender, PropertyChangedEventArgs e)

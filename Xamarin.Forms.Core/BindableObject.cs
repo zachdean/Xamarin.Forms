@@ -18,9 +18,6 @@ namespace Xamarin.Forms
 
 		bool _applying;
 		object _inheritedContext;
-
-		public Guid WindowId { get; set; }
-
 		public object BindingContext
 		{
 			get { return _inheritedContext ?? GetValue(BindingContextProperty); }

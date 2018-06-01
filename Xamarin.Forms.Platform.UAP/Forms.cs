@@ -23,8 +23,6 @@ namespace Xamarin.Forms
 
 		public static bool IsInitialized { get; private set; }
 
-		public static ConcurrentDictionary<Guid, CoreDispatcher> Dispatchers = new ConcurrentDictionary<Guid, CoreDispatcher>();
-
 		public static void Init(IActivatedEventArgs launchActivatedEventArgs, IEnumerable<Assembly> rendererAssemblies = null)
 		{
 			if (IsInitialized)

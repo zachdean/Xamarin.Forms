@@ -21,6 +21,18 @@ namespace Xamarin.Forms
 		ReadOnlyCollection<Element> _logicalChildren;
 
 		Page _mainPage;
+		public Guid WindowId { get; private set; }
+		IDispatcher _dispatcher;
+		public override IDispatcher Dispatcher
+		{
+			get
+			{
+				if (_dispatcher == null)
+					_dispatcher = Device.GetDispatcher(WindowId);
+
+				return _dispatcher;
+			}
+		}
 
 		static SemaphoreSlim SaveSemaphore = new SemaphoreSlim(1, 1);
 
@@ -94,7 +106,6 @@ namespace Xamarin.Forms
 				if (_mainPage != null)
 				{
 					_mainPage.Parent = this;
-					_mainPage.WindowId = this.WindowId;
 					_mainPage.NavigationProxy.Inner = NavigationProxy;
 					InternalChildren.Add(_mainPage);
 				}
@@ -194,7 +205,7 @@ namespace Xamarin.Forms
 		{
 			if (Device.IsInvokeRequired)
 			{
-				Device.BeginInvokeOnMainThread(SaveProperties, this.WindowId);
+				Dispatcher.BeginInvokeOnMainThread(SaveProperties);
 			}
 			else
 			{
@@ -207,7 +218,7 @@ namespace Xamarin.Forms
 		{
 			if (Device.IsInvokeRequired)
 			{
-				Device.BeginInvokeOnMainThread(SaveProperties, this.WindowId);
+				Dispatcher.BeginInvokeOnMainThread(SaveProperties);
 			}
 			else
 			{
