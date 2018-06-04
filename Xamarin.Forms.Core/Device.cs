@@ -105,12 +105,40 @@ namespace Xamarin.Forms
 
 		internal static IDispatcher GetDispatcher(Element element)
 		{
-			return PlatformServices.GetDispatcher(element);
+			Page page = GetElementPage(element);
+			if (page != null)
+			{
+				return page.Dispatcher;
+			}
+			else
+			{
+				return default(IDispatcher);
+			}
 		}
 		internal static IDispatcher GetDispatcher(Guid windowId)
 		{
 			return PlatformServices.GetDispatcher(windowId);
 		}
+
+		static Page GetElementPage(Element element)
+		{
+			if (element == null)
+			{
+				return null;
+			}
+			else if (element is Page)
+			{
+				return element as Page;
+			}
+			else
+			{
+				if (element.Parent is Page)
+					return element.Parent as Page;
+				else
+					return GetElementPage(element.Parent);
+			}
+		}
+
 		public static double GetNamedSize(NamedSize size, Element targetElement)
         {
             return GetNamedSize(size, targetElement.GetType());

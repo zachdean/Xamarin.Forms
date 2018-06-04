@@ -72,6 +72,7 @@
     <Compile Include="Converters\ViewToRendererConverter.cs" />
     <Compile Include="CustomContextMenu.cs" />
     <Compile Include="Deserializer.cs" />
+    <Compile Include="Dispatcher.cs" />
     <Compile Include="ElementChangedEventArgs.cs" />
     <Compile Include="ExportRendererAttribute.cs" />
     <Compile Include="Extensions\AlignmentExtensions.cs" />

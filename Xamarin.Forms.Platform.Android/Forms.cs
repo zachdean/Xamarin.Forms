@@ -599,6 +599,11 @@ namespace Xamarin.Forms
 				Internals.Log.Warning(nameof(AndroidPlatformServices), "Platform doesn't implement QuitApp");
 			}
 
+			public IDispatcher GetDispatcher(Guid windowId)
+			{
+				return new Dispatcher();
+			}
+
 			public class _IsolatedStorageFile : IIsolatedStorageFile
 			{
 				readonly IsolatedStorageFile _isolatedStorageFile;

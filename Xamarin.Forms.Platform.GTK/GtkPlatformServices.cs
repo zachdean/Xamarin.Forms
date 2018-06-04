@@ -23,16 +23,6 @@ namespace Xamarin.Forms.Platform.GTK
             GLib.Idle.Add(delegate { action(); return false; });
         }
 
-		public void BeginInvokeOnMainThread(Action action, Guid windowId)
-		{
-			BeginInvokeOnMainThread(action);
-		}
-
-		public void BeginInvokeOnMainThread(Action action, BindableObject bindableObject)
-		{
-			BeginInvokeOnMainThread(action);
-		}
-
 		public Ticker CreateTicker()
         {
             return new GtkTicker();
@@ -119,6 +109,11 @@ namespace Xamarin.Forms.Platform.GTK
 		public void QuitApplication()
 		{
 			Gtk.Application.Quit();
+		}
+
+		public IDispatcher GetDispatcher(Guid windowId)
+		{
+			return new GtkDispatcher();
 		}
 	}
 }

@@ -143,39 +143,9 @@ namespace Xamarin.Forms.Platform.UWP
 			Log.Warning(nameof(WindowsBasePlatformServices), "Platform doesn't implement QuitApp");
 		}
 
-		public IDispatcher GetDispatcher(Element element)
-		{
-			Page page = GetElementPage(element);
-			if (page != null)
-			{
-				return page.Dispatcher;
-			}
-			else
-			{
-				return default(IDispatcher);
-			}
-		}
 		public IDispatcher GetDispatcher(Guid windowId)
 		{
 			return new Dispatcher(windowId);
-		}
-		private Page GetElementPage(Element element)
-		{
-			if (element == null)
-			{
-				return null;
-			}
-			else if (element is Page)
-			{
-				return element as Page;
-			}
-			else
-			{
-				if (element.Parent is Page)
-					return element.Parent as Page;
-				else
-					return GetElementPage(element.Parent);
-			}
 		}
 	}
 }
