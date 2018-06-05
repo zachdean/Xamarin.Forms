@@ -186,6 +186,11 @@ namespace Xamarin.Forms.Core.UnitTests
 		{
 
 		}
+
+		public IDispatcher GetDispatcher(Guid windowId)
+		{
+			return new MockDispatcher();
+		}
 	}
 
 	internal class MockDeserializer : Internals.IDeserializer

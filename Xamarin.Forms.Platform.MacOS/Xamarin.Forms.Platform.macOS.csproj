@@ -68,11 +68,13 @@
     <Reference Include="System.Net.Http" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\Xamarin.Forms.Platform.iOS\Dispatcher.cs">
+      <Link>Dispatcher.cs</Link>
+    </Compile>
     <Compile Include="..\Xamarin.Forms.Platform.iOS\Flags.cs">
       <Link>Flags.cs</Link>
     </Compile>
     <Compile Include="Controls\FormsNSDatePicker.cs" />
-    <Compile Include="Dispatcher.cs" />
     <Compile Include="Extensions\FlowDirectionExtensions.cs" />
     <Compile Include="FormsApplicationDelegate.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

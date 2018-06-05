@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Xamarin.Forms.Platform.MacOS
+namespace Xamarin.Forms.Core.UnitTests
 {
-	public class Dispatcher : IDispatcher
+	public class MockDispatcher : IDispatcher
 	{
 		public void BeginInvokeOnMainThread(Action action)
 		{

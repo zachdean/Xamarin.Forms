@@ -74,6 +74,7 @@
     <Compile Include="CommandSourceTests.cs" />
     <Compile Include="CommandTests.cs" />
     <Compile Include="DependencyResolutionTests.cs" />
+    <Compile Include="MockDispatcher.cs" />
     <Compile Include="EffectiveFlowDirectionExtensions.cs" />
     <Compile Include="FlowDirectionTests.cs" />
     <Compile Include="LayoutChildIntoBoundingRegionTests.cs" />
