@@ -610,12 +610,9 @@ namespace Xamarin.Forms
 				}
 
 				Action action = () => _expression.Apply();
-				if (_expression._weakTarget.TryGetTarget(out BindableObject obj))
+				if (_expression._weakTarget.TryGetTarget(out BindableObject obj) && obj is Element)
 				{
-					if (obj is Element)
-					{
-						(obj as Element).Dispatcher.BeginInvokeOnMainThread(action);
-					}
+					(obj as Element).Dispatcher.BeginInvokeOnMainThread(action);
 				}
 				else
 				{
