@@ -10,29 +10,15 @@
     <iconUrl>http://xamarin.com/content/images/nuget/xamarin.png</iconUrl>
     <projectUrl>http://xamarin.com/forms</projectUrl>
     <requireLicenseAcceptance>true</requireLicenseAcceptance>
-    <description>Build native UIs for iOS, Android, and Windows Phone from a single, shared C# codebase</description>
+    <description>Build native UIs for iOS, Android, UWP, macOS, Tizen and many more from a single, shared C# codebase</description>
     <copyright>© Microsoft Corporation. All rights reserved.</copyright>
     <dependencies>
-      <group targetFramework="MonoAndroid10">
-        <dependency id="Xamarin.Android.Support.v4" version="[23.3.0]"/>
-        <dependency id="Xamarin.Android.Support.Design" version="[23.3.0]"/>
-        <dependency id="Xamarin.Android.Support.v7.AppCompat" version="[23.3.0]"/>
-        <dependency id="Xamarin.Android.Support.v7.CardView" version="[23.3.0]"/>
-        <dependency id="Xamarin.Android.Support.v7.MediaRouter" version="[23.3.0]"/>
-      </group>
-      <group targetFramework="MonoAndroid70">
-        <dependency id="Xamarin.Android.Support.v4" version="23.3.0"/>
-        <dependency id="Xamarin.Android.Support.Design" version="23.3.0"/>
-        <dependency id="Xamarin.Android.Support.v7.AppCompat" version="23.3.0"/>
-        <dependency id="Xamarin.Android.Support.v7.CardView" version="23.3.0"/>
-        <dependency id="Xamarin.Android.Support.v7.MediaRouter" version="23.3.0"/>
-      </group>
-      <group targetFramework="MonoAndroid71">
-        <dependency id="Xamarin.Android.Support.v4" version="25.4.0.2"/>
-        <dependency id="Xamarin.Android.Support.Design" version="25.4.0.2"/>
-        <dependency id="Xamarin.Android.Support.v7.AppCompat" version="25.4.0.2"/>
-        <dependency id="Xamarin.Android.Support.v7.CardView" version="25.4.0.2"/>
-        <dependency id="Xamarin.Android.Support.v7.MediaRouter" version="25.4.0.2"/>
+      <group targetFramework="MonoAndroid81">
+        <dependency id="Xamarin.Android.Support.v4" version="27.0.2"/>
+        <dependency id="Xamarin.Android.Support.Design" version="27.0.2"/>
+        <dependency id="Xamarin.Android.Support.v7.AppCompat" version="27.0.2"/>
+        <dependency id="Xamarin.Android.Support.v7.CardView" version="27.0.2"/>
+        <dependency id="Xamarin.Android.Support.v7.MediaRouter" version="27.0.2"/>
       </group>
       <group targetFramework="uap10.0">
         <dependency id="NETStandard.Library" version="2.0.1"/>
@@ -42,9 +28,49 @@
         <dependency id="Tizen.NET" version="4.0.0"/>
       </group>
     </dependencies>
+    
+    <references>    
+        <group> 
+            <reference file="Xamarin.Forms.Core.dll" /> 
+            <reference file="Xamarin.Forms.Platform.dll" /> 
+            <reference file="Xamarin.Forms.Xaml.dll" /> 
+        </group>
+        <group targetFramework="Xamarin.iOS10"> 
+            <reference file="Xamarin.Forms.Core.dll" /> 
+            <reference file="Xamarin.Forms.Platform.dll" /> 
+            <reference file="Xamarin.Forms.Xaml.dll" /> 
+            <reference file="Xamarin.Forms.Platform.iOS.dll" /> 
+        </group>    
+        <group targetFramework="MonoAndroid10"> 
+            <reference file="Xamarin.Forms.Core.dll" /> 
+            <reference file="Xamarin.Forms.Platform.dll" /> 
+            <reference file="Xamarin.Forms.Xaml.dll" /> 
+            <reference file="FormsViewGroup.dll" /> 
+            <reference file="Xamarin.Forms.Platform.Android.dll" /> 
+        </group>    
+        <group targetFramework="uap10.0">   
+            <reference file="Xamarin.Forms.Core.dll" /> 
+            <reference file="Xamarin.Forms.Platform.dll" /> 
+            <reference file="Xamarin.Forms.Xaml.dll" /> 
+            <reference file="Xamarin.Forms.Platform.UAP.dll" /> 
+        </group>    
+        <group targetFramework="Xamarin.Mac">   
+            <reference file="Xamarin.Forms.Core.dll" /> 
+            <reference file="Xamarin.Forms.Platform.macOS.dll" />   
+            <reference file="Xamarin.Forms.Platform.dll" /> 
+            <reference file="Xamarin.Forms.Xaml.dll" /> 
+        </group>    
+        <group targetFramework="tizen40">   
+            <reference file="Xamarin.Forms.Core.dll" /> 
+            <reference file="Xamarin.Forms.Platform.Tizen.dll" />   
+            <reference file="Xamarin.Forms.Platform.dll" /> 
+            <reference file="Xamarin.Forms.Xaml.dll" /> 
+        </group>    
+    </references>
+    
   </metadata>
-  <files>
 
+  <files>
 
     <!--netstandard 1.0-->
     <file src="..\Xamarin.Forms.Core\bin\$Configuration$\netstandard1.0\Xamarin.Forms.Core.dll" target="lib\netstandard1.0" />
@@ -105,6 +131,17 @@
     <file src="..\Xamarin.Forms.Core.Design\bin\$Configuration$\Xamarin.Forms.Core.Design.dll" target="lib\netstandard1.0\Design" />
     <file src="..\Xamarin.Forms.Xaml.Design\bin\$Configuration$\Xamarin.Forms.Xaml.Design.dll" target="lib\netstandard1.0\Design" />
 
+    <file src="..\Xamarin.Forms.Core.Design\bin\$Configuration$\Xamarin.Forms.Core.Design.dll" target="lib\MonoAndroid10\Design" /> 
+    <file src="..\Xamarin.Forms.Xaml.Design\bin\$Configuration$\Xamarin.Forms.Xaml.Design.dll" target="lib\MonoAndroid10\Design" /> 
+    <file src="..\Xamarin.Forms.Core.Design\bin\$Configuration$\Xamarin.Forms.Core.Design.dll" target="lib\Xamarin.iOS10\Design" /> 
+    <file src="..\Xamarin.Forms.Xaml.Design\bin\$Configuration$\Xamarin.Forms.Xaml.Design.dll" target="lib\Xamarin.iOS10\Design" /> 
+    <file src="..\Xamarin.Forms.Core.Design\bin\$Configuration$\Xamarin.Forms.Core.Design.dll" target="lib\uap10.0\Design" />   
+    <file src="..\Xamarin.Forms.Xaml.Design\bin\$Configuration$\Xamarin.Forms.Xaml.Design.dll" target="lib\uap10.0\Design" />   
+    <file src="..\Xamarin.Forms.Core.Design\bin\$Configuration$\Xamarin.Forms.Core.Design.dll" target="lib\Xamarin.Mac\Design" />   
+    <file src="..\Xamarin.Forms.Xaml.Design\bin\$Configuration$\Xamarin.Forms.Xaml.Design.dll" target="lib\Xamarin.Mac\Design" />   
+    <file src="..\Xamarin.Forms.Core.Design\bin\$Configuration$\Xamarin.Forms.Core.Design.dll" target="lib\tizen40\Design" />   
+    <file src="..\Xamarin.Forms.Xaml.Design\bin\$Configuration$\Xamarin.Forms.Xaml.Design.dll" target="lib\tizen40\Design" />
+    
     <!--Android-->
     <file src="..\Xamarin.Forms.Platform.Android\bin\$Configuration$\Xamarin.Forms.Platform.Android.dll" target="lib\MonoAndroid10" />
     <file src="..\Xamarin.Forms.Platform.Android\bin\$Configuration$\Xamarin.Forms.Platform.Android.*pdb" target="lib\MonoAndroid10" />

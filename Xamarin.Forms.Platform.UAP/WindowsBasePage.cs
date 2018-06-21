@@ -44,15 +44,19 @@ namespace Xamarin.Forms.Platform.UWP
 
 		void OnApplicationResuming(object sender, object e)
 		{
-			_application.SendResume();
+			Application.Current?.SendResume();
 		}
 
 		async void OnApplicationSuspending(object sender, SuspendingEventArgs e)
 		{
+			var sendSleepTask = Application.Current?.SendSleepAsync();
+			if (sendSleepTask == null)
+				return;
+
 			SuspendingDeferral deferral = e.SuspendingOperation.GetDeferral();
 			try
 			{
-				await _application.SendSleepAsync();
+				await sendSleepTask;
 			}
 			finally
 			{

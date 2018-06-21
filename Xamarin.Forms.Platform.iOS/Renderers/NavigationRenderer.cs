@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
+using ObjCRuntime;
 using UIKit;
 using Xamarin.Forms.Internals;
 using Xamarin.Forms.PlatformConfiguration.iOSSpecific;
@@ -275,9 +276,7 @@ namespace Xamarin.Forms.Platform.iOS
 
 		protected virtual void OnElementChanged(VisualElementChangedEventArgs e)
 		{
-			var changed = ElementChanged;
-			if (changed != null)
-				changed(this, e);
+			ElementChanged?.Invoke(this, e);
 		}
 
 		protected virtual async Task<bool> OnPopToRoot(Page page, bool animated)
@@ -317,18 +316,9 @@ namespace Xamarin.Forms.Platform.iOS
 			UIViewController poppedViewController;
 			poppedViewController = base.PopViewController(animated);
 
-			if (poppedViewController == null)
-			{
-				// this happens only when the user does something REALLY dumb like pop right after putting the page as visible.
-				poppedViewController = TopViewController;
-				var newControllers = ViewControllers.Remove(poppedViewController);
-				ViewControllers = newControllers;
-				actuallyRemoved = true;
-			}
-			else
-				actuallyRemoved = !await task;
+			actuallyRemoved = (poppedViewController == null) ? true : !await task;
 
-			poppedViewController.Dispose();
+			poppedViewController?.Dispose();
 
 			UpdateToolBarVisible();
 			return actuallyRemoved;
@@ -527,6 +517,11 @@ namespace Xamarin.Forms.Platform.iOS
 
 		void OnPushRequested(object sender, NavigationRequestedEventArgs e)
 		{
+			// If any text entry controls have focus, we need to end their editing session
+			// so that they are not the first responder; if we don't some things (like the activity indicator
+			// on pull-to-refresh) will not work correctly.
+			View?.Window?.EndEditing(true);
+
 			e.Task = PushPageAsync(e.Page, e.Animated);
 		}
 
@@ -759,6 +754,8 @@ namespace Xamarin.Forms.Platform.iOS
 
 		class SecondaryToolbar : UIToolbar
 		{
+			nfloat _toolbarWidth;
+
 			readonly List<UIView> _lines = new List<UIView>();
 
 			public SecondaryToolbar()
@@ -786,6 +783,11 @@ namespace Xamarin.Forms.Platform.iOS
 
 			void LayoutToolbarItems(nfloat toolbarWidth, nfloat toolbarHeight, nfloat padding)
 			{
+				if (_toolbarWidth == toolbarWidth)
+					return;
+
+				_toolbarWidth = toolbarWidth;
+
 				var x = padding;
 				var y = 0;
 				var itemH = toolbarHeight;

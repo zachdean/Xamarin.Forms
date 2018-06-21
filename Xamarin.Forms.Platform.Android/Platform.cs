@@ -65,7 +65,7 @@ namespace Xamarin.Forms.Platform.Android
 			{
 				_defaultActionBarTitleTextColor = SetDefaultActionBarTitleTextColor();
 			}
-			
+
 			_renderer = new PlatformRenderer(context, this);
 
 			if (embedded)
@@ -1105,8 +1105,8 @@ namespace Xamarin.Forms.Platform.Android
 		static int s_id = 0x00000400;
 
 		#region Previewer Stuff
-		
-		internal static readonly BindableProperty PageContextProperty = 
+
+		internal static readonly BindableProperty PageContextProperty =
 			BindableProperty.CreateAttached("PageContext", typeof(Context), typeof(Platform), null);
 
 		internal Platform(Context context) : this(context, false)
@@ -1115,12 +1115,12 @@ namespace Xamarin.Forms.Platform.Android
 			// the 'embedded' bool parameter so the previewer can find it via reflection
 		}
 
-		internal static void SetPageContext(BindableObject bindable, Context context)		
- 		{
+		internal static void SetPageContext(BindableObject bindable, Context context)
+		{
 			// Set a context for this page and its child controls
 			bindable.SetValue(PageContextProperty, context);
 		}
-		
+
 		static Context GetPreviewerContext(Element element)
 		{
 			// Walk up the tree and find the Page this element is hosted in
@@ -1139,6 +1139,7 @@ namespace Xamarin.Forms.Platform.Android
 		internal class DefaultRenderer : VisualElementRenderer<View>
 		{
 			bool _notReallyHandled;
+			IOnTouchListener _touchListener;
 
 			[Obsolete("This constructor is obsolete as of version 2.5. Please use DefaultRenderer(Context) instead.")]
 			public DefaultRenderer()
@@ -1207,10 +1208,28 @@ namespace Xamarin.Forms.Platform.Android
 					// don't consider the event truly "handled" yet. 
 					// Since a child control short-circuited the normal dispatchTouchEvent stuff, this layout never got the chance for
 					// IOnTouchListener.OnTouch and the OnTouchEvent override to try handling the touches; we'll do that now
-					return OnTouchEvent(e);
+					// Any associated Touch Listeners are called from DispatchTouchEvents if all children of this view return false
+					// So here we are simulating both calls that would have typically been called from inside DispatchTouchEvent
+					// but were not called due to the fake "true"
+					result = _touchListener?.OnTouch(this, e) ?? false;
+					return result || OnTouchEvent(e);
 				}
 
 				return result;
+			}
+
+			public override void SetOnTouchListener(IOnTouchListener l)
+			{
+				_touchListener = l;
+				base.SetOnTouchListener(l);
+			}
+
+			protected override void Dispose(bool disposing)
+			{
+				if (disposing)
+					_touchListener = null;
+
+				base.Dispose(disposing);
 			}
 		}
 
@@ -1232,29 +1251,38 @@ namespace Xamarin.Forms.Platform.Android
 
 		SizeRequest IPlatform.GetNativeSize(VisualElement view, double widthConstraint, double heightConstraint)
 		{
-			var reference = Guid.NewGuid().ToString();
-			Performance.Start(reference);
+			Performance.Start(out string reference);
 
 			// FIXME: potential crash
-			IVisualElementRenderer viewRenderer = GetRenderer(view);
+			IVisualElementRenderer visualElementRenderer = GetRenderer(view);
 
 			// negative numbers have special meanings to android they don't to us
 			widthConstraint = widthConstraint <= -1 ? double.PositiveInfinity : _context.ToPixels(widthConstraint);
 			heightConstraint = heightConstraint <= -1 ? double.PositiveInfinity : _context.ToPixels(heightConstraint);
 
-			int width = !double.IsPositiveInfinity(widthConstraint)
+			bool widthConstrained = !double.IsPositiveInfinity(widthConstraint);
+			bool heightConstrained = !double.IsPositiveInfinity(heightConstraint);
+
+			int widthMeasureSpec = widthConstrained
 							? MeasureSpecFactory.MakeMeasureSpec((int)widthConstraint, MeasureSpecMode.AtMost)
 							: MeasureSpecFactory.MakeMeasureSpec(0, MeasureSpecMode.Unspecified);
 
-			int height = !double.IsPositiveInfinity(heightConstraint)
+			int heightMeasureSpec = heightConstrained
 							 ? MeasureSpecFactory.MakeMeasureSpec((int)heightConstraint, MeasureSpecMode.AtMost)
 							 : MeasureSpecFactory.MakeMeasureSpec(0, MeasureSpecMode.Unspecified);
 
-			SizeRequest rawResult = viewRenderer.GetDesiredSize(width, height);
+			SizeRequest rawResult = visualElementRenderer.GetDesiredSize(widthMeasureSpec, heightMeasureSpec);
 			if (rawResult.Minimum == Size.Zero)
 				rawResult.Minimum = rawResult.Request;
 			var result = new SizeRequest(new Size(_context.FromPixels(rawResult.Request.Width), _context.FromPixels(rawResult.Request.Height)),
 				new Size(_context.FromPixels(rawResult.Minimum.Width), _context.FromPixels(rawResult.Minimum.Height)));
+
+			if ((widthConstrained && result.Request.Width < widthConstraint)
+				|| (heightConstrained && result.Request.Height < heightConstraint))
+			{
+				// Do a final exact measurement in case the native control needs to fill the container
+				(visualElementRenderer as IViewRenderer)?.MeasureExactly();
+			}
 
 			Performance.Stop(reference);
 			return result;

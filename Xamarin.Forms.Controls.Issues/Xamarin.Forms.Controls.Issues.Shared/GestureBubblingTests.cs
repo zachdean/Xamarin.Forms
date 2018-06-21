@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using Xamarin.Forms.CustomAttributes;
 using Xamarin.Forms.Internals;
-
+using Xamarin.Forms.PlatformConfiguration;
+using Xamarin.Forms.PlatformConfiguration.iOSSpecific;
 
 #if UITEST
 using NUnit.Framework;
@@ -118,9 +119,9 @@ namespace Xamarin.Forms.Controls.Issues
 			var rec = new TapGestureRecognizer { NumberOfTapsRequired = 1 };
 			rec.Tapped += (s, e) => { label.Text = Tapped; };
 			frame.GestureRecognizers.Add(rec);
-			
+
 			var layout = new StackLayout();
-		
+
 			layout.Children.Add(instructions);
 			layout.Children.Add(label);
 			layout.Children.Add(frame);
@@ -204,7 +205,11 @@ namespace Xamarin.Forms.Controls.Issues
 
 			col2.Children.Add(MenuButton(nameof(DatePicker), () => new DatePicker()));
 			col2.Children.Add(MenuButton(nameof(TimePicker), () => new TimePicker()));
-			col2.Children.Add(MenuButton(nameof(Slider), () => new Slider()));
+
+			var slider = new Slider();
+			slider.On<iOS>().SetUpdateOnTap(true);
+			col2.Children.Add(MenuButton(nameof(Slider), () => slider));
+
 			col2.Children.Add(MenuButton(nameof(Switch), () => new Switch()));
 			col2.Children.Add(MenuButton(nameof(Stepper), () => new Stepper()));
 			col2.Children.Add(MenuButton(nameof(BoxView), () => new BoxView { BackgroundColor = Color.DarkMagenta, WidthRequest = 100, HeightRequest = 100 }));

@@ -125,6 +125,7 @@ namespace Xamarin.Forms.Controls
 			}
 
 			readonly List<IssueModel> _issues;
+			TableSection _section;
 
 			void VerifyNoDuplicates()
 			{
@@ -161,10 +162,6 @@ namespace Xamarin.Forms.Controls
 						Action = ActivatePageAndNavigate (attribute, typeInfo.AsType ())
 					}).ToList();
 
-				var root = new TableRoot ();
-				var section = new TableSection ("Bug Repro");
-				root.Add (section);
-
 				VerifyNoDuplicates();
 
 				FilterIssues();
@@ -195,10 +192,6 @@ namespace Xamarin.Forms.Controls
 				_filter = filter;
 
 				PageToAction.Clear();
-
-				var root = new TableRoot ();
-				var section = new TableSection ("Bug Repro");
-				root.Add (section);
 
 				var issueCells = Enumerable.Empty<TextCell>();
 
@@ -234,12 +227,19 @@ namespace Xamarin.Forms.Controls
 
 					issueCells = issueCells.Concat(untrackedIssueCells);
 				}
+				
+				if (_section != null)
+				{
+					Root.Remove(_section);
+				}
+
+				_section = new TableSection("Bug Repro");
 
 				foreach (var issueCell in issueCells) {
-					section.Add (issueCell);
+					_section.Add (issueCell);
 				} 
 
-				Root = root;
+				Root.Add(_section);
 			}
 
 			// Legacy reasons, do not add to this list
@@ -267,7 +267,7 @@ namespace Xamarin.Forms.Controls
 			};
 
 			var searchBar = new SearchBar() {
-				HeightRequest = 42, // Need this for Android N, see https://bugzilla.xamarin.com/show_bug.cgi?id=43975
+				MinimumHeightRequest = 42, // Need this for Android N, see https://bugzilla.xamarin.com/show_bug.cgi?id=43975
 				AutomationId = "SearchBarGo"
 			};
 

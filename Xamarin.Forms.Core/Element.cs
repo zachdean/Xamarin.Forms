@@ -293,9 +293,9 @@ namespace Xamarin.Forms
 			return false;
 		}
 
-		object INameScope.FindByName(string name)
+		public object FindByName(string name)
 		{
-			INameScope namescope = GetNameScope();
+			var namescope = GetNameScope();
 			if (namescope == null)
 				throw new InvalidOperationException("this element is not in a namescope");
 			return namescope.FindByName(name);
@@ -303,27 +303,10 @@ namespace Xamarin.Forms
 
 		void INameScope.RegisterName(string name, object scopedElement)
 		{
-			INameScope namescope = GetNameScope();
+			var namescope = GetNameScope();
 			if (namescope == null)
 				throw new InvalidOperationException("this element is not in a namescope");
 			namescope.RegisterName(name, scopedElement);
-		}
-
-		[Obsolete]
-		void INameScope.RegisterName(string name, object scopedElement, IXmlLineInfo xmlLineInfo)
-		{
-			INameScope namescope = GetNameScope();
-			if (namescope == null)
-				throw new InvalidOperationException("this element is not in a namescope");
-			namescope.RegisterName(name, scopedElement, xmlLineInfo);
-		}
-
-		void INameScope.UnregisterName(string name)
-		{
-			INameScope namescope = GetNameScope();
-			if (namescope == null)
-				throw new InvalidOperationException("this element is not in a namescope");
-			namescope.UnregisterName(name);
 		}
 
 		public event EventHandler<ElementEventArgs> ChildAdded;
@@ -634,32 +617,27 @@ namespace Xamarin.Forms
 			}
 		}
 
-		INameScope GetNameScope()
+		internal INameScope GetNameScope()
 		{
-			INameScope namescope = NameScope.GetNameScope(this);
-			Element p = RealParent;
-			while (namescope == null && p != null)
-			{
-				namescope = NameScope.GetNameScope(p);
-				p = p.RealParent;
-			}
-			return namescope;
+			var element = this;
+			do {
+				var ns = NameScope.GetNameScope(element);
+				if (ns != null)
+					return ns;
+			} while ((element = element.RealParent) != null);
+			return null;
 		}
 
 		void OnDescendantAdded(Element child)
 		{
 			DescendantAdded?.Invoke(this, new ElementEventArgs(child));
-
-			if (RealParent != null)
-				RealParent.OnDescendantAdded(child);
+			RealParent?.OnDescendantAdded(child);
 		}
 
 		void OnDescendantRemoved(Element child)
 		{
 			DescendantRemoved?.Invoke(this, new ElementEventArgs(child));
-
-			if (RealParent != null)
-				RealParent.OnDescendantRemoved(child);
+			RealParent?.OnDescendantRemoved(child);
 		}
 
 		void OnResourceChanged(BindableProperty property, object value)

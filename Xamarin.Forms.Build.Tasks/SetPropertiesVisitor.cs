@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml;
@@ -44,6 +43,13 @@ namespace Xamarin.Forms.Build.Tasks
 		public bool StopOnDataTemplate => true;
 		public bool VisitNodeOnDataTemplate => true;
 		public bool SkipChildren(INode node, INode parentNode) => false;
+
+		public bool IsResourceDictionary(ElementNode node)
+		{
+			var parentVar = Context.Variables[(IElementNode)node];
+			return parentVar.VariableType.FullName == "Xamarin.Forms.ResourceDictionary"
+				|| parentVar.VariableType.Resolve().BaseType?.FullName == "Xamarin.Forms.ResourceDictionary";
+		}
 
 		ModuleDefinition Module { get; }
 
@@ -301,14 +307,16 @@ namespace Xamarin.Forms.Build.Tasks
 			{
 				var acceptEmptyServiceProvider = context.Variables[node].VariableType.GetCustomAttribute(module, ("Xamarin.Forms.Core", "Xamarin.Forms.Xaml", "AcceptEmptyServiceProviderAttribute")) != null;
 				vardefref.VariableDefinition = new VariableDefinition(module.TypeSystem.Object);
-				yield return Instruction.Create(OpCodes.Ldloc, context.Variables[node]);
+				yield return Create(Ldloc, context.Variables[node]);
 				if (acceptEmptyServiceProvider)
-					yield return Instruction.Create(OpCodes.Ldnull);
+					yield return Create(Ldnull);
 				else
 					foreach (var instruction in node.PushServiceProvider(context, bpRef, propertyRef, propertyDeclaringTypeRef))
 						yield return instruction;
-				yield return Instruction.Create(OpCodes.Callvirt, module.ImportMethodReference(("Xamarin.Forms.Core", "Xamarin.Forms.Xaml", "IMarkupExtension"), methodName: "ProvideValue", paramCount: 1));
-				yield return Instruction.Create(OpCodes.Stloc, vardefref.VariableDefinition);
+				yield return Create(Callvirt, module.ImportMethodReference(("Xamarin.Forms.Core", "Xamarin.Forms.Xaml", "IMarkupExtension"),
+																		   methodName: "ProvideValue",
+																		   parameterTypes: new[] { ("System.ComponentModel", "System", "IServiceProvider") }));
+				yield return Create(Stloc, vardefref.VariableDefinition);
 			}
 			else if (context.Variables[node].VariableType.ImplementsInterface(module.ImportReference(("Xamarin.Forms.Core", "Xamarin.Forms.Xaml", "IValueProvider"))))
 			{
@@ -331,16 +339,16 @@ namespace Xamarin.Forms.Build.Tasks
 				}
 
 				vardefref.VariableDefinition = new VariableDefinition(module.TypeSystem.Object);
-				yield return Instruction.Create(OpCodes.Ldloc, context.Variables[node]);
+				yield return Create(Ldloc, context.Variables[node]);
 				if (acceptEmptyServiceProvider)
-					yield return Instruction.Create(OpCodes.Ldnull);
+					yield return Create(Ldnull);
 				else
 					foreach (var instruction in node.PushServiceProvider(context, bpRef, propertyRef, propertyDeclaringTypeRef))
 						yield return instruction;
-				yield return Instruction.Create(OpCodes.Callvirt, module.ImportMethodReference(("Xamarin.Forms.Core", "Xamarin.Forms.Xaml", "IValueProvider"),
-																							   methodName: "ProvideValue",
-																							   paramCount: 1));
-				yield return Instruction.Create(OpCodes.Stloc, vardefref.VariableDefinition);
+				yield return Create(Callvirt, module.ImportMethodReference(("Xamarin.Forms.Core", "Xamarin.Forms.Xaml", "IValueProvider"),
+																		   methodName: "ProvideValue",
+																		   parameterTypes: new[] { ("System.ComponentModel", "System", "IServiceProvider") }));
+				yield return Create(Stloc, vardefref.VariableDefinition);
 			}
 		}
 
@@ -370,7 +378,11 @@ namespace Xamarin.Forms.Build.Tasks
 			if (dataType == null)
 				yield break; //throw
 
-			var namespaceuri = dataType.Contains(":") ? node.NamespaceResolver.LookupNamespace(dataType.Split(':') [0].Trim()) : "";
+			var prefix = dataType.Contains(":") ? dataType.Substring(0, dataType.IndexOf(":", StringComparison.Ordinal)) : "";
+			var namespaceuri = node.NamespaceResolver.LookupNamespace(prefix) ?? "";
+			if (!string.IsNullOrEmpty(prefix) && string.IsNullOrEmpty(namespaceuri))
+				throw new XamlParseException($"Undeclared xmlns prefix '{prefix}'", dataTypeNode as IXmlLineInfo);
+
 			var dtXType = new XmlType(namespaceuri, dataType, null);
 
 			var tSourceRef = dtXType.GetTypeReference(module, (IXmlLineInfo)node);
@@ -379,6 +391,7 @@ namespace Xamarin.Forms.Build.Tasks
 
 			var properties = ParsePath(path, tSourceRef, node as IXmlLineInfo, module);
 			var tPropertyRef = properties != null && properties.Any() ? properties.Last().Item1.PropertyType : tSourceRef;
+			tPropertyRef = module.ImportReference(tPropertyRef);
 
 			var funcRef = module.ImportReference(module.ImportReference(("mscorlib", "System", "Func`2")).MakeGenericInstanceType(new [] { tSourceRef, tPropertyRef }));
 			var actionRef = module.ImportReference(module.ImportReference(("mscorlib", "System", "Action`2")).MakeGenericInstanceType(new [] { tSourceRef, tPropertyRef }));
@@ -438,7 +451,8 @@ namespace Xamarin.Forms.Build.Tasks
 				}
 
 				if (p.Length > 0) {
-					var property = previousPartTypeRef.GetProperty(pd => pd.Name == p && pd.GetMethod != null && pd.GetMethod.IsPublic, out _);
+					var property = previousPartTypeRef.GetProperty(pd => pd.Name == p && pd.GetMethod != null && pd.GetMethod.IsPublic, out _)
+					                                  ?? throw new XamlParseException($"Binding: Property '{p}' not found on '{previousPartTypeRef}'", lineInfo);
 					properties.Add(new Tuple<PropertyDefinition, string>(property,null));
 					previousPartTypeRef = property.PropertyType;
 				}
@@ -475,7 +489,7 @@ namespace Xamarin.Forms.Build.Tasks
 					new ParameterDefinition(tSourceRef)
 				},
 				CustomAttributes = {
-					new CustomAttribute (module.ImportCtorReference(("mscorlib", "System.Runtime.CompilerServices", "CompilerGeneratedAttribute"), paramCount: 0))
+					new CustomAttribute (module.ImportCtorReference(("mscorlib", "System.Runtime.CompilerServices", "CompilerGeneratedAttribute"), parameterTypes: null))
 				}
 			};
 			getter.Body.InitLocals = true;
@@ -550,7 +564,7 @@ namespace Xamarin.Forms.Build.Tasks
 					new ParameterDefinition(tPropertyRef)
 				},
 				CustomAttributes = {
-					new CustomAttribute (module.ImportCtorReference(("mscorlib", "System.Runtime.CompilerServices", "CompilerGeneratedAttribute"), paramCount: 0))
+					new CustomAttribute (module.ImportCtorReference(("mscorlib", "System.Runtime.CompilerServices", "CompilerGeneratedAttribute"), parameterTypes: null))
 				}
 			};
 			setter.Body.InitLocals = true;
@@ -652,7 +666,7 @@ namespace Xamarin.Forms.Build.Tasks
 						new ParameterDefinition(tSourceRef)
 					},
 					CustomAttributes = {
-						new CustomAttribute (module.ImportCtorReference(("mscorlib", "System.Runtime.CompilerServices", "CompilerGeneratedAttribute"), paramCount: 0))
+						new CustomAttribute (module.ImportCtorReference(("mscorlib", "System.Runtime.CompilerServices", "CompilerGeneratedAttribute"), parameterTypes: null))
 					}
 				};
 				partGetter.Body.InitLocals = true;
@@ -809,7 +823,7 @@ namespace Xamarin.Forms.Build.Tasks
 			var name = $"{localName}Property";
 			FieldReference bpRef = bpOwnerType.GetField(fd => fd.Name == name &&
 														fd.IsStatic &&
-														fd.IsPublic, out declaringTypeReference);
+														(fd.IsPublic || fd.IsAssembly), out declaringTypeReference);
 			if (bpRef != null) {
 				bpRef = module.ImportReference(bpRef.ResolveGenericParameters(declaringTypeReference));
 				bpRef.FieldType = module.ImportReference(bpRef.FieldType);
@@ -842,12 +856,12 @@ namespace Xamarin.Forms.Build.Tasks
 
 			var value = ((ValueNode)valueNode).Value;
 
-			yield return Instruction.Create(OpCodes.Ldloc, parent);
+			yield return Create(Ldloc, parent);
 			if (context.Root is VariableDefinition)
-				yield return Instruction.Create(OpCodes.Ldloc, context.Root as VariableDefinition);
+				yield return Create(Ldloc, context.Root as VariableDefinition);
 			else if (context.Root is FieldDefinition) {
-				yield return Instruction.Create(OpCodes.Ldarg_0);
-				yield return Instruction.Create(OpCodes.Ldfld, context.Root as FieldDefinition);
+				yield return Create(Ldarg_0);
+				yield return Create(Ldfld, context.Root as FieldDefinition);
 			} else 
 				throw new InvalidProgramException();
 			var declaringType = context.Body.Method.DeclaringType;
@@ -856,19 +870,33 @@ namespace Xamarin.Forms.Build.Tasks
 			var handler = declaringType.AllMethods().FirstOrDefault(md => md.Name == value as string);
 			if (handler == null) 
 				throw new XamlParseException($"EventHandler \"{value}\" not found in type \"{context.Body.Method.DeclaringType.FullName}\"", iXmlLineInfo);
+
+			//check if the handler signature matches the Invoke signature;
+			var invoke = module.ImportReference(eventinfo.EventType.ResolveCached().GetMethods().First(md => md.Name == "Invoke"));
+			invoke = invoke.ResolveGenericParameters(eventinfo.EventType, module);
+			if (!handler.ReturnType.InheritsFromOrImplements(invoke.ReturnType))
+				throw new XamlParseException($"Signature (return type) of EventHandler \"{context.Body.Method.DeclaringType.FullName}.{value}\" doesn't match the event type", iXmlLineInfo);
+			if (invoke.Parameters.Count != handler.Parameters.Count)
+				throw new XamlParseException($"Signature (number of arguments) of EventHandler \"{context.Body.Method.DeclaringType.FullName}.{value}\" doesn't match the event type", iXmlLineInfo);
+			if (!invoke.ContainsGenericParameter)
+				for (var i = 0; i < invoke.Parameters.Count;i++)
+					if (!handler.Parameters[i].ParameterType.InheritsFromOrImplements(invoke.Parameters[i].ParameterType))
+						throw new XamlParseException($"Signature (parameter {i}) of EventHandler \"{context.Body.Method.DeclaringType.FullName}.{value}\" doesn't match the event type", iXmlLineInfo);
+
 			if (handler.IsVirtual) {
-				yield return Instruction.Create(OpCodes.Ldarg_0);
-				yield return Instruction.Create(OpCodes.Ldvirtftn, handler);
+				yield return Create(Ldarg_0);
+				yield return Create(Ldvirtftn, handler);
 			} else
-				yield return Instruction.Create(OpCodes.Ldftn, handler);
+				yield return Create(Ldftn, handler);
 
 			//FIXME: eventually get the right ctor instead fo the First() one, just in case another one could exists (not even sure it's possible).
 			var ctor = module.ImportReference(eventinfo.EventType.ResolveCached().GetConstructors().First());
 			ctor = ctor.ResolveGenericParameters(eventinfo.EventType, module);
-			yield return Instruction.Create(OpCodes.Newobj, module.ImportReference(ctor));
+			yield return Create(Newobj, module.ImportReference(ctor));
+			//Check if the handler has the same signature as the ctor (it should)
 			var adder = module.ImportReference(eventinfo.AddMethod);
 			adder = adder.ResolveGenericParameters(eventDeclaringTypeRef, module);
-			yield return Instruction.Create(OpCodes.Callvirt, module.ImportReference(adder));
+			yield return Create(Callvirt, module.ImportReference(adder));
 		}
 
 		static bool CanSetDynamicResource(FieldReference bpRef, INode valueNode, ILContext context)
@@ -893,7 +921,12 @@ namespace Xamarin.Forms.Build.Tasks
 			yield return Create(Ldsfld, bpRef);
 			yield return Create(Ldloc, context.Variables[elementNode]);
 			yield return Create(Callvirt, module.ImportPropertyGetterReference(("Xamarin.Forms.Core", "Xamarin.Forms.Internals", "DynamicResource"), propertyName: "Key"));
-			yield return Create(Callvirt, module.ImportMethodReference(("Xamarin.Forms.Core", "Xamarin.Forms.Internals", "IDynamicResourceHandler"), methodName: "SetDynamicResource", paramCount: 2));
+			yield return Create(Callvirt, module.ImportMethodReference(("Xamarin.Forms.Core", "Xamarin.Forms.Internals", "IDynamicResourceHandler"),
+																	   methodName: "SetDynamicResource",
+																	   parameterTypes: new[] {
+																		   ("Xamarin.Forms.Core", "Xamarin.Forms", "BindableProperty"),
+																		   ("mscorlib", "System", "String"),
+																	   }));
 		}
 
 		static bool CanSetBinding(FieldReference bpRef, INode valueNode, ILContext context)
@@ -929,7 +962,12 @@ namespace Xamarin.Forms.Build.Tasks
 			if (implicitOperator != null) 
 //				IL_000f:  call !0 class [Xamarin.Forms.Core]Xamarin.Forms.OnPlatform`1<BindingBase>::op_Implicit(class [Xamarin.Forms.Core]Xamarin.Forms.OnPlatform`1<!0>)
 				yield return Create(Call, module.ImportReference(implicitOperator));
-			yield return Create(Callvirt, module.ImportMethodReference(("Xamarin.Forms.Core", "Xamarin.Forms", "BindableObject"), methodName: "SetBinding", paramCount: 2));
+			yield return Create(Callvirt, module.ImportMethodReference(("Xamarin.Forms.Core", "Xamarin.Forms", "BindableObject"),
+																	   methodName: "SetBinding",
+																	   parameterTypes: new[] {
+																		   ("Xamarin.Forms.Core", "Xamarin.Forms", "BindableProperty"),
+																		   ("Xamarin.Forms.Core", "Xamarin.Forms", "BindingBase"),
+																	   }));
 		}
 
 		static bool CanSetValue(FieldReference bpRef, bool attached, INode node, IXmlLineInfo iXmlLineInfo, ILContext context)
@@ -1012,7 +1050,12 @@ namespace Xamarin.Forms.Build.Tasks
 				if (varType.IsValueType)
 					yield return Create(Box, varType);
 			}
-			yield return Create(Callvirt, module.ImportMethodReference(("Xamarin.Forms.Core", "Xamarin.Forms", "BindableObject"), methodName: "SetValue", paramCount: 2));
+			yield return Create(Callvirt, module.ImportMethodReference(("Xamarin.Forms.Core", "Xamarin.Forms", "BindableObject"),
+																	   methodName: "SetValue",
+																	   parameterTypes: new[] {
+																		   ("Xamarin.Forms.Core", "Xamarin.Forms", "BindableProperty"),
+																		   ("mscorlib", "System", "Object"),
+																	   }));
 		}
 
 		static IEnumerable<Instruction> GetValue(VariableDefinition parent, FieldReference bpRef, IXmlLineInfo iXmlLineInfo, ILContext context, out TypeReference propertyType)
@@ -1023,7 +1066,9 @@ namespace Xamarin.Forms.Build.Tasks
 			return new[] {
 				Create(Ldloc, parent),
 				Create(Ldsfld, bpRef),
-				Create(Callvirt,  module.ImportMethodReference(("Xamarin.Forms.Core", "Xamarin.Forms", "BindableObject"), methodName: "GetValue", paramCount: 1)),
+				Create(Callvirt,  module.ImportMethodReference(("Xamarin.Forms.Core", "Xamarin.Forms", "BindableObject"),
+															   methodName: "GetValue",
+															   parameterTypes: new[] { ("Xamarin.Forms.Core", "Xamarin.Forms", "BindableProperty")})),
 			};
 		}
 
@@ -1192,8 +1237,7 @@ namespace Xamarin.Forms.Build.Tasks
 			var module = context.Body.Method.Module;
 			if (module.ImportMethodReference(("Xamarin.Forms.Core", "Xamarin.Forms", "ResourceDictionary"),
 											 methodName: "Add",
-											 paramCount: 1,
-											 predicate: md => TypeRefComparer.Default.Equals(md.Parameters[0].ParameterType, nodeTypeRef)) != null)
+											 parameterTypes: new[] { (nodeTypeRef.Scope.Name, nodeTypeRef.Namespace, nodeTypeRef.Name) }) != null)
 				return true;
 
 			throw new XamlParseException("resources in ResourceDictionary require a x:Key attribute", lineInfo);
@@ -1245,15 +1289,19 @@ namespace Xamarin.Forms.Build.Tasks
 				if (varDef.VariableType.IsValueType)
 					yield return Create(Box, module.ImportReference(varDef.VariableType));
 				yield return Create(Callvirt, module.ImportMethodReference(("Xamarin.Forms.Core", "Xamarin.Forms", "ResourceDictionary"),
-																		   methodName: "Add", paramCount: 2));
+																		   methodName: "Add",
+																		   parameterTypes: new[] {
+																			   ("mscorlib", "System", "String"),
+																			   ("mscorlib", "System", "Object"),
+																		   }));
 				yield break;
 			}
 
 			var nodeTypeRef = context.Variables[node].VariableType;
 			yield return Create(Ldloc, context.Variables[node]);
 			yield return Create(Callvirt, module.ImportMethodReference(("Xamarin.Forms.Core", "Xamarin.Forms", "ResourceDictionary"),
-																	   methodName: "Add", paramCount: 1,
-																	   predicate: md => TypeRefComparer.Default.Equals(md.Parameters[0].ParameterType, nodeTypeRef)));
+																	   methodName: "Add",
+																	   parameterTypes: new[] { (nodeTypeRef.Scope.Name, nodeTypeRef.Namespace, nodeTypeRef.Name) }));
 			yield break;
 		}
 
@@ -1300,7 +1348,7 @@ namespace Xamarin.Forms.Build.Tasks
 				TypeAttributes.NestedPrivate) {
 				BaseType = module.TypeSystem.Object,
 				CustomAttributes = {
-					new CustomAttribute (module.ImportCtorReference(("mscorlib", "System.Runtime.CompilerServices", "CompilerGeneratedAttribute"), paramCount: 0)),
+					new CustomAttribute (module.ImportCtorReference(("mscorlib", "System.Runtime.CompilerServices", "CompilerGeneratedAttribute"), parameterTypes: null)),
 				}
 			};
 
@@ -1366,8 +1414,8 @@ namespace Xamarin.Forms.Build.Tasks
 			//SetDataTemplate
 			parentIl.Emit(Ldftn, loadTemplate);
 			parentIl.Emit(Newobj, module.ImportCtorReference(("mscorlib", "System", "Func`1"),
-															 paramCount: 2,
-															 classArguments: new[] { ("mscorlib", "System", "Object") }));
+															 classArguments: new[] { ("mscorlib", "System", "Object") },
+															 paramCount: 2));
 
 			parentContext.IL.Emit(OpCodes.Callvirt, module.ImportPropertySetterReference(("Xamarin.Forms.Core", "Xamarin.Forms.Internals", "IDataTemplate"), propertyName: "LoadTemplate"));
 

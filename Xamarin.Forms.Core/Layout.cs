@@ -102,7 +102,7 @@ namespace Xamarin.Forms
 
 		void IPaddingElement.OnPaddingPropertyChanged(Thickness oldValue, Thickness newValue)
 		{
-			UpdateChildrenLayout();
+			InvalidateMeasureInternal(InvalidationTrigger.MeasureChanged);
 		}
 
 		internal ObservableCollection<Element> InternalChildren { get; } = new ObservableCollection<Element>();
@@ -362,24 +362,28 @@ namespace Xamarin.Forms
 				{
 					s_relayoutInProgress = true;
 
-					// if thread safety mattered we would need to lock this and compareexchange above
-					IList<KeyValuePair<Layout, int>> copy = s_resolutionList;
-					s_resolutionList = new List<KeyValuePair<Layout, int>>();
-					s_relayoutInProgress = false;
+					// Rather than recomputing the layout for each change as it happens, we accumulate them in 
+					// s_resolutionList and schedule a single layout update operation to handle them all at once.
+					// This avoids a lot of unnecessary layout operations if something is triggering many property
+					// changes at once (e.g., a BindingContext change)
 
-					foreach (KeyValuePair<Layout, int> kvp in copy.OrderBy(kvp => kvp.Value))
+					this.Dispatcher.BeginInvokeOnMainThread(() =>
 					{
-						Layout layout = kvp.Key;
-						double width = layout.Width, height = layout.Height;
-						if (!layout._allocatedFlag && width >= 0 && height >= 0)
+						// if thread safety mattered we would need to lock this and compareexchange above
+						IList<KeyValuePair<Layout, int>> copy = s_resolutionList;
+						s_resolutionList = new List<KeyValuePair<Layout, int>>();
+						s_relayoutInProgress = false;
+
+						foreach (KeyValuePair<Layout, int> kvp in copy.OrderBy(kvp => kvp.Value))
 						{
-							layout.Dispatcher.BeginInvokeOnMainThread(() =>
+							Layout layout = kvp.Key;
+							double width = layout.Width, height = layout.Height;
+							if (!layout._allocatedFlag && width >= 0 && height >= 0)
 							{
 								layout.SizeAllocated(width, height);
-							});
+							}
 						}
-					}
-
+					});
 				}
 			}
 		}

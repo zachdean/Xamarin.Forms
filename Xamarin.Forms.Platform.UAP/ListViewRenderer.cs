@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
@@ -16,12 +18,15 @@ using WApp = Windows.UI.Xaml.Application;
 using Xamarin.Forms.Internals;
 using Xamarin.Forms.PlatformConfiguration.WindowsSpecific;
 using Specifics = Xamarin.Forms.PlatformConfiguration.WindowsSpecific.ListView;
+using System.Collections.ObjectModel;
 
 namespace Xamarin.Forms.Platform.UWP
 {
 	public class ListViewRenderer : ViewRenderer<ListView, FrameworkElement>
 	{
 		ITemplatedItemsView<Cell> TemplatedItemsView => Element;
+		ObservableCollection<object> SourceItems => _context?.Source as ObservableCollection<object>;
+		CollectionViewSource _context;
 		bool _itemWasClicked;
 		bool _subscribedToItemClick;
 		bool _subscribedToTapped;
@@ -48,7 +53,7 @@ namespace Xamarin.Forms.Platform.UWP
 
 				if (List == null)
 				{
-					List = new WListView 
+					List = new WListView
 					{
 						IsSynchronizedWithCurrentItem = false,
 						ItemTemplate = (Windows.UI.Xaml.DataTemplate)WApp.Current.Resources["CellTemplate"],
@@ -63,8 +68,7 @@ namespace Xamarin.Forms.Platform.UWP
 					List.SetBinding(ItemsControl.ItemsSourceProperty, "");
 				}
 
-				// WinRT throws an exception if you set ItemsSource directly to a CVS, so bind it.
-				List.DataContext = new CollectionViewSource { Source = Element.ItemsSource, IsSourceGrouped = Element.IsGroupingEnabled };
+				ReloadData();
 
 				if (Element.SelectedItem != null)
 					OnElementItemSelected(null, new SelectedItemChangedEventArgs(Element.SelectedItem));
@@ -78,9 +82,79 @@ namespace Xamarin.Forms.Platform.UWP
 			}
 		}
 
-		void OnCollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+		void ReloadData()
 		{
-			List.DataContext = new CollectionViewSource { Source = Element.ItemsSource, IsSourceGrouped = Element.IsGroupingEnabled };
+			if (Element?.ItemsSource == null && _context != null)
+				_context.Source = null;
+
+			var allSourceItems = new ObservableCollection<object>();
+
+			if (Element?.ItemsSource != null)
+			{
+				foreach (var item in Element.ItemsSource)
+					allSourceItems.Add(item);
+			}
+
+			// WinRT throws an exception if you set ItemsSource directly to a CVS, so bind it.
+			List.DataContext = _context = new CollectionViewSource
+			{
+				Source = allSourceItems,
+				IsSourceGrouped = Element.IsGroupingEnabled
+			};
+		}
+
+		void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+		{
+			switch (e.Action)
+			{
+				case NotifyCollectionChangedAction.Add:
+					if (e.NewStartingIndex < 0)
+						goto case NotifyCollectionChangedAction.Reset;
+
+					// if a NewStartingIndex that's too high is passed in just add the items.
+					// I realize this is enforcing bad behavior but prior to this synchronization
+					// code being added it wouldn't cause the app to crash whereas now it does
+					// so this code accounts for that in order to ensure smooth sailing for the user
+					if (e.NewStartingIndex >= SourceItems.Count)
+					{
+						for (int i = 0; i < e.NewItems.Count; i++)
+							SourceItems.Add((e.NewItems[i] as BindableObject).BindingContext);
+					}
+					else
+					{
+						for (int i = e.NewItems.Count - 1; i >= 0; i--)
+							SourceItems.Insert(e.NewStartingIndex, (e.NewItems[i] as BindableObject).BindingContext);
+					}
+
+					break;
+				case NotifyCollectionChangedAction.Remove:
+					for (int i = e.OldItems.Count - 1; i >= 0; i--)
+						SourceItems.RemoveAt(e.OldStartingIndex);
+					break;
+				case NotifyCollectionChangedAction.Move:
+					for (var i = 0; i < e.OldItems.Count; i++)
+					{
+						var oldi = e.OldStartingIndex;
+						var newi = e.NewStartingIndex;
+
+						if (e.NewStartingIndex < e.OldStartingIndex)
+						{
+							oldi += i;
+							newi += i;
+						}
+
+						SourceItems.Move(oldi, newi);
+					}
+					break;
+				case NotifyCollectionChangedAction.Replace:
+				case NotifyCollectionChangedAction.Reset:
+				default:
+					ClearSizeEstimate();
+					ReloadData();
+					break;
+			}
+
+			Device.BeginInvokeOnMainThread(() => List.UpdateLayout());
 		}
 
 		protected override void OnElementPropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -111,12 +185,7 @@ namespace Xamarin.Forms.Platform.UWP
 			{
 				ClearSizeEstimate();
 			}
-			else if (e.PropertyName == ListView.ItemsSourceProperty.PropertyName)
-			{
-				ClearSizeEstimate();
-				((CollectionViewSource)List.DataContext).Source = Element.ItemsSource;
-			}
-			else if (e.PropertyName == ListView.SelectionModeProperty.PropertyName)
+			else if (e.PropertyName == Specifics.SelectionModeProperty.PropertyName)
 			{
 				UpdateSelectionMode();
 			}
@@ -139,6 +208,11 @@ namespace Xamarin.Forms.Platform.UWP
 			{
 				if (List != null)
 				{
+					foreach (ViewToRendererConverter.WrapperControl wrapperControl in FindDescendants<ViewToRendererConverter.WrapperControl>(List))
+					{
+						wrapperControl.CleanUp();
+					}
+
 					if (_subscribedToTapped)
 					{
 						_subscribedToTapped = false;
@@ -223,7 +297,8 @@ namespace Xamarin.Forms.Platform.UWP
 		{
 			bool grouping = Element.IsGroupingEnabled;
 
-			((CollectionViewSource)List.DataContext).IsSourceGrouped = grouping;
+			if (_context != null)
+				_context.IsSourceGrouped = grouping;
 
 			var templatedItems = TemplatedItemsView.TemplatedItems;
 			if (grouping && templatedItems.ShortNames != null)
@@ -336,6 +411,18 @@ namespace Xamarin.Forms.Platform.UWP
 			ScrollTo(listProxy.ProxiedEnumerable, listProxy[0], ScrollToPosition.Start, true, true);
 		}
 
+		bool ScrollToItemWithAnimation(ScrollViewer viewer, object item)
+		{
+			var selectorItem = List.ContainerFromItem(item) as Windows.UI.Xaml.Controls.Primitives.SelectorItem;
+			var transform = selectorItem?.TransformToVisual(viewer.Content as UIElement);
+			var position = transform?.TransformPoint(new Windows.Foundation.Point(0, 0));
+			if (!position.HasValue)
+				return false;
+			// scroll with animation
+			viewer.ChangeView(position.Value.X, position.Value.Y, null);
+			return true;
+		}
+
 #pragma warning disable 1998 // considered for removal
 		async void ScrollTo(object group, object item, ScrollToPosition toPosition, bool shouldAnimate, bool includeGroup = false, bool previouslyFailed = false)
 #pragma warning restore 1998
@@ -344,7 +431,7 @@ namespace Xamarin.Forms.Platform.UWP
 			if (viewer == null)
 			{
 				RoutedEventHandler loadedHandler = null;
-				loadedHandler = async (o, e) => 
+				loadedHandler = async (o, e) =>
 				{
 					List.Loaded -= loadedHandler;
 
@@ -361,6 +448,10 @@ namespace Xamarin.Forms.Platform.UWP
 
 			object[] t = templatedItems.GetGroup(location.Item1).ItemsSource.Cast<object>().ToArray();
 			object c = t[location.Item2];
+
+			// scroll to desired item with animation
+			if (shouldAnimate && ScrollToItemWithAnimation(viewer, c))
+				return;
 
 			double viewportHeight = viewer.ViewportHeight;
 
@@ -537,7 +628,7 @@ namespace Xamarin.Forms.Platform.UWP
 			{
 				var templatedItems = TemplatedItemsView.TemplatedItems;
 				var selectedItemIndex = templatedItems.GetGlobalIndexOfItem(e.ClickedItem);
-				
+
 				OnListItemClicked(selectedItemIndex);
 			}
 		}
