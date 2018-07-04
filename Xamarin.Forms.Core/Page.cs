@@ -47,6 +47,7 @@ namespace Xamarin.Forms
 
 		bool _containerAreaSet;
 
+		bool _hasAppearing;
 		bool _hasAppeared;
 
 		ReadOnlyCollection<Element> _logicalChildren;
@@ -153,6 +154,10 @@ namespace Xamarin.Forms
 
 		public event EventHandler Disappearing;
 
+		public event EventHandler Appeared;
+
+		public event EventHandler Disappeared;
+
 		public Task<string> DisplayActionSheet(string title, string cancel, string destruction, params string[] buttons)
 		{
 			var args = new ActionSheetArguments(title, cancel, destruction, buttons);
@@ -218,6 +223,10 @@ namespace Xamarin.Forms
 		{
 		}
 
+		protected virtual void OnAppeared()
+		{
+		}
+
 		protected virtual bool OnBackButtonPressed()
 		{
 			var application = RealParent as Application;
@@ -252,6 +261,10 @@ namespace Xamarin.Forms
 		}
 
 		protected virtual void OnDisappearing()
+		{
+		}
+
+		protected virtual void OnDisappeared()
 		{
 		}
 
@@ -332,10 +345,10 @@ namespace Xamarin.Forms
         [EditorBrowsable(EditorBrowsableState.Never)]
         public void SendAppearing()
 		{
-			if (_hasAppeared)
+			if (_hasAppearing)
 				return;
 
-			_hasAppeared = true;
+			_hasAppearing = true;
 
 			if (IsBusy)
 				MessagingCenter.Send(this, BusySetSignalName, true);
@@ -352,10 +365,10 @@ namespace Xamarin.Forms
         [EditorBrowsable(EditorBrowsableState.Never)]
         public void SendDisappearing()
 		{
-			if (!_hasAppeared)
+			if (!_hasAppearing)
 				return;
 
-			_hasAppeared = false;
+			_hasAppearing = false;
 
 			if (IsBusy)
 				MessagingCenter.Send(this, BusySetSignalName, false);
@@ -367,6 +380,46 @@ namespace Xamarin.Forms
 			Disappearing?.Invoke(this, EventArgs.Empty);
 
 			FindApplication(this)?.OnPageDisappearing(this);
+		}
+
+		[EditorBrowsable(EditorBrowsableState.Never)]
+		public void SendAppeared()
+		{
+			if (_hasAppeared)
+				return;
+
+			_hasAppeared = true;
+
+			if (IsBusy)
+				MessagingCenter.Send(this, BusySetSignalName, true);
+
+			OnAppeared();
+			Appeared?.Invoke(this, EventArgs.Empty);
+
+			var pageContainer = this as IPageContainer<Page>;
+			pageContainer?.CurrentPage?.SendAppeared();
+
+			FindApplication(this)?.OnPageAppeared(this);
+		}
+
+		[EditorBrowsable(EditorBrowsableState.Never)]
+		public void SendDisappeared()
+		{
+			if (!_hasAppeared)
+				return;
+
+			_hasAppeared = false;
+
+			if (IsBusy)
+				MessagingCenter.Send(this, BusySetSignalName, false);
+
+			var pageContainer = this as IPageContainer<Page>;
+			pageContainer?.CurrentPage?.SendDisappeared();
+
+			OnDisappeared();
+			Disappeared?.Invoke(this, EventArgs.Empty);
+
+			FindApplication(this)?.OnPageDisappeared(this);
 		}
 
 		Application FindApplication(Element element)
@@ -419,7 +472,7 @@ namespace Xamarin.Forms
 
 		void OnPageBusyChanged()
 		{
-			if (!_hasAppeared)
+			if (!_hasAppearing)
 				return;
 
 			MessagingCenter.Send(this, BusySetSignalName, IsBusy);
