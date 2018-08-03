@@ -36,8 +36,11 @@ namespace Xamarin.Forms.Platform.Android
 			set { _paddingTop = value; }
 		}
 
+		
+		string MyPersonalId = Guid.NewGuid().ToString();
 		public BorderDrawable(Func<double, float> convertToPixels, Color defaultColor, bool drawOutlineWithBackground)
 		{
+			
 			_convertToPixels = convertToPixels;
 			_pressed = false;
 			_defaultColor = defaultColor;
@@ -69,28 +72,20 @@ namespace Xamarin.Forms.Platform.Android
 			if (width <= 0 || height <= 0)
 				return;
 
-			if (_normalBitmap == null ||
-				_normalBitmap?.IsDisposed() == true ||
-				_pressedBitmap?.IsDisposed() == true ||
-				_normalBitmap.Height != height ||
-				_normalBitmap.Width != width)
+			//System.Diagnostics.Debug.WriteLine($"Draw: {Handle} _normalBitmap {_normalBitmap?.Handle} IsDisposed: {_normalBitmap?.IsDisposed() == true}");
+
+
+			if (_normalBitmap == null || _normalBitmap.Height != height || _normalBitmap.Width != width)
+			{
 				Reset();
 
-			if (!_drawOutlineWithBackground && BorderElement.BackgroundColor == Color.Default)
-				return;
-
-			Bitmap bitmap = null;
-			if (GetState().Contains(global::Android.Resource.Attribute.StatePressed))
-			{
-				_pressedBitmap = _pressedBitmap ?? CreateBitmap(true, width, height);
-				bitmap = _pressedBitmap;
-			}
-			else
-			{
-				_normalBitmap = _normalBitmap ?? CreateBitmap(false, width, height);
-				bitmap = _normalBitmap;
+				_normalBitmap = CreateBitmap(false, width, height);
+				_pressedBitmap = CreateBitmap(true, width, height);
 			}
 
+			//System.Diagnostics.Debug.WriteLine($"Draw: {Handle} _normalBitmap {_normalBitmap?.Handle} IsDisposed: {_normalBitmap?.IsDisposed()}");
+
+			Bitmap bitmap = GetState().Contains(global::Android.Resource.Attribute.StatePressed) ? _pressedBitmap : _normalBitmap;
 			canvas.DrawBitmap(bitmap, 0, 0, new Paint());
 		}
 
@@ -110,26 +105,25 @@ namespace Xamarin.Forms.Platform.Android
 			return this;
 		}
 
+		
 		public void Reset()
 		{
 			if (_normalBitmap != null)
 			{
-				if (!_normalBitmap.IsDisposed())
-				{
-					_normalBitmap.Recycle();
-					_normalBitmap.Dispose();
-				}
+				//System.Diagnostics.Debug.WriteLine($"_normalBitmap: Reset: {Handle}  {MyPersonalId}");
+				_normalBitmap.Recycle();
+				_normalBitmap.Dispose();
 				_normalBitmap = null;
+				//System.Diagnostics.Debug.WriteLine($"AFTER _normalBitmap: Reset: {Handle}  {MyPersonalId}");
 			}
 
 			if (_pressedBitmap != null)
 			{
-				if (!_pressedBitmap.IsDisposed())
-				{
-					_pressedBitmap.Recycle();
-					_pressedBitmap.Dispose();
-				}
+				//System.Diagnostics.Debug.WriteLine($"_pressedBitmap: Reset: {Handle}  {MyPersonalId}");
+				_pressedBitmap.Recycle();
+				_pressedBitmap.Dispose();
 				_pressedBitmap = null;
+				//System.Diagnostics.Debug.WriteLine($"AFTER _pressedBitmap: Reset: {Handle}  {MyPersonalId}");
 			}
 		}
 
@@ -146,6 +140,7 @@ namespace Xamarin.Forms.Platform.Android
 
 		protected override void Dispose(bool disposing)
 		{
+			//System.Diagnostics.Debug.WriteLine($"Button Drawable Dispose: {Handle} {MyPersonalId}");
 			if (_isDisposed)
 				return;
 
