@@ -122,6 +122,7 @@ namespace Xamarin.Forms.Platform.MacOS
 				UpdateFont();
 				UpdateAlignment();
 				UpdateMaxLength();
+				UpdateIsReadOnly();
 			}
 		}
 
@@ -153,6 +154,8 @@ namespace Xamarin.Forms.Platform.MacOS
 				UpdateAlignment();
 			else if (e.PropertyName == InputView.MaxLengthProperty.PropertyName)
 				UpdateMaxLength();
+			else if (e.PropertyName == Xamarin.Forms.InputView.IsReadOnlyProperty.PropertyName)
+				UpdateIsReadOnly();
 
 			base.OnElementPropertyChanged(sender, e);
 		}
@@ -272,6 +275,11 @@ namespace Xamarin.Forms.Platform.MacOS
 
 			if (currentControlText.Length > Element?.MaxLength)
 				Control.StringValue = currentControlText.Substring(0, Element.MaxLength);
+		}
+
+		void UpdateIsReadOnly()
+		{
+			Control.Editable = !Element.IsReadOnly;
 		}
 	}
 }
