@@ -268,6 +268,7 @@ namespace Xamarin.Forms.Platform.iOS
 		{
 			Control.UserInteractionEnabled = !Element.IsReadOnly;
 		}
+
 		void UpdateUserInteraction()
 		{
 			if (Element.IsEnabled && Element.IsReadOnly)
