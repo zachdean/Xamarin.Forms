@@ -18,7 +18,7 @@ namespace Xamarin.Forms.Platform.UWP
 			}
 		}
 
-		protected Platform Platform { get; private set; }
+		internal Platform Platform { get; private set; }
 
 		protected abstract Platform CreatePlatform();
 
@@ -30,7 +30,8 @@ namespace Xamarin.Forms.Platform.UWP
 			_application = application;
 			Application.SetCurrentApplication(application);
 			Platform = CreatePlatform();
-			Platform.SetPage(_application.MainPage);
+			if (_application.MainPage != null)
+				Platform.SetPage(_application.MainPage);
 			application.PropertyChanged += OnApplicationPropertyChanged;
 
 			_application.SendStart();
