@@ -58,8 +58,8 @@ namespace Xamarin.Forms
 
 			if (Device.IsInvokeRequired)
 			{
-				if (self is Element)
-					((Element)self).Dispatcher.BeginInvokeOnMainThread(abort);
+				if (self is Element element)
+					element.Dispatcher.BeginInvokeOnMainThread(abort);
 				else
 					Device.BeginInvokeOnMainThread(abort);
 			}
@@ -115,8 +115,8 @@ namespace Xamarin.Forms
 
 			if (Device.IsInvokeRequired)
 			{
-				if (self is Element)
-					((Element)self).Dispatcher.BeginInvokeOnMainThread(animate);
+				if (self is Element element)
+					element.Dispatcher.BeginInvokeOnMainThread(animate);
 				else
 					Device.BeginInvokeOnMainThread(animate);
 			}
@@ -133,8 +133,8 @@ namespace Xamarin.Forms
 
 			if (Device.IsInvokeRequired)
 			{
-				if (self is Element)
-					((Element)self).Dispatcher.BeginInvokeOnMainThread(animate);
+				if (self is Element element)
+					element.Dispatcher.BeginInvokeOnMainThread(animate);
 				else
 					Device.BeginInvokeOnMainThread(animate);
 			}

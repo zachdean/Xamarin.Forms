@@ -278,9 +278,9 @@ namespace Xamarin.Forms.Internals
 				if (!string.IsNullOrEmpty(e.PropertyName) && string.CompareOrdinal(e.PropertyName, PropertyName) != 0)
 					return;
 
-				if (sender is Element)
+				if (sender is Element element)
 				{
-					(sender as Element).Dispatcher.BeginInvokeOnMainThread(() => _binding.Apply(false));
+					element.Dispatcher.BeginInvokeOnMainThread(() => _binding.Apply(false));
 				}
 				else
 				{

@@ -126,16 +126,13 @@ namespace Xamarin.Forms
 			{
 				return null;
 			}
-			else if (element is Page)
+			else if (element is Page page)
 			{
-				return element as Page;
+				return page;
 			}
 			else
 			{
-				if (element.Parent is Page)
-					return element.Parent as Page;
-				else
-					return GetElementPage(element.Parent);
+				return GetElementPage(element.Parent);
 			}
 		}
 

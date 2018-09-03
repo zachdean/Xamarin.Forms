@@ -215,9 +215,9 @@ namespace Xamarin.Forms
 				sync.Callback(ProxiedEnumerable, sync.Context, () =>
 				{
 					e = e.WithCount(Count);
-					if (_listView != null && _listView is Element)
+					if (_listView is Element element)
 					{
-						(_listView as Element).Dispatcher.BeginInvokeOnMainThread(action);
+						element.Dispatcher.BeginInvokeOnMainThread(action);
 					}
 					else
 					{
@@ -229,9 +229,9 @@ namespace Xamarin.Forms
 			{
 				e = e.WithCount(Count);
 				if (Device.IsInvokeRequired)
-					if (_listView != null && _listView is Element)
+					if (_listView is Element element)
 					{
-						(_listView as Element).Dispatcher.BeginInvokeOnMainThread(action);
+						element.Dispatcher.BeginInvokeOnMainThread(action);
 					}
 					else
 					{
