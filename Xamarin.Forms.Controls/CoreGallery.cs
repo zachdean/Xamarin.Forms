@@ -483,6 +483,12 @@ namespace Xamarin.Forms.Controls
 							GC.WaitForPendingFinalizers ();
 							GC.Collect ();
 						})
+					},
+					new Button {
+						Text = "Click to Open New Window",
+						Command = new Command(() => {
+							DependencyService.Get<IWindowNavigation>().OpenNewWindowAsync();
+						})
 					}
 
 				}
