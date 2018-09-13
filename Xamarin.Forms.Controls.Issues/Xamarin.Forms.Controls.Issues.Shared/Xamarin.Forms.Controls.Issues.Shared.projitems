@@ -248,6 +248,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Effects\AttachedStateEffectList.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)GitHub1648.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)GitHub1702.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)GitHub1700.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)GitHub2598.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Issue1483.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Issue1556.cs" />
@@ -258,6 +259,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Issue3271.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Issue3390.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Issue3000.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Issue3273.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Issue3053.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Issue2617.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Issue3087.cs" />
@@ -389,6 +391,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Bugzilla39829.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Bugzilla39458.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Bugzilla39853.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)MultipleClipToBounds.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)PerformanceGallery\PerformanceDataManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)PerformanceGallery\PerformanceGallery.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)PerformanceGallery\PerformanceScenario.cs" />
@@ -549,6 +552,7 @@
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Issue1664.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Issue1680.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Issue3624.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Issue1682.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Issue1685.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Issue1698.cs" />
@@ -786,6 +790,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)GitHub1650.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)GitHub3216.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)GitHub1776.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Issue3408.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Issue3413.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Issue3525.cs" />
   </ItemGroup>
