@@ -367,23 +367,38 @@ namespace Xamarin.Forms
 					// This avoids a lot of unnecessary layout operations if something is triggering many property
 					// changes at once (e.g., a BindingContext change)
 
-					Dispatcher.BeginInvokeOnMainThread(() =>
+					if (Dispatcher != null)
 					{
-						// if thread safety mattered we would need to lock this and compareexchange above
-						IList<KeyValuePair<Layout, int>> copy = s_resolutionList;
-						s_resolutionList = new List<KeyValuePair<Layout, int>>();
-						s_relayoutInProgress = false;
-
-						foreach (KeyValuePair<Layout, int> kvp in copy.OrderBy(kvp => kvp.Value))
+						Dispatcher.BeginInvokeOnMainThread(() =>
 						{
-							Layout layout = kvp.Key;
-							double width = layout.Width, height = layout.Height;
-							if (!layout._allocatedFlag && width >= 0 && height >= 0)
-							{
-								layout.SizeAllocated(width, height);
-							}
-						}
-					});
+							UpdateContext();
+						});
+					}
+					else
+					{
+						Device.BeginInvokeOnMainThread(() => 
+						{
+							UpdateContext();
+						});
+					}			
+				}
+			}
+		}
+
+		internal void UpdateContext()
+		{
+			// if thread safety mattered we would need to lock this and compareexchange above
+			IList<KeyValuePair<Layout, int>> copy = s_resolutionList;
+			s_resolutionList = new List<KeyValuePair<Layout, int>>();
+			s_relayoutInProgress = false;
+
+			foreach (KeyValuePair<Layout, int> kvp in copy.OrderBy(kvp => kvp.Value))
+			{
+				Layout layout = kvp.Key;
+				double width = layout.Width, height = layout.Height;
+				if (!layout._allocatedFlag && width >= 0 && height >= 0)
+				{
+					layout.SizeAllocated(width, height);
 				}
 			}
 		}
