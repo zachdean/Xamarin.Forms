@@ -113,7 +113,7 @@ namespace Xamarin.Forms.Platform.UWP
 			return new WindowsIsolatedStorage(ApplicationData.Current.LocalFolder);
 		}
 
-		public bool IsInvokeRequired => Application.Current == null ? false : Application.Current.Dispatcher.IsInvokeRequired();
+		public bool IsInvokeRequired => DispatcherManager.Current == null ? false : DispatcherManager.Current.Dispatcher.IsInvokeRequired();
 
 		public string RuntimePlatform => Device.UWP;
 
@@ -139,9 +139,9 @@ namespace Xamarin.Forms.Platform.UWP
 			Log.Warning(nameof(WindowsBasePlatformServices), "Platform doesn't implement QuitApp");
 		}
 
-		public IDispatcher GetDispatcher(Guid windowId)
+		public IDispatcher GetDispatcher()
 		{
-			return new Dispatcher(windowId);
+			return new Dispatcher();
 		}
 	}
 }

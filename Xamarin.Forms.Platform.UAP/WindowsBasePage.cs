@@ -29,12 +29,20 @@ namespace Xamarin.Forms.Platform.UWP
 
 			_application = application;
 			Application.SetCurrentApplication(application);
-			Platform = CreatePlatform();
 			if (_application.MainPage != null)
-				Platform.SetPage(_application.MainPage);
+				RegisterWindow(_application.MainPage);
 			application.PropertyChanged += OnApplicationPropertyChanged;
 
 			_application.SendStart();
+		}
+
+		protected void RegisterWindow(Page page)
+		{
+			if (page == null)
+				throw new ArgumentNullException("page");
+
+			Platform = CreatePlatform();
+			Platform.SetPage(page);
 		}
 
 		void OnApplicationPropertyChanged(object sender, PropertyChangedEventArgs e)

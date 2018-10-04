@@ -12,7 +12,6 @@ namespace Xamarin.Forms
 {
 	public class Application : Element, IResourcesProvider, IApplicationController, IElementConfiguration<Application>
 	{
-		[ThreadStatic]
 		static Application s_current;
 		Task<IDictionary<string, object>> _propertiesTask;
 		readonly Lazy<PlatformConfigurationRegistry<Application>> _platformConfigurationRegistry;
@@ -22,19 +21,7 @@ namespace Xamarin.Forms
 		ReadOnlyCollection<Element> _logicalChildren;
 
 		Page _mainPage;
-		public Guid WindowId { get; private set; }
-		IDispatcher _dispatcher;
-		public override IDispatcher Dispatcher
-		{
-			get
-			{
-				if (_dispatcher == null)
-					_dispatcher = Device.GetDispatcher(WindowId);
-
-				return _dispatcher;
-			}
-		}
-
+		
 		static SemaphoreSlim SaveSemaphore = new SemaphoreSlim(1, 1);
 
 		static Lazy<DelegateLogListener> _applicationOutputListener;
@@ -71,7 +58,6 @@ namespace Xamarin.Forms
 				Loader.Load();
 			NavigationProxy = new NavigationImpl(this);
 			SetCurrentApplication(this);
-			WindowId = Guid.NewGuid();
 
 			SystemResources = DependencyService.Get<ISystemResourcesProvider>().GetSystemResources();
 			SystemResources.ValuesChanged += OnParentResourcesChanged;

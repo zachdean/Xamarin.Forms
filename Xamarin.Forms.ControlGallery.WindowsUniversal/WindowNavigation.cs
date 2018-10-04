@@ -14,11 +14,18 @@ namespace Xamarin.Forms.ControlGallery.WindowsUniversal
 {
 	public class WindowNavigation : IWindowNavigation
 	{
-		public async Task<Guid> OpenNewWindowAsync()
+		[ThreadStatic]
+		static EventHandler<Page> _updatePage;
+
+		public void NavegateToAnotherPage(Page page)
+		{
+			_updatePage?.Invoke(null, page);
+		}
+
+		public async Task OpenNewWindowAsync()
 		{
 			var currentViewId = ApplicationView.GetForCurrentView();
 			var newAV = CoreApplication.CreateNewView();
-			var _windowId = Guid.Empty;
 
 			await newAV.Dispatcher.RunAsync(
 							CoreDispatcherPriority.Normal,
@@ -27,15 +34,15 @@ namespace Xamarin.Forms.ControlGallery.WindowsUniversal
 								var newWindow = Window.Current;
 								var newAppView = ApplicationView.GetForCurrentView();
 								Windows.UI.Xaml.Controls.Frame frameContent = new Windows.UI.Xaml.Controls.Frame();
-
-								//Create new app to get WindowId
-								var app = new Xamarin.Forms.Controls.App();
-								_windowId = app.WindowId;
-
-								newWindow.Content = frameContent;								
+								newWindow.Content = frameContent;
 								newWindow.Activate();
 
-								frameContent.Navigate(typeof(SecondPage), app);
+								frameContent.Navigate(typeof(SecondPage), new Controls.ControlGalleryPages.SecondPage());
+
+								_updatePage += (sender, args) =>
+								{
+									frameContent.Navigate(typeof(SecondPage), args);
+								};
 
 								await ApplicationViewSwitcher.TryShowAsStandaloneAsync(
 									newAppView.Id,
@@ -43,8 +50,6 @@ namespace Xamarin.Forms.ControlGallery.WindowsUniversal
 									currentViewId.Id,
 									ViewSizePreference.Default);
 							});
-
-			return _windowId;
 		}
 	}
 }

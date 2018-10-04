@@ -161,7 +161,7 @@ namespace Xamarin.Forms.Platform.Tizen
 			Forms.Context.Exit();
 		}
 
-		public IDispatcher GetDispatcher(Guid windowId)
+		public IDispatcher GetDispatcher()
 		{
 			return new Dispatcher();
 		}

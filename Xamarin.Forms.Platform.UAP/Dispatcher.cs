@@ -12,7 +12,7 @@ namespace Xamarin.Forms.Platform.UWP
 {
 	public class Dispatcher : IDispatcher
 	{
-		Guid _windowId;
+
 		CoreDispatcher _coreDispatcher;
 		CoreDispatcher CoreDispatcher
 		{
@@ -26,10 +26,7 @@ namespace Xamarin.Forms.Platform.UWP
 				return _coreDispatcher;
 			}
 		}
-		public Dispatcher(Guid windowId)
-		{
-			_windowId = windowId;
-		}
+
 		public void BeginInvokeOnMainThread(Action action)
 		{
 			CoreDispatcher.RunAsync(CoreDispatcherPriority.Normal, () => action()).WatchForError();

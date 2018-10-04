@@ -489,6 +489,12 @@ namespace Xamarin.Forms.Controls
 						Command = new Command(() => {
 							DependencyService.Get<IWindowNavigation>().OpenNewWindowAsync();
 						})
+					},
+					new Button {
+						Text = "Click to Change content",
+						Command = new Command(() => {
+							DependencyService.Get<IWindowNavigation>().NavegateToAnotherPage(new ContentPage());
+						})
 					}
 
 				}

@@ -14,7 +14,7 @@ namespace Xamarin.Forms
 	[RenderWith(typeof(_PageRenderer))]
 	public class Page : VisualElement, ILayout, IPageController, IElementConfiguration<Page>, IPaddingElement
 	{
-		public override IDispatcher Dispatcher => Application.Current?.Dispatcher;
+		public override IDispatcher Dispatcher => DispatcherManager.Current?.Dispatcher;
 
 		public const string BusySetSignalName = "Xamarin.BusySet";
 

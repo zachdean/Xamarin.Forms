@@ -33,7 +33,7 @@ namespace Xamarin.Forms.Internals
 
 		string RuntimePlatform { get; }
 
-		IDispatcher GetDispatcher(Guid windowId);
+		IDispatcher GetDispatcher();
 
 		void QuitApplication();
 	}

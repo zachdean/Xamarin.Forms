@@ -115,9 +115,10 @@ namespace Xamarin.Forms
 				return default(IDispatcher);
 			}
 		}
-		internal static IDispatcher GetDispatcher(Guid windowId)
+
+		internal static IDispatcher GetDispatcher()
 		{
-			return PlatformServices.GetDispatcher(windowId);
+			return PlatformServices.GetDispatcher();
 		}
 
 		static Page GetElementPage(Element element)

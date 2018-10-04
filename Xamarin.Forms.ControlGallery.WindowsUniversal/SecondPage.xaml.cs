@@ -24,7 +24,7 @@ namespace Xamarin.Forms.ControlGallery.WindowsUniversal
 	/// </summary>
 	public sealed partial class SecondPage
 	{
-		Controls.App _app;
+		Xamarin.Forms.Page _mainSecondPage;
 
 		public SecondPage()
 		{
@@ -35,17 +35,8 @@ namespace Xamarin.Forms.ControlGallery.WindowsUniversal
 		{
 			base.OnNavigatedTo(e);
 
-			_app = (Controls.App)e.Parameter;
-			LoadApplication(_app);
-		}
-
-		void OnKeyDown(CoreWindow coreWindow, KeyEventArgs args)
-		{
-			if (args.VirtualKey == VirtualKey.Escape)
-			{
-				_app.Reset();
-				args.Handled = true;
-			}
+			_mainSecondPage = (Xamarin.Forms.Page)e.Parameter;
+			RegisterWindow(_mainSecondPage);
 		}
 
 		void AddNativeControls(NestedNativeControlGalleryPage page)
