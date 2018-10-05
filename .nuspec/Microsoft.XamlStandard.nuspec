@@ -21,6 +21,7 @@
   <files>
 
     <file src="..\Microsoft.XamlStandard\bin\$Configuration$\netstandard2.0\Microsoft.XamlStandard.dll" target="lib\netstandard2.0" />
+    <file src="..\Xamarin.Forms.Core.Design\bin\$Configuration$\Microsoft.XamlStandard.Design.dll" target="lib\netstandard2.0\Design" />
 
 </files>
 </package>
