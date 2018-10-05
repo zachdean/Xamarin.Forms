@@ -37,6 +37,7 @@ namespace Xamarin.Forms.Xaml
 {
 	static class XamlParser
 	{
+		public const string StandardUri = "http://xamarin.com/schemas/2018/standard";
 		public const string XFUri = "http://xamarin.com/schemas/2014/forms";
 		public const string X2006Uri = "http://schemas.microsoft.com/winfx/2006/xaml";
 		public const string X2009Uri = "http://schemas.microsoft.com/winfx/2009/xaml";
@@ -91,7 +92,7 @@ namespace Xamarin.Forms.Xaml
 								node.Properties.Add(XmlName.xArguments, prop);
 						}
 						// 3. DataTemplate (should be handled by 4.)
-						else if (node.XmlType.NamespaceUri == XFUri &&
+						else if ((node.XmlType.NamespaceUri == XFUri || node.XmlType.NamespaceUri == StandardUri) &&
 						         (node.XmlType.Name == "DataTemplate" || node.XmlType.Name == "ControlTemplate"))
 						{
 							var prop = ReadNode(reader, true);

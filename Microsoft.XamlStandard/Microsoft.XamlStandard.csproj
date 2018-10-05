@@ -8,4 +8,10 @@
     <ProjectReference Include="..\Xamarin.Forms.Core\Xamarin.Forms.Core.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Reference Include="System.Xaml">
+      <HintPath>..\..\..\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7\System.Xaml.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
 </Project>

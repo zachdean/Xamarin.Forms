@@ -1,6 +1,8 @@
 ﻿using Xamarin.Forms;
 using System;
 
+[assembly: System.Windows.Markup.XmlnsDefinition("http://xamarin.com/schemas/2018/standard", "Microsoft.XamlStandard")]
+
 namespace Microsoft.XamlStandard
 {
 	#region Manual Generation

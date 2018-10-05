@@ -35,7 +35,7 @@ namespace Microsoft.XamlStandard.Design
 		{
 			// Turn off validation of values, which doesn't work for OnPlatform/OnIdiom
 			AddCustomAttributes(typeof(AbsoluteLayout).Assembly,
-				new XmlnsSupportsValidationAttribute("http://xamarin.com/schemas/2014/standard", false));
+				new XmlnsSupportsValidationAttribute("http://xamarin.com/schemas/2018/standard", false));
 
 			// Style isn't a view, make it visible
 			AddCallback(typeof(Style), builder => builder.AddCustomAttributes(
