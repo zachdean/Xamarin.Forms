@@ -10,19 +10,16 @@ using Xamarin.Forms.Xaml;
 namespace Xamarin.Forms.Controls.ControlGalleryPages
 {
 	[XamlCompilation(XamlCompilationOptions.Compile)]
-	public partial class SecondPage : MasterDetailPage
+	public partial class SecondPage : ContentPage
 	{
 		public SecondPage()
 		{
 			InitializeComponent();
+		}
 
-			var layout = new StackLayout { BackgroundColor = Color.Red };
-			layout.Children.Add(new Label { Text = "This is master Page" });
-			var master = new ContentPage { Title = "Master", Content = layout, BackgroundColor = Color.SkyBlue };
-
-			Master = master;
-			Detail = CoreGallery.GetMainPage();
-
+		private void Button_Clicked(object sender, EventArgs e)
+		{
+			DependencyService.Get<IWindowNavigation>().NavegateToAnotherPage(new ContentPage());
 		}
 	}
 }
