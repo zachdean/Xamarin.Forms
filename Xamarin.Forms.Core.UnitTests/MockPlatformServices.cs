@@ -187,7 +187,7 @@ namespace Xamarin.Forms.Core.UnitTests
 
 		}
 
-		public IDispatcher GetDispatcher(Guid windowId)
+		public IDispatcher GetDispatcher()
 		{
 			return new MockDispatcher();
 		}

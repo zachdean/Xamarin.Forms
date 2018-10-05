@@ -111,7 +111,7 @@ namespace Xamarin.Forms.Platform.GTK
 			Gtk.Application.Quit();
 		}
 
-		public IDispatcher GetDispatcher(Guid windowId)
+		public IDispatcher GetDispatcher()
 		{
 			return new GtkDispatcher();
 		}

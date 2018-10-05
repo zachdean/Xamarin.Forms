@@ -156,7 +156,7 @@ namespace Xamarin.Forms.Platform.WPF
 			System.Windows.Application.Current.Shutdown();
 		}
 
-		public IDispatcher GetDispatcher(Guid windowId)
+		public IDispatcher GetDispatcher()
 		{
 			return new Dispatcher();
 		}

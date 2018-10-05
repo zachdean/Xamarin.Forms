@@ -601,7 +601,7 @@ namespace Xamarin.Forms
 				Internals.Log.Warning(nameof(AndroidPlatformServices), "Platform doesn't implement QuitApp");
 			}
 
-			public IDispatcher GetDispatcher(Guid windowId)
+			public IDispatcher GetDispatcher()
 			{
 				return new Dispatcher();
 			}

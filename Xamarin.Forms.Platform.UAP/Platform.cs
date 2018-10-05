@@ -274,41 +274,51 @@ namespace Xamarin.Forms.Platform.UWP
 
 		async void SetCurrent(Page newPage, bool popping = false, Action completedCallback = null)
 		{
-			if (newPage == _currentPage)
-				return;
-
-			newPage.Platform = this;
-
-			if (_currentPage != null)
+			try
 			{
-				Page previousPage = _currentPage;
-				IVisualElementRenderer previousRenderer = GetRenderer(previousPage);
-				_container.Children.Remove(previousRenderer.ContainerElement);
+				if (newPage == _currentPage)
+					return;
 
-				if (popping)
+				newPage.Platform = this;
+
+				if (_currentPage != null)
 				{
-					previousPage.Cleanup();
-					// Un-parent the page; otherwise the Resources Changed Listeners won't be unhooked and the 
-					// page will leak 
-					previousPage.Parent = null;
+					Page previousPage = _currentPage;
+					IVisualElementRenderer previousRenderer = GetRenderer(previousPage);
+					_container.Children.Remove(previousRenderer.ContainerElement);
+
+					if (popping)
+					{
+						previousPage.Cleanup();
+						// Un-parent the page; otherwise the Resources Changed Listeners won't be unhooked and the 
+						// page will leak 
+						previousPage.Parent = null;
+					}
 				}
+
+				newPage.Layout(ContainerBounds);
+
+				IVisualElementRenderer pageRenderer = newPage.GetOrCreateRenderer();
+				_container.Children.Add(pageRenderer.ContainerElement);
+
+				pageRenderer.ContainerElement.Width = _container.ActualWidth;
+				pageRenderer.ContainerElement.Height = _container.ActualHeight;
+
+				completedCallback?.Invoke();
+
+				_currentPage = newPage;
+
+				UpdateToolbarTracker();
+
+				await UpdateToolbarItems();
 			}
-
-			newPage.Layout(ContainerBounds);
-
-			IVisualElementRenderer pageRenderer = newPage.GetOrCreateRenderer();
-			_container.Children.Add(pageRenderer.ContainerElement);
-
-			pageRenderer.ContainerElement.Width = _container.ActualWidth;
-			pageRenderer.ContainerElement.Height = _container.ActualHeight;
-
-			completedCallback?.Invoke();
-
-			_currentPage = newPage;
-
-			UpdateToolbarTracker();
-
-			await UpdateToolbarItems();
+			catch(Exception error)
+			{
+				if (error.HResult == -2147417842)
+					throw new InvalidOperationException("Changing the current page is only allowed if it's being called from the same UI thread." +
+						"Please ensure that the new page is in the same UI thread as the current page.");
+				throw error;
+			}
 		}
 
 		async void OnToolbarItemsChanged(object sender, EventArgs e)
