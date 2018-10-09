@@ -1,7 +1,8 @@
 ﻿using Xamarin.Forms;
+using Xamarin.Forms.Internals;
 using System;
 
-[assembly: System.Windows.Markup.XmlnsDefinition("http://xamarin.com/schemas/2018/standard", "Microsoft.XamlStandard")]
+[assembly: XmlnsDefinition("http://xamarin.com/schemas/2018/standard", "Microsoft.XamlStandard")]
 
 namespace Microsoft.XamlStandard
 {
