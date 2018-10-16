@@ -16,7 +16,7 @@ namespace Xamarin.Forms.Xaml.UnitTests
 				/>";
 
 			// This should be a ContentPage
-			Assert.IsInstanceOf<ContentPage> (CreateXaml(xaml), "#1");
+			Assert.IsInstanceOf<ContentPage> ((ContentPage)XamlLoader.Create(xaml, true), "#1");
 		}
 
 		[Test]
@@ -28,7 +28,7 @@ namespace Xamarin.Forms.Xaml.UnitTests
 				/>";
 
 			// This should be a View
-			Assert.IsInstanceOf<View> (CreateXaml(xaml), "#1");
+			Assert.IsInstanceOf<View> ((ContentPage)XamlLoader.Create(xaml, true), "#1");
 		}
 
 		[Test]
@@ -42,7 +42,7 @@ namespace Xamarin.Forms.Xaml.UnitTests
 
 			// We should have a ContentPage with a 'View' of some sort as the content because
 			// we do not know what the real object is.
-			var result = (ContentPage) CreateXaml(xaml);
+			var result = (ContentPage)XamlLoader.Create(xaml, true);
 			Assert.IsInstanceOf<View> (result.Content, "#1");
 		}
 
@@ -63,7 +63,7 @@ namespace Xamarin.Forms.Xaml.UnitTests
 
 			// We should have a ContentPage with a 'View' of some sort as the content because
 			// we do not know what the real object is. It's background color should be red.
-			var result = (ContentPage)CreateXaml(xaml);
+			var result = (ContentPage)XamlLoader.Create(xaml, true);
 
 			View content = result.Content;
 			Assert.IsNotNull(content);
@@ -75,8 +75,7 @@ namespace Xamarin.Forms.Xaml.UnitTests
 		{
 			var xaml = @"
 				<ContentPage xmlns=""http://xamarin.com/schemas/2014/forms""
-					xmlns:local=""clr-namespace:MissingNamespace;assembly=MissingAssembly""
-					xmlns:x=""http://schemas.microsoft.com/winfx/2009/xaml"">
+					xmlns:local=""clr-namespace:MissingNamespace;assembly=MissingAssembly"">
 					<ContentPage.Resources>
 						<Style TargetType=""local:MyCustomButton"">
 							<Setter Property=""BackgroundColor"" Value=""Red""></Setter>
@@ -87,18 +86,29 @@ namespace Xamarin.Forms.Xaml.UnitTests
 
 			// We should have a ContentPage with a 'View' of some sort as the content because
 			// we do not know what the real object is. It's background color should be red.
-			var result = (ContentPage)CreateXaml(xaml);
+			var result = (ContentPage)XamlLoader.Create(xaml, true);
 
 			View content = result.Content;
 			Assert.IsNotNull(content);
 			Assert.Equals(content.BackgroundColor, new Color(1, 0, 0));
 		}
 
-		static object CreateXaml(string xaml)
+		[Test]
+		public void MissingTypeWithUnknownProperty()
 		{
-#pragma warning disable 618
-			return (ContentPage)XamlLoader.Create(xaml, true);
-#pragma warning restore 618
+			var xaml = @"
+				<ContentPage xmlns=""http://xamarin.com/schemas/2014/forms""
+					xmlns:x=""http://schemas.microsoft.com/winfx/2009/xaml""
+					xmlns:local=""clr-namespace:MissingNamespace;assembly=MissingAssembly"">
+
+					<local:MyCustomButton MyText=""Hello"" />
+
+				</ContentPage>";
+
+			// We should have a ContentPage with a 'View' of some sort as the content because
+			// we do not know what the real object is. The unknown property should be ignored.
+			var result = (ContentPage)XamlLoader.Create(xaml, true);
+			Assert.IsInstanceOf<View>(result.Content, "#1");
 		}
 	}
 }
