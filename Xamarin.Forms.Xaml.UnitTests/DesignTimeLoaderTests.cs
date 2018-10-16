@@ -1,7 +1,4 @@
 ﻿using NUnit.Framework;
-using System.Linq;
-using System;
-using System.Collections.Generic;
 
 using Xamarin.Forms.Core.UnitTests;
 
@@ -11,44 +8,97 @@ namespace Xamarin.Forms.Xaml.UnitTests
 	public class DesignTimeLoaderTests : BaseTestFixture
 	{
 		[Test]
-		public void ContenPageWithMissingClass()
+		public void ContentPageWithMissingClass()
 		{
 			var xaml = @"
-				<ContentPage xmlns=""http://xamarin.com/schemas/2014/forms""
+				<ContentPage xmlns=""http://xamarin.com/schemas/2014/forms"" xmlns:x=""http://schemas.microsoft.com/winfx/2009/xaml""
 				      x:Class=""Xamarin.Forms.Xaml.UnitTests.CustomView""
 				/>";
 
-			// This shoudl be a ContentPage
-			Assert.IsInstanceOf<ContentPage> (XamlLoader.Create(xaml, true), "#1");
+			// This should be a ContentPage
+			Assert.IsInstanceOf<ContentPage> (CreateXaml(xaml), "#1");
 		}
 
 		[Test]
 		public void ViewWithMissingClass()
 		{
 			var xaml = @"
-				<View xmlns=""http://xamarin.com/schemas/2014/forms""
+				<View xmlns=""http://xamarin.com/schemas/2014/forms"" xmlns:x=""http://schemas.microsoft.com/winfx/2009/xaml""
 				      x:Class=""Xamarin.Forms.Xaml.UnitTests.CustomView""
 				/>";
 
 			// This should be a View
-			Assert.IsInstanceOf<View> (XamlLoader.Create (xaml, true), "#1");
+			Assert.IsInstanceOf<View> (CreateXaml(xaml), "#1");
 		}
 
 		[Test]
-		public void ContenPageWithMissingType()
+		public void ContentPageWithMissingType()
 		{
 			var xaml = @"
 				<ContentPage xmlns=""http://xamarin.com/schemas/2014/forms""
 					xmlns:local=""clr-namespace:MissingNamespace;assembly=MissingAssembly"">
-					<ContentPage.Content>
-						<local:MyCustomButton />
-					</ContentPage.Content>
+					<local:MyCustomButton />
 				</ContentPage>";
 
 			// We should have a ContentPage with a 'View' of some sort as the content because
 			// we do not know what the real object is.
-			var result = (ContentPage) XamlLoader.Create(xaml, true);
+			var result = (ContentPage) CreateXaml(xaml);
 			Assert.IsInstanceOf<View> (result.Content, "#1");
+		}
+
+		[Test]
+		public void ExplicitStyleAppliedToMissingType()
+		{
+			var xaml = @"
+				<ContentPage xmlns=""http://xamarin.com/schemas/2014/forms""
+					xmlns:local=""clr-namespace:MissingNamespace;assembly=MissingAssembly""
+					xmlns:x=""http://schemas.microsoft.com/winfx/2009/xaml"">
+					<ContentPage.Resources>
+						<Style x:Key=""Test"" TargetType=""local:MyCustomButton"">
+							<Setter Property=""BackgroundColor"" Value=""Red""></Setter>
+						</Style>
+					</ContentPage.Resources>
+					<local:MyCustomButton Style=""{StaticResource Test}"" />
+				</ContentPage>";
+
+			// We should have a ContentPage with a 'View' of some sort as the content because
+			// we do not know what the real object is. It's background color should be red.
+			var result = (ContentPage)CreateXaml(xaml);
+
+			View content = result.Content;
+			Assert.IsNotNull(content);
+			Assert.Equals(content.BackgroundColor, new Color(1, 0, 0));
+		}
+
+		[Test]
+		public void ImplicitStyleAppliedToMissingType()
+		{
+			var xaml = @"
+				<ContentPage xmlns=""http://xamarin.com/schemas/2014/forms""
+					xmlns:local=""clr-namespace:MissingNamespace;assembly=MissingAssembly""
+					xmlns:x=""http://schemas.microsoft.com/winfx/2009/xaml"">
+					<ContentPage.Resources>
+						<Style TargetType=""local:MyCustomButton"">
+							<Setter Property=""BackgroundColor"" Value=""Red""></Setter>
+						</Style>
+					</ContentPage.Resources>
+					<local:MyCustomButton />
+				</ContentPage>";
+
+			// We should have a ContentPage with a 'View' of some sort as the content because
+			// we do not know what the real object is. It's background color should be red.
+			var result = (ContentPage)CreateXaml(xaml);
+
+			View content = result.Content;
+			Assert.IsNotNull(content);
+			Assert.Equals(content.BackgroundColor, new Color(1, 0, 0));
+		}
+
+		static object CreateXaml(string xaml)
+		{
+#pragma warning disable 618
+			return (ContentPage)XamlLoader.Create(xaml, true);
+#pragma warning restore 618
 		}
 	}
 }
