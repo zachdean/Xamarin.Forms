@@ -1,0 +1,957 @@
+resources:
+- repo: self
+  clean: true
+phases:
+- phase: Phase_1
+  displayName: Prepare Build Phase
+
+  condition: succeeded()
+  queue:
+    name: Hosted VS2017
+#Task group has not been exported, task groups are not supported yet
+
+  - powershell: |
+       $isTag = (git tag --points-at HEAD)
+       if($isTag) {
+           $value = (git describe --tags)
+           $commit  = (git rev-list $value -n1)
+           $message = (git log --format=%s -n 1 $commit).trim()
+            Write-Host "##vso[task.setvariable variable=Build.SourceVersion;]$commit"
+            Write-Host "##vso[task.setvariable variable=Build.SourceVersionMessage;]$message"
+            $newTag = '$(Build.SourceBranchName)'
+            $newCurrentVersion = $newTag.Split("-")[1]
+            $preRelease =  $newTag.StartsWith("beta")
+            $newCurrentSuffix = ""
+            if($newTag.Split("-").Length -eq 3)
+            {
+                $newCurrentSuffix = $newTag.Split("-")[2].Split(".")[0]
+            }
+            if($preRelease)
+            {
+                Write-Host "Pre release $newCurrentVersion $newCurrentSuffix"
+            }
+            else
+            {
+                $newCurrentSuffix = "";
+                Write-Host "Release $newCurrentVersion $newCurrentSuffix"
+            }
+            Write-Host "##vso[task.setvariable variable=CurrentSemanticVersion;]$newCurrentVersion"
+            Write-Host "##vso[task.setvariable variable=Suffix;]$newCurrentSuffix"
+        }
+
+       Write-Host "Finding the right branch"
+       $sourceBranchName =  ""+ $env:BUILD_SOURCEBRANCH
+       $sourceBranch = ""+  $env:BUILD_SOURCEBRANCH
+       $publicTags =  ""+ $env:PUBLICTAGS
+       $tags = New-Object System.Collections.ArrayList
+       $realBuildName = "" +$env:REALBUILDNUMBER
+       $newRealBuildName = "";
+       $buildId = ""+ $env:BUILD_BUILDID
+
+       $sorceV = "" +$env:BUILD_SOURCEVERSION
+
+       echo $sorceV
+
+       if($sourceBranch)
+       {
+           $branchParts =  $sourceBranch.Split('/')
+           if($branchParts.Count -eq 1)
+           {
+               $tags.Add($branchParts[0] +"-release");
+               $newRealBuildName = "{0} - ({1})" -f  $branchParts[0],$buildId
+           }
+           if($branchParts.Count -eq 3)
+           {
+               if($branchParts[1] -contains "heads")
+               {
+                   $branchName = $branchParts[2]
+                   $tags.Add($branchName+"-release")
+                   $newRealBuildName = "{0} - ({1})" -f  $branchName,$buildId
+               }
+               if($branchParts[1] -contains "tags")
+               {
+                $tags.Add("public-release")
+                   $branchName = $branchParts[2]
+                   $newRealBuildName = "{0} - ({1})" -f  $branchName,$buildId
+               }
+
+           }
+           if($branchParts.Count -eq 4)
+           {
+               if($branchParts[1] -contains "pull")
+               {
+                  $tags.Add("pull-release");
+                  $tags.Add("pr-"+$branchParts[2]);
+                  $newRealBuildName = "pull-{0} - ({1})" -f  $branchParts[2],$buildId
+               }
+               if($branchParts[1] -contains "heads")
+               {
+                   $branchName = $branchParts[2] + "-" +$branchParts[3]
+                   $tags.Add($branchName+"-release")
+                   $newRealBuildName = "{0} - ({1})" -f  $branchName,$buildId
+               }
+           }
+       }
+       #Tag this build
+       #check PublicTags also add them to the tag list
+       foreach($publicTag in $publicTags.Split(';'))
+       {
+           if($publicTag){
+               $tags.Add($publicTag);
+           }
+       }
+       #Add tags to the VSTS Build
+       foreach ($tag in $tags) {
+          Write-Host "##vso[build.addbuildtag]$tag"
+       }
+       #Update our PublicTags to pass to OSX
+       $publicTags = $tags -join ';'
+       Write-Host "##vso[task.setvariable variable=publictags;isOutput=true;]$publicTags"
+       #Update VSTS build name
+       if(!$realBuildName)
+       {
+           $realBuildName = $newRealBuildName;
+       }
+
+    displayName: 'Tag and name build copy'
+
+
+#Multi-configuration and multi-agent job options are not exported to YAML. Configure these options using documentation guidance: https://docs.microsoft.com/vsts/pipelines/process/phases
+
+- phase: Phase_2
+  displayName: Build Windows Phase
+
+  dependsOn: Phase_1
+  condition: succeeded()
+  queue:
+    name: Hosted VS2017
+    demands: msbuild
+
+#Your build pipeline references the ‘BuildPlatforms’ variable, which you’ve selected to be settable at queue time. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab, and then select the option to make it settable at queue time. See https://go.microsoft.com/fwlink/?linkid=865971
+#Your build pipeline references the ‘BuildConfigurations’ variable, which you’ve selected to be settable at queue time. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab, and then select the option to make it settable at queue time. See https://go.microsoft.com/fwlink/?linkid=865971
+#Your build pipeline references the ‘BuildConfigurations’ variable, which you’ve selected to be settable at queue time. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab, and then select the option to make it settable at queue time. See https://go.microsoft.com/fwlink/?linkid=865971
+#Your build pipeline references the ‘BuildConfigurations’ variable, which you’ve selected to be settable at queue time. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab, and then select the option to make it settable at queue time. See https://go.microsoft.com/fwlink/?linkid=865971
+#Your build pipeline references the ‘BuildConfigurations’ variable, which you’ve selected to be settable at queue time. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab, and then select the option to make it settable at queue time. See https://go.microsoft.com/fwlink/?linkid=865971
+#Your build pipeline references the ‘BuildConfigurations’ variable, which you’ve selected to be settable at queue time. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab, and then select the option to make it settable at queue time. See https://go.microsoft.com/fwlink/?linkid=865971
+#Your build pipeline references the ‘BuildConfigurations’ variable, which you’ve selected to be settable at queue time. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab, and then select the option to make it settable at queue time. See https://go.microsoft.com/fwlink/?linkid=865971
+#Your build pipeline references the ‘BuildConfigurations’ variable, which you’ve selected to be settable at queue time. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab, and then select the option to make it settable at queue time. See https://go.microsoft.com/fwlink/?linkid=865971
+#Your build pipeline references the ‘BuildConfigurations’ variable, which you’ve selected to be settable at queue time. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab, and then select the option to make it settable at queue time. See https://go.microsoft.com/fwlink/?linkid=865971
+#Your build pipeline references the ‘BuildConfigurations’ variable, which you’ve selected to be settable at queue time. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab, and then select the option to make it settable at queue time. See https://go.microsoft.com/fwlink/?linkid=865971
+#Your build pipeline references the ‘BuildConfigurations’ variable, which you’ve selected to be settable at queue time. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab, and then select the option to make it settable at queue time. See https://go.microsoft.com/fwlink/?linkid=865971
+#Your build pipeline references the ‘BuildConfigurations’ variable, which you’ve selected to be settable at queue time. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab, and then select the option to make it settable at queue time. See https://go.microsoft.com/fwlink/?linkid=865971
+#Your build pipeline references the ‘BuildConfigurations’ variable, which you’ve selected to be settable at queue time. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab, and then select the option to make it settable at queue time. See https://go.microsoft.com/fwlink/?linkid=865971
+#Your build pipeline references the ‘BuildConfigurations’ variable, which you’ve selected to be settable at queue time. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab, and then select the option to make it settable at queue time. See https://go.microsoft.com/fwlink/?linkid=865971
+#Your build pipeline references the ‘BuildConfigurations’ variable, which you’ve selected to be settable at queue time. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab, and then select the option to make it settable at queue time. See https://go.microsoft.com/fwlink/?linkid=865971
+#Your build pipeline references the ‘BuildConfigurations’ variable, which you’ve selected to be settable at queue time. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab, and then select the option to make it settable at queue time. See https://go.microsoft.com/fwlink/?linkid=865971
+#Your build pipeline references the ‘BuildConfigurations’ variable, which you’ve selected to be settable at queue time. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab, and then select the option to make it settable at queue time. See https://go.microsoft.com/fwlink/?linkid=865971
+#Your build pipeline references the ‘BuildConfigurations’ variable, which you’ve selected to be settable at queue time. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab, and then select the option to make it settable at queue time. See https://go.microsoft.com/fwlink/?linkid=865971
+#Your build pipeline references the ‘BuildConfigurations’ variable, which you’ve selected to be settable at queue time. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab, and then select the option to make it settable at queue time. See https://go.microsoft.com/fwlink/?linkid=865971
+#Your build pipeline references the ‘BuildConfigurations’ variable, which you’ve selected to be settable at queue time. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab, and then select the option to make it settable at queue time. See https://go.microsoft.com/fwlink/?linkid=865971
+#Your build pipeline references the ‘BuildConfigurations’ variable, which you’ve selected to be settable at queue time. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab, and then select the option to make it settable at queue time. See https://go.microsoft.com/fwlink/?linkid=865971
+#Your build pipeline references the ‘BuildConfigurations’ variable, which you’ve selected to be settable at queue time. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab, and then select the option to make it settable at queue time. See https://go.microsoft.com/fwlink/?linkid=865971
+#Your build pipeline references the ‘BuildConfigurations’ variable, which you’ve selected to be settable at queue time. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab, and then select the option to make it settable at queue time. See https://go.microsoft.com/fwlink/?linkid=865971
+#Your build pipeline references the ‘BuildConfigurations’ variable, which you’ve selected to be settable at queue time. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab, and then select the option to make it settable at queue time. See https://go.microsoft.com/fwlink/?linkid=865971
+#Your build pipeline references the ‘BuildConfigurations’ variable, which you’ve selected to be settable at queue time. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab, and then select the option to make it settable at queue time. See https://go.microsoft.com/fwlink/?linkid=865971
+#Your build pipeline references the ‘BuildPlatforms’ variable, which you’ve selected to be settable at queue time. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab, and then select the option to make it settable at queue time. See https://go.microsoft.com/fwlink/?linkid=865971
+#Your build pipeline references the ‘BuildConfigurations’ variable, which you’ve selected to be settable at queue time. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab, and then select the option to make it settable at queue time. See https://go.microsoft.com/fwlink/?linkid=865971
+#Your build pipeline references the ‘BuildPlatforms’ variable, which you’ve selected to be settable at queue time. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab, and then select the option to make it settable at queue time. See https://go.microsoft.com/fwlink/?linkid=865971
+#Your build pipeline references the ‘BuildConfigurations’ variable, which you’ve selected to be settable at queue time. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab, and then select the option to make it settable at queue time. See https://go.microsoft.com/fwlink/?linkid=865971
+#Your build pipeline references the ‘BuildPlatforms’ variable, which you’ve selected to be settable at queue time. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab, and then select the option to make it settable at queue time. See https://go.microsoft.com/fwlink/?linkid=865971
+#Your build pipeline references the ‘BuildConfigurations’ variable, which you’ve selected to be settable at queue time. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab, and then select the option to make it settable at queue time. See https://go.microsoft.com/fwlink/?linkid=865971
+#Your build pipeline references the ‘BuildPlatforms’ variable, which you’ve selected to be settable at queue time. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab, and then select the option to make it settable at queue time. See https://go.microsoft.com/fwlink/?linkid=865971
+#Your build pipeline references the ‘BuildConfigurations’ variable, which you’ve selected to be settable at queue time. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab, and then select the option to make it settable at queue time. See https://go.microsoft.com/fwlink/?linkid=865971
+#Your build pipeline references the ‘BuildConfigurations’ variable, which you’ve selected to be settable at queue time. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab, and then select the option to make it settable at queue time. See https://go.microsoft.com/fwlink/?linkid=865971
+#Your build pipeline references the ‘BuildConfigurations’ variable, which you’ve selected to be settable at queue time. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab, and then select the option to make it settable at queue time. See https://go.microsoft.com/fwlink/?linkid=865971
+#Your build pipeline references the ‘BuildConfigurations’ variable, which you’ve selected to be settable at queue time. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab, and then select the option to make it settable at queue time. See https://go.microsoft.com/fwlink/?linkid=865971
+#Your build pipeline references the ‘BuildConfigurations’ variable, which you’ve selected to be settable at queue time. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab, and then select the option to make it settable at queue time. See https://go.microsoft.com/fwlink/?linkid=865971
+#Your build pipeline references the ‘BuildConfigurations’ variable, which you’ve selected to be settable at queue time. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab, and then select the option to make it settable at queue time. See https://go.microsoft.com/fwlink/?linkid=865971
+#Your build pipeline references the ‘BuildConfigurations’ variable, which you’ve selected to be settable at queue time. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab, and then select the option to make it settable at queue time. See https://go.microsoft.com/fwlink/?linkid=865971
+#Your build pipeline references the ‘BuildConfigurations’ variable, which you’ve selected to be settable at queue time. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab, and then select the option to make it settable at queue time. See https://go.microsoft.com/fwlink/?linkid=865971
+#Your build pipeline references the ‘BuildConfigurations’ variable, which you’ve selected to be settable at queue time. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab, and then select the option to make it settable at queue time. See https://go.microsoft.com/fwlink/?linkid=865971
+#Your build pipeline references the ‘BuildConfigurations’ variable, which you’ve selected to be settable at queue time. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab, and then select the option to make it settable at queue time. See https://go.microsoft.com/fwlink/?linkid=865971
+#Your build pipeline references the ‘BuildConfigurations’ variable, which you’ve selected to be settable at queue time. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab, and then select the option to make it settable at queue time. See https://go.microsoft.com/fwlink/?linkid=865971
+#Your build pipeline references the ‘BuildConfigurations’ variable, which you’ve selected to be settable at queue time. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab, and then select the option to make it settable at queue time. See https://go.microsoft.com/fwlink/?linkid=865971
+#Your build pipeline references the ‘BuildConfigurations’ variable, which you’ve selected to be settable at queue time. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab, and then select the option to make it settable at queue time. See https://go.microsoft.com/fwlink/?linkid=865971
+#Your build pipeline references the ‘BuildConfigurations’ variable, which you’ve selected to be settable at queue time. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab, and then select the option to make it settable at queue time. See https://go.microsoft.com/fwlink/?linkid=865971
+#Your build pipeline references the ‘BuildConfigurations’ variable, which you’ve selected to be settable at queue time. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab, and then select the option to make it settable at queue time. See https://go.microsoft.com/fwlink/?linkid=865971
+#Your build pipeline references the ‘BuildConfigurations’ variable, which you’ve selected to be settable at queue time. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab, and then select the option to make it settable at queue time. See https://go.microsoft.com/fwlink/?linkid=865971
+#Your build pipeline references the ‘BuildConfigurations’ variable, which you’ve selected to be settable at queue time. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab, and then select the option to make it settable at queue time. See https://go.microsoft.com/fwlink/?linkid=865971
+#Your build pipeline references the ‘BuildConfigurations’ variable, which you’ve selected to be settable at queue time. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab, and then select the option to make it settable at queue time. See https://go.microsoft.com/fwlink/?linkid=865971
+#Your build pipeline references the ‘BuildConfigurations’ variable, which you’ve selected to be settable at queue time. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab, and then select the option to make it settable at queue time. See https://go.microsoft.com/fwlink/?linkid=865971
+#Your build pipeline references the ‘BuildConfigurations’ variable, which you’ve selected to be settable at queue time. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab, and then select the option to make it settable at queue time. See https://go.microsoft.com/fwlink/?linkid=865971
+#Your build pipeline references the ‘BuildConfigurations’ variable, which you’ve selected to be settable at queue time. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab, and then select the option to make it settable at queue time. See https://go.microsoft.com/fwlink/?linkid=865971
+#Your build pipeline references the ‘BuildConfigurations’ variable, which you’ve selected to be settable at queue time. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab, and then select the option to make it settable at queue time. See https://go.microsoft.com/fwlink/?linkid=865971
+#Your build pipeline references the ‘BuildConfigurations’ variable, which you’ve selected to be settable at queue time. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab, and then select the option to make it settable at queue time. See https://go.microsoft.com/fwlink/?linkid=865971
+#Your build pipeline references the ‘BuildPlatforms’ variable, which you’ve selected to be settable at queue time. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab, and then select the option to make it settable at queue time. See https://go.microsoft.com/fwlink/?linkid=865971
+#Your build pipeline references the ‘BuildConfigurations’ variable, which you’ve selected to be settable at queue time. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab, and then select the option to make it settable at queue time. See https://go.microsoft.com/fwlink/?linkid=865971
+#Your build pipeline references the ‘BuildPlatforms’ variable, which you’ve selected to be settable at queue time. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab, and then select the option to make it settable at queue time. See https://go.microsoft.com/fwlink/?linkid=865971
+#Your build pipeline references the ‘BuildConfigurations’ variable, which you’ve selected to be settable at queue time. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab, and then select the option to make it settable at queue time. See https://go.microsoft.com/fwlink/?linkid=865971
+#Your build pipeline references the ‘BuildPlatforms’ variable, which you’ve selected to be settable at queue time. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab, and then select the option to make it settable at queue time. See https://go.microsoft.com/fwlink/?linkid=865971
+#Your build pipeline references the ‘BuildConfigurations’ variable, which you’ve selected to be settable at queue time. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab, and then select the option to make it settable at queue time. See https://go.microsoft.com/fwlink/?linkid=865971
+#Your build pipeline references the ‘BuildConfigurations’ variable, which you’ve selected to be settable at queue time. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab, and then select the option to make it settable at queue time. See https://go.microsoft.com/fwlink/?linkid=865971
+#Your build pipeline references the ‘BuildConfigurations’ variable, which you’ve selected to be settable at queue time. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab, and then select the option to make it settable at queue time. See https://go.microsoft.com/fwlink/?linkid=865971
+#Your build pipeline references the ‘BuildConfigurations’ variable, which you’ve selected to be settable at queue time. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab, and then select the option to make it settable at queue time. See https://go.microsoft.com/fwlink/?linkid=865971
+#Your build pipeline references the ‘BuildConfigurations’ variable, which you’ve selected to be settable at queue time. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab, and then select the option to make it settable at queue time. See https://go.microsoft.com/fwlink/?linkid=865971
+#Your build pipeline references the ‘BuildConfigurations’ variable, which you’ve selected to be settable at queue time. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab, and then select the option to make it settable at queue time. See https://go.microsoft.com/fwlink/?linkid=865971
+#Your build pipeline references the ‘BuildConfigurations’ variable, which you’ve selected to be settable at queue time. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab, and then select the option to make it settable at queue time. See https://go.microsoft.com/fwlink/?linkid=865971
+#Your build pipeline references the ‘BuildConfigurations’ variable, which you’ve selected to be settable at queue time. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab, and then select the option to make it settable at queue time. See https://go.microsoft.com/fwlink/?linkid=865971
+#Your build pipeline references the ‘BuildConfigurations’ variable, which you’ve selected to be settable at queue time. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab, and then select the option to make it settable at queue time. See https://go.microsoft.com/fwlink/?linkid=865971
+#Your build pipeline references the ‘BuildConfigurations’ variable, which you’ve selected to be settable at queue time. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab, and then select the option to make it settable at queue time. See https://go.microsoft.com/fwlink/?linkid=865971
+#Your build pipeline references the ‘BuildConfigurations’ variable, which you’ve selected to be settable at queue time. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab, and then select the option to make it settable at queue time. See https://go.microsoft.com/fwlink/?linkid=865971
+#Your build pipeline references the ‘BuildConfigurations’ variable, which you’ve selected to be settable at queue time. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab, and then select the option to make it settable at queue time. See https://go.microsoft.com/fwlink/?linkid=865971
+#Your build pipeline references the ‘BuildConfigurations’ variable, which you’ve selected to be settable at queue time. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab, and then select the option to make it settable at queue time. See https://go.microsoft.com/fwlink/?linkid=865971
+#Your build pipeline references the ‘BuildConfigurations’ variable, which you’ve selected to be settable at queue time. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab, and then select the option to make it settable at queue time. See https://go.microsoft.com/fwlink/?linkid=865971
+#Your build pipeline references the ‘BuildConfigurations’ variable, which you’ve selected to be settable at queue time. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab, and then select the option to make it settable at queue time. See https://go.microsoft.com/fwlink/?linkid=865971
+#Your build pipeline references the ‘BuildConfigurations’ variable, which you’ve selected to be settable at queue time. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab, and then select the option to make it settable at queue time. See https://go.microsoft.com/fwlink/?linkid=865971
+#Your build pipeline references the ‘BuildConfigurations’ variable, which you’ve selected to be settable at queue time. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab, and then select the option to make it settable at queue time. See https://go.microsoft.com/fwlink/?linkid=865971
+#Your build pipeline references the ‘BuildConfigurations’ variable, which you’ve selected to be settable at queue time. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab, and then select the option to make it settable at queue time. See https://go.microsoft.com/fwlink/?linkid=865971
+#Your build pipeline references the ‘BuildConfigurations’ variable, which you’ve selected to be settable at queue time. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab, and then select the option to make it settable at queue time. See https://go.microsoft.com/fwlink/?linkid=865971
+#Your build pipeline references the ‘BuildConfigurations’ variable, which you’ve selected to be settable at queue time. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab, and then select the option to make it settable at queue time. See https://go.microsoft.com/fwlink/?linkid=865971
+#Your build pipeline references the ‘BuildConfigurations’ variable, which you’ve selected to be settable at queue time. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab, and then select the option to make it settable at queue time. See https://go.microsoft.com/fwlink/?linkid=865971
+#Your build pipeline references the ‘BuildConfigurations’ variable, which you’ve selected to be settable at queue time. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab, and then select the option to make it settable at queue time. See https://go.microsoft.com/fwlink/?linkid=865971
+#Your build pipeline references the ‘BuildConfigurations’ variable, which you’ve selected to be settable at queue time. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab, and then select the option to make it settable at queue time. See https://go.microsoft.com/fwlink/?linkid=865971
+#Your build pipeline references the ‘BuildConfigurations’ variable, which you’ve selected to be settable at queue time. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab, and then select the option to make it settable at queue time. See https://go.microsoft.com/fwlink/?linkid=865971
+#Your build pipeline references the ‘BuildConfigurations’ variable, which you’ve selected to be settable at queue time. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab, and then select the option to make it settable at queue time. See https://go.microsoft.com/fwlink/?linkid=865971
+#Your build pipeline references the ‘BuildConfigurations’ variable, which you’ve selected to be settable at queue time. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab, and then select the option to make it settable at queue time. See https://go.microsoft.com/fwlink/?linkid=865971
+#Your build pipeline references the ‘BuildConfigurations’ variable, which you’ve selected to be settable at queue time. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab, and then select the option to make it settable at queue time. See https://go.microsoft.com/fwlink/?linkid=865971
+#Your build pipeline references the ‘BuildConfigurations’ variable, which you’ve selected to be settable at queue time. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab, and then select the option to make it settable at queue time. See https://go.microsoft.com/fwlink/?linkid=865971
+#Your build pipeline references the ‘BuildConfigurations’ variable, which you’ve selected to be settable at queue time. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab, and then select the option to make it settable at queue time. See https://go.microsoft.com/fwlink/?linkid=865971
+#Your build pipeline references the ‘BuildConfigurations’ variable, which you’ve selected to be settable at queue time. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab, and then select the option to make it settable at queue time. See https://go.microsoft.com/fwlink/?linkid=865971
+#Your build pipeline references the ‘BuildConfigurations’ variable, which you’ve selected to be settable at queue time. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab, and then select the option to make it settable at queue time. See https://go.microsoft.com/fwlink/?linkid=865971
+#Your build pipeline references the ‘BuildConfigurations’ variable, which you’ve selected to be settable at queue time. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab, and then select the option to make it settable at queue time. See https://go.microsoft.com/fwlink/?linkid=865971
+#Your build pipeline references the ‘BuildConfigurations’ variable, which you’ve selected to be settable at queue time. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab, and then select the option to make it settable at queue time. See https://go.microsoft.com/fwlink/?linkid=865971
+#Your build pipeline references the ‘BuildConfigurations’ variable, which you’ve selected to be settable at queue time. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab, and then select the option to make it settable at queue time. See https://go.microsoft.com/fwlink/?linkid=865971
+#Your build pipeline references the ‘BuildConfigurations’ variable, which you’ve selected to be settable at queue time. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab, and then select the option to make it settable at queue time. See https://go.microsoft.com/fwlink/?linkid=865971
+#Your build pipeline references the ‘BuildConfigurations’ variable, which you’ve selected to be settable at queue time. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab, and then select the option to make it settable at queue time. See https://go.microsoft.com/fwlink/?linkid=865971
+  steps:
+  - powershell: ./'$(Build.SourcesDirectory)/Xamarin.Forms.Build/provisionator.ps1'
+    arguments: '$(Build.SourcesDirectory)/Xamarin.Forms.Build/provisioning_windows.csx -v -v'
+
+    displayName: 'Provisioning Windows'
+    enabled: false
+
+  - task: NuGetToolInstaller@0
+    displayName: 'Use NuGet 4.4.1'
+    inputs:
+      versionSpec: 4.4.1
+
+
+  - task: NuGetCommand@2
+    displayName: 'NuGet restore'
+    inputs:
+      restoreSolution: Xamarin.Forms.sln
+
+
+  - task: MSBuild@1
+    displayName: 'Build solution Xamarin.Forms.sln'
+    inputs:
+      solution: Xamarin.Forms.sln
+
+      msbuildVersion: 15.0
+
+      platform: '$(BuildPlatforms)'
+
+      configuration: '$(BuildConfigurations)'
+
+      msbuildArguments: '/nowarn:VSX1000'
+
+      clean: true
+
+
+  - task: DeleteFiles@1
+    displayName: 'Delete files from $(Build.ArtifactStagingDirectory)'
+    inputs:
+      SourceFolder: '$(Build.ArtifactStagingDirectory)'
+
+      Contents: '**/*'
+
+
+  - task: CopyFiles@2
+    displayName: 'Copy Files dlls'
+    inputs:
+      Contents: |
+       Stubs/**/bin/**/*.dll
+       Microsoft.XamlStandard/bin/**/*.dll
+       Microsoft.XamlStandard.Design/bin/**/*.dll
+       Xamarin.Forms.Core/bin/**/*.dll
+       Xamarin.Forms.Core/bin/**/*.pdb
+       Xamarin.Forms.Core/bin/**/*.mdb
+       Xamarin.Forms.Xaml/bin/**/*.dll
+       Xamarin.Forms.Xaml/bin/**/*.pdb
+       Xamarin.Forms.Xaml/bin/**/*.mdb
+       Xamarin.Forms.Platform/bin/**/*.dll
+       Xamarin.Forms.Build.Tasks/bin/**/*.dll
+       Xamarin.Forms.Core.Design/bin/**/*.dll
+       Xamarin.Forms.Xaml.Design/bin/**/*.dll
+       Xamarin.Forms.Maps.Design/bin/**/*.dll
+       Xamarin.Forms.Maps/bin/$(BuildConfigurations)/**/*.dll
+       Xamarin.Forms.Maps/bin/$(BuildConfigurations)/**/*.mdb
+       Xamarin.Forms.Maps/bin/$(BuildConfigurations)/**/*.pdb
+       Xamarin.Forms.Platform.Android/bin/$(BuildConfigurations)/**/*.dll
+       Xamarin.Forms.Platform.Android/bin/$(BuildConfigurations)/**/*.pdb
+       Xamarin.Forms.Platform.Android.FormsViewGroup/bin/$(BuildConfigurations)/**/*.dll
+       Xamarin.Forms.Platform.Android.FormsViewGroup/bin/$(BuildConfigurations)/**/*.pdb
+       Xamarin.Forms.Platform.iOS/bin/$(BuildConfigurations)/**/*.dll
+       Xamarin.Forms.Platform.iOS/bin/$(BuildConfigurations)/**/*.pdb
+       Xamarin.Forms.Platform.iOS/bin/$(BuildConfigurations)/**/*.mdb
+       Xamarin.Forms.Platform.WP8/bin/$(BuildConfigurations)/**/*.dll
+       Xamarin.Forms.Platform.WinRT/bin/$(BuildConfigurations)/**/*.dll
+       Xamarin.Forms.Platform.WinRT/bin/$(BuildConfigurations)/**/*.pri
+       Xamarin.Forms.Platform.WinRT/bin/$(BuildConfigurations)/**/*.xbf
+       Xamarin.Forms.Platform.WinRT/bin/$(BuildConfigurations)/**/*.xr.xml
+       Xamarin.Forms.Platform.WinRT.Phone/bin/$(BuildConfigurations)/**/*.dll
+       Xamarin.Forms.Platform.WinRT.Phone/bin/$(BuildConfigurations)/**/*.pri
+       Xamarin.Forms.Platform.WinRT.Phone/bin/$(BuildConfigurations)/**/*.xbf
+       Xamarin.Forms.Platform.WinRT.Phone/bin/$(BuildConfigurations)/**/*.xr.xml
+       Xamarin.Forms.Platform.WinRT.Tablet/bin/$(BuildConfigurations)/**/*.dll
+       Xamarin.Forms.Platform.WinRT.Tablet/bin/$(BuildConfigurations)/**/*.pri
+       Xamarin.Forms.Platform.WinRT.Tablet/bin/$(BuildConfigurations)/**/*.xbf
+       Xamarin.Forms.Platform.WinRT.Tablet/bin/$(BuildConfigurations)/**/*.xr.xml
+       Xamarin.Forms.Platform.WinRT.Tablet/bin/$(BuildPlatforms)/$(BuildConfigurations)/**/*.dll
+       Xamarin.Forms.Platform.WinRT.Tablet/bin/$(BuildPlatforms)/$(BuildConfigurations)/**/*.pri
+       Xamarin.Forms.Platform.WinRT.Tablet/bin/$(BuildPlatforms)/$(BuildConfigurations)/**/*.xbf
+       Xamarin.Forms.Platform.WinRT.Tablet/bin/$(BuildPlatforms)/$(BuildConfigurations)/**/*.xr.xml
+       Xamarin.Forms.Platform.UAP/bin/$(BuildConfigurations)/**/*.dll
+       Xamarin.Forms.Platform.UAP/bin/$(BuildConfigurations)/**/*.pri
+       Xamarin.Forms.Platform.UAP/bin/$(BuildConfigurations)/**/*.xr.xml
+       Xamarin.Forms.Platform.UAP/bin/$(BuildConfigurations)/**/*.xbf
+       Xamarin.Forms.Platform.UAP/Properties/Xamarin.Forms.Platform.UAP.rd.xml
+       Xamarin.Forms.Platform.MacOS/bin/$(BuildConfigurations)/**/*.dll
+       Xamarin.Forms.Platform.MacOS/bin/$(BuildConfigurations)/**/*.mdb
+       Xamarin.Forms.Maps/bin/$(BuildConfigurations)/**/*.dll
+       Xamarin.Forms.Maps/bin/$(BuildConfigurations)/**/*.pdb
+       Xamarin.Forms.Maps/bin/$(BuildConfigurations)/**/*.mdb
+       Xamarin.Forms.Maps.Android/bin/$(BuildConfigurations)/**/*.dll
+       Xamarin.Forms.Maps.iOS/bin/iPhoneSimulator/$(BuildConfigurations)/**/*.dll
+       Xamarin.Forms.Maps.MacOS/bin/$(BuildConfigurations)/**/*.dll
+       Xamarin.Forms.Maps.WP8/bin/$(BuildConfigurations)/**/*.dll
+       Xamarin.Forms.Maps.UWP/bin/$(BuildConfigurations)/**/*.dll
+       Xamarin.Forms.Maps.UWP/bin/$(BuildConfigurations)/**/*.pri
+       Xamarin.Forms.Maps.UWP/bin/$(BuildConfigurations)/**/*.xbf
+       Xamarin.Forms.Maps.WinRT.Phone/bin/$(BuildConfigurations)/**/*.dll
+       Xamarin.Forms.Maps.WinRT.Phone/bin/$(BuildConfigurations)/**/*.pri
+       Xamarin.Forms.Maps.WinRT.Phone/bin/$(BuildConfigurations)/**/*.xbf
+       Xamarin.Forms.Maps.WinRT.Tablet/bin/$(BuildConfigurations)/**/*.dll
+       Xamarin.Forms.Maps.WinRT.Tablet/bin/$(BuildConfigurations)/**/*.pri
+       Xamarin.Forms.Maps.WinRT.Tablet/bin/$(BuildConfigurations)/**/*.xbf
+       Xamarin.Forms.Maps.WinRT.Tablet/bin/$(BuildPlatforms)/$(BuildConfigurations)/**/*.dll
+       Xamarin.Forms.Maps.WinRT.Tablet/bin/$(BuildPlatforms)/$(BuildConfigurations)/**/*.pri
+       Xamarin.Forms.Maps.WinRT.Tablet/bin/$(BuildPlatforms)/$(BuildConfigurations)/**/*.xbf
+       Xamarin.Forms.Pages/bin/$(BuildConfigurations)/**/*.dll
+       Xamarin.Forms.Pages/bin/$(BuildConfigurations)/**/*.pdb
+       Xamarin.Forms.Pages/bin/$(BuildConfigurations)/**/*.mdb
+       Xamarin.Forms.Pages.Azure/bin/$(BuildConfigurations)/**/*.dll
+       Xamarin.Forms.Pages.Azure/bin/$(BuildConfigurations)/**/*.pdb
+       Xamarin.Forms.Pages.Azure/bin/$(BuildConfigurations)/**/*.mdb
+       Xamarin.Forms.Platform.Android.AppLinks/bin/$(BuildConfigurations)/**/*.dll
+       Xamarin.Forms.Platform.Android.AppLinks/bin/$(BuildConfigurations)/**/*.pdb
+       Xamarin.Forms.Platform.Android.AppLinks/bin/$(BuildConfigurations)/**/*.mdb
+       Xamarin.Forms.Core.UnitTests/bin/$(BuildConfigurations)/**/*.dll
+       Xamarin.Forms.Xaml.UnitTests/bin/$(BuildConfigurations)/**/*.dll
+       Xamarin.Forms.Pages.UnitTests/bin/$(BuildConfigurations)/**/*.dll
+       Xamarin.Forms.Maps.Tizen/bin/$(BuildConfigurations)/**/*.dll
+       Xamarin.Forms.Maps.Tizen/bin/$(BuildConfigurations)/**/*.mdb
+       Xamarin.Forms.Maps.Tizen/bin/$(BuildConfigurations)/**/*.pdb
+       Xamarin.Forms.Platform.Tizen/bin/$(BuildConfigurations)/**/*.dll
+       Xamarin.Forms.Platform.Tizen/bin/$(BuildConfigurations)/**/*.pdb
+       Xamarin.Forms.Platform.Tizen/bin/$(BuildConfigurations)/**/*.mdb
+       Xamarin.Forms.Build.Tasks.Core/bin/$(BuildConfigurations)/**/*.dll
+       Xamarin.Forms.Build.Tasks.Core/bin/$(BuildConfigurations)/**/*.pdb
+       Xamarin.Forms.Build.Tasks.Core/bin/$(BuildConfigurations)/**/*.mdb
+       Xamarin.Forms.Maps.WPF/bin/$(BuildConfigurations)/**/*.dll
+       Xamarin.Forms.Maps.WPF/bin/$(BuildConfigurations)/**/*.mdb
+       Xamarin.Forms.Maps.WPF/bin/$(BuildConfigurations)/**/*.pdb
+       Xamarin.Forms.Maps.GTK/bin/$(BuildConfigurations)/**/*.dll
+       Xamarin.Forms.Maps.GTK/bin/$(BuildConfigurations)/**/*.mdb
+       Xamarin.Forms.Maps.GTK/bin/$(BuildConfigurations)/**/*.pdb
+       Xamarin.Forms.Platform.WPF/bin/$(BuildConfigurations)/**/*.dll
+       Xamarin.Forms.Platform.WPF/bin/$(BuildConfigurations)/**/*.mdb
+       Xamarin.Forms.Platform.WPF/bin/$(BuildConfigurations)/**/*.pdb
+       Xamarin.Forms.Platform.GTK/bin/$(BuildConfigurations)/**/*.dll
+       Xamarin.Forms.Platform.GTK/bin/$(BuildConfigurations)/**/*.mdb
+       Xamarin.Forms.Platform.GTK/bin/$(BuildConfigurations)/**/*.pdb
+       Microsoft.XamlStandard/bin/$(BuildConfigurations)/**/*.dll
+       Microsoft.XamlStandard/bin/$(BuildConfigurations)/**/*.mdb
+       Microsoft.XamlStandard/bin/$(BuildConfigurations)/**/*.pdb
+
+      TargetFolder: '$(Build.ArtifactStagingDirectory)'
+
+
+  - task: CopyFiles@2
+    displayName: 'Copy files test adapter'
+    inputs:
+      Contents: '**/NUnitTestAdapter.*/tools/*.dll'
+
+      TargetFolder: '$(Build.ArtifactStagingDirectory)/testadapter'
+
+      CleanTargetFolder: true
+
+      OverWrite: true
+
+      flattenFolders: true
+
+
+  - task: PublishBuildArtifacts@1
+    displayName: 'Publish Artifact: win_build'
+    inputs:
+      ArtifactName: 'win_build'
+
+
+
+#Multi-configuration and multi-agent job options are not exported to YAML. Configure these options using documentation guidance: https://docs.microsoft.com/vsts/pipelines/process/phases
+
+- phase: Phase_3
+  displayName: Test Phase
+
+  dependsOn: Phase_2
+  condition: succeeded()
+  queue:
+    name: Hosted VS2017
+    demands: vstest
+
+#Your build pipeline references the ‘BuildConfigurations’ variable, which you’ve selected to be settable at queue time. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab, and then select the option to make it settable at queue time. See https://go.microsoft.com/fwlink/?linkid=865971
+#Your build pipeline references the ‘BuildConfigurations’ variable, which you’ve selected to be settable at queue time. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab, and then select the option to make it settable at queue time. See https://go.microsoft.com/fwlink/?linkid=865971
+#Your build pipeline references the ‘BuildConfigurations’ variable, which you’ve selected to be settable at queue time. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab, and then select the option to make it settable at queue time. See https://go.microsoft.com/fwlink/?linkid=865971
+#Your build pipeline references the ‘BuildConfigurations’ variable, which you’ve selected to be settable at queue time. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab, and then select the option to make it settable at queue time. See https://go.microsoft.com/fwlink/?linkid=865971
+#Your build pipeline references the ‘BuildConfigurations’ variable, which you’ve selected to be settable at queue time. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab, and then select the option to make it settable at queue time. See https://go.microsoft.com/fwlink/?linkid=865971
+#Your build pipeline references the ‘BuildConfigurations’ variable, which you’ve selected to be settable at queue time. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab, and then select the option to make it settable at queue time. See https://go.microsoft.com/fwlink/?linkid=865971
+  steps:
+  - task: DownloadBuildArtifacts@0
+    displayName: 'Download build artifact win_build'
+    inputs:
+      downloadType: specific
+
+      itemPattern: '**/*.UnitTests/bin/$(BuildConfigurations)/*'
+
+      downloadPath: '$(Build.BinariesDirectory)'
+
+      parallelizationLimit: 20
+
+
+  - task: DownloadBuildArtifacts@0
+    displayName: 'Download build artifact testadapters'
+    inputs:
+      downloadType: specific
+
+      itemPattern: '**/testadapter/*'
+
+      downloadPath: '$(Build.BinariesDirectory)/testadapters/'
+
+      parallelizationLimit: 20
+
+
+  - task: VSTest@2
+    displayName: 'Unit Tests'
+    inputs:
+      testAssemblyVer2: |
+       **/bin/$(BuildConfigurations)/Xamarin.Forms.Core.UnitTests.dll
+       **/bin/$(BuildConfigurations)/Xamarin.Forms.Pages.UnitTests.dll
+       **/bin/$(BuildConfigurations)/Xamarin.Forms.Xaml.UnitTests.dll
+
+      searchFolder: '$(Build.BinariesDirectory)'
+
+      pathtoCustomTestAdapters: '$(Build.BinariesDirectory)/testadapters/'
+
+      codeCoverageEnabled: true
+
+      testRunTitle: '$(BuildConfigurations)_UnitTests'
+
+      configuration: '$(BuildConfigurations)'
+
+
+
+- phase: Phase_4
+  displayName: OSX Phase
+
+  dependsOn: Phase_1
+  condition: succeeded()
+  queue:
+    name: Hosted Mac Internal
+    demands:
+   - Agent.OS -equals darwin
+   - sh
+   - msbuild
+   - Xamarin.iOS
+
+#Your build pipeline references an undefined variable named ‘.p12.Password’. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab. See https://go.microsoft.com/fwlink/?linkid=865972
+#Your build pipeline references the ‘BuildConfiguration’ variable, which you’ve selected to be settable at queue time. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab, and then select the option to make it settable at queue time. See https://go.microsoft.com/fwlink/?linkid=865971
+#Your build pipeline references an undefined variable named ‘IpaName’. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab. See https://go.microsoft.com/fwlink/?linkid=865972
+#Your build pipeline references the ‘BuildConfiguration’ variable, which you’ve selected to be settable at queue time. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab, and then select the option to make it settable at queue time. See https://go.microsoft.com/fwlink/?linkid=865971
+#Your build pipeline references the ‘BuildConfiguration’ variable, which you’ve selected to be settable at queue time. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab, and then select the option to make it settable at queue time. See https://go.microsoft.com/fwlink/?linkid=865971
+#Your build pipeline references an undefined variable named ‘ApkName’. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab. See https://go.microsoft.com/fwlink/?linkid=865972
+#Your build pipeline references an undefined variable named ‘ApkName’. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab. See https://go.microsoft.com/fwlink/?linkid=865972
+#Your build pipeline references an undefined variable named ‘ApkName’. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab. See https://go.microsoft.com/fwlink/?linkid=865972
+  steps:
+  - task: ms-devlabs.utilitytasks.task-Shellpp.Shell++@0
+    displayName: 'Add QA cert password to keychain'
+    inputs:
+      type: InlineScript
+
+      script: '$(Build.Repository.LocalPath)/Xamarin.Forms.Build/provisionator.sh keychain set pb_dev_iphone.p12 $(.p12.Password)'
+
+
+#Task group has not been exported, task groups are not supported yet
+
+  - task: NuGetToolInstaller@0
+    displayName: 'Use NuGet 4.4.1'
+    inputs:
+      versionSpec: 4.4.1
+
+      checkLatest: true
+
+
+  - task: NuGetCommand@2
+    displayName: 'NuGet restore'
+    inputs:
+      restoreSolution: Xamarin.Forms.sln
+
+
+  - task: MSBuild@1
+    displayName: 'Build solution Xamarin.Forms.Build.Tasks/Xamarin.Forms.Build.Tasks.csproj'
+    inputs:
+      solution: Xamarin.Forms.Build.Tasks/Xamarin.Forms.Build.Tasks.csproj
+
+
+  - task: XamariniOS@2
+    displayName: 'Build Xamarin.iOS solution Xamarin.Forms.sln'
+    inputs:
+      solutionFile: Xamarin.Forms.sln
+
+      configuration: '$(BuildConfiguration)'
+
+      runNugetRestore: true
+
+
+#Task group has not been exported, task groups are not supported yet
+
+  - task: CopyFiles@2
+    displayName: 'Copy test-cloud.exe'
+    inputs:
+      Contents: '**/Xamarin.UITest.*/tools/test-cloud.exe'
+
+      TargetFolder: '$(build.artifactstagingdirectory)/testcloud'
+
+      CleanTargetFolder: true
+
+      OverWrite: true
+
+      flattenFolders: true
+
+
+  - task: CopyFiles@2
+    displayName: 'Copy build scripts'
+    inputs:
+      Contents: 'Xamarin.Forms.Build/scripts/**'
+
+      TargetFolder: '$(build.artifactstagingdirectory)/build'
+
+      CleanTargetFolder: true
+
+
+  - task: CopyFiles@2
+    displayName: 'Copy iOS Files for UITest'
+    inputs:
+      Contents: |
+       **/$(IpaName)
+       Xamarin.Forms.Core.iOS.UITests/bin/$(BuildConfiguration)/**
+
+      TargetFolder: '$(build.artifactstagingdirectory)/ios'
+
+      CleanTargetFolder: true
+
+      flattenFolders: true
+
+
+  - task: CopyFiles@2
+    displayName: 'Copy Android Files for UITest'
+    inputs:
+      Contents: 'Xamarin.Forms.Core.Android.UITests/bin/$(BuildConfiguration)/**'
+
+      TargetFolder: '$(build.artifactstagingdirectory)/android'
+
+      CleanTargetFolder: true
+
+      flattenFolders: true
+
+
+  - task: CopyFiles@2
+    displayName: 'Copy Android apk''s for UITest'
+    inputs:
+      Contents: |
+       Xamarin.Forms.ControlGallery.Android/newRenderers/$(ApkName)
+       Xamarin.Forms.ControlGallery.Android/legacyRenderers/$(ApkName)
+       Xamarin.Forms.ControlGallery.Android/preAppCompat/$(ApkName)
+
+      TargetFolder: '$(build.artifactstagingdirectory)/androidApp'
+
+      CleanTargetFolder: true
+
+
+  - task: PublishBuildArtifacts@1
+    displayName: 'Publish Artifact: iOS'
+    inputs:
+      PathtoPublish: '$(build.artifactstagingdirectory)'
+
+      ArtifactName: OSXArtifacts
+
+
+
+- phase: Phase_5
+  displayName: Nuget Phase
+
+  dependsOn:
+   - Phase_4
+   - Phase_3
+  condition: succeeded()
+  queue:
+    name: Hosted VS2017
+    demands:
+   - DotNetFramework
+   - Cmd
+
+#Your build pipeline references a secret variable named ‘GitHub.Token’. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab, and then select the option to make it secret. See https://go.microsoft.com/fwlink/?linkid=865972
+#Your build pipeline references an undefined variable named ‘$_.Include’. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab. See https://go.microsoft.com/fwlink/?linkid=865972
+#Your build pipeline references an undefined variable named ‘$_.Include’. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab. See https://go.microsoft.com/fwlink/?linkid=865972
+#Your build pipeline references an undefined variable named ‘$_.Include’. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab. See https://go.microsoft.com/fwlink/?linkid=865972
+#Your build pipeline references an undefined variable named ‘$_.Include’. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab. See https://go.microsoft.com/fwlink/?linkid=865972
+#Your build pipeline references an undefined variable named ‘$_.Include’. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab. See https://go.microsoft.com/fwlink/?linkid=865972
+#Your build pipeline references an undefined variable named ‘$_.Include’. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab. See https://go.microsoft.com/fwlink/?linkid=865972
+#Your build pipeline references an undefined variable named ‘$_.Include’. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab. See https://go.microsoft.com/fwlink/?linkid=865972
+#Your build pipeline references an undefined variable named ‘$_.Include’. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab. See https://go.microsoft.com/fwlink/?linkid=865972
+#Your build pipeline references an undefined variable named ‘$_.Include’. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab. See https://go.microsoft.com/fwlink/?linkid=865972
+#Your build pipeline references an undefined variable named ‘$_.Include’. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab. See https://go.microsoft.com/fwlink/?linkid=865972
+#Your build pipeline references an undefined variable named ‘$_.Include’. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab. See https://go.microsoft.com/fwlink/?linkid=865972
+#Your build pipeline references an undefined variable named ‘$_.Include’. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab. See https://go.microsoft.com/fwlink/?linkid=865972
+#Your build pipeline references an undefined variable named ‘$_.Include’. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab. See https://go.microsoft.com/fwlink/?linkid=865972
+#Your build pipeline references an undefined variable named ‘$entry.src’. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab. See https://go.microsoft.com/fwlink/?linkid=865972
+#Your build pipeline references an undefined variable named ‘$entry.src’. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab. See https://go.microsoft.com/fwlink/?linkid=865972
+#Your build pipeline references an undefined variable named ‘$entry.src’. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab. See https://go.microsoft.com/fwlink/?linkid=865972
+#Your build pipeline references an undefined variable named ‘$entry.src’. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab. See https://go.microsoft.com/fwlink/?linkid=865972
+#Your build pipeline references an undefined variable named ‘$entry.src’. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab. See https://go.microsoft.com/fwlink/?linkid=865972
+#Your build pipeline references an undefined variable named ‘$entry.src’. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab. See https://go.microsoft.com/fwlink/?linkid=865972
+#Your build pipeline references an undefined variable named ‘$entry.src’. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab. See https://go.microsoft.com/fwlink/?linkid=865972
+#Your build pipeline references an undefined variable named ‘$entry.src’. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab. See https://go.microsoft.com/fwlink/?linkid=865972
+#Your build pipeline references an undefined variable named ‘$entry.src’. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab. See https://go.microsoft.com/fwlink/?linkid=865972
+#Your build pipeline references an undefined variable named ‘$entry.target’. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab. See https://go.microsoft.com/fwlink/?linkid=865972
+#Your build pipeline references an undefined variable named ‘$entry.src’. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab. See https://go.microsoft.com/fwlink/?linkid=865972
+#Your build pipeline references an undefined variable named ‘$entry.src’. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab. See https://go.microsoft.com/fwlink/?linkid=865972
+#Your build pipeline references an undefined variable named ‘$entry.src’. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab. See https://go.microsoft.com/fwlink/?linkid=865972
+#Your build pipeline references an undefined variable named ‘$entry.src’. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab. See https://go.microsoft.com/fwlink/?linkid=865972
+  variables:
+    FormsIdAppend: ''
+  steps:
+  - task: DownloadBuildArtifacts@0
+    displayName: 'Download build artifact win_build'
+    inputs:
+      artifactName: 'win_build'
+
+      downloadPath: '$(Build.ArtifactsDirectory)'
+
+
+  - task: CopyFiles@2
+    displayName: 'Copy Files to: $(System.DefaultWorkingDirectory)'
+    inputs:
+      SourceFolder: '$(Build.ArtifactsDirectory)/win_build'
+
+      TargetFolder: '$(System.DefaultWorkingDirectory)'
+
+
+  - task: PowerShell@1
+    displayName: 'Choose docs generation method'
+    inputs:
+      scriptType: inlineScript
+
+      inlineScript: |
+       if(Test-Path Xamarin.Forms.Build\scripts\generate-docs.ps1) {
+            Write-Host "##vso[task.setvariable variable=newdocs]True"
+       }
+
+
+  - task: BatchScript@1
+    displayName: 'Update XML Docs'
+    inputs:
+      filename: 'update-docs-windows.bat'
+
+    condition: and(succeeded(), eq(False, variables['newdocs']))
+
+#Task group has not been exported, task groups are not supported yet
+
+  - task: PowerShell@1
+    displayName: 'Generate docs from docs repo'
+    inputs:
+      scriptName: 'Xamarin.Forms.Build/scripts/generate-docs.ps1'
+
+      arguments: '"$(Build.SourceBranch)" "$(GitHub.Token)"'
+
+      workingFolder: '$(System.DefaultWorkingDirectory)/Xamarin.Forms.Build/scripts'
+
+      failOnStandardError: false
+
+    condition: and(succeeded(), eq(variables['newdocs'], 'True'))
+
+  - powershell: |
+       $buildConfiguration = "Release"
+       $formsNugetVersion = "" + $env:CURRENTSEMANTICVERSION + "." + ($env:BUILD_BUILDID - $env:MAGICNUMBER)
+       if($env:SUFFIX)
+       {
+          $formsNugetVersion = $formsNugetVersion +"-"+$env:SUFFIX
+       }
+       Write-Host("FormsVersion = $formsNugetVersion")
+       Write-Host("##{0}[task.setvariable variable=XamarinFormsPackageVersion]{1}" -f "vso",$formsNugetVersion.ToString() )
+    failOnStderr: true
+
+    displayName: 'Set Nuget version'
+
+  - task: ms-devlabs.utilitytasks.task-PSpp.Powershellpp@0
+    displayName: ConfirmNuget
+    inputs:
+      type: InlineScript
+
+      script: |
+       [CmdletBinding()]
+       param ( )
+
+       # Namespace for msbuild csproj files
+       $namespace = @{msb="http://schemas.microsoft.com/developer/msbuild/2003"}
+
+       # The various Windows projects and their nuspec targets
+       $projectTargets = @{
+           "Xamarin.Forms.Platform.WinRT.Phone" = @("lib\wpa81\Xamarin.Forms.Platform.WinRT.Phone");
+           "Xamarin.Forms.Platform.WinRT" = @("lib\wpa81\Xamarin.Forms.Platform.WinRT", "lib\win81\Xamarin.Forms.Platform.WinRT");
+           "Xamarin.Forms.Platform.WinRT.Tablet" = @("lib\win81\Xamarin.Forms.Platform.WinRT.Tablet");
+           "Xamarin.Forms.Platform.UAP" = @("lib\uap10.0\Xamarin.Forms.Platform.UAP");
+       }
+
+       # Iterate over the Windows projects, load their csproj files,
+       # and build a hashtable of the required .xbf files and their targets
+
+       $projectNames = @()
+       $projectTargets.Keys | % {
+           $projectNames += $_
+       }
+
+       $requirements = @{}
+
+       $projectNames  | % {
+
+           $name = $_
+
+           # Find the csproj file
+           $csproj = (Get-ChildItem -r ($_ + '.csproj')).FullName
+
+           # Load it up
+           [xml]$proj = Get-Content $csproj
+
+           # Check for XAML files as part of control with codebehind files
+           $dependentUpon = Select-Xml -Xml $proj -XPath "//msb:Compile/msb:DependentUpon" -Namespace $namespace | Select-Object -ExpandProperty Node
+           $dependentUpon | % {
+               $filename = $_.InnerText
+
+               Write-Verbose "Found $filename for project $name";
+
+               # Build the .xbf source file name that should be in the nuspec
+               $xbf = (Split-Path $filename -leaf).Replace(".xaml", ".xbf")
+               $xbf = "..\$name\bin\`$Configuration`$\$xbf"
+
+               # Add this .xbf to our requirements
+               $requirements[$xbf] = $projectTargets[$name]
+           }
+
+           # Check for XAML files included as Pages (Resources files, styles, etc.)
+           $pageInclude = Select-Xml -Xml $proj -XPath "//msb:Page" -Namespace $namespace | Select-Object -ExpandProperty Node
+           $pageInclude | % {
+
+               Write-Verbose "Found $($_.Include) for project $name";
+
+               # Build the .xbf source file name that should be in the nuspec
+               $xbf = (Split-Path $_.Include -leaf).Replace(".xaml", ".xbf")
+               $xbf = "..\$name\bin\`$Configuration`$\$xbf"
+
+               # Add this .xbf to our requirements
+               $requirements[$xbf] = $projectTargets[$name]
+           }
+       }
+
+
+       # load up the nuspec file
+       [xml]$nuspec = Get-Content .\.nuspec\Xamarin.Forms.nuspec
+
+       # Keep track of which requirements aren't being met so we can display that in the build output
+       $failedRequirements = @()
+
+       # Also keep track of extra XBF entries which aren't required so we can display that in the build output
+       $extraEntries = @()
+
+       # Find all the xbf files listed in the nuspec
+       $nuspecFiles = $nuspec.package.files.file | ? { $_.src.EndsWith(".xbf") }
+
+       # Iterate over the requirements and track each one that isn't met
+       Write-Verbose "Verifying that required XAML file has a corresponding XBF in nuspec..."
+       $requirements.Keys | % {
+           $xbf = $_
+
+           $requirements[$_] | % {
+               $target = $_
+
+               Write-Verbose "Checking for nuspec entry file = $xbf with target $target"
+
+               $entries = $nuspecFiles | ? {
+                   ($_.src -eq $xbf) -and ($_.target -eq $target)
+               }
+
+               if(!$entries) {
+                  $failedRequirements +=  "Missing nuspec entry for $xbf with target $target"
+               }
+           }
+       }
+
+       # Iterate over the xbf entries and track each one that isn't a requirement
+       Write-Verbose "Verifying that each XBF entry in nuspec has an actual XAML file..."
+       $nuspecFiles | % {
+           $entry = $_
+
+           Write-Verbose "Checking entry with src = $($entry.src) and target = $($entry.target)"
+
+           $srcMatch = $requirements.Keys | ? { $_ -eq $entry.src }
+
+           if($srcMatch) {
+               $requirements[$entry.src] | % { Write-Verbose $_ }
+               $targetMatch = $requirements[$entry.src] | ? { $_ -eq $entry.target }
+               if(-not $targetMatch) {
+                    $extraEntries += "XBF entry $($entry.src) doesn't have a corresponding XAML file"
+               }
+           } else {
+                $extraEntries += "XBF entry $($entry.src) doesn't have a corresponding XAML file"
+           }
+       }
+
+
+       # Emit the failed requirements and extra entries so they show up in build ouput
+       $failedRequirements
+       $extraEntries
+
+       if($failedRequirements -or $extraEntries) {
+           # D'oh!
+           exit 13
+       } else {
+           # Woohoo!
+           exit 0
+       }
+
+
+    enabled: false
+
+  - powershell: ./'Xamarin.Forms.Build/scripts/verify-nuspecs.ps1'
+    displayName: 'Verify Nuget'
+    enabled: false
+
+  - task: NuGetCommand@2
+    displayName: 'Make NuGet Package'
+    inputs:
+      command: pack
+
+      feedsToUse: config
+
+      packagesToPack: '.nuspec/*.nuspec'
+
+      packDestination: '$(Build.ArtifactStagingDirectory)/nuget/debug'
+
+      versioningScheme: byEnvVar
+
+      versionEnvVar: XamarinFormsPackageVersion
+
+      buildProperties: 'IdAppend=$(FormsIdAppend)'
+
+
+  - task: NuGetCommand@2
+    displayName: 'NuGet push'
+    inputs:
+      command: push
+
+      packagesToPush: '$(Build.ArtifactStagingDirectory)/nuget/debug/*.nupkg'
+
+      publishVstsFeed: '13fa23d7-5f2f-47f1-a87c-45a9f173dd74'
+
+      allowPackageConflicts: true
+
+
+  - powershell: |
+       $buildConfiguration = "Release"
+       $formsNugetVersion = "" + $env:XAMARINFORMSPACKAGEVERSION
+
+       Write-Host("Update nuspecs")
+       Get-ChildItem './.nuspec/*.nuspec' -Recurse | Foreach-Object {
+            (Get-Content $_) | Foreach-Object  {
+                $_ -replace '\$version\$', $formsNugetVersion `
+                   -replace '\$Configuration\$', $buildConfiguration `
+                   -replace '\$IdAppend\$', ''
+           } | Set-Content $_
+       }
+    failOnStderr: true
+
+    displayName: 'Update nuspecs'
+    condition: and(succeeded(), or(eq(variables['Build.SourceBranch'], 'refs/heads/master'), startsWith(variables['Build.SourceBranch'],'refs/tags/')))
+
+  - task: NuGetCommand@2
+    displayName: 'Make NuGet Package Release'
+    inputs:
+      command: pack
+
+      feedsToUse: config
+
+      packagesToPack: '.nuspec/*.nuspec'
+
+      packDestination: '$(Build.ArtifactStagingDirectory)/nuget/release'
+
+      versioningScheme: byEnvVar
+
+      versionEnvVar: XamarinFormsPackageVersion
+
+      buildProperties: 'IdAppend=$(FormsIdAppend)'
+
+    condition: and(succeeded(), or(eq(variables['Build.SourceBranch'], 'refs/heads/master'), startsWith(variables['Build.SourceBranch'],'refs/tags/')))
+
+  - task: PublishBuildArtifacts@1
+    displayName: 'Publish Artifact: nuget'
+    inputs:
+      PathtoPublish: '$(Build.ArtifactStagingDirectory)/nuget'
+
+      ArtifactName: nuget
+
+
+
+- phase: Phase_6
+  displayName: Sign Phase
+
+  dependsOn: Phase_5
+  condition: and(succeeded(), or(eq(variables['Build.SourceBranch'], 'refs/heads/master'), startsWith(variables['Build.SourceBranch'],'refs/tags/')))
+  queue:
+    name: VSEng-Xamarin-Forms
+  steps:
+  - task: JenkinsQueueJob@2
+    displayName: 'Queue Jenkins Job: sign-from-vsts'
+    inputs:
+      serverEndpoint: 'Xamarin Code Signing Jenkins'
+
+      jobName: 'sign-from-vsts'
+
+      isParameterizedJob: true
+
+      jobParameters: |
+       REPO=xamarin/xamarin.forms
+       COMMIT=$(Build.SourceVersion)
+       JOB_ID=7981
+       BUILD_ID=$(Build.BuildId)
+
+
+#Task group has not been exported, task groups are not supported yet
+
+  - task: PublishBuildArtifacts@1
+    displayName: 'Publish Artifact: nuget signed'
+    inputs:
+      PathtoPublish: '$(Build.ArtifactStagingDirectory)/nuget'
+
+      ArtifactName: nuget
+
+
+
