@@ -59,6 +59,7 @@
     <Compile Include="AnimatableKeyTests.cs" />
     <Compile Include="BaseTestFixture.cs" />
     <Compile Include="AbsoluteLayoutTests.cs" />
+    <Compile Include="BindableLayoutTests.cs" />
     <Compile Include="BindableObjectExtensionTests.cs" />
     <Compile Include="BindableObjectUnitTests.cs" />
     <Compile Include="BindablePropertyUnitTests.cs" />
@@ -168,7 +169,6 @@
     <Compile Include="ContentViewUnitTest.cs" />
     <Compile Include="MockPlatformServices.cs" />
     <Compile Include="GridTests.cs" />
-    <Compile Include="UnitPlatform.cs" />
     <Compile Include="GridLengthTypeConverterTests.cs" />
     <Compile Include="BoxViewUnitTests.cs" />
     <Compile Include="NotifiedPropertiesTests.cs" />

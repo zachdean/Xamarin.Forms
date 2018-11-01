@@ -53,8 +53,6 @@ namespace Xamarin.Forms
 
 		Element _parentOverride;
 
-		IPlatform _platform;
-
 		string _styleId;
 
 		public string AutomationId
@@ -157,29 +155,6 @@ namespace Xamarin.Forms
 			}
 		}
 
-		[EditorBrowsable(EditorBrowsableState.Never)]
-		public IPlatform Platform
-		{
-			get
-			{
-				if (_platform == null && RealParent != null)
-					return RealParent.Platform;
-				return _platform;
-			}
-			set
-			{
-				if (_platform == value)
-					return;
-				_platform = value;
-				PlatformSet?.Invoke(this, EventArgs.Empty);
-				foreach (Element descendant in Descendants())
-				{
-					descendant._platform = _platform;
-					descendant.PlatformSet?.Invoke(this, EventArgs.Empty);
-				}
-			}
-		}
-
 		// you're not my real dad
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		public Element RealParent { get; private set; }
@@ -225,13 +200,6 @@ namespace Xamarin.Forms
 				}
 
 				OnParentSet();
-
-				if (RealParent != null)
-				{
-					IPlatform platform = RealParent.Platform;
-					if (platform != null)
-						Platform = platform;
-				}
 
 				OnPropertyChanged();
 			}
@@ -347,8 +315,6 @@ namespace Xamarin.Forms
 		{
 
 			child.Parent = this;
-			if (Platform != null)
-				child.Platform = Platform;
 
 			child.ApplyBindings(skipBindingContext: false, fromBindingContextChanged:true);
 
@@ -506,9 +472,6 @@ namespace Xamarin.Forms
 				}
 			}
 		}
-
-		[EditorBrowsable(EditorBrowsableState.Never)]
-		public event EventHandler PlatformSet;
 
 		internal virtual void SetChildInheritedBindingContext(Element child, object context)
 		{

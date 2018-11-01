@@ -2,10 +2,12 @@
 using System.ComponentModel;
 using System.Threading.Tasks;
 using Android.Content;
+using Android.Graphics;
 using AImageView = Android.Widget.ImageView;
 using AView = Android.Views.View;
 using Android.Views;
 using Xamarin.Forms.Internals;
+using Android.Support.V4.View;
 
 namespace Xamarin.Forms.Platform.Android.FastRenderers
 {
@@ -137,9 +139,9 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 		void IVisualElementRenderer.SetLabelFor(int? id)
 		{
 			if (_defaultLabelFor == null)
-				_defaultLabelFor = LabelFor;
+				_defaultLabelFor = ViewCompat.GetLabelFor(this);
 
-			LabelFor = (int)(id ?? _defaultLabelFor);
+			ViewCompat.SetLabelFor(this, (int)(id ?? _defaultLabelFor));
 		}
 
 		void IVisualElementRenderer.UpdateLayout() => _visualElementTracker?.UpdateLayout();
@@ -213,6 +215,12 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 			}
 
 			await Control.UpdateBitmap(_element, previous);
+		}
+
+		protected override void OnLayout(bool changed, int left, int top, int right, int bottom)
+		{
+			base.OnLayout(changed, left, top, right, bottom);
+			ClipBounds = GetScaleType() == ScaleType.CenterCrop ? new Rect(0, 0, right - left, bottom - top) : null;
 		}
 
 		void UpdateAspect()

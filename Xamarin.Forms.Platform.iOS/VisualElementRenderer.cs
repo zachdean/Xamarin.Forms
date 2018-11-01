@@ -156,9 +156,9 @@ namespace Xamarin.Forms.Platform.MacOS
 
 		protected bool TabStop { get; set; } = true;
 
-		protected void UpdateTabStop () => TabStop = Element.IsTabStop;
+		protected void UpdateTabStop () => TabStop = Element?.IsTabStop ?? true;
 
-		protected void UpdateTabIndex () => TabIndex = Element.TabIndex;
+		protected void UpdateTabIndex() => TabIndex = Element?.TabIndex ?? 0;
 
 		public NativeView FocusSearch(bool forwardDirection)
 		{
@@ -186,19 +186,19 @@ namespace Xamarin.Forms.Platform.MacOS
 		}
 
 #if __MACOS__
-		public override NativeView NextKeyView { 
+		public override NativeView NextKeyView {
 			get {
-				return FocusSearch (forwardDirection: true) ?? base.NextKeyView;
+				return Element == null ? null : (FocusSearch(forwardDirection: true) ?? base.NextKeyView);
 			}
 			set {
-				if (value != null) // setting the value to null throws an exception
+				if (Element != null && value != null) // setting the value to null throws an exception
 					base.NextKeyView = value;
 			}
 		}
 
 		public override NativeView PreviousKeyView {
 			get {
-				return FocusSearch (forwardDirection: false) ?? base.PreviousKeyView;
+				return Element == null ? null : (FocusSearch(forwardDirection: false) ?? base.PreviousKeyView);
 			}
 		}
 #else
@@ -386,35 +386,17 @@ namespace Xamarin.Forms.Platform.MacOS
 #if __MOBILE__
 		protected virtual void SetAccessibilityHint()
 		{
-			if (Element == null)
-				return;
-
-			if (_defaultAccessibilityHint == null)
-				_defaultAccessibilityHint = AccessibilityHint;
-
-			AccessibilityHint = (string)Element.GetValue(AutomationProperties.HelpTextProperty) ?? _defaultAccessibilityHint;
+			_defaultAccessibilityHint = this.SetAccessibilityHint(Element, _defaultAccessibilityHint);
 		}
 
 		protected virtual void SetAccessibilityLabel()
 		{
-			if (Element == null)
-				return;
-
-			if (_defaultAccessibilityLabel == null)
-				_defaultAccessibilityLabel = AccessibilityLabel;
-
-			AccessibilityLabel = (string)Element.GetValue(AutomationProperties.NameProperty) ?? _defaultAccessibilityLabel;
+			_defaultAccessibilityLabel = this.SetAccessibilityLabel(Element, _defaultAccessibilityLabel);
 		}
 
 		protected virtual void SetIsAccessibilityElement()
 		{
-			if (Element == null)
-				return;
-
-			if (!_defaultIsAccessibilityElement.HasValue)
-				_defaultIsAccessibilityElement = IsAccessibilityElement;
-
-			IsAccessibilityElement = (bool)((bool?)Element.GetValue(AutomationProperties.IsInAccessibleTreeProperty) ?? _defaultIsAccessibilityElement);
+			_defaultIsAccessibilityElement = this.SetIsAccessibilityElement(Element, _defaultIsAccessibilityElement);
 		}
 #endif
 		protected virtual void SetAutomationId(string id)

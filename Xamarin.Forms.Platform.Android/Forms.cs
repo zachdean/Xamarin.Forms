@@ -606,6 +606,11 @@ namespace Xamarin.Forms
 				return new Dispatcher();
 			}
 
+			public SizeRequest GetNativeSize(VisualElement view, double widthConstraint, double heightConstraint)
+			{
+				return Platform.Android.Platform.GetNativeSize(view, widthConstraint, heightConstraint);
+			}
+
 			public class _IsolatedStorageFile : IIsolatedStorageFile
 			{
 				readonly IsolatedStorageFile _isolatedStorageFile;

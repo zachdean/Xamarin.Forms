@@ -152,5 +152,10 @@ namespace Xamarin.Forms.Platform.UWP
 		{
 			return new Dispatcher();
 		}
+
+		public SizeRequest GetNativeSize(VisualElement view, double widthConstraint, double heightConstraint)
+		{
+			return Platform.GetNativeSize(view, widthConstraint, heightConstraint);
+		}
 	}
 }
