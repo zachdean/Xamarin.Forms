@@ -44,7 +44,8 @@ namespace Xamarin.Forms.Controls
 				Content = new StackLayout {
 					Children = {
 						pageOneLabel,
-						pageOneButton
+						pageOneButton,
+						CreatePicker()
 					}
 				}
 			});
@@ -55,7 +56,8 @@ namespace Xamarin.Forms.Controls
 				Content = new StackLayout {
 					Children = {
 						pageTwoLabel,
-						pageTwoButton
+						pageTwoButton,
+						CreatePicker()
 					}
 				}
 			});
@@ -66,10 +68,19 @@ namespace Xamarin.Forms.Controls
 				Content = new StackLayout {
 					Children = {
 						pageThreeLabel,
-						pageThreeButton
+						pageThreeButton,
+						CreatePicker()
 					}
 				}
 			});
+		}
+
+		Picker CreatePicker()
+		{
+			var picker = new Picker();
+			for (int i = 1; i < 10; i++)
+				picker.Items.Add($"item {i}");
+			return picker;
 		}
 	}
 }
