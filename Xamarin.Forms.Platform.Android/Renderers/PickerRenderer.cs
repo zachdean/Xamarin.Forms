@@ -11,7 +11,7 @@ using Android.Content;
 
 namespace Xamarin.Forms.Platform.Android
 {
-	public class PickerRenderer : ViewRenderer<Picker, PickerEditText>, IPickerRenderer
+	public class PickerRenderer : ViewRenderer<Picker, EditText>, IPickerRenderer
 	{
 		AlertDialog _dialog;
 		bool _isDisposed;
@@ -41,7 +41,7 @@ namespace Xamarin.Forms.Platform.Android
 			base.Dispose(disposing);
 		}
 
-		protected override PickerEditText CreateNativeControl()
+		protected override EditText CreateNativeControl()
 		{
 			return new PickerEditText(Context, this);
 		}

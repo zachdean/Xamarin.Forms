@@ -6,10 +6,11 @@ using Android.Util;
 using Android.Text.Format;
 using ATimePicker = Android.Widget.TimePicker;
 using Android.OS;
+using Android.Widget;
 
 namespace Xamarin.Forms.Platform.Android
 {
-	public class TimePickerRenderer : ViewRenderer<TimePicker, PickerEditText>, TimePickerDialog.IOnTimeSetListener, IPickerRenderer
+	public class TimePickerRenderer : ViewRenderer<TimePicker, EditText>, TimePickerDialog.IOnTimeSetListener, IPickerRenderer
 	{
 		AlertDialog _dialog;
 		TextColorSwitcher _textColorSwitcher;
@@ -44,7 +45,7 @@ namespace Xamarin.Forms.Platform.Android
 			_dialog = null;
 		}
 
-		protected override PickerEditText CreateNativeControl()
+		protected override EditText CreateNativeControl()
 		{
 			return new PickerEditText(Context, this);
 		}

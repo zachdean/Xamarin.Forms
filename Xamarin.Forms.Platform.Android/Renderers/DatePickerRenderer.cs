@@ -3,10 +3,11 @@ using System.ComponentModel;
 using Android.App;
 using Android.Content;
 using Android.Util;
+using Android.Widget;
 
 namespace Xamarin.Forms.Platform.Android
 {
-	public class DatePickerRenderer : ViewRenderer<DatePicker, PickerEditText>, IPickerRenderer
+	public class DatePickerRenderer : ViewRenderer<DatePicker, EditText>, IPickerRenderer
 	{
 		DatePickerDialog _dialog;
 		bool _disposed;
@@ -48,7 +49,7 @@ namespace Xamarin.Forms.Platform.Android
 			base.Dispose(disposing);
 		}
 
-		protected override PickerEditText CreateNativeControl()
+		protected override EditText CreateNativeControl()
 		{
 			return new PickerEditText(Context, this);
 		}

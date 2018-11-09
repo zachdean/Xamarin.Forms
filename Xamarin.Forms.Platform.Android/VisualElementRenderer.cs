@@ -166,7 +166,8 @@ namespace Xamarin.Forms.Platform.Android
 			} while (!(control?.Focusable == true || ++attempt >= maxAttempts));
 
 			// when the user focuses on picker show a popup dialog
-			(control as PickerEditText)?.CallOnClick();
+			if (control is PickerEditText picker)
+				picker.FromFocusSearch = true;
 
 			return control;
 		}

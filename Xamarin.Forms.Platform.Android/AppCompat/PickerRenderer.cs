@@ -5,10 +5,11 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using Android.Content;
+using Android.Widget;
 
 namespace Xamarin.Forms.Platform.Android.AppCompat
 {
-	public class PickerRenderer : ViewRenderer<Picker, PickerEditText>, IPickerRenderer
+	public class PickerRenderer : ViewRenderer<Picker, EditText>, IPickerRenderer
 	{
 		AlertDialog _dialog;
 		bool _disposed;
@@ -25,7 +26,7 @@ namespace Xamarin.Forms.Platform.Android.AppCompat
 			AutoPackage = false;
 		}
 
-		protected override PickerEditText CreateNativeControl()
+		protected override EditText CreateNativeControl()
 		{
 			return new PickerEditText(Context, this);
 		}
