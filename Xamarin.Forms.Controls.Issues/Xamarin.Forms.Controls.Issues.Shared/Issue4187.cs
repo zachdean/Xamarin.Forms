@@ -4,13 +4,14 @@ using Xamarin.Forms.Internals;
 
 #if UITEST
 using NUnit.Framework;
+using System.Threading;
 #endif
 
 namespace Xamarin.Forms.Controls
 {
 	[Preserve(AllMembers = true)]
 	[Issue(IssueTracker.Github, 4187, "Picker list shows up, when focus is set on other controls", PlatformAffected.Android)]
-	public class Issue4187 : TestContentPage
+	public class Issue4187 : TestCarouselPage
 	{
 		protected override void Init()
 		{
@@ -59,12 +60,42 @@ namespace Xamarin.Forms.Controls
 				})
 			};
 
-			Content = new StackLayout()
+			Children.Add(new ContentPage
 			{
-				Children = {
-					listView
+				Content = new StackLayout
+				{
+					Children = {
+						GenerateNewPicker(),
+						listView
+					}
 				}
-			};
+			});
+
+			Children.Add(new ContentPage
+			{
+				BackgroundColor = Color.Red,
+				Content = new StackLayout
+				{
+					Children = { GenerateNewPicker() }
+				}
+			});
+
+			Children.Add(new ContentPage
+			{
+				BackgroundColor = Color.Blue,
+				Content = new StackLayout
+				{
+					Children = { GenerateNewPicker() }
+				}
+			});
+		}
+
+		Picker GenerateNewPicker()
+		{
+			var picker = new Picker();
+			for (int i = 1; i < 10; i++)
+				picker.Items.Add($"item {i}");
+			return picker;
 		}
 
 		[Preserve(AllMembers = true)]
@@ -79,31 +110,9 @@ namespace Xamarin.Forms.Controls
 		[Test]
 		public void Issue4187Test()
 		{
-			void TapOnPicker(int index)
-			{
-				var picker = RunningApp.Query(q => q.TextField().Class("PickerEditText"))[index];
-				var location = picker.Rect;
-				RunningApp.TapCoordinates(location.X + 10, location.Y + location.Height / 2);
-			}
-
-			bool DialogIsOpened()
-			{
-				var frameLayouts = RunningApp.Query(q => q.Class("FrameLayout"));
-				foreach (var layout in frameLayouts)
-				{
-					if (layout.Rect.X > 0 && layout.Rect.Y > 0 && layout.Description.Contains(@"id/content"))
-					{
-						// tap on close button
-						RunningApp.Tap(q => q.Button().Id("button2"));
-						return true;
-					}
-				}
-				return false;
-			}
-
 			RunningApp.WaitForElement("Text 1");
-			Assert.AreEqual(6, RunningApp.Query(q => q.TextField().Class("PickerEditText")).Length);
-			TapOnPicker(0);
+			Assert.AreEqual(7, RunningApp.Query(q => q.TextField().Class("PickerEditText")).Length);
+			TapOnPicker(1);
 			Assert.IsTrue(DialogIsOpened());
 			RunningApp.Tap("Text 2");
 			Assert.IsFalse(DialogIsOpened());
@@ -111,6 +120,46 @@ namespace Xamarin.Forms.Controls
 			Assert.IsTrue(DialogIsOpened());
 			RunningApp.Tap("Text 1");
 			Assert.IsFalse(DialogIsOpened());
+
+			// Carousel - first page
+			TapOnPicker(0);
+			Assert.IsTrue(DialogIsOpened());
+
+			// Red page
+			RunningApp.SwipeRightToLeft();
+			Assert.IsFalse(DialogIsOpened());
+			TapOnPicker(0);
+			Assert.IsTrue(DialogIsOpened());
+
+			// Blue page
+			RunningApp.SwipeRightToLeft();
+			Assert.IsFalse(DialogIsOpened());
+			TapOnPicker(0);
+			Assert.IsTrue(DialogIsOpened());
+		}
+
+		void TapOnPicker(int index)
+		{
+			var picker = RunningApp.Query(q => q.TextField().Class("PickerEditText"))[index];
+			var location = picker.Rect;
+			RunningApp.TapCoordinates(location.X + 10, location.Y + location.Height / 2);
+		}
+
+		bool DialogIsOpened()
+		{
+			Thread.Sleep(1500);
+			var frameLayouts = RunningApp.Query(q => q.Class("FrameLayout"));
+			foreach (var layout in frameLayouts)
+			{
+				if (layout.Rect.X > 0 && layout.Rect.Y > 0 && layout.Description.Contains(@"id/content"))
+				{
+					// tap on close button
+					RunningApp.Tap(q => q.Button().Id("button2"));
+					Thread.Sleep(1500);
+					return true;
+				}
+			}
+			return false;
 		}
 #endif
 	}
