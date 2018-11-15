@@ -93,7 +93,7 @@ namespace Xamarin.Forms.Controls.Issues
 		Picker GenerateNewPicker()
 		{
 			var picker = new Picker();
-			for (int i = 1; i < 10; i++)
+			for (int i = 1; i < 100; i++)
 				picker.Items.Add($"item {i}");
 			return picker;
 		}
@@ -111,31 +111,31 @@ namespace Xamarin.Forms.Controls.Issues
 		public void Issue4187Test()
 		{
 			RunningApp.WaitForElement("Text 1");
-			Assert.AreEqual(7, RunningApp.Query(q => q.TextField().Class("PickerEditText")).Length);
+			Assert.AreEqual(7, RunningApp.Query(q => q.TextField().Class("PickerEditText")).Length, "picker count");
 			TapOnPicker(1);
-			Assert.IsTrue(DialogIsOpened());
+			Assert.IsTrue(DialogIsOpened(), "#1");
 			RunningApp.Tap("Text 2");
-			Assert.IsFalse(DialogIsOpened());
+			Assert.IsFalse(DialogIsOpened(), "#2");
 			TapOnPicker(3);
-			Assert.IsTrue(DialogIsOpened());
+			Assert.IsTrue(DialogIsOpened(), "#3");
 			RunningApp.Tap("Text 1");
-			Assert.IsFalse(DialogIsOpened());
+			Assert.IsFalse(DialogIsOpened(), "#5");
 
 			// Carousel - first page
 			TapOnPicker(0);
-			Assert.IsTrue(DialogIsOpened());
+			Assert.IsTrue(DialogIsOpened(), "Carousel - #1");
 
 			// Red page
 			RunningApp.SwipeRightToLeft();
-			Assert.IsFalse(DialogIsOpened());
+			Assert.IsFalse(DialogIsOpened(), "Carousel - #2");
 			TapOnPicker(0);
-			Assert.IsTrue(DialogIsOpened());
+			Assert.IsTrue(DialogIsOpened(), "Carousel - #3");
 
 			// Blue page
 			RunningApp.SwipeRightToLeft();
-			Assert.IsFalse(DialogIsOpened());
+			Assert.IsFalse(DialogIsOpened(), "Carousel - #4");
 			TapOnPicker(0);
-			Assert.IsTrue(DialogIsOpened());
+			Assert.IsTrue(DialogIsOpened(), "Carousel - #5");
 		}
 
 		void TapOnPicker(int index)
@@ -154,7 +154,7 @@ namespace Xamarin.Forms.Controls.Issues
 				if (layout.Rect.X > 0 && layout.Rect.Y > 0 && layout.Description.Contains(@"id/content"))
 				{
 					// tap on close button
-					RunningApp.Tap(q => q.Button().Id("button2"));
+					RunningApp.Tap(q => q.Button());
 					Thread.Sleep(1500);
 					return true;
 				}
