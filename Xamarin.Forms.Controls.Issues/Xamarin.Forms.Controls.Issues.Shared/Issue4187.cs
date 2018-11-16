@@ -122,6 +122,8 @@ namespace Xamarin.Forms.Controls.Issues
 			Assert.IsFalse(DialogIsOpened(), "#5");
 
 			// Carousel - first page
+			RunningApp.Back();
+			RunningApp.ScrollUp();
 			TapOnPicker(0);
 			Assert.IsTrue(DialogIsOpened(), "Carousel - #1");
 
@@ -154,7 +156,7 @@ namespace Xamarin.Forms.Controls.Issues
 				if (layout.Rect.X > 0 && layout.Rect.Y > 0 && layout.Description.Contains(@"id/content"))
 				{
 					// tap on close button
-					RunningApp.Tap(q => q.Button());
+					RunningApp.Back();
 					Thread.Sleep(1500);
 					return true;
 				}
