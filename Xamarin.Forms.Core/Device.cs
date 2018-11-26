@@ -105,15 +105,7 @@ namespace Xamarin.Forms
 
 		internal static IDispatcher GetDispatcher(Element element)
 		{
-			Page page = GetElementPage(element);
-			if (page != null)
-			{
-				return page.Dispatcher;
-			}
-			else
-			{
-				return default(IDispatcher);
-			}
+			return GetElementPage(element)?.Dispatcher ?? default(IDispatcher);
 		}
 
 		internal static IDispatcher GetDispatcher()
@@ -138,14 +130,14 @@ namespace Xamarin.Forms
 		}
 
 		public static double GetNamedSize(NamedSize size, Element targetElement)
-        {
-            return GetNamedSize(size, targetElement.GetType());
-        }
+		{
+			return GetNamedSize(size, targetElement.GetType());
+		}
 
-        public static double GetNamedSize(NamedSize size, Type targetElementType)
-        {
-            return GetNamedSize(size, targetElementType, false);
-        }
+		public static double GetNamedSize(NamedSize size, Type targetElementType)
+		{
+			return GetNamedSize(size, targetElementType, false);
+		}
 
         [Obsolete("OnPlatform is obsolete as of version 2.3.4. Please use 'switch (Device.RuntimePlatform)' instead.")]
         public static void OnPlatform(Action iOS = null, Action Android = null, Action WinPhone = null, Action Default = null)

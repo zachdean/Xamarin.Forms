@@ -489,7 +489,7 @@ namespace Xamarin.Forms.Controls
 					new Button {
 						Text = "Click to Open New Window",
 						Command = new Command(() => {
-							DependencyService.Get<IWindowNavigation>().OpenNewWindowAsync();
+							DependencyService.Get<IWindowNavigation>()?.OpenNewWindowAsync();
 						})
 					}
 				}

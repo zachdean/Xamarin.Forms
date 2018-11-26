@@ -223,7 +223,7 @@ namespace Xamarin.Forms
 
 		public async Task SavePropertiesAsync()
 		{
-			if (Device.IsInvokeRequired)
+			if (Dispatcher.IsInvokeRequired)
 			{
 				Dispatcher.BeginInvokeOnMainThread(SaveProperties);
 			}
@@ -236,7 +236,7 @@ namespace Xamarin.Forms
 		// Don't use this unless there really is no better option
 		internal void SavePropertiesAsFireAndForget()
 		{
-			if (Device.IsInvokeRequired)
+			if (Dispatcher.IsInvokeRequired)
 			{
 				Dispatcher.BeginInvokeOnMainThread(SaveProperties);
 			}

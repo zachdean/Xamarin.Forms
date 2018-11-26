@@ -56,17 +56,7 @@ namespace Xamarin.Forms
 				AbortKinetic(key);
 			};
 
-			if (Device.IsInvokeRequired)
-			{
-				if (self is Element element)
-					element.Dispatcher.BeginInvokeOnMainThread(abort);
-				else
-					Device.BeginInvokeOnMainThread(abort);
-			}
-			else
-			{
-				abort();
-			}
+			DoAction(self, abort);
 
 			return true;
 		}
@@ -112,36 +102,14 @@ namespace Xamarin.Forms
 				throw new ArgumentNullException(nameof(self));
 
 			Action animate = () => AnimateInternal(self, name, transform, callback, rate, length, easing, finished, repeat);
-
-			if (Device.IsInvokeRequired)
-			{
-				if (self is Element element)
-					element.Dispatcher.BeginInvokeOnMainThread(animate);
-				else
-					Device.BeginInvokeOnMainThread(animate);
-			}
-			else
-			{
-				animate();
-			}
+			DoAction(self, animate);
 		}
 
 
 		public static void AnimateKinetic(this IAnimatable self, string name, Func<double, double, bool> callback, double velocity, double drag, Action finished = null)
 		{
 			Action animate = () => AnimateKineticInternal(self, name, callback, velocity, drag, finished);
-
-			if (Device.IsInvokeRequired)
-			{
-				if (self is Element element)
-					element.Dispatcher.BeginInvokeOnMainThread(animate);
-				else
-					Device.BeginInvokeOnMainThread(animate);
-			}
-			else
-			{
-				animate();
-			}
+			DoAction(self, animate);
 		}
 
 		public static bool AnimationIsRunning(this IAnimatable self, string handle)
@@ -302,6 +270,21 @@ namespace Xamarin.Forms
 				owner.BatchBegin();
 				info.Callback(info.Easing.Ease(tweener.Value));
 				owner.BatchCommit();
+			}
+		}
+
+		static void DoAction(IAnimatable self, Action action)
+		{
+			if (Device.IsInvokeRequired)
+			{
+				if (self is Element element)
+					element.Dispatcher.BeginInvokeOnMainThread(action);
+				else
+					Device.BeginInvokeOnMainThread(action);
+			}
+			else
+			{
+				action();
 			}
 		}
 

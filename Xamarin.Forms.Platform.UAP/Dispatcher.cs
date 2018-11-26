@@ -32,9 +32,6 @@ namespace Xamarin.Forms.Platform.UWP
 			CoreDispatcher.RunAsync(CoreDispatcherPriority.Normal, () => action()).WatchForError();
 		}
 
-		public bool IsInvokeRequired()
-		{
-			return _coreDispatcher.HasThreadAccess;
-		}
+		bool IDispatcher.IsInvokeRequired => Device.IsInvokeRequired;
 	}
 }

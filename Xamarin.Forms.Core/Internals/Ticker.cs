@@ -64,28 +64,29 @@ namespace Xamarin.Forms.Internals
 		{
 			Device.BeginInvokeOnMainThread(() =>
 			{
-				_timeouts.RemoveAll(t => t.Item1 == handle);
-
-				if (_timeouts.Count == 0)
-				{
-					_enabled = false;
-					Disable();
-				}
+				RemoveTimeout(handle);
 			});
 		}
+
 		public virtual void Remove(int handle, IDispatcher dispatcher)
 		{
 			dispatcher.BeginInvokeOnMainThread(() =>
 			{
-				_timeouts.RemoveAll(t => t.Item1 == handle);
-
-				if (_timeouts.Count() > 0)
-				{
-					_enabled = false;
-					Disable();
-				}
+				RemoveTimeout(handle);
 			});
 		}
+
+		void RemoveTimeout(int handle)
+		{
+			_timeouts.RemoveAll(t => t.Item1 == handle);
+
+			if (_timeouts.Count() > 0)
+			{
+				_enabled = false;
+				Disable();
+			}
+		}
+
 		protected abstract void DisableTimer();
 
 		protected abstract void EnableTimer();

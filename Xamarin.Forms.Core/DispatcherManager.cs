@@ -26,10 +26,8 @@ namespace Xamarin.Forms
 			get
 			{
 				if (s_current == null)
-				{
 					s_current = new DispatcherManager();
-				}
-
+				
 				return s_current;
 			}
 		}

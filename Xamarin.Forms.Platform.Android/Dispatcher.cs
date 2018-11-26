@@ -11,9 +11,6 @@ namespace Xamarin.Forms.Platform.Android
 			Device.BeginInvokeOnMainThread(action);
 		}
 
-		public bool IsInvokeRequired()
-		{
-			return Device.IsInvokeRequired;
-		}
+		bool IDispatcher.IsInvokeRequired => Device.IsInvokeRequired;
 	}
 }
