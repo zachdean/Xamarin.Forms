@@ -57,6 +57,16 @@ namespace Xamarin.Forms.Platform.MacOS
 			PropertyChanged?.Invoke(this, e);
 		}
 
+		protected override void Dispose(bool disposing)
+		{
+			base.Dispose(disposing);
+			if(disposing)
+			{
+				_contexActionsTrackingView?.Dispose();
+				_contexActionsTrackingView = null;
+			}
+		}
+
 		public override void Layout()
 		{
 			const int padding = 10;

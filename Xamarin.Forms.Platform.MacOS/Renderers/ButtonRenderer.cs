@@ -7,6 +7,7 @@ namespace Xamarin.Forms.Platform.MacOS
 {
 	public class ButtonRenderer : ViewRenderer<Button, NSButton>
 	{
+		bool _disposed;
 		class FormsNSButton : NSButton
 		{
 			public event Action Pressed;
@@ -25,17 +26,24 @@ namespace Xamarin.Forms.Platform.MacOS
 
 		protected override void Dispose(bool disposing)
 		{
-			if (Control != null)
-				Control.Activated -= OnButtonActivated;
+			base.Dispose(disposing);
 
-			var formsButton = Control as FormsNSButton;
-			if (formsButton != null)
+			if (disposing)
 			{
-				formsButton.Pressed -= HandleButtonPressed;
-				formsButton.Released -= HandleButtonReleased;
+				if (_disposed)
+					return;
+
+				_disposed = true;
+				if (Control != null)
+					Control.Activated -= OnButtonActivated;
+
+				if (Control is FormsNSButton formsButton)
+				{
+					formsButton.Pressed -= HandleButtonPressed;
+					formsButton.Released -= HandleButtonReleased;
+				}
 			}
 
-			base.Dispose(disposing);
 		}
 
 		protected override void OnElementChanged(ElementChangedEventArgs<Button> e)

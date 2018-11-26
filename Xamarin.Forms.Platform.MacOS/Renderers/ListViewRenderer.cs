@@ -44,36 +44,23 @@ namespace Xamarin.Forms.Platform.MacOS
 			{
 				_disposed = true;
 
-				var viewsToLookAt = new Stack<NSView>(Subviews);
-				while (viewsToLookAt.Count > 0)
-				{
-					var view = viewsToLookAt.Pop();
-					var viewCellRenderer = view as ViewCellNSView;
-					if (viewCellRenderer != null)
-						viewCellRenderer.Dispose();
-					else
-					{
-						foreach (var child in view.Subviews)
-							viewsToLookAt.Push(child);
-					}
-				}
+				_dataSource?.Dispose();
+				_dataSource = null;
+
+				foreach (NSView subview in Subviews)
+					DisposeSubviews(subview);
 
 				if (Element != null)
 				{
+					(Element as ListView).ScrollToRequested -= OnScrollToRequested;
 					var templatedItems = TemplatedItemsView.TemplatedItems;
 					templatedItems.CollectionChanged -= OnCollectionChanged;
 					templatedItems.GroupedCollectionChanged -= OnGroupedCollectionChanged;
 				}
-			}
 
-			if (disposing)
-			{
 				ClearHeader();
-				if (_footerRenderer != null)
-				{
-					Platform.DisposeModelAndChildrenRenderers(_footerRenderer.Element);
-					_footerRenderer = null;
-				}
+				ClearFooter();
+
 			}
 
 			base.Dispose(disposing);
@@ -166,6 +153,23 @@ namespace Xamarin.Forms.Platform.MacOS
 				UpdateHorizontalScrollBarVisibility();
 		}
 
+		void DisposeSubviews(NSView view)
+		{
+			var ver = view as IVisualElementRenderer;
+
+			if (ver == null)
+			{
+				// VisualElementRenderers should implement their own dispose methods that will appropriately dispose and remove their child views.
+				// Non-renderer views, such as separator lines, etc., can be removed here.
+				foreach (NSView subView in view.Subviews)
+					DisposeSubviews(subView);
+			
+			}
+			if (view != NativeTableView)
+				view.Dispose();
+
+		}
+
 		void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
 		{
 			UpdateItems(e, 0, true);
@@ -232,6 +236,15 @@ namespace Xamarin.Forms.Platform.MacOS
 			Platform.DisposeModelAndChildrenRenderers(_headerRenderer.Element);
 			_headerRenderer = null;
 		}
+
+		void ClearFooter()
+		{
+			if (_footerRenderer == null)
+				return;
+			Platform.DisposeModelAndChildrenRenderers(_footerRenderer.Element);
+			_footerRenderer = null;
+		}
+
 
 		void UpdateItems(NotifyCollectionChangedEventArgs e, int section, bool resetWhenGrouped)
 		{

@@ -68,6 +68,8 @@ namespace Xamarin.Forms.Platform.MacOS
 		IVisualElementRenderer GetNewRenderer()
 		{
 			var newRenderer = Platform.CreateRenderer(_viewCell.View);
+			newRenderer.SetElement(_viewCell.View);
+			Platform.SetRenderer(_viewCell.View, newRenderer);
 			_rendererRef = new WeakReference<IVisualElementRenderer>(newRenderer);
 			AddSubview(newRenderer.NativeView);
 			return newRenderer;

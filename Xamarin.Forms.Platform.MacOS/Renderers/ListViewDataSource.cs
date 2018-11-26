@@ -9,14 +9,15 @@ namespace Xamarin.Forms.Platform.MacOS
 {
 	internal class ListViewDataSource : NSTableViewSource
 	{
+		bool _disposed;
 		IVisualElementRenderer _prototype;
 		const int DefaultItemTemplateId = 1;
 		static int s_dataTemplateIncrementer = 2; // lets start at not 0 because
 		static int s_sectionCount;
 		readonly nfloat _defaultSectionHeight;
 		readonly Dictionary<DataTemplate, int> _templateToId = new Dictionary<DataTemplate, int>();
-		readonly NSTableView _nsTableView;
-		protected readonly ListView List;
+		NSTableView _nsTableView;
+		ListView List;
 
 		ITemplatedItemsView<Cell> TemplatedItemsView => List;
 
@@ -33,6 +34,23 @@ namespace Xamarin.Forms.Platform.MacOS
 			_defaultSectionHeight = source._defaultSectionHeight;
 			_selectionFromNative = source._selectionFromNative;
 			Counts = new Dictionary<int, int>();
+		}
+
+		protected override void Dispose(bool disposing)
+		{
+			if(disposing)
+			{
+				if(!_disposed)
+				{
+					_disposed = true;
+					if(List != null)
+						List.ItemSelected -= OnItemSelected;
+					_prototype = null;
+					_nsTableView = null;
+					List = null;
+				}
+			}
+			base.Dispose(disposing);
 		}
 
 		public ListViewDataSource(ListView list, NSTableView tableView)
