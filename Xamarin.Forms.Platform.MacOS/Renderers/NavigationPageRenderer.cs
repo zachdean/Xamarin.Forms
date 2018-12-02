@@ -248,11 +248,11 @@ namespace Xamarin.Forms.Platform.MacOS
 			vc.SetElementSize(new Size(View.Bounds.Width, View.Bounds.Height));
 			page.Layout(new Rectangle(0, 0, View.Bounds.Width, View.Frame.Height));
 
-			var beforeViewController = Platform.GetRenderer(before).ViewController;
-			var beforeControllerIndex = ChildViewControllers.IndexOf(beforeViewController);
+			var beforeRenderer = Platform.GetRenderer(before);
+			var beforeControllerIndex = ChildViewControllers.IndexOf(beforeRenderer.ViewController);
 
 			InsertChildViewController(vc.ViewController, beforeControllerIndex);
-			View.AddSubview(vc.NativeView);
+			View.AddSubview(vc.NativeView, NSWindowOrderingMode.Below, beforeRenderer.NativeView);
 		}
 
 		void OnInsertPageBeforeRequested(object sender, NavigationRequestedEventArgs e)
