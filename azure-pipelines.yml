@@ -91,6 +91,7 @@ jobs:
       - msbuild
       - Xamarin.iOS
   variables:
+    provisioningOSX : true
     provisioningSign : $(provisioning)
   steps:
      - template: build/steps/build-osx.yml
