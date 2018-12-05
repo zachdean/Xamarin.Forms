@@ -1,25 +1,37 @@
 variables:
-- name: BuildConfiguration
-  value: Debug
-- name: BuildPlatform
-  value: 'any cpu'
-- name: XamarinFormsPackageVersion
-  value: ''
-- name: Suffix
-  value: ''
-- group: Xamarin.Forms
-- group: XQA Secrets
+  - group: Xamarin.Forms
+  - group: XQA Secrets
+  - name: BuildConfiguration
+    value: Debug
+  - name: BuildPlatform
+    value: 'any cpu'
+  - name: XamarinFormsPackageVersion
+    value: ''
+  - name: Suffix
+    value: ''
+  - name: major
+    value: 4
+  - name: minor
+    value: 0
+  - name: patch
+    value: 1
+  - name: version
+    value: $[counter('versioncounter', 1000)]
+  - name: sign
+    value: 'false'
+  - name: provisioning
+    value: 'true'
 
 trigger:
   branches:
     include:
     - master
-    - 3.4.0
     - 3.3.0
+    - 3.4.0
+    - 3.5.0
   paths:
     exclude:
     - README.md
-
 pr: none
 
 jobs:
@@ -29,6 +41,7 @@ jobs:
   pool:
     name: Hosted VS2017
   steps:
+     - checkout: none
      - template: build/steps/build-prepare.yml
 
 - job: Phase_2
@@ -63,6 +76,7 @@ jobs:
       release:
         BuildConfiguration: 'Release'
   steps:
+     - checkout: none
      - template: build/steps/build-windows-test.yml
 
 - job: Phase_4
@@ -76,6 +90,8 @@ jobs:
       - sh
       - msbuild
       - Xamarin.iOS
+  variables:
+    provisioningSign : $(provisioning)
   steps:
      - template: build/steps/build-osx.yml
 
@@ -95,10 +111,13 @@ jobs:
 - job: Phase_6
   displayName: Sign Phase
   dependsOn: Phase_5
-  condition: and(succeeded(), or(eq(variables['Build.SourceBranch'], 'refs/heads/master'), startsWith(variables['Build.SourceBranch'],'refs/tags/')))
+  condition: and(succeeded(), eq(dependencies.Phase_1.outputs['prepare.sign'], 'true'))
   pool:
     name: VSEng-Xamarin-Forms
+  variables:
+    sign: $[dependencies.Phase_1.outputs['prepare.sign']]
   steps:
+     - checkout: none
      - template: build/steps/build-sign.yml
 
 
