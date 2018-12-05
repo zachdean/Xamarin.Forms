@@ -17,7 +17,7 @@ steps:
         msbuildVersion: 15.0
         platform: '$(BuildPlatform)'
         configuration: '$(BuildConfiguration)'
-        msbuildArguments: '/nowarn:VSX1000 /p:CreateAllAndroidTargets=true'
+        msbuildArguments: '/nowarn:VSX1000'
         clean: true
 
 

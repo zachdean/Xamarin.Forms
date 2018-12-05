@@ -27,12 +27,10 @@ steps:
       versionSpec: 4.8.1
       checkLatest: true
 
-
   - task: NuGetCommand@2
     displayName: 'NuGet restore'
     inputs:
       restoreSolution: Xamarin.Forms.sln
-
 
   - task: MSBuild@1
     displayName: 'Build solution Xamarin.Forms.Build.Tasks/Xamarin.Forms.Build.Tasks.csproj'
@@ -45,6 +43,7 @@ steps:
     inputs:
       solutionFile: Xamarin.Forms.sln
       configuration: '$(BuildConfiguration)'
+      runNugetRestore: true
 
 
   - task: MSBuild@1
