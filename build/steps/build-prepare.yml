@@ -67,21 +67,25 @@ steps:
                }
            }
        }
-       if($reason -eq "Schedule")
-        {
-            $tags.Add("nightly-release")
-        }
+
        #Tag this build
        #check PublicTags also add them to the tag list
        foreach($publicTag in $publicTags.Split(';'))
        {
-            if($publicTag){
-                $tags.Add($publicTag);
-            }
+           if($publicTag)
+           {
+               $tags.Add($publicTag);
+           }
+       }
+       #If is a nightly build
+       if($reason -eq "Schedule")
+       {
+            $tags.Add("nightly-release")
        }
 
        #Add tags to the VSTS Build
        foreach ($tag in $tags) {
+            #check if we need to sign
             if($tag -eq "public-release")
             {
                 $sign = 'true'
