@@ -17,9 +17,6 @@ steps:
     displayName: Provisioning iPhone Signing
     condition: eq(variables['provisioningSign'], 'true')
 
-  - bash: '$(Build.Repository.LocalPath)/Xamarin.Forms.Build/provisionator.sh $(Build.Repository.LocalPath)/build/provisioning/provisioning.csx -v'
-    displayName: Provisioning OSX
-    condition: eq(variables['provisioningOSX'], 'true')
 
   - task: NuGetToolInstaller@0
     displayName: 'Use NuGet 4.8.1'

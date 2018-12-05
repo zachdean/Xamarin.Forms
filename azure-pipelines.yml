@@ -41,7 +41,6 @@ jobs:
   pool:
     name: Hosted VS2017
   steps:
-     - checkout: none
      - template: build/steps/build-prepare.yml
 
 - job: Phase_2
