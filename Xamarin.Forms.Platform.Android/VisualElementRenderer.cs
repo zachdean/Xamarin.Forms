@@ -167,7 +167,7 @@ namespace Xamarin.Forms.Platform.Android
 
 			// when the user focuses on picker show a popup dialog
 			if (control is PickerEditText picker)
-				picker.FromFocusSearch = true;
+				picker.ShowPopupWhenFocus = true;
 
 			return control;
 		}

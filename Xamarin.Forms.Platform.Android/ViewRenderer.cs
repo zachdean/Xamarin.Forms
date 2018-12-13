@@ -261,6 +261,9 @@ namespace Xamarin.Forms.Platform.Android
 				var handler = new Handler(looper);
 				handler.Post(() =>
 				{
+					var pickerEdit = Control as PickerEditText;
+					if (pickerEdit != null)
+						pickerEdit.ShowPopupWhenFocus = true;
 					Control?.RequestFocus();
 				});
 			}

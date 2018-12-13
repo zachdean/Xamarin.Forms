@@ -17,7 +17,7 @@ namespace Xamarin.Forms.Platform.Android
 
 		System.WeakReference<IPickerRenderer> rendererRef;
 
-		internal bool FromFocusSearch;
+		internal bool ShowPopupWhenFocus;
 
 		public PickerEditText(Context context, IPickerRenderer pickerRenderer) : base(context)
 		{
@@ -32,9 +32,9 @@ namespace Xamarin.Forms.Platform.Android
 		protected override void OnFocusChanged(bool gainFocus, [GeneratedEnum] FocusSearchDirection direction, Rect previouslyFocusedRect)
 		{
 			base.OnFocusChanged(gainFocus, direction, previouslyFocusedRect);
-			if (gainFocus && FromFocusSearch)
+			if (gainFocus && ShowPopupWhenFocus)
 				CallOnClick();
-			FromFocusSearch = false;
+			ShowPopupWhenFocus = false;
 		}
 
 		void OnKeyPress(object sender, KeyEventArgs e)
