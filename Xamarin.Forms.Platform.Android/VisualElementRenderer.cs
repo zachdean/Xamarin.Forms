@@ -26,7 +26,7 @@ namespace Xamarin.Forms.Platform.Android
 		VisualElementPackager _packager;
 		PropertyChangedEventHandler _propertyChangeHandler;
 
-		readonly GestureManager _gestureManager;
+		GestureManager _gestureManager;
 
 		protected VisualElementRenderer(Context context) : base(context)
 		{
@@ -166,6 +166,10 @@ namespace Xamarin.Forms.Platform.Android
 				control = (renderer as ITabStop)?.TabStop;
 			} while (!(control?.Focusable == true || ++attempt >= maxAttempts));
 
+			// when the user focuses on picker show a popup dialog
+			if (control is IPopupTrigger popupElement)
+				popupElement.ShowPopupOnFocus = true;
+
 			return control;
 		}
 
@@ -251,6 +255,8 @@ namespace Xamarin.Forms.Platform.Android
 				SetOnClickListener(null);
 				SetOnTouchListener(null);
 
+				EffectUtilities.UnregisterEffectControlProvider(this, Element);
+
 				if (Tracker != null)
 				{
 					Tracker.Dispose();
@@ -261,6 +267,12 @@ namespace Xamarin.Forms.Platform.Android
 				{
 					_packager.Dispose();
 					_packager = null;
+				}
+
+				if (_gestureManager != null)
+				{
+					_gestureManager.Dispose();
+					_gestureManager = null;
 				}
 
 				if (ManageNativeControlLifetime)

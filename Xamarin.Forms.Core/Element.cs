@@ -313,7 +313,6 @@ namespace Xamarin.Forms
 
 		protected virtual void OnChildAdded(Element child)
 		{
-
 			child.Parent = this;
 
 			child.ApplyBindings(skipBindingContext: false, fromBindingContextChanged:true);
@@ -340,6 +339,7 @@ namespace Xamarin.Forms
 		{
 			ParentSet?.Invoke(this, EventArgs.Empty);
 			ApplyStyleSheetsOnParentSet();
+			(this as IPropertyPropagationController)?.PropagatePropertyChanged(null);
 		}
 
 		protected override void OnPropertyChanged([CallerMemberName] string propertyName = null)

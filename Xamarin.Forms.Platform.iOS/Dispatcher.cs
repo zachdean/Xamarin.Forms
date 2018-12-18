@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 #if __MOBILE__
 namespace Xamarin.Forms.Platform.iOS

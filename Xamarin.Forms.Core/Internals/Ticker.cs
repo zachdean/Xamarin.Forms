@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Linq;
 
 namespace Xamarin.Forms.Internals
 {
@@ -80,7 +79,7 @@ namespace Xamarin.Forms.Internals
 		{
 			_timeouts.RemoveAll(t => t.Item1 == handle);
 
-			if (_timeouts.Count() > 0)
+			if (_timeouts.Count > 0)
 			{
 				_enabled = false;
 				Disable();

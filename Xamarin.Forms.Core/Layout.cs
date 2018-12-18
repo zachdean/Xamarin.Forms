@@ -369,17 +369,11 @@ namespace Xamarin.Forms
 
 					if (Dispatcher != null)
 					{
-						Dispatcher.BeginInvokeOnMainThread(() =>
-						{
-							UpdateContext();
-						});
+						Dispatcher.BeginInvokeOnMainThread(UpdateContext);
 					}
 					else
 					{
-						Device.BeginInvokeOnMainThread(() => 
-						{
-							UpdateContext();
-						});
+						Device.BeginInvokeOnMainThread(UpdateContext);
 					}			
 				}
 			}
@@ -388,11 +382,10 @@ namespace Xamarin.Forms
 		internal void UpdateContext()
 		{
 			// if thread safety mattered we would need to lock this and compareexchange above
-			IList<KeyValuePair<Layout, int>> copy = s_resolutionList;
-			s_resolutionList = new List<KeyValuePair<Layout, int>>();
+			var copy = s_resolutionList.OrderBy(kvp => kvp.Value);
 			s_relayoutInProgress = false;
 
-			foreach (KeyValuePair<Layout, int> kvp in copy.OrderBy(kvp => kvp.Value))
+			foreach (KeyValuePair<Layout, int> kvp in copy)
 			{
 				Layout layout = kvp.Key;
 				double width = layout.Width, height = layout.Height;
@@ -435,8 +428,9 @@ namespace Xamarin.Forms
 
 			if (e.OldItems != null)
 			{
-				foreach (object item in e.OldItems)
+				for (int i = 0; i < e.OldItems.Count; i++)
 				{
+					object item = e.OldItems[i];
 					var v = item as View;
 					if (v == null)
 						continue;
@@ -447,8 +441,9 @@ namespace Xamarin.Forms
 
 			if (e.NewItems != null)
 			{
-				foreach (object item in e.NewItems)
+				for (int i = 0; i < e.NewItems.Count; i++)
 				{
+					object item = e.NewItems[i];
 					var v = item as View;
 					if (v == null)
 						continue;
