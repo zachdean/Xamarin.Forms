@@ -309,7 +309,7 @@ namespace Xamarin.Forms.Platform.UWP
 			catch(Exception error)
 			{
 				//This exception prevents the Main Page from being changed in a child 
-				//window or a different thread, except on the Main thread.
+				//window or a different thread, except on the Main thread. 
 				//HEX 0x8001010E 
 				if (error.HResult == -2147417842)
 					throw new InvalidOperationException("Changing the current page is only allowed if it's being called from the same UI thread." +
