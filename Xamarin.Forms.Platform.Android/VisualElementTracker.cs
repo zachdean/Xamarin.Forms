@@ -8,6 +8,7 @@ using Android.Views;
 using AView = Android.Views.View;
 using Object = Java.Lang.Object;
 using Xamarin.Forms.Internals;
+using AViewCompat = Android.Support.V4.View.ViewCompat;
 
 namespace Xamarin.Forms.Platform.Android
 {
@@ -289,32 +290,16 @@ namespace Xamarin.Forms.Platform.Android
 
 			bool shouldClip = layout.IsClippedToBounds;
 
-			// setClipBounds is only available in API 18 +
-			if ((int)Build.VERSION.SdkInt >= 18)
+			if (!(_renderer.View is ViewGroup viewGroup))
 			{
-				if (!(_renderer.View is ViewGroup viewGroup))
-				{
-					return;
-				}
-
-				// Forms layouts should not impose clipping on their children
-				viewGroup.SetClipChildren(false);
-
-				// But if IsClippedToBounds is true, they _should_ enforce clipping at their own edges
-				viewGroup.ClipBounds = shouldClip ? new Rect(0, 0, viewGroup.Width, viewGroup.Height) : null;
+				return;
 			}
-			else
-			{
-				// For everything in 17 and below, use the setClipChildren method
-				if (!(_renderer.View.Parent is ViewGroup parent))
-					return;
 
-				if ((int)Build.VERSION.SdkInt >= 18 && parent.ClipChildren == shouldClip)
-					return;
+			// Forms layouts should not impose clipping on their children
+			viewGroup.SetClipChildren(false);
 
-				parent.SetClipChildren(shouldClip);
-				parent.Invalidate();
-			}
+			// But if IsClippedToBounds is true, they _should_ enforce clipping at their own edges
+			AViewCompat.SetClipBounds(viewGroup, shouldClip ? new Rect(0, 0, viewGroup.Width, viewGroup.Height) : null);
 		}
 
 		void UpdateIsVisible()
