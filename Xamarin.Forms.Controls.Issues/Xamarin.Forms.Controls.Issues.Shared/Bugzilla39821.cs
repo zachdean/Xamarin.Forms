@@ -25,7 +25,7 @@ namespace Xamarin.Forms.Controls.Issues
 
 			var instructions = new Label { Text = "Click the 'Animate' button to run animation on the box. If the animations complete without crashing, this test has passed." };
 
-			var success = new Label { Text = "Success", IsVisible = false };
+			var success = new Label { Text = "Fail"};
 
 			var button = new Button() { Text = "Animate" };
 
@@ -59,7 +59,7 @@ namespace Xamarin.Forms.Controls.Issues
 					Task.Run(async () => await Cancel(box))
 					);
 
-				success.IsVisible = true;
+				success.Text = "Success";
 			};
 		}
 
