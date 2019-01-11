@@ -10,11 +10,6 @@ using OpenQA.Selenium.Interactions.Internal;
 using OpenQA.Selenium.Remote;
 using Xamarin.Forms.Xaml;
 using Xamarin.UITest;
-using OpenQA.Selenium.Appium;
-using System.Collections.Generic;
-using OpenQA.Selenium.Interactions;
-using OpenQA.Selenium.Appium.Windows.Enums;
-using System.Windows.Input;
 
 namespace Xamarin.Forms.Core.UITests
 {
@@ -27,11 +22,11 @@ namespace Xamarin.Forms.Core.UITests
 		{
 			if (Session == null)
 			{
-				AppiumOptions options = new AppiumOptions();
-				options.AddAdditionalCapability("app", "0d4424f6-1e29-4476-ac00-ba22c3789cb6_ph1m9x8skttmg!App");
-				Session = new WindowsDriver<WindowsElement>(new Uri(WindowsApplicationDriverUrl), options);
+				DesiredCapabilities appCapabilities = new DesiredCapabilities();
+				appCapabilities.SetCapability("app", "0d4424f6-1e29-4476-ac00-ba22c3789cb6_ph1m9x8skttmg!App");
+				Session = new WindowsDriver<WindowsElement>(new Uri(WindowsApplicationDriverUrl), appCapabilities);
 				Assert.IsNotNull(Session);
-				Session.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(1);
+				Session.Manage().Timeouts().ImplicitlyWait(TimeSpan.FromSeconds(1));
 				Reset();
 			}
 
@@ -50,9 +45,7 @@ namespace Xamarin.Forms.Core.UITests
 		{
 			try
 			{
-				new Actions(Session)
-					.SendKeys(Keys.Escape)
-					.Perform();
+				Session?.Keyboard?.PressKey(Keys.Escape);
 			}
 			catch (Exception ex)
 			{

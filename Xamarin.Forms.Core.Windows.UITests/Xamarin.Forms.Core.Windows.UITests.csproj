@@ -47,7 +47,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Appium.WebDriver" Version="4.0.0.4-beta" />
+    <PackageReference Include="Appium.WebDriver" Version="3.0.0.2" />
     <PackageReference Include="Castle.Core" Version="4.3.1" />
     <PackageReference Include="DotNetSeleniumExtras.PageObjects" Version="3.11.0" />
     <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
@@ -55,8 +55,8 @@
     <PackageReference Include="NUnitTestAdapter">
       <Version>2.1.1</Version>
     </PackageReference>
-    <PackageReference Include="Selenium.Support" Version="3.14.0" />
-    <PackageReference Include="Selenium.WebDriver" Version="3.14.0" />
+    <PackageReference Include="Selenium.Support" Version="3.0.1.0" />
+    <PackageReference Include="Selenium.WebDriver" Version="3.0.1.0" />
     <PackageReference Include="Xam.Plugin.DeviceInfo" Version="3.0.2" />
     <PackageReference Include="Xamarin.UITest" Version="2.2.7" />
   </ItemGroup>

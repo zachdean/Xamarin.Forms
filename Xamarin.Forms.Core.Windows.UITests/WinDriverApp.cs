@@ -283,7 +283,7 @@ namespace Xamarin.Forms.Core.UITests
 			string filename = $"{title}.png";
 
 			Screenshot screenshot = _session.GetScreenshot();
-			screenshot.SaveAsFile(filename, ScreenshotImageFormat.Png);
+			screenshot.SaveAsFile(filename, ImageFormat.Png);
 			return new FileInfo(filename);
 		}
 
