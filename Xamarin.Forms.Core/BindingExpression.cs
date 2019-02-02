@@ -639,7 +639,7 @@ namespace Xamarin.Forms
 							value = LastGetter.Invoke(value, Arguments);
 						}
 						catch (TargetInvocationException ex) {
-							if (ex.InnerException is KeyNotFoundException || ex.InnerException is IndexOutOfRangeException) {
+							if (ex.InnerException is KeyNotFoundException || ex.InnerException is IndexOutOfRangeException || ex.InnerException is ArgumentOutOfRangeException) {
 								value = null;
 								return false;
 							}
