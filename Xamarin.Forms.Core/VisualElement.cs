@@ -53,6 +53,8 @@ namespace Xamarin.Forms
 
 		internal static readonly BindableProperty TransformProperty = BindableProperty.Create("Transform", typeof(string), typeof(VisualElement), null, propertyChanged: OnTransformChanged);
 
+		public static readonly BindableProperty BaselineProperty = BindableProperty.Create(nameof(Baseline), typeof(double), typeof(VisualElement), double.NaN);
+
 		public static readonly BindableProperty VisualProperty =
 			BindableProperty.Create(nameof(Visual), typeof(IVisual), typeof(VisualElement), Forms.VisualMarker.MatchParent,
 									validateValue: (b, v) => v != null, propertyChanged: OnVisualChanged);
@@ -297,6 +299,18 @@ namespace Xamarin.Forms
 				BatchCommit();
 			}
 		}
+
+		public double Baseline
+		{
+			get { return (double)GetValue(BaselineProperty); }
+			set { SetValue(BaselineProperty, value); }
+		}
+
+		public double RelativeBaseline
+		{
+			get;
+			set;
+		} = double.NaN;
 
 		public double Height
 		{

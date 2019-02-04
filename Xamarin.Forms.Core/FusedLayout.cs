@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Text;
 
-namespace Xamarin.Forms.Core
+namespace Xamarin.Forms
 {
 	public class FusedLayout : Layout<View>, IElementConfiguration<FusedLayout>
 	{
@@ -189,7 +189,7 @@ namespace Xamarin.Forms.Core
 
 
 		static internal List<FuseProperty> yFuses =
-			new List <FuseProperty> { FuseProperty.Height, FuseProperty.Y, FuseProperty.Center, FuseProperty.CenterY, FuseProperty.Top, FuseProperty.Bottom, FuseProperty.Size };
+			new List <FuseProperty> { FuseProperty.Height, FuseProperty.Y, FuseProperty.Center, FuseProperty.CenterY, FuseProperty.Top, FuseProperty.Bottom, FuseProperty.Size, FuseProperty.Baseline };
 
 
 
@@ -266,8 +266,6 @@ namespace Xamarin.Forms.Core
 
 					return sr;
 				};
-
-
 				
 				if (xAxisFuses.Count == 0)
 				{
@@ -320,6 +318,14 @@ namespace Xamarin.Forms.Core
 						case FuseProperty.Height:
 						case FuseProperty.Size:
 							solveView.Y = 0;
+							break;
+						case FuseProperty.Baseline:
+							sizeRequest = doMeasure(sizeRequest);
+							solveView.Height = sizeRequest.Height;
+
+							//if(double.IsNaN(solveView.Baseline))
+							//	solveView.Baseline = childView.Baseline;
+
 							break;
 						case FuseProperty.Y:
 						case FuseProperty.Top:
@@ -379,7 +385,14 @@ namespace Xamarin.Forms.Core
 
 
 			public double Y { get; set; } 
-			public double Height { get; set; } 
+			public double Height
+			{
+				get;
+				set;
+			}
+
+			public double Baseline { get; set; }
+			
 			public double Top { get; set; } 
 			public double Bottom { get; set; } 
 
@@ -402,6 +415,7 @@ namespace Xamarin.Forms.Core
 				Height  = double.NaN;
 				Top  = double.NaN;
 				Bottom  = double.NaN;
+				Baseline = double.NaN;
 
 				Center  = NullPoint;
 				CenterX  = double.NaN;
@@ -439,6 +453,8 @@ namespace Xamarin.Forms.Core
 						return Center == NullPoint;
 					case FuseProperty.Size:
 						return Size == NullSize;
+					case FuseProperty.Baseline:
+						return double.IsNaN(Baseline);
 					default:
 						throw new ArgumentException($"{fuseProperty}");
 				}
@@ -455,6 +471,9 @@ namespace Xamarin.Forms.Core
 						break;
 					case FuseProperty.Bottom:
 						Bottom = ((IFusion<double>)fuseTarget.Fuse).GetPropertySolve();
+						break;
+					case FuseProperty.Baseline:
+						Baseline = ((IFusion<double>)fuseTarget.Fuse).GetPropertySolve();
 						break;
 					case FuseProperty.CenterX:
 						CenterX = ((IFusion<double>)fuseTarget.Fuse).GetPropertySolve();
@@ -653,6 +672,22 @@ namespace Xamarin.Forms.Core
 					somethingNewSet = true;
 				}
 
+
+				if (!double.IsNaN(Baseline) && double.IsNaN(Y) && !double.IsNaN(Height))
+				{
+					TargetElement.Baseline = Baseline;
+					Y = (Baseline) - (Height / 2);
+					somethingNewSet = true;
+					TargetElement.RelativeBaseline = TargetElement.Baseline - Y;
+				}
+
+				if (double.IsNaN(Baseline) && !double.IsNaN(Y) && !double.IsNaN(TargetElement.RelativeBaseline) && !Fuses.HasFuse(FuseProperty.Baseline))
+				{
+					Baseline = TargetElement.RelativeBaseline + Y;
+					TargetElement.Baseline = Baseline;
+					somethingNewSet = true;
+				}
+
 				return somethingNewSet;
 			}
 
@@ -690,7 +725,20 @@ namespace Xamarin.Forms.Core
 
 	public class FuseCollection : List<IFusionSolve>
 	{
-
+		public bool HasFuse(FuseProperty property)
+		{
+			FuseCollection list = this;
+			for (var i = 0; i < list.Count; i++)
+			{
+				List<FuseProperty> list1 = list[i].GetYFuseProperties();
+				for (var i1 = 0; i1 < list1.Count; i1++)
+				{
+					if (list1[i1] == property)
+						return true;
+				}
+			}
+			return false;
+		}
 	}
 
 
@@ -715,6 +763,7 @@ namespace Xamarin.Forms.Core
 		Center,
 		CenterX,
 		CenterY,
-		Size
+		Size,
+		Baseline
 	}
 }

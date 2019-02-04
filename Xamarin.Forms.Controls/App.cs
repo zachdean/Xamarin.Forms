@@ -106,6 +106,39 @@ namespace Xamarin.Forms.Controls
 
 		public Page CreateDefaultMainPage()
 		{
+			FusedLayout fusedLayout = 
+				new FusedLayout();
+
+
+			Label labelone = new Label() { Text = "baseline", HeightRequest=100, BackgroundColor = Color.Green, FontSize = 24 };
+			Label labeltwo = new Label() { Text = "aligned", HeightRequest = 200, FontSize = 36,BackgroundColor = Color.Red };
+
+
+			Label labelthree = new Label() { Text = "Y aligned", HeightRequest = 150, FontSize = 30, BackgroundColor = Color.Red, VerticalTextAlignment = TextAlignment.End };
+
+
+			FusedLayout.AddFusion(labelone, FuseProperty.Y, new Fusion(fusedLayout).CenterY);
+			FusedLayout.AddFusion(labelone, FuseProperty.X, new Fusion(fusedLayout).X);
+
+
+			FusedLayout.AddFusion(labeltwo, FuseProperty.X, new Fusion(labelone).Right);
+			FusedLayout.AddFusion(labeltwo, FuseProperty.Baseline, new Fusion(labelone).Baseline);
+
+
+			FusedLayout.AddFusion(labelthree, FuseProperty.X, new Fusion(labeltwo).Right);
+			FusedLayout.AddFusion(labelthree, FuseProperty.Bottom, new Fusion(labeltwo).Baseline);
+
+
+			fusedLayout.Children.Add(labelone);
+			fusedLayout.Children.Add(labeltwo);
+			fusedLayout.Children.Add(labelthree);
+
+			return new ContentPage()
+			{
+				Content = fusedLayout
+			};
+
+			/*
 			var layout = new StackLayout { BackgroundColor = Color.Red };
 			layout.Children.Add(new Label { Text = "This is master Page" });
 			var master = new ContentPage { Title = "Master", Content = layout, BackgroundColor = Color.SkyBlue, Icon ="menuIcon" };
@@ -122,10 +155,11 @@ namespace Xamarin.Forms.Controls
 			mdp.Master.Icon.SetAutomationPropertiesHelpText("This as MDP icon");
 			mdp.Master.Icon.SetAutomationPropertiesName("MDPICON");
 			return mdp;
+			*/
 
 			//Device.SetFlags(new[] { "Shell_Experimental" });
-            //return new XamStore.StoreShell();
-        }
+			//return new XamStore.StoreShell();
+		}
 
         protected override void OnAppLinkRequestReceived(Uri uri)
 		{

@@ -8,6 +8,7 @@ using Android.Text;
 using Android.Util;
 using Android.Views;
 using AView = Android.Views.View;
+using ATextViewCompat = Android.Support.V4.Widget.TextViewCompat;
 
 namespace Xamarin.Forms.Platform.Android.FastRenderers
 {
@@ -120,13 +121,38 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 			_lastConstraintHeight = heightConstraint;
 			_lastSizeRequest = result;
 
+			SetBaseline();
 			return result;
 		}
+
+		protected override void OnMeasure(int widthMeasureSpec, int heightMeasureSpec)
+		{
+			base.OnMeasure(widthMeasureSpec, heightMeasureSpec);
+			SetBaseline();
+		}
+
+		double GetBaseline() => Context.FromPixels(ATextViewCompat.GetFirstBaselineToTopHeight(this));
+
+		void SetBaseline()
+		{
+			if (double.IsNaN(Element.RelativeBaseline))
+			{
+				if (GetBaseline() != -1)
+					Element.RelativeBaseline = GetBaseline();
+			}
+		}
+
 
 		protected override void OnLayout(bool changed, int left, int top, int right, int bottom)
 		{
 			base.OnLayout(changed, left, top, right, bottom);
 			this.RecalculateSpanPositions(Element, _spannableString, new SizeRequest(new Size(right - left, bottom - top)));
+
+			if (!double.IsNaN(Element.RelativeBaseline) &&
+				(int)Context.ToPixels(Element.RelativeBaseline) != GetBaseline())
+			{
+				ATextViewCompat.SetFirstBaselineToTopHeight(this, (int)Context.ToPixels(Element.RelativeBaseline));
+			}
 		}
 
 		void IVisualElementRenderer.SetElement(VisualElement element)

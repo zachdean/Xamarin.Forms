@@ -8,7 +8,7 @@ using Android.Widget;
 using System;
 using System.ComponentModel;
 using Xamarin.Forms.PlatformConfiguration.TizenSpecific;
-
+using ATextViewCompat = Android.Support.V4.Widget.TextViewCompat;
 namespace Xamarin.Forms.Platform.Android
 {
 	public class LabelRenderer : ViewRenderer<Label, TextView>
@@ -87,14 +87,42 @@ namespace Xamarin.Forms.Platform.Android
 			_lastConstraintWidth = widthConstraint;
 			_lastConstraintHeight = heightConstraint;
 			_lastSizeRequest = result;
+			SetBaseline();
 
 			return result;
 		}
 
+		protected override void OnMeasure(int widthMeasureSpec, int heightMeasureSpec)
+		{
+			base.OnMeasure(widthMeasureSpec, heightMeasureSpec);
+			SetBaseline();
+		}
+
+		void SetBaseline()
+		{
+			if (double.IsNaN(Element.RelativeBaseline))
+			{
+				//hacky way to set baseline
+				if (Control.Baseline == -1 && Control.MeasuredHeight > 0)
+					OnLayout(true, 0, 0, Control.MeasuredWidth, Control.MeasuredHeight);
+
+				if (Control.Baseline != -1)
+				{
+					Element.RelativeBaseline = Context.FromPixels(ATextViewCompat.GetFirstBaselineToTopHeight(Control));
+				}
+			}
+
+		}
 		protected override void OnLayout(bool changed, int l, int t, int r, int b)
 		{
 			base.OnLayout(changed, l, t, r, b);
 			Control.RecalculateSpanPositions(Element, _spannableString, new SizeRequest(new Size(r - l, b - t)));
+
+			if (!double.IsNaN(Element.RelativeBaseline) &&
+				(int)Context.ToPixels(Element.RelativeBaseline) != Control.Baseline)
+			{
+				ATextViewCompat.SetFirstBaselineToTopHeight(Control, (int)Context.ToPixels(Element.RelativeBaseline));
+			}
 		}
 
 		protected override TextView CreateNativeControl()

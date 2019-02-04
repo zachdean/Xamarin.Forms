@@ -18,7 +18,6 @@ namespace Xamarin.Forms.Core.UnitTests
 		{
 			FusedLayout fusedLayout = new FusedLayout()
 			{
-				Platform = new UnitPlatform(),
 				IsPlatformEnabled = true
 			};
 
@@ -63,7 +62,7 @@ namespace Xamarin.Forms.Core.UnitTests
 		{
 			FusedLayout fusedLayout = new FusedLayout()
 			{
-				Platform = new UnitPlatform(),
+				
 				IsPlatformEnabled = true
 			};
 
@@ -95,7 +94,7 @@ namespace Xamarin.Forms.Core.UnitTests
 		{
 			FusedLayout fusedLayout = new FusedLayout()
 			{
-				Platform = new UnitPlatform(),
+				
 				IsPlatformEnabled = true
 			};
 
@@ -154,7 +153,7 @@ namespace Xamarin.Forms.Core.UnitTests
 		{
 			FusedLayout fusedLayout = new FusedLayout()
 			{
-				Platform = new UnitPlatform(),
+				
 				IsPlatformEnabled = true
 			};
 
@@ -187,7 +186,7 @@ namespace Xamarin.Forms.Core.UnitTests
 		{
 			FusedLayout fusedLayout = new FusedLayout()
 			{
-				Platform = new UnitPlatform(),
+				
 				IsPlatformEnabled = true
 			};
 
@@ -284,7 +283,7 @@ namespace Xamarin.Forms.Core.UnitTests
 		{
 			FusedLayout fusedLayout = new FusedLayout()
 			{
-				Platform = new UnitPlatform(),
+				
 				IsPlatformEnabled = true
 			};
 
@@ -328,7 +327,7 @@ namespace Xamarin.Forms.Core.UnitTests
 		{
 			FusedLayout fusedLayout = new FusedLayout()
 			{
-				Platform = new UnitPlatform(),
+				
 				IsPlatformEnabled = true
 			};
 
@@ -369,7 +368,7 @@ namespace Xamarin.Forms.Core.UnitTests
 		{
 			FusedLayout fusedLayout = new FusedLayout()
 			{
-				Platform = new UnitPlatform(),
+				
 				IsPlatformEnabled = true
 			};
 
@@ -425,7 +424,7 @@ namespace Xamarin.Forms.Core.UnitTests
 		{
 			FusedLayout fusedLayout = new FusedLayout()
 			{
-				Platform = new UnitPlatform(),
+				
 				IsPlatformEnabled = true
 			};
 
@@ -477,7 +476,7 @@ namespace Xamarin.Forms.Core.UnitTests
 		{
 			FusedLayout fusedLayout = new FusedLayout()
 			{
-				Platform = new UnitPlatform(),
+				
 				IsPlatformEnabled = true
 			};
 
@@ -533,7 +532,7 @@ namespace Xamarin.Forms.Core.UnitTests
 		{
 			FusedLayout fusedLayout = new FusedLayout()
 			{
-				Platform = new UnitPlatform(),
+				
 				IsPlatformEnabled = true
 			};
 
@@ -612,7 +611,7 @@ namespace Xamarin.Forms.Core.UnitTests
 		{
 			FusedLayout fusedLayout = new FusedLayout()
 			{
-				Platform = new UnitPlatform(),
+				
 				IsPlatformEnabled = true
 			};
 
@@ -636,7 +635,7 @@ namespace Xamarin.Forms.Core.UnitTests
 		{
 			FusedLayout fusedLayout = new FusedLayout()
 			{
-				Platform = new UnitPlatform(),
+				
 				IsPlatformEnabled = true
 			};
 
@@ -661,7 +660,7 @@ namespace Xamarin.Forms.Core.UnitTests
 		{
 			FusedLayout fusedLayout = new FusedLayout()
 			{
-				Platform = new UnitPlatform(),
+				
 				IsPlatformEnabled = true
 			};
 
@@ -685,7 +684,7 @@ namespace Xamarin.Forms.Core.UnitTests
 		{
 			FusedLayout fusedLayout = new FusedLayout()
 			{
-				Platform = new UnitPlatform(),
+				
 				IsPlatformEnabled = true
 			};
 
@@ -713,7 +712,7 @@ namespace Xamarin.Forms.Core.UnitTests
 		{
 			FusedLayout fusedLayout = new FusedLayout()
 			{
-				Platform = new UnitPlatform(),
+				
 				IsPlatformEnabled = true
 			};
 
@@ -737,7 +736,7 @@ namespace Xamarin.Forms.Core.UnitTests
 		{
 			FusedLayout fusedLayout = new FusedLayout()
 			{
-				Platform = new UnitPlatform(),
+				
 				IsPlatformEnabled = true
 			};
 

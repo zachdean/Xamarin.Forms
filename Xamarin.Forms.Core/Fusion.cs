@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using Xamarin.Forms.Core;
 
 namespace Xamarin.Forms
 {
@@ -44,7 +43,7 @@ namespace Xamarin.Forms
 			return This.Offset(scalar, FuseOperator.Add);
 		}
 
-		public static ScalarOperationFusion Add(this ScalarPropertyFusion This,  double value)
+		public static ScalarOperationFusion Add(this ScalarPropertyFusion This, double value)
 		{
 			return This.Offset(value, FuseOperator.Add);
 		}
@@ -67,10 +66,10 @@ var sizeFuse = new Fusion (view2).Measure().Add (20, 20);(
 		FusedLayout.AddFusion(view2, FuseProperty.Center, new Fuse (mainLayout).Center.Add (20, 0));
  */
 	public abstract class PointFusionBase : FusionBase<Point>
-	{ 
-		protected PointFusionBase(FusionBase  parent) : base(parent)
+	{
+		protected PointFusionBase(FusionBase parent) : base(parent)
 		{
-			
+
 		}
 
 		public PointFusionBase Offset(Point point, FuseOperator operation)
@@ -136,7 +135,7 @@ var sizeFuse = new Fusion (view2).Measure().Add (20, 20);(
 		private ScalarFusionBase FusionScalarValue { get; }
 
 
-		private PointOperationFusion(FusionBase parent, FuseOperator operation) 
+		private PointOperationFusion(FusionBase parent, FuseOperator operation)
 			: base(parent)
 		{
 			SourceElement = parent.SourceElement;
@@ -145,7 +144,7 @@ var sizeFuse = new Fusion (view2).Measure().Add (20, 20);(
 		}
 
 
-		public PointOperationFusion(FusionBase parent, FuseOperator operation, Point value) 
+		public PointOperationFusion(FusionBase parent, FuseOperator operation, Point value)
 			: this(parent, operation)
 		{
 			PointValue = value;
@@ -166,7 +165,7 @@ var sizeFuse = new Fusion (view2).Measure().Add (20, 20);(
 
 		public override Point GetPropertySolve()
 		{
-			if(!SourceElementVisible)
+			if (!SourceElementVisible)
 			{
 				return Point.Zero;
 			}
@@ -176,14 +175,14 @@ var sizeFuse = new Fusion (view2).Measure().Add (20, 20);(
 				return parentSolve;
 
 			Point value;
-			if(FusionPointValue != null)
+			if (FusionPointValue != null)
 			{
 				value = FusionPointValue.GetPropertySolve();
 			}
-			else if(FusionScalarValue != null)
+			else if (FusionScalarValue != null)
 			{
 				var scalarResult = FusionScalarValue.GetPropertySolve();
-				if(!double.IsNaN(scalarResult))
+				if (!double.IsNaN(scalarResult))
 				{
 					value = new Point(scalarResult, scalarResult);
 				}
@@ -197,12 +196,12 @@ var sizeFuse = new Fusion (view2).Measure().Add (20, 20);(
 				value = PointValue;
 			}
 
-			if(value == FusedLayout.SolveView.NullPoint)
+			if (value == FusedLayout.SolveView.NullPoint)
 			{
 				return FusedLayout.SolveView.NullPoint;
 			}
 
-			switch(Operation)
+			switch (Operation)
 			{
 				case FuseOperator.Add:
 					return new Point(parentSolve.X + value.X, parentSolve.Y + value.Y);
@@ -214,18 +213,19 @@ var sizeFuse = new Fusion (view2).Measure().Add (20, 20);(
 		}
 	}
 
-	
+
 
 	public class CenterFusion : PointFusionBase
 	{
 		public CenterFusion(FusionBase parent) : base(parent)
 		{
 			SourceElement = parent.SourceElement;
-		} 
+		}
 
 		public override Point GetPropertySolve()
 		{
-			if (!SourceElementVisible) { return Point.Zero; }
+			if (!SourceElementVisible)
+			{ return Point.Zero; }
 
 			return FusedLayout.GetSolveView(SourceElement).Center;
 		}
@@ -270,7 +270,8 @@ var sizeFuse = new Fusion (view2).Measure().Add (20, 20);(
 
 		public override Size GetPropertySolve()
 		{
-			if (!SourceElementVisible) { return Size.Zero; }
+			if (!SourceElementVisible)
+			{ return Size.Zero; }
 
 			var parentSolve = (Size)ParentFusion.GetPropertySolve();
 
@@ -388,10 +389,11 @@ var sizeFuse = new Fusion (view2).Measure().Add (20, 20);(
 
 		public override Size GetPropertySolve()
 		{
-			if (!SourceElementVisible) { return Size.Zero; }
+			if (!SourceElementVisible)
+			{ return Size.Zero; }
 			return FusedLayout.GetSolveView(SourceElement).Size;
 		}
-	} 
+	}
 
 	public abstract class FusionBase : BindableObject
 	{
@@ -408,7 +410,7 @@ var sizeFuse = new Fusion (view2).Measure().Add (20, 20);(
 			this.ParentFusion = parent;
 			SourceProperty = parent?.SourceProperty ?? FuseProperty.None;
 		}
-		 
+
 		public FusionBase ParentFusion
 		{
 			get;
@@ -444,7 +446,7 @@ var sizeFuse = new Fusion (view2).Measure().Add (20, 20);(
 
 
 
-		
+
 	}
 
 	public interface IFusion<T>
@@ -474,7 +476,7 @@ var sizeFuse = new Fusion (view2).Measure().Add (20, 20);(
 	{
 		Func<double> Value { get; }
 		public ScalarFunctionFusion(FusionBase parent, Func<double> value) : base(parent)
-		{ 
+		{
 			Value = value;
 		}
 
@@ -508,7 +510,7 @@ var sizeFuse = new Fusion (view2).Measure().Add (20, 20);(
 			_operation = operation;
 		}
 
-		public ScalarOperationFusion(FusionBase parent, FuseOperator operation, double scalarValue) : 
+		public ScalarOperationFusion(FusionBase parent, FuseOperator operation, double scalarValue) :
 			this(parent, operation)
 		{
 			_scalarValue = scalarValue;
@@ -519,7 +521,7 @@ var sizeFuse = new Fusion (view2).Measure().Add (20, 20);(
 		{
 			_fusionValue = fusionValue;
 		}
-		 
+
 
 		public override double GetPropertySolve()
 		{
@@ -528,7 +530,7 @@ var sizeFuse = new Fusion (view2).Measure().Add (20, 20);(
 
 			var returnValue = double.NaN;
 
-			if(ParentFusion != null)
+			if (ParentFusion != null)
 			{
 				returnValue = ParentFusion.GetPropertySolve();
 			}
@@ -536,12 +538,14 @@ var sizeFuse = new Fusion (view2).Measure().Add (20, 20);(
 			{
 				returnValue = _scalarValue;
 			}
-			
-			if (double.IsNaN(returnValue)) { return double.NaN; }
-			if (_operation == FuseOperator.None) { return returnValue; }
+
+			if (double.IsNaN(returnValue))
+			{ return double.NaN; }
+			if (_operation == FuseOperator.None)
+			{ return returnValue; }
 
 			double value;
-			if(_fusionValue != null)
+			if (_fusionValue != null)
 			{
 				value = _fusionValue.GetPropertySolve();
 			}
@@ -550,7 +554,8 @@ var sizeFuse = new Fusion (view2).Measure().Add (20, 20);(
 				value = _scalarValue;
 			}
 
-			if (double.IsNaN(value)) { return double.NaN; }
+			if (double.IsNaN(value))
+			{ return double.NaN; }
 
 
 			switch (_operation)
@@ -598,21 +603,22 @@ var sizeFuse = new Fusion (view2).Measure().Add (20, 20);(
 	{
 		internal FusionRootView(VisualElement sourceElement) : base(sourceElement)
 		{
-			
+
 		}
 	}
 
 	public class Fusion : BindableObject
 	{
 		FusionRootView _rootView;
-		public Fusion(VisualElement sourceElement)  
+		public Fusion(VisualElement sourceElement)
 		{
 			_rootView = new FusionRootView(sourceElement);
 		}
 
-		public CenterFusion Center  => new CenterFusion(_rootView);
+		public CenterFusion Center => new CenterFusion(_rootView);
 		public ScalarPropertyFusion CenterX => new ScalarPropertyFusion(_rootView, FuseProperty.CenterX);
 		public ScalarPropertyFusion CenterY => new ScalarPropertyFusion(_rootView, FuseProperty.CenterY);
+		public ScalarPropertyFusion Baseline => new ScalarPropertyFusion(_rootView, FuseProperty.Baseline);
 
 		public SizeFusion Size => new SizeFusion(_rootView);
 		public ScalarPropertyFusion Right => new ScalarPropertyFusion(_rootView, FuseProperty.Right);
@@ -631,53 +637,31 @@ var sizeFuse = new Fusion (view2).Measure().Add (20, 20);(
 			switch (property)
 			{
 				case FuseProperty.X:
-					{
-						return dependentSourceSolve.X;
-					}
+					return dependentSourceSolve.X;
 				case FuseProperty.Y:
-					{
-						return dependentSourceSolve.Y;
-					}
+					return dependentSourceSolve.Y;
 				case FuseProperty.Height:
-					{
-						return dependentSourceSolve.Height;
-					}
+					return dependentSourceSolve.Height;
 				case FuseProperty.Width:
-					{
-						return dependentSourceSolve.Width;
-					}
+					return dependentSourceSolve.Width;
 				case FuseProperty.Right:
-					{
-						return dependentSourceSolve.Right;
-					}
+					return dependentSourceSolve.Right;
 				case FuseProperty.Bottom:
-					{
-						return dependentSourceSolve.Bottom;
-					}
+					return dependentSourceSolve.Bottom;
 				case FuseProperty.CenterX:
-					{
-						return dependentSourceSolve.CenterX;
-					}
+					return dependentSourceSolve.CenterX;
 				case FuseProperty.CenterY:
-					{
-						return dependentSourceSolve.CenterY;
-					}
+					return dependentSourceSolve.CenterY;
 				case FuseProperty.Left:
-					{
-						return dependentSourceSolve.Left;
-					}
+					return dependentSourceSolve.Left;
 				case FuseProperty.Top:
-					{
-						return dependentSourceSolve.Top;
-					}
+					return dependentSourceSolve.Top;
 				case FuseProperty.Center:
-					{
-						return dependentSourceSolve.Center;
-					}
+					return dependentSourceSolve.Center;
 				case FuseProperty.Size:
-					{
-						return dependentSourceSolve.Size;
-					}
+					return dependentSourceSolve.Size;
+				case FuseProperty.Baseline:
+					return dependentSourceSolve.Baseline;
 			}
 
 			throw new ArgumentException($"Invalid SourceProperty: {property}");
@@ -692,7 +676,7 @@ var sizeFuse = new Fusion (view2).Measure().Add (20, 20);(
 
 		public bool IsActive => true;
 
-		public View TargetView  { get; }
+		public View TargetView { get; }
 
 		public ConditionalTargetWrapperSet(View targetView)
 		{
@@ -743,18 +727,18 @@ var sizeFuse = new Fusion (view2).Measure().Add (20, 20);(
 		public bool SolveTargetProperty()
 		{
 			bool propertySolve = false;
-			for(int i = 0; i < ConditionalWrappers.Count; i++)
+			for (int i = 0; i < ConditionalWrappers.Count; i++)
 			{
 				var element = ConditionalWrappers[i];
-				if(element.Condition())
+				if (element.Condition())
 				{
-					for(int j = 0; j < element.Wrappers.Count; j++)
+					for (int j = 0; j < element.Wrappers.Count; j++)
 					{
 						// Only return true if all applicable solves return true
 						propertySolve = propertySolve || element.Wrappers[j].SolveTargetProperty();
 					}
 
-					if(element.StopOnMatch)
+					if (element.StopOnMatch)
 					{
 						break;
 					}
@@ -766,7 +750,7 @@ var sizeFuse = new Fusion (view2).Measure().Add (20, 20);(
 
 		internal ConditionalTargetWrapper AddConditionalSet(Func<bool> condition)
 		{
-			var returnValue =  new ConditionalTargetWrapper(TargetView, condition);
+			var returnValue = new ConditionalTargetWrapper(TargetView, condition);
 			ConditionalWrappers.Add(returnValue);
 			return returnValue;
 		}
@@ -778,7 +762,7 @@ var sizeFuse = new Fusion (view2).Measure().Add (20, 20);(
 		public bool SignalChange { get; set; } //BP
 		public bool IsActive => Condition();
 
-		public View TargetView  { get;   }
+		public View TargetView { get; }
 
 		/// <summary>
 		/// parent, me, fusedlayout
@@ -789,7 +773,7 @@ var sizeFuse = new Fusion (view2).Measure().Add (20, 20);(
 
 
 		internal ConditionalTargetWrapper(View targetView, Func<bool> condition)
-		{			
+		{
 			Condition = condition;
 			TargetView = targetView;
 			Wrappers = new List<IFusionSolve>();
@@ -894,7 +878,7 @@ var sizeFuse = new Fusion (view2).Measure().Add (20, 20);(
 	public interface IFusionSolve
 	{
 		View TargetView { get; }
-		bool IsActive { get;  }
+		bool IsActive { get; }
 		bool SolveTargetProperty();
 		List<FuseProperty> GetXFuseProperties();
 		List<FuseProperty> GetYFuseProperties();
