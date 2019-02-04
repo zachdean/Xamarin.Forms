@@ -111,6 +111,7 @@ namespace Xamarin.Forms.Platform.Android
 		{
 			Picker model = Element;
 
+			
 			var picker = new NumberPicker(Context);
 			if (model.Items != null && model.Items.Any())
 			{
