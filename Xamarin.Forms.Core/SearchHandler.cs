@@ -327,7 +327,7 @@ namespace Xamarin.Forms
 			if (newValue == null)
 				self.ListProxy = null;
 			else
-				self.ListProxy = new ListProxy((IEnumerable)newValue);
+				self.ListProxy = new ListProxy(bindable, (IEnumerable)newValue);
 		}
 
 		static void OnQueryChanged(BindableObject bindable, object oldValue, object newValue)
