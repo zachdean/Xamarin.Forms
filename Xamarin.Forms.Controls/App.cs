@@ -114,7 +114,7 @@ namespace Xamarin.Forms.Controls
 			Label labeltwo = new Label() { Text = "aligned", HeightRequest = 200, FontSize = 36,BackgroundColor = Color.Red };
 
 
-			Label labelthree = new Label() { Text = "Y aligned", HeightRequest = 150, FontSize = 30, BackgroundColor = Color.Red, VerticalTextAlignment = TextAlignment.End };
+			Label labelthree = new Label() { Text = "Bottom of view aligned", HeightRequest = 150, FontSize = 30, BackgroundColor = Color.Red, VerticalTextAlignment = TextAlignment.End };
 
 
 			FusedLayout.AddFusion(labelone, FuseProperty.Y, new Fusion(fusedLayout).CenterY);
