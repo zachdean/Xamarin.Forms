@@ -251,9 +251,14 @@ namespace Xamarin.Forms.Internals
 
 		public static Registrar<IRegisterable> Registered { get; internal set; }
 
+
 		public static void RegisterAll(Type[] attrTypes)
 		{
-			Assembly[] assemblies = Device.GetAssemblies();
+			Profile.Push();
+
+			Assembly[] assemblies;
+			assemblies = Device.GetAssemblies();
+
 			if (ExtraAssemblies != null)
 				assemblies = assemblies.Union(ExtraAssemblies).ToArray();
 
@@ -268,8 +273,12 @@ namespace Xamarin.Forms.Internals
 
 			// Don't use LINQ for performance reasons
 			// Naive implementation can easily take over a second to run
+			Profile.PopPush("Reflect");
 			foreach (Assembly assembly in assemblies)
 			{
+				var assemblyName = assembly.GetName();
+				Profile.Push(assemblyName.Name);
+
 				foreach (Type attrType in attrTypes)
 				{
 					object[] attributes;
@@ -287,6 +296,7 @@ namespace Xamarin.Forms.Internals
 						Log.Warning(nameof(Registrar), "Could not load assembly: {0} for Attibute {1} | Some renderers may not be loaded", assembly.FullName, attrType.FullName);
 						continue;
 					}
+
 					var length = attributes.Length;
 					for (var i = 0; i < length; i++)
 					{
@@ -327,9 +337,13 @@ namespace Xamarin.Forms.Internals
 					else
 						StyleProperties[attribute.CssPropertyName] = new List<StyleSheets.StylePropertyAttribute> { attribute };
 				}
+				Profile.Pop();
 			}
 
+			Profile.PopPush("DependencyService.Initialize");
 			DependencyService.Initialize(assemblies);
+
+			Profile.Pop();
 		}
 	}
 }
