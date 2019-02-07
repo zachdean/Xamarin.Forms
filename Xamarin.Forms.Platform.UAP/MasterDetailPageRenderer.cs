@@ -22,6 +22,7 @@ namespace Xamarin.Forms.Platform.UWP
 		AccessibilityView? _defaultAutomationPropertiesAccessibilityView;
 		string _defaultAutomationPropertiesHelpText;
 		UIElement _defaultAutomationPropertiesLabeledBy;
+		long _IsPaneOpenCallbackToken;
 
 		VisualElementTracker<Page, FrameworkElement> _tracker;
 
@@ -163,7 +164,7 @@ namespace Xamarin.Forms.Platform.UWP
 					Control.Unloaded += OnControlUnloaded;
 					Control.SizeChanged += OnNativeSizeChanged;
 
-					Control.RegisterPropertyChangedCallback(MasterDetailControl.IsPaneOpenProperty, OnIsPaneOpenChanged);
+					_IsPaneOpenCallbackToken = Control.RegisterPropertyChangedCallback(MasterDetailControl.IsPaneOpenProperty, OnIsPaneOpenChanged);
 
 					Tracker = new VisualElementTracker<Page, FrameworkElement> { Container = Control, Element = Element };
 				}
@@ -185,6 +186,10 @@ namespace Xamarin.Forms.Platform.UWP
 				_defaultAutomationPropertiesHelpText = Control.SetAutomationPropertiesHelpText(Element, _defaultAutomationPropertiesHelpText);
 				_defaultAutomationPropertiesLabeledBy = Control.SetAutomationPropertiesLabeledBy(Element, _defaultAutomationPropertiesLabeledBy);
 				_defaultAutomationPropertiesAccessibilityView = Control.SetAutomationPropertiesAccessibilityView(Element, _defaultAutomationPropertiesAccessibilityView);
+			}
+			else
+			{
+				Control?.UnregisterPropertyChangedCallback(MasterDetailControl.IsPaneOpenProperty, _IsPaneOpenCallbackToken);
 			}
 		}
 
