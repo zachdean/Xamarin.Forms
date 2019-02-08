@@ -159,6 +159,13 @@ namespace Xamarin.Forms.Platform.Android
 				return base.FocusSearch(focused, direction);
 
 			VisualElement element = Element as VisualElement;
+
+			if (element?.UseTabStop == false)
+			{
+				var native =  base.FocusSearch(focused, direction);
+				return native?.Focusable == true ? native : null;
+			}
+
 			int maxAttempts = 0;
 			var tabIndexes = element?.GetTabIndexesOnParentPage(out maxAttempts);
 			if (tabIndexes == null)

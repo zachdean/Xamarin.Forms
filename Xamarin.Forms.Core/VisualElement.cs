@@ -194,6 +194,12 @@ namespace Xamarin.Forms
 									propertyChanged: OnTabStopPropertyChanged,
 									defaultValueCreator: TabStopDefaultValueCreator);
 
+		public static readonly BindableProperty UseTabStopProperty =
+			BindableProperty.Create(nameof(UseTabStop),
+							typeof(bool),
+							typeof(VisualElement),
+							defaultValue: true);
+
 		static void OnTabIndexPropertyChanged(BindableObject bindable, object oldValue, object newValue) =>
 			((VisualElement)bindable).OnTabIndexPropertyChanged((int)oldValue, (int)newValue);
 
@@ -408,6 +414,12 @@ namespace Xamarin.Forms
 		{
 			get => (bool)GetValue(IsTabStopProperty);
 			set => SetValue(IsTabStopProperty, value);
+		}
+
+		public bool UseTabStop
+		{
+			get { return (bool)GetValue(UseTabStopProperty); }
+			set { SetValue(UseTabStopProperty, value); }
 		}
 
 		protected virtual void OnTabStopPropertyChanged(bool oldValue, bool newValue) { }

@@ -14,11 +14,18 @@ namespace Xamarin.Forms.Controls.Issues
 
 		protected override void Init ()
 		{
+			var customView = new CustomView() { UseTabStop = false };
+
 			Content = new StackLayout
 			{
 				Children = {
 					new Label { Text = "Select any editbox below and try using the TAB key navigation. Focus should change from one editbox to another" },
-					new CustomView()
+					customView,
+					new Button
+					{
+						Text = $"Switch UseTabStop",
+						Command = new Command(() => customView.UseTabStop = !customView.UseTabStop)
+					}
 				}
 			};
 		}
