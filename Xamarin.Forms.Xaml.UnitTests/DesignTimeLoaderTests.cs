@@ -450,5 +450,52 @@ namespace Xamarin.Forms.Xaml.UnitTests
 
 			Assert.That(myButton.BackgroundColor, Is.Not.EqualTo(Color.Blue));
 		}
+
+		[Test]
+		public void ShellTypeNotParsed()
+		{
+			XamlLoader.FallbackTypeResolver = (p, type) => type ?? typeof(ContentPage);
+
+			var xaml = @"
+			   <Shell xmlns = ""http://xamarin.com/schemas/2014/forms""
+				   xmlns:x = ""http://schemas.microsoft.com/winfx/2009/xaml""
+				   xmlns:d = ""http://xamarin.com/schemas/2014/forms/design""
+				   xmlns:mc = ""http://schemas.openxmlformats.org/markup-compatibility/2006""
+				   mc:Ignorable = ""d""
+				   RouteHost = ""companyname.com""
+				   RouteScheme = ""app""
+				   FlyoutBehavior = ""Disabled"" >
+
+					<Shell.Resources>
+						<ResourceDictionary>
+							<Color x:Key = ""NavigationPrimary"">#2196F3</Color>
+							<Style x:Key = ""BaseStyle"" TargetType = ""Element"">
+								<Setter Property = ""Shell.ShellBackgroundColor"" Value = ""{StaticResource NavigationPrimary}"" />
+								<Setter Property = ""Shell.ShellForegroundColor"" Value = ""White"" />
+								<Setter Property = ""Shell.ShellTitleColor"" Value = ""White"" />
+								<Setter Property = ""Shell.ShellDisabledColor"" Value = ""#B4FFFFFF"" />
+								<Setter Property = ""Shell.ShellUnselectedColor"" Value = ""#95FFFFFF"" />
+								<Setter Property = ""Shell.ShellTabBarBackgroundColor"" Value = ""{StaticResource NavigationPrimary}"" />
+								<Setter Property = ""Shell.ShellTabBarForegroundColor"" Value = ""White"" />
+								<Setter Property = ""Shell.ShellTabBarUnselectedColor"" Value = ""#95FFFFFF"" />
+								<Setter Property = ""Shell.ShellTabBarTitleColor"" Value = ""White"" />
+							</Style>
+							<Style TargetType = ""ShellItem"" BasedOn = ""{StaticResource BaseStyle}"" />
+						</ResourceDictionary>
+					</Shell.Resources>
+
+					<ShellItem>
+						<ShellSection Title = ""Browse"" Icon = ""tab_feed.png"" />
+						<ShellSection Title = ""About"" Icon = ""tab_about.png"" />
+					</ShellItem>
+				</Shell>";
+
+
+			Device.SetFlags(new List<string> { "Shell_Experimental" });
+			var shell = (Shell)XamlLoader.Create(xaml, true);
+
+			ShellSection section = shell?.Items[0]?.Items[0];
+			Assert.That(section.Title, Is.EqualTo("Browse"));
+		}
 	}
 }
