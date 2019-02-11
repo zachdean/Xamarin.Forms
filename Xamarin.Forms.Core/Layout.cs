@@ -368,14 +368,18 @@ namespace Xamarin.Forms
 					// This avoids a lot of unnecessary layout operations if something is triggering many property
 					// changes at once (e.g., a BindingContext change)
 
-					if (Dispatcher != null)
+					if (Dispatcher != null && Dispatcher.IsInvokeRequired)
 					{
 						Dispatcher.BeginInvokeOnMainThread(UpdateContext);
 					}
-					else
+					else if(Device.IsInvokeRequired)
 					{
 						Device.BeginInvokeOnMainThread(UpdateContext);
 					}			
+					else
+					{
+						UpdateContext();
+					}
 				}
 			}
 		}

@@ -616,13 +616,17 @@ namespace Xamarin.Forms
 				}
 
 				Action action = () => _expression.Apply();
-				if (_expression._weakTarget.TryGetTarget(out BindableObject obj) && obj is Element element && element.Dispatcher != null)
+				if (_expression._weakTarget.TryGetTarget(out BindableObject obj) && obj is Element element && element.Dispatcher != null && element.Dispatcher.IsInvokeRequired)
 				{
 					element.Dispatcher.BeginInvokeOnMainThread(action);
 				}
-				else
+				else if(Device.IsInvokeRequired)
 				{
 					Device.BeginInvokeOnMainThread(action);
+				}
+				else
+				{
+					action();
 				}
 
 			}

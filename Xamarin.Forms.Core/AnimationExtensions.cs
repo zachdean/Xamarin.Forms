@@ -278,7 +278,10 @@ namespace Xamarin.Forms
 			if (Device.IsInvokeRequired)
 			{
 				if (self is Element element)
-					element.Dispatcher.BeginInvokeOnMainThread(action);
+					if (element.Dispatcher.IsInvokeRequired)
+						element.Dispatcher.BeginInvokeOnMainThread(action);
+					else
+						action();
 				else
 					Device.BeginInvokeOnMainThread(action);
 			}
