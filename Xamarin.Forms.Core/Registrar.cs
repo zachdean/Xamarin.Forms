@@ -326,6 +326,10 @@ namespace Xamarin.Forms.Internals
 			Profile.PopPush("Reflect");
 			foreach (Assembly assembly in assemblies)
 			{
+				if (IsKnownAssembly(assembly))
+					continue;
+
+				var assemblyName = new AssemblyName(assembly.FullName);
 				Profile.Push(assemblyName.Name);
 
 				foreach (Type attrType in attrTypes)

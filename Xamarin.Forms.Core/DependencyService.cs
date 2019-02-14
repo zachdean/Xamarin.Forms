@@ -118,6 +118,9 @@ namespace Xamarin.Forms
 				// Naive implementation can easily take over a second to run
 				foreach (Assembly assembly in assemblies)
 				{
+					if (Internals.Registrar.IsKnownAssembly(assembly))
+						continue;
+
 					object[] attributes;
 					try
 					{
