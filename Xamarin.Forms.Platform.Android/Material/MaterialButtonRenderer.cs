@@ -157,10 +157,10 @@ namespace Xamarin.Forms.Platform.Android.Material
 				this.EnsureId();
 
 				_buttonLayoutManager?.Update();
-			/*	UpdateBorder();
+				UpdateBorder();
 				UpdateFont();
 				UpdatePrimaryColors();
-				UpdateInputTransparent();*/
+				UpdateInputTransparent();
 
 				ElevationHelper.SetElevation(this, e.NewElement);
 			}
