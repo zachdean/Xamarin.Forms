@@ -37,8 +37,8 @@ namespace Xamarin.Forms.Sandbox
 		ContentPage CreateListViewPage(Func<View> template)
 		{
 			var listView = new ListView(ListViewCachingStrategy.RecycleElement);
-			listView.RowHeight = 500;
-			listView.ItemsSource = Enumerable.Range(0, 1).ToList();
+			listView.RowHeight = 200;
+			listView.ItemsSource = Enumerable.Range(0, 100).ToList();
 			listView.ItemTemplate = new DataTemplate(() =>
 			{
 				ViewCell cell = new ViewCell();

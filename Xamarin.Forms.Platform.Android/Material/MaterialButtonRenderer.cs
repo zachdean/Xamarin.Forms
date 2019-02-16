@@ -23,7 +23,7 @@ namespace Xamarin.Forms.Platform.Android.Material
 {
 	public class MaterialButtonRenderer : MButton,
 		IBorderVisualElementRenderer, IButtonLayoutRenderer, IVisualElementRenderer, IViewRenderer, ITabStop,
-		AView.IOnAttachStateChangeListener, AView.IOnFocusChangeListener, AView.IOnClickListener, AView.IOnTouchListener
+		AView.IOnAttachStateChangeListener, AView.IOnFocusChangeListener, AView.IOnClickListener, AView.IOnTouchListener, ICanSelfDestruct
 	{
 		int _defaultCornerRadius = -1;
 		int _defaultBorderWidth = -1;
@@ -47,8 +47,25 @@ namespace Xamarin.Forms.Platform.Android.Material
 		public event EventHandler<VisualElementChangedEventArgs> ElementChanged;
 		public event EventHandler<PropertyChangedEventArgs> ElementPropertyChanged;
 
-		public MaterialButtonRenderer(Context context)
-			: base(new ContextThemeWrapper(context, Resource.Style.XamarinFormsMaterialTheme))
+		static int getThemeId(BindableObject element)
+		{
+			var style = Xamarin.Forms.Material.Button.GetStyle(element);
+			int themeId = Resource.Style.XamarinFormsMaterialTheme;
+			switch (style)
+			{
+				case Xamarin.Forms.Material.Style.Outline:
+					themeId = Resource.Style.XamarinFormsMaterialOutlinedButtonTheme;
+					break;
+				case Xamarin.Forms.Material.Style.Text:
+					themeId = Resource.Style.XamarinFormsMaterialTextButtonTheme;
+					break;
+			}
+
+			return themeId;
+		}
+
+		public MaterialButtonRenderer(Context context, BindableObject element)
+			: base(new ContextThemeWrapper(context, getThemeId(element)))
 		{
 			VisualElement.VerifyVisualFlagEnabled();
 
@@ -66,6 +83,13 @@ namespace Xamarin.Forms.Platform.Android.Material
 			OnFocusChangeListener = this;
 
 			Tag = this;
+		}
+
+		event EventHandler _selfDestruct;
+		event EventHandler ICanSelfDestruct.SelfDestruct
+		{
+			add => _selfDestruct += value;
+			remove => _selfDestruct -= value;
 		}
 
 		protected MButton Control => this;
@@ -174,6 +198,8 @@ namespace Xamarin.Forms.Platform.Android.Material
 				UpdatePrimaryColors();
 			else if (e.PropertyName == VisualElement.InputTransparentProperty.PropertyName)
 				UpdateInputTransparent();
+			else if (e.PropertyName == VisualElement.VisualProperty.PropertyName || e.PropertyName == Xamarin.Forms.Material.Button.StyleProperty.PropertyName)
+				_selfDestruct?.Invoke(this, EventArgs.Empty);
 
 			ElementPropertyChanged?.Invoke(this, e);
 		}

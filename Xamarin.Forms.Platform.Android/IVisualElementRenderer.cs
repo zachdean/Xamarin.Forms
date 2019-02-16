@@ -6,6 +6,7 @@ using ALayoutChangeEventArgs = Android.Views.View.LayoutChangeEventArgs;
 
 namespace Xamarin.Forms.Platform.Android
 {
+
 	public interface IVisualElementRenderer : IRegisterable, IDisposable
 	{
 		VisualElement Element { get; }

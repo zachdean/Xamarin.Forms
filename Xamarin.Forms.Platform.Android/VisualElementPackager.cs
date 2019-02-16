@@ -127,6 +127,9 @@ namespace Xamarin.Forms.Platform.Android
 					renderer.SetElement(view);
 				}
 
+				if(renderer is ICanSelfDestruct canSelfDestruct)
+					canSelfDestruct.SelfDestruct += OnSelfDestructRequest;
+
 				Performance.Start(reference, "Set renderer");
 				Platform.SetRenderer(view, renderer);
 				Performance.Stop(reference, "Set renderer");
@@ -142,6 +145,14 @@ namespace Xamarin.Forms.Platform.Android
 				Performance.Stop(reference);
 			}
 		}
+
+		void OnSelfDestructRequest(object sender, EventArgs e)
+		{
+			var renderer = sender as IVisualElementRenderer;
+			RemoveChild(renderer.Element);
+			AddChild(renderer.Element);
+		}
+
 		void EnsureChildOrder()
 		{
 			for (var i = 0; i < ElementController.LogicalChildren.Count; i++)
@@ -185,6 +196,10 @@ namespace Xamarin.Forms.Platform.Android
 		void RemoveChild(VisualElement view)
 		{
 			IVisualElementRenderer renderer = Platform.GetRenderer(view);
+
+			if (renderer is ICanSelfDestruct canSelfDestruct)
+				canSelfDestruct.SelfDestruct -= OnSelfDestructRequest;
+
 			if (renderer == null) // child is itself a compressed layout
 			{
 				if (_childPackagers != null && _childPackagers.TryGetValue (view, out VisualElementPackager packager))

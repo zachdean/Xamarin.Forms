@@ -27,6 +27,22 @@
     <item name="android:paddingTop">8dp</item>
     <item name="android:paddingBottom">8dp</item>
   </style>
+
+
+  <style name="XamarinFormsMaterialTextButtonTheme" parent="@style/XamarinFormsMaterialTheme">
+    <item name="materialButtonStyle">@style/XamarinFormsMaterialTextButton</item>
+  </style>
+  <style name="XamarinFormsMaterialTextButton" parent="Widget.MaterialComponents.Button.TextButton">
+  </style>
+
+
+  <style name="XamarinFormsMaterialOutlinedButtonTheme" parent="@style/XamarinFormsMaterialTheme">
+    <item name="materialButtonStyle">@style/XamarinFormsMaterialOutlinedButton</item>
+  </style>
+  <style name="XamarinFormsMaterialOutlinedButton" parent="Widget.MaterialComponents.Button.OutlinedButton">
+  </style>
+
+  <!-- Material Entry -->
   <style name="XamarinFormsMaterialEntryFilled" parent="Widget.MaterialComponents.TextInputLayout.FilledBox">
     <item name="boxCollapsedPaddingTop">8dp</item>
   </style>
