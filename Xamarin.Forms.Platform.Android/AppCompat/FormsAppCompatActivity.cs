@@ -91,6 +91,7 @@ namespace Xamarin.Forms.Platform.Android
 			
 			if (!_renderersAdded)
 			{
+				DependencyResolver.ResolveVisualUsing(Material.MaterialVisualHandlerResolver.Instance);
 				RegisterHandlerForDefaultRenderer(typeof(NavigationPage), typeof(NavigationPageRenderer), typeof(NavigationRenderer));
 				RegisterHandlerForDefaultRenderer(typeof(TabbedPage), typeof(TabbedPageRenderer), typeof(TabbedRenderer));
 				RegisterHandlerForDefaultRenderer(typeof(MasterDetailPage), typeof(MasterDetailPageRenderer), typeof(MasterDetailRenderer));

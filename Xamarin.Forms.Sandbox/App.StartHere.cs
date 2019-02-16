@@ -9,9 +9,12 @@ namespace Xamarin.Forms.Sandbox
 		// This code is called from the App Constructor so just initialize the main page of the application here
 		void InitializeMainPage()
 		{
+			var button = new Button() { Text = "text" };
+			Material.Button.SetStyle(button, Material.Style.Outline);
 			MainPage = new ContentPage()
 			{
-				Content = CreateStackLayout(new[] { new Button() { Text = "text" } })
+				Content = CreateStackLayout(new[] { button }),
+				Visual = VisualMarker.Material
 			};
 		}
 	}

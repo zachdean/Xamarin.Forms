@@ -1,12 +1,36 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
 namespace Xamarin.Forms.Internals
 {
+	public interface IVisualHandlerResolver
+	{
+		Type VisualType { get; }
+		object GetHandler(VisualRendererFactoryArgs args);
+	}
+
+	public class VisualRendererFactoryArgs
+	{
+		public object[] Args;
+		public object Source;
+		public Type HandlerType;
+	}
+
 	public static class DependencyResolver
 	{
 		static Func<Type, object[], object> Resolver { get; set; }
+		static Dictionary<Type, IVisualHandlerResolver[]> VisualHandlerResolvers { get; set; } = new Dictionary<Type, IVisualHandlerResolver[]>();
+
+		public static void ResolveVisualUsing(IVisualHandlerResolver visualHandlerResolver)
+		{
+			ResolveVisualUsing(visualHandlerResolver.VisualType, new[] { visualHandlerResolver });
+		}
+		public static void ResolveVisualUsing(Type visualType, IVisualHandlerResolver[] visualHandlerResolver)
+		{
+			VisualHandlerResolvers[visualType] = visualHandlerResolver;
+		}
 
 		public static void ResolveUsing(Func<Type, object[], object> resolver)
 		{
@@ -33,11 +57,24 @@ namespace Xamarin.Forms.Internals
 			return result;
 		}
 
-		internal static object ResolveOrCreate(Type type, params object[] args)
+		internal static object ResolveOrCreate(Type type) => ResolveOrCreate(type, null, null);
+
+		internal static object ResolveOrCreate(Type type, Type visualType, object source, params object[] args)
 		{
 			var result = Resolve(type, args);
 
 			if (result != null) return result;
+
+			IVisualHandlerResolver[] handlers = null;
+			if (VisualHandlerResolvers.TryGetValue(visualType, out handlers))
+			{
+				var factoryArgs = new VisualRendererFactoryArgs() { Args = args, Source = source, HandlerType = type };
+				foreach(var handler in handlers)
+					result = handler.GetHandler(factoryArgs);
+			}
+
+			if (result != null)
+				return result;
 
 			if (args.Length > 0)
 			{

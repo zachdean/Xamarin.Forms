@@ -47,8 +47,12 @@ namespace Xamarin.Forms.Platform.Android.Material
 		public event EventHandler<VisualElementChangedEventArgs> ElementChanged;
 		public event EventHandler<PropertyChangedEventArgs> ElementPropertyChanged;
 
-		public MaterialButtonRenderer(Context context)
-			: base(new ContextThemeWrapper(context, Resource.Style.XamarinFormsMaterialTheme))
+		public MaterialButtonRenderer(Context context) : this(context, Resource.Style.XamarinFormsMaterialButton)
+		{
+		}
+
+		public MaterialButtonRenderer(Context context, int themeId)
+			: base(new ContextThemeWrapper(context, themeId))
 		{
 			VisualElement.VerifyVisualFlagEnabled();
 
@@ -153,10 +157,10 @@ namespace Xamarin.Forms.Platform.Android.Material
 				this.EnsureId();
 
 				_buttonLayoutManager?.Update();
-				UpdateBorder();
+			/*	UpdateBorder();
 				UpdateFont();
 				UpdatePrimaryColors();
-				UpdateInputTransparent();
+				UpdateInputTransparent();*/
 
 				ElevationHelper.SetElevation(this, e.NewElement);
 			}

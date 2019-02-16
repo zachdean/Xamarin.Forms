@@ -161,6 +161,7 @@
     <Compile Include="Material\MaterialTimePickerRenderer.cs" />
     <Compile Include="Material\MaterialProgressBarRenderer.cs" />
     <Compile Include="IPickerRenderer.cs" />
+    <Compile Include="Material\MaterialVisualHandlerResolver.cs" />
     <Compile Include="PickerManager.cs" />
     <Compile Include="Renderers\PickerEditText.cs" />
     <Compile Include="Renderers\FontImageSourceHandler.cs" />
@@ -421,9 +422,7 @@
       <SubType>Designer</SubType>
     </AndroidResource>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Resources\color\" />
-  </ItemGroup>
+  <ItemGroup />
   <Target Name="BeforeBuild" Condition=" '$(CreateAllAndroidTargets)' == 'true' ">
     <!--  create 8.1 binaries-->
     <MSBuild Targets="Restore" Projects="@(ProjectToBuild)">
