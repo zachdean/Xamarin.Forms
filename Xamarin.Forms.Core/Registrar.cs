@@ -272,21 +272,10 @@ namespace Xamarin.Forms.Internals
 			{
 				foreach (Type attrType in attrTypes)
 				{
-					object[] attributes;
-					try
-					{
-#if NETSTANDARD2_0
-						attributes = assembly.GetCustomAttributes(attrType, true);
-#else
-						attributes = assembly.GetCustomAttributes(attrType).ToArray();
-#endif
-					}
-					catch (System.IO.FileNotFoundException)
-					{
-						// Sometimes the previewer doesn't actually have everything required for these loads to work
-						Log.Warning(nameof(Registrar), "Could not load assembly: {0} for Attibute {1} | Some renderers may not be loaded", assembly.FullName, attrType.FullName);
+					object[] attributes = assembly.GetCustomAttributesSafe(attrType);
+					if (attributes == null)
 						continue;
-					}
+
 					var length = attributes.Length;
 					for (var i = 0; i < length; i++)
 					{
