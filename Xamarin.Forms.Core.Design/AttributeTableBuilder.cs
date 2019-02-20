@@ -37,7 +37,7 @@ namespace Xamarin.Forms.Core.Design
 
 			AddCallback(typeof(VisualElement), builder => builder.AddCustomAttributes(
 			   "Visual",
-			   new System.ComponentModel.TypeConverterAttribute(typeof(DerivedTypesConverter<IVisual>))));
+			   new System.ComponentModel.TypeConverterAttribute(typeof(VisualTypes))));
 
 			// TODO: OnPlatform/OnIdiom
 			// These two should be proper markup extensions, to follow WPF syntax for those.

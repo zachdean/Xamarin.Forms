@@ -5,9 +5,9 @@
 	using System.ComponentModel;
 	using System;
 
-	public class DerivedTypesConverter<T> : TypeConverter
+	public class VisualTypes : TypeConverter
 	{
-		public DerivedTypesConverter()
+		public VisualTypes()
 		{
 		}
 
@@ -32,7 +32,7 @@
 			if(Values == null)
 			{
 				var derivedNames = new List<string>();
-				var baseType = typeof(T);
+				var baseType = typeof(IVisual);
 
 				var typeElements = typeof(View).Assembly.ExportedTypes.Where(t => baseType.IsAssignableFrom(t));
 
