@@ -5,6 +5,7 @@
     <ContentPage.Content>
         <StackLayout>
             <Button Text="Material text" Visual="MaTeRiAl" />
+            <Editor Visual="Material"></Editor>
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>
