@@ -276,6 +276,7 @@ namespace Xamarin.Forms.Platform.iOS.Material
 
 		IImageVisualElementRenderer IButtonLayoutRenderer.ImageVisualElementRenderer => this;
 
-		nfloat IButtonLayoutRenderer.MinimumHeight => _buttonScheme?.MinimumHeight ?? -1;
+		//https://github.com/material-components/material-components-ios/blob/687491f21e04e9f4b469df7d55c8877e4e372123/components/Buttons/src/MDCButton.m#L276
+		nfloat IButtonLayoutRenderer.MinimumHeight => 48;
 	}
 }

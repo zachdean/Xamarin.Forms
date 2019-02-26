@@ -351,7 +351,11 @@ namespace Xamarin.Forms.Platform.Android.Material
 		{
 			_buttonLayoutManager?.Update();
 			Measure(widthConstraint, heightConstraint);
-			return new SizeRequest(new Size(MeasuredWidth, MeasuredHeight), new Size());
+
+			// we picked 48 for the minimum height because the material guidelines minimum wants 48
+			var height = Math.Max(MeasuredHeight, Context.ToPixels(48));
+
+			return new SizeRequest(new Size(MeasuredWidth, height), new Size());
 		}
 
 		void IVisualElementRenderer.SetElement(VisualElement element) =>
