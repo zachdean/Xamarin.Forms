@@ -31,8 +31,10 @@ namespace Xamarin.Forms.Platform.iOS
 
 		protected override void OnElementChanged(ElementChangedEventArgs<Editor> e)
 		{
-			if (e.NewElement != null)
+			bool initializing = false;
+			if (e.NewElement != null && _placeholderLabel == null)
 			{
+				initializing = true;
 				// create label so it can get updated during the initial setup loop
 				_placeholderLabel = new UILabel
 				{
@@ -42,7 +44,7 @@ namespace Xamarin.Forms.Platform.iOS
 
 			base.OnElementChanged(e);
 
-			if (e.NewElement != null)
+			if (e.NewElement != null && initializing)
 			{
 				CreatePlaceholderLabel();
 			}
