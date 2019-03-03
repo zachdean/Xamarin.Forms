@@ -39,7 +39,10 @@ namespace Xamarin.Forms.Platform.iOS
 
 			base.OnElementChanged(e);
 
-			CreatePlaceholderLabel();
+			if (e.NewElement != null)
+			{
+				CreatePlaceholderLabel();
+			}
 		}
 
 		protected internal override void UpdateFont()
