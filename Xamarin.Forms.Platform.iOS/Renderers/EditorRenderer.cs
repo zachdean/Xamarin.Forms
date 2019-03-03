@@ -31,11 +31,14 @@ namespace Xamarin.Forms.Platform.iOS
 
 		protected override void OnElementChanged(ElementChangedEventArgs<Editor> e)
 		{
-			// create label so it can get updated during the initial setup loop
-			_placeholderLabel = new UILabel
+			if (e.NewElement != null)
 			{
-				BackgroundColor = UIColor.Clear
-			};
+				// create label so it can get updated during the initial setup loop
+				_placeholderLabel = new UILabel
+				{
+					BackgroundColor = UIColor.Clear
+				};
+			}
 
 			base.OnElementChanged(e);
 
@@ -66,6 +69,9 @@ namespace Xamarin.Forms.Platform.iOS
 
 		void CreatePlaceholderLabel()
 		{
+			if (Control == null)
+				return;
+
 			Control.AddSubview(_placeholderLabel);
 
 			var edgeInsets = TextView.TextContainerInset;
