@@ -130,6 +130,7 @@
     <Compile Include="SecondPage.xaml.cs">
       <DependentUpon>SecondPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="PlatformSpecificCoreGalleryFactory.cs" />
     <Compile Include="RegistrarValidationService.cs" />
     <Compile Include="SampleNativeControl.cs" />
     <Compile Include="WindowNavigation.cs" />
@@ -162,7 +163,6 @@
     <Content Include="Assets\Fonts\Lobster-Regular.ttf" />
     <Content Include="Properties\default.rd.xml" />
     <Compile Include="BrokenImageSourceHandler.cs" />
-    <Compile Include="StringProvider.cs" />
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
