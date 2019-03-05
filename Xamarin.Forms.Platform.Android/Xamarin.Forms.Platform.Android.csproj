@@ -95,7 +95,6 @@
     <Compile Include="CollectionView\SnapManager.cs" />
     <Compile Include="CollectionView\StartSingleSnapHelper.cs" />
     <Compile Include="CollectionView\StartSnapHelper.cs" />
-    <Compile Include="ButtonBackgroundTracker.cs" />
     <Compile Include="Dispatcher.cs" />
     <Compile Include="CollectionView\TemplatedItemViewHolder.cs" />
     <Compile Include="CollectionView\TextViewHolder.cs" />
