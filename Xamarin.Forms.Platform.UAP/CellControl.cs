@@ -112,6 +112,11 @@ namespace Xamarin.Forms.Platform.UWP
 
 		ListView GetListView()
 		{
+			return GetListViewRenderer()?.Element;
+		}
+
+		ListViewRenderer GetListViewRenderer()
+		{
 			DependencyObject parent = VisualTreeHelper.GetParent(this);
 			while (parent != null)
 			{
@@ -119,7 +124,7 @@ namespace Xamarin.Forms.Platform.UWP
 				if (lv != null)
 				{
 					_isListViewRealized = true;
-					return lv.Element;
+					return lv;
 				}
 
 				parent = VisualTreeHelper.GetParent(parent);
@@ -243,7 +248,7 @@ namespace Xamarin.Forms.Platform.UWP
 			// Cell has an ItemTemplate. Instead, we'll store the new data item, and it will be
 			// set on MeasureOverrideDelegate. However, if the parent is a TableView, we'll already 
 			// have a complete Cell object to work with, so we can move ahead.
-			if (_isListViewRealized || args.NewValue is Cell)
+			if (_isListViewRealized)
 				SetCell(args.NewValue);
 			else if (args.NewValue != null)
 				_newValue = args.NewValue;
@@ -294,13 +299,7 @@ namespace Xamarin.Forms.Platform.UWP
 
 		void SetCell(object newContext)
 		{
-			var cell = newContext as Cell;
-
-			if (cell != null)
-			{
-				Cell = cell;
-				return;
-			}
+			Cell cell = null;
 
 			if (ReferenceEquals(Cell?.BindingContext, newContext))
 				return;
@@ -311,17 +310,17 @@ namespace Xamarin.Forms.Platform.UWP
 			if (lv != null)
 			{
 				bool isGroupHeader = IsGroupHeader;
-				DataTemplate template = isGroupHeader ? lv.GroupHeaderTemplate : lv.ItemTemplate;
 				object bindingContext = newContext;
-
-				if (template is DataTemplateSelector)
+				
+				if(isGroupHeader && lv.GroupHeaderTemplate != null)
 				{
-					template = ((DataTemplateSelector)template).SelectTemplate(bindingContext, lv);
+					cell = lv.GroupHeaderTemplate.CreateContent() as Cell;
 				}
-
-				if (template != null)
+				else if (!isGroupHeader && lv.ItemTemplate != null)
 				{
-					cell = template.CreateContent() as Cell;
+					ListViewRenderer renderer = GetListViewRenderer();
+					var index = renderer.IndexOfCellControl(this);
+					cell = lv.TemplatedItems.CreateContent(index, bindingContext);
 				}
 				else
 				{

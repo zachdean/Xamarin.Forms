@@ -261,7 +261,7 @@ namespace Xamarin.Forms.Platform.UWP
 			if (disposing)
 			{
 				if (List != null)
-				{
+				{					
 					foreach (ViewToRendererConverter.WrapperControl wrapperControl in FindDescendants<ViewToRendererConverter.WrapperControl>(List))
 					{
 						wrapperControl.CleanUp();
@@ -755,7 +755,7 @@ namespace Xamarin.Forms.Platform.UWP
 		FrameworkElement FindElement(object cell)
 		{
 			foreach (CellControl selector in FindDescendants<CellControl>(List))
-			{
+			{				
 				if (ReferenceEquals(cell, selector.DataContext))
 					return selector;
 			}
@@ -773,5 +773,19 @@ namespace Xamarin.Forms.Platform.UWP
 				: new ListViewAutomationPeer(List);
 		}
 
+
+		internal int IndexOfCellControl(CellControl container)
+		{
+			int i = 0;
+			foreach (CellControl selector in FindDescendants<CellControl>(List))
+			{
+				if (selector == container)
+					return i;
+
+				i++;
+			}
+
+			return -1;
+		}
 	}
 }

@@ -10,11 +10,11 @@ using Xamarin.UITest;
 namespace Xamarin.Forms.Controls.Issues
 {
 	[Preserve(AllMembers = true)]
-	public class Person 
+	public class Person
 	{
 		public string Name { get; set; }
 
-		public Person (string name)
+		public Person(string name)
 		{
 			Name = name;
 		}
@@ -22,20 +22,25 @@ namespace Xamarin.Forms.Controls.Issues
 
 
 	[Preserve(AllMembers = true)]
-	public class CustomViewCell : ViewCell 
+	public class CustomViewCell : ViewCell
 	{
-
-		public CustomViewCell ()
+		public CustomViewCell()
 		{
 			int tapsFired = 0;
 
 			Height = 50;
 
-			var label = new Label {
-				Text = "I have been selected:"
-			};
+			var label = new Label();
+			label.Text = "I have been selected:";
+			
 
-			Tapped += (s, e) => {
+			if (this is CustomViewCellBindingContext)
+				label.Text = "If you are reading this text the test has failed";
+
+
+			Tapped += (s, e) =>
+			{
+				var me = this;
 				tapsFired++;
 				label.Text = "I have been selected:" + tapsFired;
 			};
@@ -43,24 +48,31 @@ namespace Xamarin.Forms.Controls.Issues
 			View = label;
 		}
 	}
+
+	[Preserve(AllMembers = true)]
+	public class CustomViewCellBindingContext : CustomViewCell
+	{
+	}
+
 #if UITEST
 	[NUnit.Framework.Category(Core.UITests.UITestCategories.UwpIgnore)]
 #endif
-	[Preserve (AllMembers=true)]
-	[Issue (IssueTracker.Github, 935, "ViewCell.ItemTapped only fires once for ListView.SelectedItem", PlatformAffected.Android)]
+	[Preserve(AllMembers = true)]
+	[Issue(IssueTracker.Github, 935, "ViewCell.ItemTapped only fires once for ListView.SelectedItem", PlatformAffected.Android)]
 	public class Issue935 : TestContentPage
 	{
-		protected override void Init ()
+		protected override void Init()
 		{
 			Title = "List Page";
 
-			var items = new [] {
-				new CustomViewCell (),
+			var items = new[] {
+				new CustomViewCellBindingContext()
 			};
-				
-			var cellTemplate = new DataTemplate (typeof(CustomViewCell));
 
-			var list = new ListView () {
+			var cellTemplate = new DataTemplate(typeof(CustomViewCell));
+
+			var list = new ListView()
+			{
 				ItemTemplate = cellTemplate,
 				ItemsSource = items
 			};
@@ -70,17 +82,17 @@ namespace Xamarin.Forms.Controls.Issues
 
 #if UITEST
 		[Test]
-		[Description ("Verify that OnTapped is fired every time a ViewCell is tapped")]
-		[UiTest (typeof(ViewCell))]
-		[UiTest (typeof(ListView))]
-		[UiTest (typeof(ListView), "SelectedItem")]
-		public void Issue935TestsMultipleOnTappedViewCell ()
+		[Description("Verify that OnTapped is fired every time a ViewCell is tapped")]
+		[UiTest(typeof(ViewCell))]
+		[UiTest(typeof(ListView))]
+		[UiTest(typeof(ListView), "SelectedItem")]
+		public void Issue935TestsMultipleOnTappedViewCell()
 		{
-			RunningApp.Tap (q => q.Marked ("I have been selected:"));
-			RunningApp.Screenshot ("Tapped Cell Once");
-			RunningApp.Tap (q => q.Marked ("I have been selected:1"));
-			RunningApp.WaitForElement (q => q.Marked ("I have been selected:2"));
-			RunningApp.Screenshot ("Tapped Cell Twice");
+			RunningApp.Tap(q => q.Marked("I have been selected:"));
+			RunningApp.Screenshot("Tapped Cell Once");
+			RunningApp.Tap(q => q.Marked("I have been selected:1"));
+			RunningApp.WaitForElement(q => q.Marked("I have been selected:2"));
+			RunningApp.Screenshot("Tapped Cell Twice");
 		}
 #endif
 
