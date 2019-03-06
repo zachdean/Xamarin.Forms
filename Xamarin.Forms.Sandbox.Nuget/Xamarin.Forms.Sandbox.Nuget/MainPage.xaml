@@ -1,7 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="Xamarin.Forms.Sandbox.MainPage">
+             xmlns:local="clr-namespace:Xamarin.Forms.Sandbox.Nuget"
+             x:Class="Xamarin.Forms.Sandbox.Nuget.MainPage">
+
     <StackLayout>
         <!-- Place new controls here -->
         <Button Text="Welcome to Xamarin.Forms!" 
@@ -9,4 +11,5 @@
         <Button Text="Welcome to Xamarin.Forms!" 
            Visual="Default" />
     </StackLayout>
+
 </ContentPage>
