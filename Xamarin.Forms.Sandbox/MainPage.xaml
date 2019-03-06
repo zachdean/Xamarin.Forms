@@ -4,7 +4,9 @@
              x:Class="Xamarin.Forms.Sandbox.MainPage">
     <ContentPage.Content>
         <StackLayout>
-            <Button Text="Material text" Visual="MaTeRiAl" />
+            <Frame Visual="Material">
+                <Button Text="Material text" Visual="Material" />
+            </Frame>
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>
