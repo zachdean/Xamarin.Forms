@@ -12,7 +12,7 @@ namespace Xamarin.Forms.Material
 	}
 
 
-	public static class Button
+	public static class MaterialButton
 	{
 		public static readonly BindableProperty StyleProperty = BindableProperty.CreateAttached("Style", typeof(Style), typeof(Button), Style.Filled);
 
