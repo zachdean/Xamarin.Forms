@@ -14,7 +14,7 @@ namespace Xamarin.Forms.Sandbox
 	{
 		public MainPage()
 		{
-			Xamarin.Forms.Material.FormsMaterial.KeepAround();
+			Xamarin.Forms.Material.FormsMaterial.Init();
 			InitializeComponent();
 		}
 	}

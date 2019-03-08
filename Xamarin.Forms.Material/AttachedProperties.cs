@@ -6,30 +6,34 @@ using Xamarin.Forms;
 [assembly: XmlnsDefinition("http://xamarin.com/schemas/2014/forms", "Xamarin.Forms.Material")]
 namespace Xamarin.Forms.Material
 {
-	public enum Style
+	public enum ButtonStyle
 	{
 		Filled, Outline, Text
 	}
 
 
-	public static class MaterialButton
+	public static class Material
 	{
-		public static readonly BindableProperty StyleProperty = BindableProperty.CreateAttached("Style", typeof(Style), typeof(Button), Style.Filled);
+		public static readonly BindableProperty ButtonStyleProperty = BindableProperty.CreateAttached("ButtonStyle", typeof(ButtonStyle), typeof(Material), ButtonStyle.Filled);
 
-		public static Style GetStyle(BindableObject bindable)
+		public static ButtonStyle GetButtonStyle(BindableObject bindable)
 		{
-			return (Style)bindable.GetValue(StyleProperty);
+			return (ButtonStyle)bindable.GetValue(ButtonStyleProperty);
 		}
-		public static void SetStyle(BindableObject bindable, Style value)
+		public static void SetButtonStyle(BindableObject bindable, ButtonStyle value)
 		{
-			bindable.SetValue(StyleProperty, value);
+			bindable.SetValue(ButtonStyleProperty, value);
 		}
 	}
+
 	public static class FormsMaterial
 	{
-		public static void KeepAround()
+		public static void Init()
 		{
-			
+			// my only purpose is to exist so when called
+			// this dll doesn't get removed
+
+			VisualMarker.RegisterMaterial();
 		}
 	}
 }

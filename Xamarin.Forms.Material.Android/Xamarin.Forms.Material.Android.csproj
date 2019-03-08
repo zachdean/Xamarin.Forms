@@ -49,7 +49,6 @@
     <Compile Include="..\Xamarin.Forms.Material\AttachedProperties.cs">
       <Link>AttachedProperties.cs</Link>
     </Compile>
-    <Compile Include="FormsMaterial.cs" />
     <Compile Include="MaterialActivityIndicatorRenderer.cs" />
     <Compile Include="MaterialButtonRenderer.cs" />
     <Compile Include="MaterialColors.cs" />

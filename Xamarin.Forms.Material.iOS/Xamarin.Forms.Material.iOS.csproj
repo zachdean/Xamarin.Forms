@@ -81,7 +81,6 @@
     <Compile Include="MaterialProgressBarRenderer.cs" />
     <Compile Include="MaterialSliderRenderer.cs" />
     <Compile Include="MaterialStepperRenderer.cs" />
-    <Compile Include="FormsMaterial.cs" />
     <Compile Include="ReadOnlyMaterialTextField.cs" />
   </ItemGroup>
   <ItemGroup>

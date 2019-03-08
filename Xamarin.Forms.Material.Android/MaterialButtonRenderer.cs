@@ -43,14 +43,14 @@ namespace Xamarin.Forms.Material.Android
 
 		static int getThemeId(BindableObject element)
 		{
-			var style = Xamarin.Forms.Material.MaterialButton.GetStyle(element);
+			var style = Xamarin.Forms.Material.Material.GetButtonStyle(element);
 			int themeId = Resource.Attribute.materialFilledButtonStyle;
 			switch (style)
 			{
-				case Xamarin.Forms.Material.Style.Outline:
+				case Xamarin.Forms.Material.ButtonStyle.Outline:
 					themeId = Resource.Attribute.materialOutlinedButtonStyle;
 					break;
-				case Xamarin.Forms.Material.Style.Text:
+				case Xamarin.Forms.Material.ButtonStyle.Text:
 					themeId = Resource.Attribute.materialTextButtonStyle;
 					break;
 			}
