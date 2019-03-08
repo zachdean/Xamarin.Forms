@@ -26,5 +26,3 @@ using Xamarin.Forms;
 [assembly: ExportRenderer(typeof(Xamarin.Forms.DatePicker), typeof(Xamarin.Forms.Material.iOS.MaterialDatePickerRenderer), new[] { typeof(VisualMarker.MaterialVisual) })]
 [assembly: ExportRenderer(typeof(Xamarin.Forms.Stepper), typeof(Xamarin.Forms.Material.iOS.MaterialStepperRenderer), new[] { typeof(VisualMarker.MaterialVisual) })]
 [assembly: ExportRenderer(typeof(Xamarin.Forms.Editor), typeof(Xamarin.Forms.Material.iOS.MaterialEditorRenderer), new[] { typeof(VisualMarker.MaterialVisual) })]
-
-[assembly: XmlnsDefinition("http://xamarin.com/schemas/2014/forms", "Xamarin.Forms.Material")]

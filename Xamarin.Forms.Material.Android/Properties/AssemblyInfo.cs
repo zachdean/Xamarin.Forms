@@ -17,5 +17,3 @@ using Xamarin.Forms.Internals;
 [assembly: Preserve]
 [assembly: AssemblyVersion("2.0.0.0")]
 [assembly: AssemblyFileVersion("2.0.0.0")]
-
-[assembly: XmlnsDefinition("http://xamarin.com/schemas/2014/forms", "Xamarin.Forms.Material")]
