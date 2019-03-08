@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 using System.Runtime.InteropServices;
+using Xamarin.Forms;
 using Xamarin.Forms.Internals;
 
 // General Information about an assembly is controlled through the following 
@@ -16,3 +17,5 @@ using Xamarin.Forms.Internals;
 [assembly: Preserve]
 [assembly: AssemblyVersion("2.0.0.0")]
 [assembly: AssemblyFileVersion("2.0.0.0")]
+
+[assembly: XmlnsDefinition("http://xamarin.com/schemas/2014/forms", "Xamarin.Forms.Material")]

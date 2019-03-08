@@ -34,15 +34,33 @@ namespace Xamarin.Forms.Material.Android
 		Typeface _defaultTypeface;
 		bool _disposed;
 		bool _inputTransparent;
-		Button _button;
-		IPlatformElementConfiguration<PlatformConfiguration.Android, Button> _platformElementConfiguration;
+		Xamarin.Forms.Button _button;
+		IPlatformElementConfiguration<PlatformConfiguration.Android, Xamarin.Forms.Button> _platformElementConfiguration;
 		VisualElementTracker _tracker;
 		VisualElementRenderer _visualElementRenderer;
 		ButtonLayoutManager _buttonLayoutManager;
 		readonly AutomationPropertiesProvider _automationPropertiesProvider;
-		
-		public MaterialButtonRenderer(Context context)
-			: base(new ContextThemeWrapper(context, Resource.Style.XamarinFormsMaterialTheme))
+
+		static int getThemeId(BindableObject element)
+		{
+			var style = Xamarin.Forms.Material.Button.GetStyle(element);
+			int themeId = Resource.Attribute.materialFilledButtonStyle;
+			switch (style)
+			{
+				case Xamarin.Forms.Material.Style.Outline:
+					themeId = Resource.Attribute.materialOutlinedButtonStyle;
+					break;
+				case Xamarin.Forms.Material.Style.Text:
+					themeId = Resource.Attribute.materialTextButtonStyle;
+					break;
+			}
+
+			return themeId;
+		}
+
+
+		public MaterialButtonRenderer(Context context, BindableObject element)
+			: base(MaterialContextThemeWrapper.Create(context), null, getThemeId(element))
 		{
 			_automationPropertiesProvider = new AutomationPropertiesProvider(this);
 			_buttonLayoutManager = new ButtonLayoutManager(this,
@@ -64,7 +82,7 @@ namespace Xamarin.Forms.Material.Android
 		public event EventHandler<PropertyChangedEventArgs> ElementPropertyChanged;
 		protected MButton Control => this;
 
-		protected Button Element
+		protected Xamarin.Forms.Button Element
 		{
 			get => _button;
 			set
@@ -93,7 +111,7 @@ namespace Xamarin.Forms.Material.Android
 				if (_visualElementRenderer == null)
 					_visualElementRenderer = new VisualElementRenderer(this);
 
-				OnElementChanged(new ElementChangedEventArgs<Button>(oldElement, Element));
+				OnElementChanged(new ElementChangedEventArgs<Xamarin.Forms.Button>(oldElement, Element));
 
 				_button.SendViewInitialized(this);
 
@@ -140,7 +158,7 @@ namespace Xamarin.Forms.Material.Android
 			return base.OnTouchEvent(e);
 		}
 
-		protected virtual void OnElementChanged(ElementChangedEventArgs<Button> e)
+		protected virtual void OnElementChanged(ElementChangedEventArgs<Xamarin.Forms.Button> e)
 		{
 			if (e.NewElement != null && !_disposed)
 			{
@@ -160,11 +178,11 @@ namespace Xamarin.Forms.Material.Android
 
 		protected virtual void OnElementPropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
-			if (e.PropertyName == Button.BorderWidthProperty.PropertyName || e.PropertyName == Button.BorderColorProperty.PropertyName || e.PropertyName == Button.CornerRadiusProperty.PropertyName)
+			if (e.PropertyName == Xamarin.Forms.Button.BorderWidthProperty.PropertyName || e.PropertyName == Xamarin.Forms.Button.BorderColorProperty.PropertyName || e.PropertyName == Xamarin.Forms.Button.CornerRadiusProperty.PropertyName)
 				UpdateBorder();
-			else if (e.PropertyName == Button.FontProperty.PropertyName)
+			else if (e.PropertyName == Xamarin.Forms.Button.FontProperty.PropertyName)
 				UpdateFont();
-			else if (e.PropertyName == Button.TextColorProperty.PropertyName || e.PropertyName == VisualElement.BackgroundColorProperty.PropertyName)
+			else if (e.PropertyName == Xamarin.Forms.Button.TextColorProperty.PropertyName || e.PropertyName == VisualElement.BackgroundColorProperty.PropertyName)
 				UpdatePrimaryColors();
 			else if (e.PropertyName == VisualElement.InputTransparentProperty.PropertyName)
 				UpdateInputTransparent();
@@ -291,7 +309,7 @@ namespace Xamarin.Forms.Material.Android
 			ViewCompat.SetBackgroundTintList(this, MaterialColors.CreateButtonBackgroundColors(background));
 		}
 
-		IPlatformElementConfiguration<PlatformConfiguration.Android, Button> OnThisPlatform() =>
+		IPlatformElementConfiguration<PlatformConfiguration.Android, Xamarin.Forms.Button> OnThisPlatform() =>
 			_platformElementConfiguration ?? (_platformElementConfiguration = Element.OnThisPlatform());
 
 		// IOnAttachStateChangeListener
@@ -325,7 +343,7 @@ namespace Xamarin.Forms.Material.Android
 		AView IBorderVisualElementRenderer.View => this;
 
 		// IButtonLayoutRenderer
-		Button IButtonLayoutRenderer.Element => Element;
+		Xamarin.Forms.Button IButtonLayoutRenderer.Element => Element;
 		AppCompatButton IButtonLayoutRenderer.View => this;
 
 		// IVisualElementRenderer
@@ -342,7 +360,7 @@ namespace Xamarin.Forms.Material.Android
 		}
 
 		void IVisualElementRenderer.SetElement(VisualElement element) =>
-			Element = (element as Button) ?? throw new ArgumentException("Element must be of type Button.");
+			Element = (element as Xamarin.Forms.Button) ?? throw new ArgumentException("Element must be of type Button.");
 
 		void IVisualElementRenderer.SetLabelFor(int? id)
 		{

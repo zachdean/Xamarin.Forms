@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Xamarin.Forms;
 
 namespace Xamarin.Forms.Sandbox
 {
@@ -9,11 +10,22 @@ namespace Xamarin.Forms.Sandbox
 		// This code is called from the App Constructor so just initialize the main page of the application here
 		void InitializeMainPage()
 		{
-			/*MainPage = new ContentPage()
-			{
-				Content = CreateStackLayout(new[] { new Button() { Text = "text" } })
-			};
-			MainPage.Visual = VisualMarker.Material;*/
+			//Func<View> create = null;
+			//create = () =>
+			//{
+			//	Button button = null;
+			//	button = new Button()
+			//	{
+			//		Text = "text"
+			//	};
+
+			//	Material.Button.SetStyle(button, Material.Style.Outline);
+			//	return button;
+			//};
+
+			//MainPage = CreateListViewPage(create);
+			//MainPage.Visual = VisualMarker.Material;
+
 			MainPage = new MainPage();
 		}
 	}

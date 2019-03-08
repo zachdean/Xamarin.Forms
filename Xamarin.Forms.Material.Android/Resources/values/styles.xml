@@ -2,13 +2,18 @@
 <resources>
 
   <attr name="materialOutlinedButtonStyle" format="reference"/>
-
+  <attr name="materialFilledButtonStyle" format="reference"/>
+  <attr name="materialTextButtonStyle" format="reference"/>
+  
   <!-- Material Base Theme -->
   <style name="XamarinFormsMaterialTheme" parent="Theme.MaterialComponents.Light.DarkActionBar">
     <item name="materialButtonStyle">@style/XamarinFormsMaterialButton</item>
+    <item name="materialFilledButtonStyle">@style/XamarinFormsMaterialButton</item>
     <item name="materialOutlinedButtonStyle">@style/XamarinFormsMaterialButtonOutlined</item>
+    <item name="materialTextButtonStyle">@style/XamarinFormsMaterialTextButton</item>
   </style>
 
+  
   <!-- Material Sliders -->
   <style name="XamarinFormsMaterialSlider" parent="Widget.AppCompat.SeekBar">
   </style>
@@ -37,5 +42,7 @@
   </style>
   <style name="XamarinFormsMaterialEntryFilled" parent="Widget.MaterialComponents.TextInputLayout.FilledBox">
     <item name="boxCollapsedPaddingTop">8dp</item>
+  </style>  
+  <style name="XamarinFormsMaterialTextButton" parent="Widget.MaterialComponents.Button.TextButton">
   </style>
 </resources>
