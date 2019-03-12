@@ -8,7 +8,6 @@ namespace Xamarin.Forms.Platform.Skia
 {
 	public static class Forms
 	{
-		public static IPlatform Platform = new Platform();
 
 		public static byte[] DrawToPng(Element element, Rectangle region, Action redraw)
 		{
@@ -45,7 +44,6 @@ namespace Xamarin.Forms.Platform.Skia
 
 			canvas.Clear(SKColors.White);
 
-			element.Platform = Platform;
 			foreach (var e in element.Descendants())
 				if (e is VisualElement v)
 					v.IsPlatformEnabled = true;
@@ -230,7 +228,6 @@ namespace Xamarin.Forms.Platform.Skia
 				var view = vc.View;
 				var rowHeight = listView.RowHeight <= 0 ? 48d : listView.RowHeight;
 
-				view.Platform = Platform;
 				view.Parent = listView;
 				foreach (var e in view.Descendants())
 					if (e is VisualElement v)
