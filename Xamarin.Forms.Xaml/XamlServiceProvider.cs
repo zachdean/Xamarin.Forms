@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Reflection;
 using System.Xml;
 using Xamarin.Forms.Internals;
@@ -12,12 +13,11 @@ namespace Xamarin.Forms.Xaml.Internals
 
 		internal XamlServiceProvider(INode node, HydrationContext context)
 		{
-			object targetObject;
-			if (node != null && node.Parent != null && context.Values.TryGetValue(node.Parent, out targetObject))
+			if (context != null && node != null && node.Parent != null && context.Values.TryGetValue(node.Parent, out object targetObject))
 				IProvideValueTarget = new XamlValueTargetProvider(targetObject, node, context, null);
 			if (context != null)
 				IRootObjectProvider = new XamlRootObjectProvider(context.RootElement);
-			if (node != null)
+			if (context != null && node != null)
 			{
 				IXamlTypeResolver = new XamlTypeResolver(node.NamespaceResolver, XamlParser.GetElementType,
 					context.RootElement.GetType().GetTypeInfo().Assembly);
@@ -25,8 +25,7 @@ namespace Xamarin.Forms.Xaml.Internals
 				Add(typeof(IReferenceProvider), new ReferenceProvider(node));
 			}
 
-			var xmlLineInfo = node as IXmlLineInfo;
-			if (xmlLineInfo != null)
+			if (node is IXmlLineInfo xmlLineInfo)
 				IXmlLineInfoProvider = new XmlLineInfoProvider(xmlLineInfo);
 
 			IValueConverterProvider = new ValueConverterProvider();
@@ -62,6 +61,7 @@ namespace Xamarin.Forms.Xaml.Internals
 		}
 
 		[Obsolete]
+		[EditorBrowsable(EditorBrowsableState.Never)]
 		internal INameScopeProvider INameScopeProvider
 		{
 			get { return (INameScopeProvider)GetService(typeof (INameScopeProvider)); }
@@ -133,13 +133,21 @@ namespace Xamarin.Forms.Xaml.Internals
 	{
 		readonly object[] objectAndParents;
 		readonly object targetProperty;
+		readonly INameScope scope;
 
 		[Obsolete("SimpleValueTargetProvider(object[] objectAndParents) is obsolete as of version 2.3.4. Please use SimpleValueTargetProvider(object[] objectAndParents, object targetProperty) instead.")]
+		[EditorBrowsable(EditorBrowsableState.Never)]
 		public SimpleValueTargetProvider(object[] objectAndParents) : this (objectAndParents, null)
 		{
 		}
 
-		public SimpleValueTargetProvider(object[] objectAndParents, object targetProperty)
+		[Obsolete("SimpleValueTargetProvider(object[] objectAndParents) is obsolete as of version 3.3.0. Please use SimpleValueTargetProvider(object[] objectAndParents, object targetProperty, NameScope scope) instead.")]
+		[EditorBrowsable(EditorBrowsableState.Never)]
+		public SimpleValueTargetProvider(object[] objectAndParents, object targetProperty) : this (objectAndParents, targetProperty, null)
+		{
+		}
+
+		public SimpleValueTargetProvider(object[] objectAndParents, object targetProperty, INameScope scope)
 		{
 			if (objectAndParents == null)
 				throw new ArgumentNullException(nameof(objectAndParents));
@@ -148,6 +156,7 @@ namespace Xamarin.Forms.Xaml.Internals
 
 			this.objectAndParents = objectAndParents;
 			this.targetProperty = targetProperty;
+			this.scope = scope;
 		}
 
 		IEnumerable<object> IProvideParentValues.ParentObjects
@@ -161,6 +170,9 @@ namespace Xamarin.Forms.Xaml.Internals
 
 		public object FindByName(string name)
 		{
+			if (scope != null)
+				return scope.FindByName(name);
+
 			for (var i = 0; i < objectAndParents.Length; i++) {
 				var bo = objectAndParents[i] as BindableObject;
 				if (bo == null) continue;
@@ -251,8 +263,7 @@ namespace Xamarin.Forms.Xaml.Internals
 			return getTypeFromXmlName(new XmlType(namespaceuri, name, null), xmlLineInfo, currentAssembly, out exception);
 		}
 
-		internal delegate Type GetTypeFromXmlName(
-			XmlType xmlType, IXmlLineInfo xmlInfo, Assembly currentAssembly, out XamlParseException exception);
+		internal delegate Type GetTypeFromXmlName(XmlType xmlType, IXmlLineInfo xmlInfo, Assembly currentAssembly, out XamlParseException exception);
 	}
 
 	class XamlRootObjectProvider : IRootObjectProvider
@@ -295,6 +306,7 @@ namespace Xamarin.Forms.Xaml.Internals
 	}
 
 	[Obsolete]
+	[EditorBrowsable(EditorBrowsableState.Never)]
 	public class NameScopeProvider : INameScopeProvider
 	{
 		public INameScope NameScope { get; set; }

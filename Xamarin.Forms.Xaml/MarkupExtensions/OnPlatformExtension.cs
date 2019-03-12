@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Globalization;
 using System.Reflection;
+using System.Xml;
 
 namespace Xamarin.Forms.Xaml
 {
-	[ContentProperty("Default")]
+	[ContentProperty(nameof(Default))]
 	public class OnPlatformExtension : IMarkupExtension
 	{
 		public object Default { get; set; }
@@ -22,21 +23,33 @@ namespace Xamarin.Forms.Xaml
 
 		public object ProvideValue(IServiceProvider serviceProvider)
 		{
-			var lineInfo = serviceProvider?.GetService<IXmlLineInfoProvider>()?.XmlLineInfo;
-			if (Android == null && GTK == null && iOS == null && 
-				macOS == null && Tizen == null && UWP == null && 
-				WPF == null && Default == null)
-			{
-				throw new XamlParseException("OnPlatformExtension requires a non-null value to be specified for at least one platform or Default.", lineInfo ?? new XmlLineInfo());
+			if (   Android == null
+				&& GTK == null
+				&& iOS == null
+				&& macOS == null
+				&& Tizen == null
+				&& UWP == null
+				&& WPF == null
+				&& Default == null) {
+				throw new XamlParseException("OnPlatformExtension requires a non-null value to be specified for at least one platform or Default.", serviceProvider);
 			}
 
 			var valueProvider = serviceProvider?.GetService<IProvideValueTarget>() ?? throw new ArgumentException();
 
-			var bp = valueProvider.TargetProperty as BindableProperty;
-			var pi = valueProvider.TargetProperty as PropertyInfo;
-			var propertyType = bp?.ReturnType 
-				?? pi?.PropertyType 
-				?? throw new InvalidOperationException("Cannot determine property to provide the value for.");
+			BindableProperty bp;
+			PropertyInfo pi = null;
+			Type propertyType = null;
+
+			if (valueProvider.TargetObject is Setter setter) {
+				bp = setter.Property;
+			}
+			else {
+				bp = valueProvider.TargetProperty as BindableProperty;
+				pi = valueProvider.TargetProperty as PropertyInfo;
+			}
+			propertyType = bp?.ReturnType
+							  ?? pi?.PropertyType
+							  ?? throw new InvalidOperationException("Cannot determine property to provide the value for.");
 
 			var value = GetValue();
 			var info = propertyType.GetTypeInfo();
@@ -47,33 +60,56 @@ namespace Xamarin.Forms.Xaml
 				return Converter.Convert(value, propertyType, ConverterParameter, CultureInfo.CurrentUICulture);
 
 			var converterProvider = serviceProvider?.GetService<IValueConverterProvider>();
+			if (converterProvider != null) {
+				MemberInfo minforetriever()
+				{
+					if (pi != null)
+						return pi;
 
-			if (converterProvider != null)
-				return converterProvider.Convert(value, propertyType, () => pi, serviceProvider);
-			else
-				return value.ConvertTo(propertyType, () => pi, serviceProvider);
+					MemberInfo minfo = null;
+					try {
+						minfo = bp.DeclaringType.GetRuntimeProperty(bp.PropertyName);
+					}
+					catch (AmbiguousMatchException e) {
+						throw new XamlParseException($"Multiple properties with name '{bp.DeclaringType}.{bp.PropertyName}' found.", serviceProvider, innerException: e);
+					}
+					if (minfo != null)
+						return minfo;
+					try {
+						return bp.DeclaringType.GetRuntimeMethod("Get" + bp.PropertyName, new[] { typeof(BindableObject) });
+					}
+					catch (AmbiguousMatchException e) {
+						throw new XamlParseException($"Multiple methods with name '{bp.DeclaringType}.Get{bp.PropertyName}' found.", serviceProvider, innerException: e);
+					}
+				}
+
+				return converterProvider.Convert(value, propertyType, minforetriever, serviceProvider);
+			}
+			var ret = value.ConvertTo(propertyType, () => pi, serviceProvider, out Exception exception);
+			if (exception != null)
+				throw exception;
+			return ret;
 		}
 
 		object GetValue()
 		{
-			switch (Device.RuntimePlatform)
-			{
-				case Device.Android:
-					return Android ?? Default;
-				case Device.GTK:
-					return GTK ?? Default;
-				case Device.iOS:
-					return iOS ?? Default;
-				case Device.macOS:
-					return macOS ?? Default;
-				case Device.Tizen:
-					return Tizen ?? Default;
-				case Device.UWP:
-					return UWP ?? Default;
-				case Device.WPF:
-					return WPF ?? Default;
-				default:
-					return Default;
+			switch (Device.RuntimePlatform) {
+			case Device.Android:
+				return Android ?? Default;
+			case Device.GTK:
+				return GTK ?? Default;
+			case Device.iOS:
+				return iOS ?? Default;
+			case Device.macOS:
+				return macOS ?? Default;
+			case Device.Tizen:
+				return Tizen ?? Default;
+			case Device.UWP:
+				return UWP ?? Default;
+			case Device.WPF:
+				return WPF ?? Default;
+			default:
+				return Default;
 			}
 		}
 	}

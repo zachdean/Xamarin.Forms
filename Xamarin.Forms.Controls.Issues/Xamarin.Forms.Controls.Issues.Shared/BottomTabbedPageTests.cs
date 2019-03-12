@@ -10,12 +10,14 @@ using Xamarin.Forms.PlatformConfiguration.AndroidSpecific;
 using System.Collections.Specialized;
 
 #if UITEST
+using Xamarin.Forms.Core.UITests;
 using NUnit.Framework;
 using Xamarin.UITest;
 #endif
 
 namespace Xamarin.Forms.Controls.Issues
 {
+
 	[Preserve(AllMembers = true)]
 	[Issue(IssueTracker.Github, 1675, "Bottom Tabbed Page Basic Test", PlatformAffected.All)]
 	public class BottomTabbedPageTests : TestTabbedPage
@@ -71,14 +73,21 @@ namespace Xamarin.Forms.Controls.Issues
 				Text = "Change Item Color",
 				Command = new Command(() =>
 				{
+#pragma warning disable CS0618 // Type or member is obsolete
 					if (On<Android>().GetBarItemColor() == Color.Default)
+#pragma warning restore CS0618 // Type or member is obsolete
+
 					{
+#pragma warning disable CS0618 // Type or member is obsolete
 						On<Android>().SetBarItemColor(new Color(0, 255, 0, 128));
+#pragma warning restore CS0618 // Type or member is obsolete
 						btnChangeBarItemColorText.Text = $"Item Color: Less Green";
 					}
 					else
 					{
+#pragma warning disable CS0618 // Type or member is obsolete
 						On<Android>().SetBarItemColor(Color.Default);
+#pragma warning restore CS0618 // Type or member is obsolete
 						btnChangeBarItemColorText.Text = $"Item Color: Default";
 					}
 				})
@@ -90,14 +99,21 @@ namespace Xamarin.Forms.Controls.Issues
 				Text = "Change Selected Item Color",
 				Command = new Command(() =>
 				{
+#pragma warning disable CS0618 // Type or member is obsolete
 					if (On<Android>().GetBarSelectedItemColor() == Color.Default)
+#pragma warning restore CS0618 // Type or member is obsolete
+
 					{
+#pragma warning disable CS0618 // Type or member is obsolete
 						On<Android>().SetBarSelectedItemColor(Color.Green);
+#pragma warning restore CS0618 // Type or member is obsolete
 						btnChangeBarSelectedItemColorText.Text = $"Selected Item Color: Green";
 					}
 					else
 					{
+#pragma warning disable CS0618 // Type or member is obsolete
 						On<Android>().SetBarSelectedItemColor(Color.Default);
+#pragma warning restore CS0618 // Type or member is obsolete
 						btnChangeBarSelectedItemColorText.Text = $"Selected Item Color: Default";
 					}
 				})
@@ -246,7 +262,7 @@ namespace Xamarin.Forms.Controls.Issues
 			pageCountLabel.Text = $"{Children.Count} Pages";
 		}
 
-#if UITEST
+#if UITEST && __ANDROID__
 		[Test]
 		public async Task AddAndRemovePages()
 		{

@@ -62,10 +62,24 @@ namespace Xamarin.Forms.Platform.Tizen
 			}
 			return platform;
 		}
+
+		public static SizeRequest GetNativeSize(VisualElement view, double widthConstraint, double heightConstraint)
+		{
+			widthConstraint = widthConstraint <= -1 ? double.PositiveInfinity : widthConstraint;
+			heightConstraint = heightConstraint <= -1 ? double.PositiveInfinity : heightConstraint;
+
+			double width = !double.IsPositiveInfinity(widthConstraint) ? widthConstraint : Int32.MaxValue;
+			double height = !double.IsPositiveInfinity(heightConstraint) ? heightConstraint : Int32.MaxValue;
+
+			return Platform.GetRenderer(view).GetDesiredSize(width, height);
+		}
 	}
 
 	[EditorBrowsable(EditorBrowsableState.Never)]
-	public interface ITizenPlatform : IPlatform, IDisposable
+	public interface ITizenPlatform : IDisposable
+#pragma warning disable CS0618 // Type or member is obsolete
+		, IPlatform
+#pragma warning restore CS0618 // Type or member is obsolete
 	{
 		void SetPage(Page page);
 		bool SendBackButtonPressed();
@@ -86,9 +100,9 @@ namespace Xamarin.Forms.Platform.Tizen
 		bool _disposed;
 		Native.Dialog _pageBusyDialog;
 		int _pageBusyCount;
-		Naviframe _internalNaviframe;
+		readonly Naviframe _internalNaviframe;
 
-		HashSet<EvasObject> _alerts = new HashSet<EvasObject>();
+		readonly HashSet<EvasObject> _alerts = new HashSet<EvasObject>();
 
 		public event EventHandler<RootNativeViewChangedEventArgs> RootNativeViewChanged;
 
@@ -119,8 +133,6 @@ namespace Xamarin.Forms.Platform.Tizen
 		public Page Page { get; private set; }
 
 		public bool HasAlpha { get; set; }
-
-		Action BackPressedAction { get; set; }
 
 		Task CurrentModalNavigationTask { get; set; }
 		TaskCompletionSource<bool> CurrentTaskCompletionSource { get; set; }
@@ -157,7 +169,12 @@ namespace Xamarin.Forms.Platform.Tizen
 			_navModel.Push(newRoot, null);
 
 			Page = newRoot;
+
+#pragma warning disable CS0618 // Type or member is obsolete
+			// The Platform property is no longer necessary, but we have to set it because some third-party
+			// library might still be retrieving it and using it
 			Page.Platform = this;
+#pragma warning restore CS0618 // Type or member is obsolete
 
 			IVisualElementRenderer pageRenderer = Platform.CreateRenderer(Page);
 			var naviItem = _internalNaviframe.Push(pageRenderer.NativeView);
@@ -178,17 +195,6 @@ namespace Xamarin.Forms.Platform.Tizen
 				CurrentPageController?.SendAppearing();
 				return false;
 			});
-		}
-
-		public SizeRequest GetNativeSize(VisualElement view, double widthConstraint, double heightConstraint)
-		{
-			widthConstraint = widthConstraint <= -1 ? double.PositiveInfinity : widthConstraint;
-			heightConstraint = heightConstraint <= -1 ? double.PositiveInfinity : heightConstraint;
-
-			double width = !double.IsPositiveInfinity(widthConstraint) ? widthConstraint : Int32.MaxValue;
-			double height = !double.IsPositiveInfinity(heightConstraint) ? heightConstraint : Int32.MaxValue;
-
-			return Platform.GetRenderer(view).GetDesiredSize(width, height);
 		}
 
 		public bool SendBackButtonPressed()
@@ -284,8 +290,6 @@ namespace Xamarin.Forms.Platform.Tizen
 			Device.BeginInvokeOnMainThread(() => previousPage?.SendDisappearing());
 
 			_navModel.PushModal(modal);
-
-			modal.Platform = this;
 
 			await PushModalInternal(modal, animated);
 
@@ -557,6 +561,11 @@ namespace Xamarin.Forms.Platform.Tizen
 				page = (Page)page.RealParent;
 
 			return Page == page || _navModel.Roots.Contains(page);
+		}
+
+		SizeRequest IPlatform.GetNativeSize(VisualElement view, double widthConstraint, double heightConstraint)
+		{
+			return Platform.GetNativeSize(view, widthConstraint, heightConstraint);
 		}
 	}
 }

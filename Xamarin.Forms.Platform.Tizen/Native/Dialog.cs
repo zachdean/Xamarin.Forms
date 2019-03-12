@@ -1,6 +1,7 @@
 using System;
 using ElmSharp;
 using EButton = ElmSharp.Button;
+using EColor = ElmSharp.Color;
 
 namespace Xamarin.Forms.Platform.Tizen.Native
 {
@@ -27,6 +28,7 @@ namespace Xamarin.Forms.Platform.Tizen.Native
 		EvasObject _content;
 		string _title;
 		string _message;
+		EColor _titleColor = EColor.Default;
 
 		/// <summary>
 		///  Creates a dialog window.
@@ -71,6 +73,22 @@ namespace Xamarin.Forms.Platform.Tizen.Native
 				{
 					_title = value;
 					ApplyTitle(value);
+				}
+			}
+		}
+
+		public EColor TitleColor
+		{
+			get
+			{
+				return _titleColor;
+			}
+			set
+			{
+				if (_titleColor != value)
+				{
+					_titleColor = value;
+					ApplyTitleColor(value);
 				}
 			}
 		}
@@ -221,6 +239,11 @@ namespace Xamarin.Forms.Platform.Tizen.Native
 			SetPartText("title,text", title);
 		}
 
+		protected virtual void ApplyTitleColor(EColor color)
+		{
+			SetPartColor(Device.Idiom == TargetIdiom.TV ? "text_title" : "text_maintitle", color);
+		}
+
 		/// <summary>
 		/// Puts the button in one of the three available slots.
 		/// </summary>
@@ -244,7 +267,6 @@ namespace Xamarin.Forms.Platform.Tizen.Native
 					part = "button2";
 					break;
 
-				case ButtonPosition.Negative:
 				default:
 					part = "button1";
 					break;

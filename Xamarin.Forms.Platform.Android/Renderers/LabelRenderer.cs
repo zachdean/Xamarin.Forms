@@ -37,6 +37,7 @@ namespace Xamarin.Forms.Platform.Android
 		}
 
 		[Obsolete("This constructor is obsolete as of version 2.5. Please use LabelRenderer(Context) instead.")]
+		[EditorBrowsable(EditorBrowsableState.Never)]
 		public LabelRenderer()
 		{
 			AutoPackage = false;
@@ -71,7 +72,16 @@ namespace Xamarin.Forms.Platform.Android
 					return _lastSizeRequest.Value;
 			}
 
+			//We need to clear the Hint or else it will interfere with the sizing of the Label
+			var hint = Control.Hint;
+			if(!string.IsNullOrEmpty(hint))
+				Control.Hint = string.Empty;
+		
 			SizeRequest result = base.GetDesiredSize(widthConstraint, heightConstraint);
+
+			//Set Hint back after sizing
+			Control.Hint = hint;
+
 			result.Minimum = new Size(Math.Min(Context.ToPixels(10), result.Request.Width), result.Request.Height);
 
 			_lastConstraintWidth = widthConstraint;
@@ -108,6 +118,7 @@ namespace Xamarin.Forms.Platform.Android
 			{
 				UpdateText();
 				UpdateLineBreakMode();
+				UpdateLineHeight();
 				UpdateGravity();
 				UpdateMaxLines();
 			}
@@ -211,7 +222,7 @@ namespace Xamarin.Forms.Platform.Android
 
 		void UpdateLineBreakMode()
 		{
-			_view.SetLineBreakMode(Element.LineBreakMode);
+			_view.SetLineBreakMode(Element);
 			_lastSizeRequest = null;
 		}
 
@@ -226,16 +237,7 @@ namespace Xamarin.Forms.Platform.Android
 
 		void UpdateMaxLines()
 		{
-			if (Element.MaxLines > 0)
-			{
-				Control.SetSingleLine(Element.MaxLines == 1);
-				Control.SetMaxLines(Element.MaxLines);
-			}
-			else
-			{
-				Control.SetSingleLine(false);
-				Control.SetMaxLines(1);
-			}
+			Control.SetMaxLines(Element);	
 		}
 
 		void UpdateText()

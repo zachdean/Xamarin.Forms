@@ -29,6 +29,7 @@ namespace Xamarin.Forms.Platform.Android
 		}
 
 		[Obsolete("This constructor is obsolete as of version 2.5. Please use WebViewRenderer(Context) instead.")]
+		[EditorBrowsable(EditorBrowsableState.Never)]
 		public WebViewRenderer()
 		{
 			AutoPackage = false;
@@ -55,6 +56,7 @@ namespace Xamarin.Forms.Platform.Android
 					ElementController.EvalRequested -= OnEvalRequested;
 					ElementController.GoBackRequested -= OnGoBackRequested;
 					ElementController.GoForwardRequested -= OnGoForwardRequested;
+					ElementController.ReloadRequested -= OnReloadRequested;
 
 					_webViewClient?.Dispose();
 					_webChromeClient?.Dispose();
@@ -99,7 +101,7 @@ namespace Xamarin.Forms.Platform.Android
 				webView.SetWebViewClient(_webViewClient);
 
 				_webChromeClient = GetFormsWebChromeClient();
-				_webChromeClient.SetContext(Context as Activity);
+				_webChromeClient.SetContext(Context);
 				webView.SetWebChromeClient(_webChromeClient);
 
 				webView.Settings.JavaScriptEnabled = true;
@@ -114,6 +116,7 @@ namespace Xamarin.Forms.Platform.Android
 				oldElementController.EvaluateJavaScriptRequested -= OnEvaluateJavaScriptRequested;
 				oldElementController.GoBackRequested -= OnGoBackRequested;
 				oldElementController.GoForwardRequested -= OnGoForwardRequested;
+				oldElementController.ReloadRequested -= OnReloadRequested;
 			}
 
 			if (e.NewElement != null)
@@ -123,8 +126,11 @@ namespace Xamarin.Forms.Platform.Android
 				newElementController.EvaluateJavaScriptRequested += OnEvaluateJavaScriptRequested;
 				newElementController.GoBackRequested += OnGoBackRequested;
 				newElementController.GoForwardRequested += OnGoForwardRequested;
+				newElementController.ReloadRequested += OnReloadRequested;
 
 				UpdateMixedContentMode();
+				UpdateEnableZoomControls();
+				UpdateDisplayZoomControls();
 			}
 
 			Load();
@@ -141,6 +147,12 @@ namespace Xamarin.Forms.Platform.Android
 					break;
 				case "MixedContentMode":
 					UpdateMixedContentMode();
+					break;
+				case "EnableZoomControls":
+					UpdateEnableZoomControls();
+					break;
+				case "DisplayZoomControls":
+					UpdateDisplayZoomControls();
 					break;
 			}
 		}
@@ -185,6 +197,11 @@ namespace Xamarin.Forms.Platform.Android
 			UpdateCanGoBackForward();
 		}
 
+		void OnReloadRequested(object sender, EventArgs eventArgs)
+		{
+			Control.Reload();
+		}
+
 		protected internal void UpdateCanGoBackForward()
 		{
 			if (Element == null || Control == null)
@@ -199,6 +216,18 @@ namespace Xamarin.Forms.Platform.Android
 			{
 				Control.Settings.MixedContentMode = (MixedContentHandling)Element.OnThisPlatform().MixedContentMode();
 			}
+		}
+
+		void UpdateEnableZoomControls()
+		{
+			var value = Element.OnThisPlatform().EnableZoomControls();
+			Control.Settings.SetSupportZoom(value);
+			Control.Settings.BuiltInZoomControls = value;
+		}
+
+		void UpdateDisplayZoomControls()
+		{
+			Control.Settings.DisplayZoomControls = Element.OnThisPlatform().DisplayZoomControls();
 		}
 
 		class JavascriptResult : Java.Lang.Object, IValueCallback

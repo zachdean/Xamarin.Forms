@@ -19,6 +19,8 @@ using Specifics = Xamarin.Forms.PlatformConfiguration.WindowsSpecific.TabbedPage
 using VisualElementSpecifics = Xamarin.Forms.PlatformConfiguration.WindowsSpecific.VisualElement;
 using PageSpecifics = Xamarin.Forms.PlatformConfiguration.WindowsSpecific.Page;
 using Windows.UI.Xaml.Input;
+using System.Linq;
+using WSelectionChangedEventArgs = Windows.UI.Xaml.Controls.SelectionChangedEventArgs;
 
 namespace Xamarin.Forms.Platform.UWP
 {
@@ -34,6 +36,8 @@ namespace Xamarin.Forms.Platform.UWP
 		Color _barTextColor;
 		bool _disposed;
 		bool _showTitle;
+		Brush _defaultSelectedColor;
+		Brush _defaultUnselectedColor;
 
 		WTextAlignment _oldBarTextBlockTextAlignment = WTextAlignment.Center;
 		WHorizontalAlignment _oldBarTextBlockHorinzontalAlignment = WHorizontalAlignment.Center;
@@ -183,6 +187,7 @@ namespace Xamarin.Forms.Platform.UWP
 
 				UpdateCurrentPage();
 				UpdateToolbarPlacement();
+				UpdateToolbarDynamicOverflowEnabled();
 
 				((INotifyCollectionChanged)Element.Children).CollectionChanged += OnPagesChanged;
 				element.PropertyChanged += OnElementPropertyChanged;
@@ -224,12 +229,16 @@ namespace Xamarin.Forms.Platform.UWP
 				UpdateBarBackgroundColor();
 			else if (e.PropertyName == PlatformConfiguration.WindowsSpecific.Page.ToolbarPlacementProperty.PropertyName)
 				UpdateToolbarPlacement();
+			else if (e.PropertyName == PlatformConfiguration.WindowsSpecific.Page.ToolbarDynamicOverflowEnabledProperty.PropertyName)
+				UpdateToolbarDynamicOverflowEnabled();
 			else if (e.PropertyName == Specifics.HeaderIconsEnabledProperty.PropertyName)
 				UpdateBarIcons();
 			else if (e.PropertyName == Specifics.HeaderIconsSizeProperty.PropertyName)
 				UpdateBarIcons();
 			else if (e.PropertyName == PageSpecifics.ToolbarPlacementProperty.PropertyName)
 				UpdateToolbarPlacement();
+			else if (e.PropertyName == TabbedPage.SelectedTabColorProperty.PropertyName || e.PropertyName == TabbedPage.UnselectedTabColorProperty.PropertyName)
+				UpdateSelectedTabColors();
 		}
 
 		void OnLoaded(object sender, RoutedEventArgs args)
@@ -240,6 +249,7 @@ namespace Xamarin.Forms.Platform.UWP
 			UpdateBarBackgroundColor();
 			UpdateBarIcons();
 			UpdateAccessKeys();
+			UpdateSelectedTabColors();
 		}
 
 		void OnPagesChanged(object sender, NotifyCollectionChangedEventArgs e) 
@@ -295,7 +305,7 @@ namespace Xamarin.Forms.Platform.UWP
 			}
 		}
 
-		void OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+		void OnSelectionChanged(object sender, WSelectionChangedEventArgs e)
 		{
 			if (Element == null)
 				return;
@@ -306,6 +316,9 @@ namespace Xamarin.Forms.Platform.UWP
 				return;
 			currentPage?.SendDisappearing();
 			Element.CurrentPage = page;
+
+			UpdateSelectedTabColors();
+
 			page?.SendAppearing();
 		}
 
@@ -494,6 +507,11 @@ namespace Xamarin.Forms.Platform.UWP
 			Control.ToolbarPlacement = Element.OnThisPlatform().GetToolbarPlacement();
 		}
 
+		void UpdateToolbarDynamicOverflowEnabled()
+		{
+			Control.ToolbarDynamicOverflowEnabled = Element.OnThisPlatform().GetToolbarDynamicOverflowEnabled();
+		}
+
 		protected void UpdateAccessKeys()
 		{
 			Control?.GetDescendantsByName<TextBlock>(TabBarHeaderTextBlockName).ForEach(UpdateAccessKey);
@@ -534,6 +552,41 @@ namespace Xamarin.Forms.Platform.UWP
 			element.SetBinding(Windows.UI.Xaml.Controls.Control.ForegroundProperty,
 				new Windows.UI.Xaml.Data.Binding { Path = new PropertyPath("ToolbarForeground"), 
 					Source = Control, RelativeSource = new RelativeSource { Mode = RelativeSourceMode.TemplatedParent } });
+		}
+
+		void UpdateSelectedTabColors()
+		{
+			// Retrieve all tab header textblocks
+			var allTabHeaderTextBlocks = Control.GetDescendantsByName<WTextBlock>(TabBarHeaderTextBlockName).ToArray();
+
+			// Loop through all pages in the Pivot control
+			foreach (Page page in Control.Items)
+			{
+				// Fetch just the textblock for the current page
+				var tabBarTextBlock = allTabHeaderTextBlocks[Control.Items.IndexOf(page)];
+
+				// Apply selected or unselected style to the current textblock
+				if (page == Element.CurrentPage)
+				{
+					if (_defaultSelectedColor == null)
+						_defaultSelectedColor = tabBarTextBlock.Foreground;
+
+					if (Element.IsSet(TabbedPage.SelectedTabColorProperty) && Element.SelectedTabColor != Color.Default)
+						tabBarTextBlock.Foreground = Element.SelectedTabColor.ToBrush();
+					else
+						tabBarTextBlock.Foreground = _defaultSelectedColor;
+				}
+				else
+				{
+					if (_defaultUnselectedColor == null)
+						_defaultUnselectedColor = tabBarTextBlock.Foreground;
+
+					if (Element.IsSet(TabbedPage.SelectedTabColorProperty) && Element.UnselectedTabColor != Color.Default)
+						tabBarTextBlock.Foreground = Element.UnselectedTabColor.ToBrush();
+					else
+						tabBarTextBlock.Foreground = _defaultUnselectedColor;
+				}
+			}
 		}
 	}
 }

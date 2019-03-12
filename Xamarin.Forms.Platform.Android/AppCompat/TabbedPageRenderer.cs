@@ -43,6 +43,7 @@ namespace Xamarin.Forms.Platform.Android.AppCompat
 		int[] _emptyStateSet = null;
 		int _defaultARGBColor = Color.Default.ToAndroid().ToArgb();
 		AColor _defaultAndroidColor = Color.Default.ToAndroid();
+		Platform _platform;
 
 		public TabbedPageRenderer(Context context) : base(context)
 		{
@@ -50,15 +51,58 @@ namespace Xamarin.Forms.Platform.Android.AppCompat
 		}
 
 		[Obsolete("This constructor is obsolete as of version 2.5. Please use TabbedPageRenderer(Context) instead.")]
+		[EditorBrowsable(EditorBrowsableState.Never)]
 		public TabbedPageRenderer()
 		{
 			AutoPackage = false;
 		}
 
+		Platform Platform
+		{
+			get
+			{
+				if (_platform == null)
+				{
+					if (Context is FormsAppCompatActivity activity)
+					{
+						_platform = activity.Platform;
+					}
+				}
+
+				return _platform;
+			}
+		}
+
 		FragmentManager FragmentManager => _fragmentManager ?? (_fragmentManager = ((FormsAppCompatActivity)Context).SupportFragmentManager);
 		bool IsBottomTabPlacement => (Element != null) ? Element.OnThisPlatform().GetToolbarPlacement() == ToolbarPlacement.Bottom : false;
-		public Color BarItemColor => (Element != null) ? Element.OnThisPlatform().GetBarItemColor() : Color.Default;
-		public Color BarSelectedItemColor => (Element != null) ? Element.OnThisPlatform().GetBarSelectedItemColor() : Color.Default;
+
+		public Color BarItemColor
+		{
+			get
+			{
+				if (Element != null)
+				{
+					if (Element.IsSet(TabbedPage.UnselectedTabColorProperty))
+						return Element.UnselectedTabColor;
+				}
+
+				return Color.Default;
+			}
+		}
+
+		public Color BarSelectedItemColor
+		{
+			get
+			{
+				if (Element != null)
+				{
+					if (Element.IsSet(TabbedPage.SelectedTabColorProperty))
+						return Element.SelectedTabColor;
+				}
+
+				return Color.Default;
+			}
+		}
 
 		IPageController PageController => Element as IPageController;
 
@@ -170,12 +214,16 @@ namespace Xamarin.Forms.Platform.Android.AppCompat
 		protected override void OnAttachedToWindow()
 		{
 			base.OnAttachedToWindow();
+			if (Parent is PageContainer pageContainer && (pageContainer.IsInFragment || pageContainer.Visibility == ViewStates.Gone))
+				return;
 			PageController.SendAppearing();
 		}
 
 		protected override void OnDetachedFromWindow()
 		{
 			base.OnDetachedFromWindow();
+			if (Parent is PageContainer pageContainer && pageContainer.IsInFragment)
+				return;
 			PageController.SendDisappearing();
 		}
 
@@ -280,8 +328,8 @@ namespace Xamarin.Forms.Platform.Android.AppCompat
 			else if (e.PropertyName == NavigationPage.BarBackgroundColorProperty.PropertyName)
 				UpdateBarBackgroundColor();
 			else if (e.PropertyName == NavigationPage.BarTextColorProperty.PropertyName ||
-				e.PropertyName == PlatformConfiguration.AndroidSpecific.TabbedPage.BarItemColorProperty.PropertyName ||
-				e.PropertyName == PlatformConfiguration.AndroidSpecific.TabbedPage.BarSelectedItemColorProperty.PropertyName)
+				e.PropertyName == TabbedPage.UnselectedTabColorProperty.PropertyName ||
+				e.PropertyName == TabbedPage.SelectedTabColorProperty.PropertyName)
 			{
 				_newTabTextColors = null;
 				_newTabIconColors = null;
@@ -493,9 +541,17 @@ namespace Xamarin.Forms.Platform.Android.AppCompat
 
 		void ScrollToCurrentPage()
 		{
-			((Platform)Element.Platform).NavAnimationInProgress = true;
+			if (Platform != null)
+			{
+				Platform.NavAnimationInProgress = true;
+			}
+
 			_viewPager.SetCurrentItem(Element.Children.IndexOf(Element.CurrentPage), Element.OnThisPlatform().IsSmoothScrollEnabled());
-			((Platform)Element.Platform).NavAnimationInProgress = false;
+
+			if (Platform != null)
+			{
+				Platform.NavAnimationInProgress = false;
+			}
 		}
 
 		void UpdateIgnoreContainerAreas()
@@ -630,7 +686,7 @@ namespace Xamarin.Forms.Platform.Android.AppCompat
 			}
 		}
 
-		Drawable GetIconDrawable(FileImageSource icon) =>
+		protected virtual Drawable GetIconDrawable(FileImageSource icon) =>
 			Context.GetDrawable(icon);
 
 		protected virtual void SetTabIcon(TabLayout.Tab tab, FileImageSource icon)

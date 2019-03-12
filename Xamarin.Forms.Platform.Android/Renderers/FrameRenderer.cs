@@ -20,6 +20,7 @@ namespace Xamarin.Forms.Platform.Android
 		}
 
 		[Obsolete("This constructor is obsolete as of version 2.5. Please use FrameRenderer(Context) instead.")]
+		[EditorBrowsable(EditorBrowsableState.Never)]
 		public FrameRenderer()
 		{
 			AutoPackage = false;
@@ -51,17 +52,20 @@ namespace Xamarin.Forms.Platform.Android
 			if (e.NewElement != null && e.OldElement == null)
 			{
 				UpdateBackground();
-				UpdateCornerRadius();
 				_motionEventHelper.UpdateElement(e.NewElement);
 			}
 		}
 
-		void UpdateBackground()
+		protected override void OnElementPropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
-			this.SetBackground(new FrameDrawable(Element, Context.ToPixels));
+			base.OnElementPropertyChanged(sender, e);
+			if (e.PropertyName == VisualElement.BackgroundColorProperty.PropertyName || e.PropertyName == Frame.CornerRadiusProperty.PropertyName)
+			{
+				UpdateBackground();
+			}
 		}
 
-		void UpdateCornerRadius()
+		void UpdateBackground()
 		{
 			this.SetBackground(new FrameDrawable(Element, Context.ToPixels));
 		}

@@ -8,7 +8,7 @@
 	<PropertyGroup>
 	    <_DisableStrongNamer Condition=" '$(_DisableStrongNamer)' != 'True' ">False</_DisableStrongNamer>
 	    <AssemblyName>Xamarin.Forms.Build.Tasks</AssemblyName>
-	    <TargetFramework>netstandard2.0</TargetFramework>
+	    <TargetFrameworks>net46;netstandard2.0</TargetFrameworks>
 	    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
 	    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
 	    <SignAssembly Condition=" '$(_DisableStrongNamer)' != 'True' ">True</SignAssembly>
@@ -19,14 +19,15 @@
 	</PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Mono.Cecil" Version="0.10.0-beta7" />
-    <PackageReference Include="System.CodeDom" Version="4.4.0" />
-    <PackageReference Include="Microsoft.Build" Version="15.3.409" />
-    <PackageReference Include="Microsoft.Build.Framework" Version="15.3.409" />
-    <PackageReference Include="Microsoft.Build.Utilities.Core" Version="15.3.409" />
-    <PackageReference Include="Microsoft.Build.Tasks.Core" Version="15.3.409" />
-    <PackageReference Include="StrongNamer" Version="0.0.7" />
-    <PackageReference Include="GitInfo" Version="2.0.11" />
+    <PackageReference Include="Mono.Cecil" Version="0.10.1" />
+    <PackageReference Include="System.CodeDom" Version="4.4.0" Condition="'$(TargetFramework)' == 'netstandard2.0'" />
+    <PackageReference Include="Microsoft.Build" Version="15.8.166" />
+    <PackageReference Include="Microsoft.Build.Framework" Version="15.8.166" />
+    <PackageReference Include="Microsoft.Build.Utilities.Core" Version="15.8.166" />
+    <PackageReference Include="Microsoft.Build.Tasks.Core" Version="15.8.166" />
+    <PackageReference Include="StrongNamer" Version="0.0.8" />
+    <PackageReference Include="System.ValueTuple" Version="4.5.0" />
+    <PackageReference Include="GitInfo" Version="2.0.20" />
   </ItemGroup>
 
   <ItemGroup>
@@ -43,7 +44,7 @@
 	<PropertyGroup Condition="'$(SnExe)' == '' And '$(OS)' != 'Windows_NT'">
 		<SnExe>sn</SnExe>
 	</PropertyGroup>
-	
+
 	<Target Name="_SetSnExe" Condition="'$(SnExe)' == '' And '$(OS)' == 'Windows_NT'">
 		<GetFrameworkSdkPath>
 			<Output TaskParameter="Path" PropertyName="WindowsSdkPath" />
@@ -55,8 +56,8 @@
 		    <SnExe>$([System.Text.RegularExpressions.Regex]::Replace('$(SnExe)', ';.*', ''))</SnExe>
 	  </PropertyGroup>
 	</Target>
-	
-  <Target Name="_StrongName" AfterTargets="Build" DependsOnTargets="_SetSnExe">
+
+  <Target Name="_StrongName" AfterTargets="Build" DependsOnTargets="_SetSnExe" Condition="'$(TargetPath)' != ''" Inputs="$(TargetPath)" Outputs="$(IntermediateOutputPath)Sn.stamp">
   	<Exec Command='"$(SnExe)" -R $(TargetPath) ..\xamarin.forms.snk' Condition=" '$(SignAssembly)' == 'true' " />
   </Target>
 
@@ -64,6 +65,6 @@
     <ItemGroup>
       <_CopyItems Include="$(TargetDir)*.dll" />
     </ItemGroup>
-    <Copy SourceFiles="@(_CopyItems)" DestinationFolder="..\.nuspec\" ContinueOnError="true" Retries="0" />
+    <Copy SourceFiles="@(_CopyItems)" DestinationFolder="..\.nuspec\$(TargetFramework)\" ContinueOnError="true" Retries="0" />
   </Target>
 </Project>

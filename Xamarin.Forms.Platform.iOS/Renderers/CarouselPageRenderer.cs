@@ -19,12 +19,14 @@ namespace Xamarin.Forms.Platform.iOS
 		bool _ignoreNativeScrolling;
 		UIScrollView _scrollView;
 		VisualElementTracker _tracker;
+		Page _previousPage;
 
 		public CarouselPageRenderer()
 		{
 		}
 
 		IElementController ElementController => Element as IElementController;
+
 
 		protected CarouselPage Carousel
 		{
@@ -63,6 +65,8 @@ namespace Xamarin.Forms.Platform.iOS
 
 			if (element != null)
 				element.SendViewInitialized(NativeView);
+
+			_previousPage = Carousel?.CurrentPage;
 		}
 
 		public void SetElementSize(Size size)
@@ -167,6 +171,8 @@ namespace Xamarin.Forms.Platform.iOS
 		{
 			if (disposing && !_disposed)
 			{
+				_previousPage = null;
+
 				if (_scrollView != null)
 					_scrollView.DecelerationEnded -= OnDecelerationEnded;
 
@@ -259,8 +265,15 @@ namespace Xamarin.Forms.Platform.iOS
 		{
 			if (_ignoreNativeScrolling || SelectedIndex >= ElementController.LogicalChildren.Count)
 				return;
-
-			Carousel.CurrentPage = (ContentPage)ElementController.LogicalChildren[SelectedIndex];
+						
+			var currentPage = (ContentPage)ElementController.LogicalChildren[SelectedIndex];
+			if (_previousPage != currentPage)
+			{
+				_previousPage?.SendDisappearing();
+				_previousPage = currentPage;
+			}
+			Carousel.CurrentPage = currentPage;
+			currentPage.SendAppearing();
 		}
 
 		void OnPagesChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -348,7 +361,7 @@ namespace Xamarin.Forms.Platform.iOS
 			string bgImage = ((Page)Element).BackgroundImage;
 			if (!string.IsNullOrEmpty(bgImage))
 			{
-				View.BackgroundColor = UIColor.FromPatternImage(UIImage.FromBundle(bgImage));
+				View.BackgroundColor = ColorExtensions.FromPatternImageFromBundle(bgImage);
 				return;
 			}
 			Color bgColor = Element.BackgroundColor;
