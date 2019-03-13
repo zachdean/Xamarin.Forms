@@ -13,7 +13,7 @@ namespace Xamarin.Forms.Controls.ControlGalleryPages
 
 		private void Button_Clicked(object sender, EventArgs e)
 		{
-			DependencyService.Get<IWindowNavigation>().NavegateToAnotherPage(new ContentPage());
+			DependencyService.Get<IWindowNavigation>().NavigateToAnotherPage(new ContentPage());
 		}
 	}
 }

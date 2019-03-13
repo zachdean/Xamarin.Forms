@@ -17,7 +17,7 @@ namespace Xamarin.Forms.ControlGallery.WindowsUniversal
 		[ThreadStatic]
 		static EventHandler<Page> _updatePage;
 
-		public void NavegateToAnotherPage(Page page)
+		public void NavigateToAnotherPage(Page page)
 		{
 			_updatePage?.Invoke(null, page);
 		}
