@@ -213,14 +213,32 @@ namespace Xamarin.Forms.Platform.iOS
 			}
 			else if (IsRootPage && _flyoutBehavior == FlyoutBehavior.Flyout)
 			{
-				ImageSource image = "3bar.png";
-				var icon = await image.GetNativeImageAsync();
-				NavigationItem.LeftBarButtonItem = new UIBarButtonItem(icon, UIBarButtonItemStyle.Plain, OnMenuButtonPressed);
+
+				await SetDrawerArrowDrawableFromFlyoutIcon();
 			}
 			else
 			{
 				NavigationItem.LeftBarButtonItem = null;
 			}
+		}
+
+		async Task SetDrawerArrowDrawableFromFlyoutIcon()
+		{
+			Element item = Page;
+			ImageSource image = null;
+			while (!Application.IsApplicationOrNull(item))
+			{
+				if (item is IShellController shell)
+				{
+					image = shell.FlyoutIcon;
+					item = null;
+				}
+				item = item?.Parent;
+			}
+			if (image == null)
+				image = "3bar.png";
+			var icon = await image.GetNativeImageAsync();
+			NavigationItem.LeftBarButtonItem = new UIBarButtonItem(icon, UIBarButtonItemStyle.Plain, OnMenuButtonPressed);
 		}
 
 		void OnMenuButtonPressed(object sender, EventArgs e)

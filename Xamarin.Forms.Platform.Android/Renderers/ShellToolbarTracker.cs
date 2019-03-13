@@ -254,6 +254,8 @@ namespace Xamarin.Forms.Platform.Android
 					{
 						ToolbarNavigationClickListener = this,
 					};
+					SetDrawerArrowDrawableFromFlyoutIcon(context, _drawerToggle);
+
 					_drawerToggle.DrawerSlideAnimationEnabled = false;
 					drawerLayout.AddDrawerListener(_drawerToggle);
 				}
@@ -271,8 +273,8 @@ namespace Xamarin.Forms.Platform.Android
 				else if (_flyoutBehavior == FlyoutBehavior.Flyout)
 				{
 					toolbar.NavigationIcon = null;
-					using (var drawable = _drawerToggle.DrawerArrowDrawable)
-						drawable.SetColorFilter(TintColor.ToAndroid(Color.White), PorterDuff.Mode.SrcAtop);
+					var drawable = _drawerToggle.DrawerArrowDrawable;
+					drawable.SetColorFilter(TintColor.ToAndroid(Color.White), PorterDuff.Mode.SrcAtop);
 					_drawerToggle.DrawerIndicatorEnabled = true;
 				}
 				else
@@ -280,6 +282,25 @@ namespace Xamarin.Forms.Platform.Android
 					_drawerToggle.DrawerIndicatorEnabled = false;
 				}
 				_drawerToggle.SyncState();
+			}
+		}
+
+		protected virtual void SetDrawerArrowDrawableFromFlyoutIcon(Context context, ActionBarDrawerToggle actionBarDrawerToggle)
+		{
+			Element item = Page;
+			string icon = null;
+			while (!Application.IsApplicationOrNull(item))
+			{
+				if (item is IShellController shell)
+				{
+					icon = (shell.FlyoutIcon as FileImageSource)?.File;
+					item = null;
+				}
+				item = item?.Parent;
+			}
+			if (!string.IsNullOrEmpty(icon))
+			{
+				actionBarDrawerToggle.DrawerArrowDrawable = new FlyoutIconDrawerDrawable(context, icon);
 			}
 		}
 
@@ -451,6 +472,30 @@ namespace Xamarin.Forms.Platform.Android
 		void UpdateToolbarItems()
 		{
 			UpdateToolbarItems(_toolbar, Page);
+		}
+
+		class FlyoutIconDrawerDrawable : DrawerArrowDrawable
+		{
+			Bitmap _iconBitmap;
+
+			protected override void Dispose(bool disposing)
+			{
+				base.Dispose(disposing);
+				if (disposing && _iconBitmap != null)
+				{
+					_iconBitmap.Dispose();
+				}
+			}
+
+			public FlyoutIconDrawerDrawable(Context context, string icon) : base(context)
+			{
+				_iconBitmap = context.Resources.GetBitmap($"{icon}");
+			}
+
+			public override void Draw(Canvas canvas)
+			{
+				canvas.DrawBitmap(_iconBitmap, 0, 0, null);
+			}
 		}
 	}
 }
