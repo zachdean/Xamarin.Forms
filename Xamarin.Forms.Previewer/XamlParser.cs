@@ -258,6 +258,7 @@ namespace  Xamarin.Forms.Previewer
 		static string XamlListViewPage = @"<?xml version=""1.0"" encoding=""UTF-8""?>
 <ContentPage xmlns=""http://xamarin.com/schemas/2014/forms"" xmlns:x=""http://schemas.microsoft.com/winfx/2009/xaml"" x:Class=""FormsListViewSample.MainViewXaml""
 xmlns:local=""clr-namespace:FormsListViewSample;assembly=FormsListViewSample""
+xmlns:d=""http://xamarin.com/schemas/2014/forms/design"" xmlns:mc=""http://schemas.openxmlformats.org/markup-compatibility/2006"" mc:Ignorable=""d""
 Title=""ListView Xaml Sample""
 >
 	<ContentPage.Content>
@@ -267,8 +268,8 @@ Title=""ListView Xaml Sample""
 					<ViewCell>
 						<StackLayout Orientation=""Horizontal"" HorizontalOptions=""Fill"" BackgroundColor=""Olive"">
 							<StackLayout Orientation=""Vertical"">
-								<Label Text = ""Tomatoe"" FontSize=""24"" AbsoluteLayout.LayoutBounds=""0.25, 0.25, 400, 40""/>
-								<Label Text = ""Fruit"" AbsoluteLayout.LayoutBounds=""50, 35, 200, 25""/>
+								<Label Text = ""{Binding Text}"" d:Text=""Tomatoe"" FontSize=""24"" AbsoluteLayout.LayoutBounds=""0.25, 0.25, 400, 40""/>
+								<Label Text = ""{Binding Description}"" d:Text=""Fruit"" AbsoluteLayout.LayoutBounds=""50, 35, 200, 25""/>
 							</StackLayout>
 							<Image Source=""https://github.com/xamarin/xamarin-forms-samples/raw/master/UserInterface/ListView/CustomCells/sample/iOS/Resources/tomato.png"" HorizontalOptions=""End"" AbsoluteLayout.LayoutBounds=""250.25, 0.25, 50, 50 ""/>
 						</StackLayout>

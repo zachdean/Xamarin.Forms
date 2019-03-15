@@ -405,7 +405,8 @@ namespace Xamarin.Forms.Xaml
 
 			if (eventInfo == null || IsNullOrEmpty(stringValue))
 				return false;
-
+			if (DesignMode.IsDesignModeEnabled)
+				return true;
 			var methodInfo = rootElement.GetType().GetRuntimeMethods().FirstOrDefault(mi => mi.Name == (string)value);
 			if (methodInfo == null) {
 				exception = new XamlParseException($"No method {value} found on type {rootElement.GetType()}", lineInfo);

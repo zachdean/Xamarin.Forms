@@ -39,7 +39,7 @@ namespace Xamarin.Forms.Xaml
 
 		public static TXaml LoadFromXaml<TXaml>(this TXaml view, string xaml)
 		{
-			XamlLoader.Load(view, xaml);
+			XamlLoader.Load(view, xaml, DesignMode.IsDesignModeEnabled);
 			return view;
 		}
 	}
