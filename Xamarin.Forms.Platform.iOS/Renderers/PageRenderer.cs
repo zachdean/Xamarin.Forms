@@ -251,7 +251,8 @@ namespace Xamarin.Forms.Platform.iOS
 
 		void UpdateUseSafeArea()
 		{
-			if (!Forms.IsiOS11OrNewer) return;
+			if (!Forms.IsiOS11OrNewer)
+				return;
 
 			if (!UsingSafeArea)
 			{
@@ -267,6 +268,9 @@ namespace Xamarin.Forms.Platform.iOS
 
 		void UpdateShellInsetPadding()
 		{
+			if (Element == null)
+				return;
+
 			var setInsets = Shell.GetSetPaddingInsets(Element);
 			if (setInsets)
 			{
