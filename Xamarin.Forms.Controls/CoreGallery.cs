@@ -520,7 +520,7 @@ namespace Xamarin.Forms.Controls
 
 			var searchBar = new SearchBar()
 			{
-				AutomationId = "SearchBar",
+				AutomationId = "SearchBar"
 			};
 
 			searchBar.TextChanged += (sender, e) =>
