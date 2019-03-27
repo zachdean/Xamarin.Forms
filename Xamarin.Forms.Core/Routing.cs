@@ -14,7 +14,7 @@ namespace Xamarin.Forms
 		static Dictionary<string, RouteFactory> s_routes = new Dictionary<string, RouteFactory>(StringComparer.InvariantCultureIgnoreCase);
 #endif
 
-		internal const string ImplicitPrefix = "IMPL_";
+		internal const string ImplicitPrefix = "*IMPL_";
 
 		internal static string GenerateImplicitRoute (string source)
 		{

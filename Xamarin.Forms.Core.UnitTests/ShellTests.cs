@@ -191,17 +191,22 @@ namespace Xamarin.Forms.Core.UnitTests
 			foreach (var route in routes)
 			{
 				Routing.RegisterRoute(route, typeof(ShellItem));
-				var caseReversed = ReverceCase(route); 
-				var content = Routing.GetOrCreateContent(caseReversed);
-				Assert.IsNotNull(content);
-				Assert.AreEqual(Routing.GetRoute(content), caseReversed);
+
+				var content1 = Routing.GetOrCreateContent(route);
+				Assert.IsNotNull(content1);
+				Assert.AreEqual(Routing.GetRoute(content1), route);
+
+				var caseReversed = ReverseCase(route); 
+				var content2 = Routing.GetOrCreateContent(caseReversed);
+				Assert.IsNotNull(content2);
+				Assert.AreEqual(Routing.GetRoute(content2), caseReversed);
 			}
 
 			Assert.Catch(typeof(ArgumentException), () => Routing.RegisterRoute(string.Empty, typeof(ShellItem)));
 
 			Assert.Catch(typeof(ArgumentNullException), () => Routing.RegisterRoute(null, typeof(ShellItem)));
 
-			Assert.Catch(typeof(ArgumentException), () => Routing.RegisterRoute("?", typeof(ShellItem)));
+			Assert.Catch(typeof(ArgumentException), () => Routing.RegisterRoute("*", typeof(ShellItem)));
 
 			// max range
 			Assert.Catch(typeof(ArgumentException), () => {
@@ -209,7 +214,7 @@ namespace Xamarin.Forms.Core.UnitTests
 				Routing.RegisterRoute(bigString, typeof(ShellItem));
 			});
 
-			string ReverceCase(string input) // Tab1 => tAB1
+			string ReverseCase(string input) // Tab1 => tAB1
 			{
 				return new string(input.Select(c => char.IsLetter(c) ? (char.IsUpper(c) ?
 					char.ToLower(c) : char.ToUpper(c)) : c).ToArray());
