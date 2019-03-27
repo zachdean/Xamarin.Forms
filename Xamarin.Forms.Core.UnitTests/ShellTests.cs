@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using NUnit.Framework;
 using Xamarin.Forms.Internals;
@@ -180,6 +181,39 @@ namespace Xamarin.Forms.Core.UnitTests
 
 			await shell.GoToAsync(new ShellNavigationState($"../one/tab11#fragment"));
 			Assert.That(shell.CurrentState.Location.ToString(), Is.EqualTo("app:///s/one/tab11/content/"));
+		}
+
+		[Test]
+		public async Task CaseIgnoreRouting()
+		{
+			var routes = new[] { "Tab1", "TAB2", "@-_-@", "+:~", "=%", "Super_Simple+-Route.doc" };
+
+			foreach (var route in routes)
+			{
+				Routing.RegisterRoute(route, typeof(ShellItem));
+				var caseReversed = ReverceCase(route); 
+				var content = Routing.GetOrCreateContent(caseReversed);
+				Assert.IsNotNull(content);
+				Assert.AreEqual(Routing.GetRoute(content), caseReversed);
+			}
+
+			Assert.Catch(typeof(ArgumentException), () => Routing.RegisterRoute(string.Empty, typeof(ShellItem)));
+
+			Assert.Catch(typeof(ArgumentNullException), () => Routing.RegisterRoute(null, typeof(ShellItem)));
+
+			Assert.Catch(typeof(ArgumentException), () => Routing.RegisterRoute("?", typeof(ShellItem)));
+
+			// max range
+			Assert.Catch(typeof(ArgumentException), () => {
+				var bigString = new string(Enumerable.Range(0, 200).Select(_ => 'o').ToArray());
+				Routing.RegisterRoute(bigString, typeof(ShellItem));
+			});
+
+			string ReverceCase(string input) // Tab1 => tAB1
+			{
+				return new string(input.Select(c => char.IsLetter(c) ? (char.IsUpper(c) ?
+					char.ToLower(c) : char.ToUpper(c)) : c).ToArray());
+			}
 		}
 
 		[Test]

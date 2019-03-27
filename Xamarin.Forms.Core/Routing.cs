@@ -48,11 +48,14 @@ namespace Xamarin.Forms
 		public static Element GetOrCreateContent(string route)
 		{
 			Element result = null;
+
 #if NETSTANDARD1_0
-			route = route.ToLowerInvariant();
-#endif
+			if (s_routes.TryGetValue(route.ToLowerInvariant(), out var content))
+				result = content.GetOrCreate();
+#else
 			if (s_routes.TryGetValue(route, out var content))
 				result = content.GetOrCreate();
+#endif
 
 			if (result == null)
 			{
