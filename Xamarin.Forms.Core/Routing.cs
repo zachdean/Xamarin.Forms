@@ -78,8 +78,7 @@ namespace Xamarin.Forms
 
 		public static void RegisterRoute(string route, RouteFactory factory)
 		{
-			if (!ValidateRoute(route))
-				throw new ArgumentException("Route contain invalid letters");
+			ValidateRoute(route);
 
 #if NETSTANDARD1_0
 			route = route.ToLowerInvariant();
@@ -89,8 +88,7 @@ namespace Xamarin.Forms
 
 		public static void RegisterRoute(string route, Type type)
 		{
-			if (!ValidateRoute(route))
-				throw new ArgumentException("Route contain invalid letters");
+			ValidateRoute(route);
 
 #if NETSTANDARD1_0
 			route = route.ToLowerInvariant();
@@ -103,8 +101,13 @@ namespace Xamarin.Forms
 			obj.SetValue(RouteProperty, value);
 		}
 
-		static bool ValidateRoute(string route)
-			=> new Regex(@"^[-a-zA-Z0-9@:%._\+~=\/]{1,100}$").IsMatch(route);
+		static Regex _validateRegex = new Regex(@"^[-a-zA-Z0-9@:%._\+~=\/]{1,100}$");
+
+		static void ValidateRoute(string route)
+		{
+			if (!_validateRegex.IsMatch(route))
+				throw new ArgumentException("Route contains invalid characters");
+		}
 
 		class TypeRouteFactory : RouteFactory
 		{
