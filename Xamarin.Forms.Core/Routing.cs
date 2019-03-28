@@ -101,12 +101,17 @@ namespace Xamarin.Forms
 			obj.SetValue(RouteProperty, value);
 		}
 
-		static Regex _validateRegex = new Regex(@"^[-a-zA-Z0-9@:%._\+~=\/]{1,100}$");
+		static Regex _unsupportedChars = new Regex(@"[^-a-zA-Z0-9@:%._\+~=\/]");
 
 		static void ValidateRoute(string route)
 		{
-			if (!_validateRegex.IsMatch(route))
-				throw new ArgumentException("Route contains invalid characters");
+			if (string.IsNullOrWhiteSpace(route))
+				throw new ArgumentNullException("Route cannot be an empty string");
+			if (route.Length > 100)
+				throw new ArgumentException("Route is too Long");
+			var match = _unsupportedChars.Match(route);
+			if (match.Success)
+				throw new ArgumentException($"Route contains invalid character \"{match.Value}\"");
 		}
 
 		class TypeRouteFactory : RouteFactory
