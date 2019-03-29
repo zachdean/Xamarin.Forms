@@ -14,23 +14,23 @@ namespace Xamarin.Forms
 		static Dictionary<string, RouteFactory> s_routes = new Dictionary<string, RouteFactory>(StringComparer.InvariantCultureIgnoreCase);
 #endif
 
-		internal const string ImplicitPrefix = "*IMPL_";
+		internal const string ImplicitPrefix = "IMPL_";
+
+		static bool IsImplict(string route) => route.StartsWith(ImplicitPrefix, StringComparison.Ordinal);
 
 		internal static string GenerateImplicitRoute (string source)
 		{
-			if (source.StartsWith(ImplicitPrefix, StringComparison.Ordinal))
-				return source;
-			return ImplicitPrefix + source;
+			return IsImplict(source) ? source : ImplicitPrefix + source;
 		}
 
 		internal static bool CompareWithRegisteredRoutes(string compare) => s_routes.ContainsKey(compare);
 
 		internal static bool CompareRoutes(string route, string compare, out bool isImplicit)
 		{
-			if (isImplicit = route.StartsWith(ImplicitPrefix, StringComparison.Ordinal))
+			if (isImplicit = IsImplict(route))
 				route = route.Substring(ImplicitPrefix.Length);
 
-			if (compare.StartsWith(ImplicitPrefix, StringComparison.Ordinal))
+			if (IsImplict(compare))
 				throw new Exception();
 
 			return route == compare;
@@ -101,17 +101,19 @@ namespace Xamarin.Forms
 			obj.SetValue(RouteProperty, value);
 		}
 
-		static Regex _unsupportedChars = new Regex(@"[^-a-zA-Z0-9@:%._\+~=\/]");
-
 		static void ValidateRoute(string route)
 		{
 			if (string.IsNullOrWhiteSpace(route))
 				throw new ArgumentNullException("Route cannot be an empty string");
-			if (route.Length > 100)
-				throw new ArgumentException("Route is too Long");
-			var match = _unsupportedChars.Match(route);
-			if (match.Success)
-				throw new ArgumentException($"Route contains invalid character \"{match.Value}\"");
+
+			var uri = new Uri(route, UriKind.RelativeOrAbsolute);
+
+			var parts = uri.OriginalString.Split(new [] { '/', '\\' }, StringSplitOptions.RemoveEmptyEntries);
+			foreach (var part in parts)
+			{
+				if (IsImplict(part))
+					throw new ArgumentException($"Route contains invalid characters in \"{part}\"");
+			}
 		}
 
 		class TypeRouteFactory : RouteFactory

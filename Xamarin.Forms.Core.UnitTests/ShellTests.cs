@@ -186,7 +186,7 @@ namespace Xamarin.Forms.Core.UnitTests
 		[Test]
 		public async Task CaseIgnoreRouting()
 		{
-			var routes = new[] { "Tab1", "TAB2", "@-_-@", "+:~", "=%", "Super_Simple+-Route.doc" };
+			var routes = new[] { "Tab1", "TAB2", "@-_-@", "+:~", "=%", "Super_Simple+-Route.doc", "1/2", @"1\2/3", "app://tab" };
 
 			foreach (var route in routes)
 			{
@@ -202,17 +202,19 @@ namespace Xamarin.Forms.Core.UnitTests
 				Assert.AreEqual(Routing.GetRoute(content2), caseReversed);
 			}
 
+			Assert.Catch(typeof(ArgumentException), () => Routing.RegisterRoute("app://IMPL_tab21", typeof(ShellItem)));
+
+			Assert.Catch(typeof(ArgumentException), () => Routing.RegisterRoute(@"app:\\IMPL_tab21", typeof(ShellItem)));
+
 			Assert.Catch(typeof(ArgumentException), () => Routing.RegisterRoute(string.Empty, typeof(ShellItem)));
 
 			Assert.Catch(typeof(ArgumentNullException), () => Routing.RegisterRoute(null, typeof(ShellItem)));
 
-			Assert.Catch(typeof(ArgumentException), () => Routing.RegisterRoute("*", typeof(ShellItem)));
+			Assert.Catch(typeof(ArgumentException), () => Routing.RegisterRoute("tab1/IMPL_tab11", typeof(ShellItem)));
 
-			// max range
-			Assert.Catch(typeof(ArgumentException), () => {
-				var bigString = new string(Enumerable.Range(0, 200).Select(_ => 'o').ToArray());
-				Routing.RegisterRoute(bigString, typeof(ShellItem));
-			});
+			Assert.Catch(typeof(ArgumentException), () => Routing.RegisterRoute("IMPL_shell", typeof(ShellItem)));
+
+			Assert.Catch(typeof(ArgumentException), () => Routing.RegisterRoute("app://tab2/IMPL_tab21", typeof(ShellItem)));
 
 			string ReverseCase(string input) // Tab1 => tAB1
 			{
