@@ -96,10 +96,16 @@ namespace Xamarin.Forms.Platform.iOS
 
 		void ResetContainer()
 		{
-			Container?.RemoveFromSuperview();
-
+			/*Container?.RemoveFromSuperview();
+			
 			Container = new PageContainer(this);
-			View?.AddSubview(Container);
+			View?.AddSubview(Container);*/
+		}
+
+		public override void ViewDidLoad()
+		{
+			Container = new PageContainer(this);
+			View = Container;
 		}
 	}
 }

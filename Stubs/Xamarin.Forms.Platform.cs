@@ -133,7 +133,7 @@ namespace Xamarin.Forms.Platform
 #if !__IOS__
 	[RenderWith (typeof (PageRenderer))]
 #else
-	[RenderWith (typeof (AccessiblePageRenderer))]
+	[RenderWith (typeof (PageRenderer))]
 #endif
 	internal class _PageRenderer { }
 
