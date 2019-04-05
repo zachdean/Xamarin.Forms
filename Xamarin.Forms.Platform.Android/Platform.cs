@@ -27,6 +27,8 @@ namespace Xamarin.Forms.Platform.Android
 		, IPlatform
 #pragma warning restore
 	{
+
+		internal static string PackageName { get; private set; }
 		internal const string CloseContextActionsSignalName = "Xamarin.CloseContextActions";
 
 		internal static readonly BindableProperty RendererProperty = BindableProperty.CreateAttached("Renderer", typeof(IVisualElementRenderer), typeof(Platform), default(IVisualElementRenderer),
@@ -64,7 +66,8 @@ namespace Xamarin.Forms.Platform.Android
 		{
 			_embedded = embedded;
 			_context = context ?? throw new ArgumentNullException(nameof(context), "Somehow we're getting a null context passed in");
-			_activity = context as Activity;
+			PackageName = context.PackageName;
+			_activity = context.GetActivity();
 
 			if (!embedded)
 			{
@@ -459,6 +462,11 @@ namespace Xamarin.Forms.Platform.Android
 
 		internal void SetPage(Page newRoot)
 		{
+			if (Page == newRoot)
+			{
+				return;
+			}
+
 			var layout = false;
 			List<IVisualElementRenderer> toDispose = null;
 

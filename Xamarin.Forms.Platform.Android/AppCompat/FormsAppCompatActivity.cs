@@ -88,9 +88,9 @@ namespace Xamarin.Forms.Platform.Android
 			Profile.Push();
 			if(!_activityCreated)
 			{
-			    throw new InvalidOperationException("Activity OnCreate was not called prior to loading the application. Did you forget a base.OnCreate call?");
+				throw new InvalidOperationException("Activity OnCreate was not called prior to loading the application. Did you forget a base.OnCreate call?");
 			}
-			
+
 			if (!_renderersAdded)
 			{
 				RegisterHandlerForDefaultRenderer(typeof(NavigationPage), typeof(NavigationPageRenderer), typeof(NavigationRenderer));
@@ -116,8 +116,11 @@ namespace Xamarin.Forms.Platform.Android
 				_renderersAdded = true;
 			}
 
+			if (_application != null)
+				_application.PropertyChanged -= AppOnPropertyChanged;
+
 			_application = application ?? throw new ArgumentNullException(nameof(application));
-			(application as IApplicationController)?.SetAppIndexingProvider(new AndroidAppIndexProvider(this));
+			((IApplicationController)application).SetAppIndexingProvider(new AndroidAppIndexProvider(this));
 			Xamarin.Forms.Application.SetCurrentApplication(application);
 
 			if (Xamarin.Forms.Application.Current.OnThisPlatform().GetWindowSoftInputModeAdjust() != WindowSoftInputModeAdjust.Unspecified)
@@ -138,7 +141,8 @@ namespace Xamarin.Forms.Platform.Android
 			}
 
 			Profile.PopPush(nameof(SetMainPage));
-			SetMainPage();
+
+      SetMainPage();
 
 			Profile.Pop();
 		}
@@ -192,14 +196,18 @@ namespace Xamarin.Forms.Platform.Android
 
 			if (Forms.IsLollipopOrNewer)
 			{
-				// Listen for the device going into power save mode so we can handle animations being disabled	
+				// Listen for the device going into power save mode so we can handle animations being disabled
 				_powerSaveModeBroadcastReceiver = new PowerSaveModeBroadcastReceiver();
 			}
 		}
 
 		protected override void OnDestroy()
 		{
+			if (_application != null)
+				_application.PropertyChanged -= AppOnPropertyChanged;
+
 			PopupManager.Unsubscribe(this);
+
 			Platform?.Dispose();
 
 			// call at the end to avoid race conditions with Platform dispose
@@ -300,7 +308,13 @@ namespace Xamarin.Forms.Platform.Android
 
 		void AppOnPropertyChanged(object sender, PropertyChangedEventArgs args)
 		{
-			if (args.PropertyName == "MainPage")
+			// Activity in pause must not react to application changes
+			if (_currentState >= AndroidApplicationLifecycleState.OnPause)
+			{
+				return;
+			}
+
+			if (args.PropertyName == nameof(_application.MainPage))
 				InternalSetPage(_application.MainPage);
 			if (args.PropertyName == PlatformConfiguration.AndroidSpecific.Application.WindowSoftInputModeAdjustProperty.PropertyName)
 				SetSoftInputMode();
@@ -331,7 +345,7 @@ namespace Xamarin.Forms.Platform.Android
 			PopupManager.ResetBusyCount(this);
 
 			Platform = new AppCompat.Platform(this);
-			
+
 			Platform.SetPage(page);
 			_layout.AddView(Platform);
 			_layout.BringToFront();
