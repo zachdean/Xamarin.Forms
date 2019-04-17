@@ -29,7 +29,7 @@ namespace Xamarin.Forms.Controls.Issues
 		{
 		}
 
-#if UITEST
+#if UITEST && __ANDROID__
 		[Test]
 		public void NavigatingBackAndForthDoesNotCrash()
 		{
