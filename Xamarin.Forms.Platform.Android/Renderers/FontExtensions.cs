@@ -4,6 +4,7 @@ using System.Text.RegularExpressions;
 using Android.Graphics;
 using AApplication = Android.App.Application;
 using Xamarin.Forms.Internals;
+using System.Diagnostics;
 
 namespace Xamarin.Forms.Platform.Android
 {
@@ -42,19 +43,66 @@ namespace Xamarin.Forms.Platform.Android
 
 		internal static Typeface ToTypeFace(this string fontfamily, FontAttributes attr = FontAttributes.None)
 		{
-			Typeface result;
-			
-			if (IsAssetFontFamily(fontfamily))
+			var result = fontfamily.TryGetFromAssets();
+			if (result.success)
 			{
-				result = Typeface.CreateFromAsset(AApplication.Context.Assets, FontNameToFontFile(fontfamily));
+				return result.typeface;
 			}
 			else
 			{
 				var style = ToTypefaceStyle(attr);
-				result = Typeface.Create(fontfamily, style);
+				return Typeface.Create(fontfamily, style);
 			}
 
-			return result;
+		}
+
+		static (bool success, Typeface typeface) TryGetFromAssets(this string fontfamily)
+		{
+			var isAssetfont = IsAssetFontFamily(fontfamily);
+			if (isAssetfont)
+			{
+				return LoadTypefaceFromAsset(fontfamily);
+			}
+
+			var extension = new[]
+			{
+				".ttf",
+				".otf"
+			};
+
+			var folders = new[]
+			{
+				"",
+				"Fonts/",
+				"fonts/",
+			};
+
+			foreach(var ext in extension)
+			{
+				foreach(var folder in folders)
+				{
+					var formated = $"{folder}{fontfamily}{ext}#{fontfamily}";
+					var result = LoadTypefaceFromAsset(formated);
+					if (result.success)
+						return result;
+				}
+			}
+
+			return (false, null);
+		}
+
+		static (bool success, Typeface typeface) LoadTypefaceFromAsset(string fontfamily)
+		{
+			try
+			{
+				var result = Typeface.CreateFromAsset(AApplication.Context.Assets, FontNameToFontFile(fontfamily));
+				return (true, result);
+			}
+			catch (Exception ex)
+			{
+				Debug.WriteLine(ex);
+				return (false, null);
+			}
 		}
 
 		public static Typeface ToTypeface(this Font self)
