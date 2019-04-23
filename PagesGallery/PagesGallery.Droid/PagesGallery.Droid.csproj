@@ -293,14 +293,6 @@
     <PackageReference Include="Xamarin.Android.Support.v7.RecyclerView" Version="28.0.0.1" />
     <PackageReference Include="Xamarin.Android.Support.Vector.Drawable" Version="28.0.0.1" />
   </ItemGroup>
-  <ItemGroup>
-    <AndroidAsset Include="Assets\CuteFont-Regular.ttf" />
-    <AndroidAsset Include="Assets\Fonts\Dokdo-Regular.ttf" />
-    <AndroidAsset Include="Assets\PTM55FT.ttf" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Assets\Fonts\" />
-  </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <Import Project="..\..\.nuspec\Xamarin.Forms.targets" Condition="'$(BuildingInsideVisualStudio)' == 'true' AND Exists('$(__XFBuildTasksLocation)Xamarin.Forms.Build.Tasks.dll')" />
   <Import Project="..\..\.nuspec\Xamarin.Forms.targets" Condition="'$(BuildingInsideVisualStudio)' != 'true'" />
