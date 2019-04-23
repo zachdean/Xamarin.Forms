@@ -280,9 +280,17 @@ namespace Xamarin.Forms.Internals
 					var length = attributes.Length;
 					for (var i = 0; i < length; i++)
 					{
-						var attribute = (HandlerAttribute)attributes[i];
-						if (attribute.ShouldRegister())
-							Registered.Register(attribute.HandlerType, attribute.TargetType, attribute.SupportedVisuals);
+						var a = attributes[i];
+						var attribute = a as HandlerAttribute;
+						if(attribute == null && (a is ExportFontAttribute fa))
+						{
+							FontRegistrar.Register(fa, assembly);
+						}
+						else
+						{
+							if (attribute.ShouldRegister())
+								Registered.Register(attribute.HandlerType, attribute.TargetType, attribute.SupportedVisuals);
+						}
 					}
 				}
 

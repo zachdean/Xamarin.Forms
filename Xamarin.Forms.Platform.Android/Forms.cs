@@ -209,7 +209,7 @@ namespace Xamarin.Forms
 			if (!IsInitialized)
 			{
 				// Only need to do this once
-				Registrar.RegisterAll(new[] { typeof(ExportRendererAttribute), typeof(ExportCellAttribute), typeof(ExportImageSourceHandlerAttribute) });
+				Registrar.RegisterAll(new[] { typeof(ExportRendererAttribute), typeof(ExportCellAttribute), typeof(ExportImageSourceHandlerAttribute), typeof(ExportFontAttribute) });
 			}
 
 			// This could change as a result of a config change, so we need to check it every time

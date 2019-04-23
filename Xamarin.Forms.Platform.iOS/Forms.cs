@@ -111,7 +111,7 @@ namespace Xamarin.Forms
 			Device.Info = new IOSDeviceInfo();
 
 			Internals.Registrar.RegisterAll(new[]
-				{ typeof(ExportRendererAttribute), typeof(ExportCellAttribute), typeof(ExportImageSourceHandlerAttribute) });
+				{ typeof(ExportRendererAttribute), typeof(ExportCellAttribute), typeof(ExportImageSourceHandlerAttribute), typeof(ExportFontAttribute) });
 			ExpressionSearch.Default = new iOSExpressionSearch();
 		}
 
