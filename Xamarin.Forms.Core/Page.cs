@@ -385,7 +385,8 @@ namespace Xamarin.Forms
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		public void SendAppeared()
 		{
-			if (Application.Current.UseLegacyPageEvents)
+			var app = FindApplication(this);
+			if (app != null && app.UseLegacyPageEvents)
 			{
 				SendAppearing();
 				return;
@@ -405,13 +406,14 @@ namespace Xamarin.Forms
 			var pageContainer = this as IPageContainer<Page>;
 			pageContainer?.CurrentPage?.SendAppeared();
 
-			FindApplication(this)?.OnPageAppeared(this);
+			app?.OnPageAppeared(this);
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		public void SendDisappeared()
 		{
-			if (Application.Current.UseLegacyPageEvents)
+			var app = FindApplication(this);
+			if (app != null && app.UseLegacyPageEvents)
 			{
 				SendDisappearing();
 				return;
@@ -431,7 +433,7 @@ namespace Xamarin.Forms
 			OnDisappeared();
 			Disappeared?.Invoke(this, EventArgs.Empty);
 
-			FindApplication(this)?.OnPageDisappeared(this);
+			app?.OnPageDisappeared(this);
 		}
 
 		Application FindApplication(Element element)
