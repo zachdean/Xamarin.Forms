@@ -51,7 +51,7 @@ namespace Xamarin.Forms.Platform.Android
 		{
 			if (!_loaded && !_disposed)
 			{
-				_element?.SendLoaded();
+				_element?.SendAppeared();
 
 				if (!Application.Current.UseLegacyPageEvents)
 					(_element as IPageController)?.SendAppeared();
@@ -213,7 +213,7 @@ namespace Xamarin.Forms.Platform.Android
 
 		void HandleViewAttachedToWindow()
 		{
-			_element?.SendBeforeAppearing();
+			_element?.SendAppearing();
 
 			if (_initialUpdateNeeded)
 			{
@@ -228,7 +228,7 @@ namespace Xamarin.Forms.Platform.Android
 		{
 			if (_loaded)
 			{
-				_element?.SendUnloaded();
+				_element?.SendDisappeared();
 
 				if (!Application.Current.UseLegacyPageEvents)
 					(_element as IPageController)?.SendDisappeared();

@@ -266,65 +266,153 @@ namespace Xamarin.Forms
 
 		LayoutConstraint _selfConstraint;
 
-		public event EventHandler Loaded;
+		public event EventHandler Appeared;
+		public event EventHandler Appearing;
+		public event EventHandler Disappeared;
+		public event EventHandler Disappearing;
 
-		public event EventHandler Unloaded;
+		bool _hasAppeared;
+		bool _hasAppearing;
+		bool _hasDisappeared;
+		bool _hasDisappearing;
 
-		public event EventHandler BeforeAppearing;
-
-		bool _hasLoaded;
-		bool _hasUnloaded;
-		bool _hasBeforeAppearing;
-
-		protected virtual void OnLoaded()
+		protected virtual void OnAppeared()
 		{
 		}
 
-		protected virtual void OnUnloaded()
+		protected virtual void OnAppearing()
 		{
 		}
 
-		protected virtual void OnBeforeAppearing()
+		protected virtual void OnDisappeared()
 		{
 		}
+
+		protected virtual void OnDisappearing()
+		{
+		}
+
+		internal virtual void PreSendAppearing() { }
+		internal virtual void PostSendAppearing() { }
 
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public void SendLoaded()
+		public void SendAppearing()
 		{
-			if (_hasLoaded)
+			if (_hasAppearing)
 				return;
 
-			OnLoaded();
-			Loaded?.Invoke(this, EventArgs.Empty);
+			if (_hasAppeared || _hasDisappearing)
+				WarnInvalidLifeCycle(nameof(SendAppearing));
 
-			_hasLoaded = true;
-			_hasUnloaded = false;
+			_hasAppearing = true;
+			_hasAppeared = false;
+			_hasDisappearing = false;
+			_hasDisappeared = false;
+
+			PreSendAppearing();
+			OnAppearing();
+			Appearing?.Invoke(this, EventArgs.Empty);
+			PostSendAppearing();
 		}
 
+		internal virtual void PreSendAppeared() { }
+		internal virtual void PostSendAppeared() { }
+
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public void SendUnloaded()
+		public void SendAppeared()
 		{
-			if (_hasUnloaded)
+			if (_hasAppeared)
 				return;
 
-			OnUnloaded();
-			Unloaded?.Invoke(this, EventArgs.Empty);
+			if (!_hasAppearing)
+				WarnInvalidLifeCycle(nameof(SendAppeared));
 
-			_hasUnloaded = true;
-			_hasBeforeAppearing = _hasLoaded = false;
+			_hasAppearing = false;
+			_hasAppeared = true;
+			_hasDisappeared = false;
+			_hasDisappearing = false;
+
+			if(this is Page)
+			{
+				var app = this.FindApplication();
+				if (app != null && app.UseLegacyPageEvents)
+				{
+					SendAppearing();
+					return;
+				}
+			}
+
+			PreSendAppeared();
+			OnAppeared();
+			Appeared?.Invoke(this, EventArgs.Empty);
+			PostSendAppeared();
 		}
 
+		internal virtual void PreSendDisappearing() { }
+		internal virtual void PostSendDisappearing() { }
+
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public void SendBeforeAppearing()
+		public void SendDisappearing()
 		{
-			if (_hasBeforeAppearing)
+			if (_hasDisappearing)
 				return;
 
-			OnBeforeAppearing();
-			BeforeAppearing?.Invoke(this, EventArgs.Empty);
+			if (!_hasAppeared)
+				WarnInvalidLifeCycle(nameof(SendDisappearing));
 
-			_hasBeforeAppearing = true;
-			_hasUnloaded = false;
+			_hasAppearing = false;
+			_hasAppeared = false;
+			_hasDisappearing = true;
+			_hasDisappeared = false;
+
+			PreSendDisappearing();
+			OnDisappearing();
+			Disappearing?.Invoke(this, EventArgs.Empty);
+			PostSendDisappearing();
+		}
+
+		internal virtual void PreSendDisappeared() { }
+		internal virtual void PostSendDisappeared() { }
+
+		[EditorBrowsable(EditorBrowsableState.Never)]
+		public void SendDisappeared()
+		{
+			if (_hasDisappeared)
+				return;
+
+			if (this is Page)
+			{
+				var app = this.FindApplication();
+				if (app != null && app.UseLegacyPageEvents)
+				{
+					SendDisappearing();
+					return;
+				}
+			}
+
+			if (!_hasDisappearing)
+				WarnInvalidLifeCycle(nameof(SendDisappeared));
+
+			_hasAppearing = false;
+			_hasAppeared = false;
+			_hasDisappearing = false;
+			_hasDisappeared = true;
+
+			PreSendDisappeared();
+			OnDisappeared();
+			Disappeared?.Invoke(this, EventArgs.Empty);
+			PostSendDisappeared();
+		}
+
+		void WarnInvalidLifeCycle(string comingFrom)
+		{
+			string currentState = $"Invalid lifecycle state while transitioning to: {comingFrom} Appearing: {_hasAppearing} Appeared: {_hasAppeared} Disappearing: {_hasDisappearing} Disappeared: {_hasDisappeared}";
+
+#if DEBUG
+			throw new Exception(currentState);
+#else
+			Internals.Log.Warning("LifeCycle", currentState);
+#endif
 		}
 
 		internal VisualElement()

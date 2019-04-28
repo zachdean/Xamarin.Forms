@@ -45,13 +45,7 @@ namespace Xamarin.Forms.Platform.Android
 		{
 			if (disposing && !_disposed)
 			{
-				if (!Application.Current.UseLegacyPageEvents)
-				{
-					if (_appearing)
-						PageController?.SendDisappearing();
-					_appearing = false;
-				}
-				else
+				if (Application.Current.UseLegacyPageEvents)
 				{
 					PageController?.SendDisappearing();
 				}
@@ -63,10 +57,6 @@ namespace Xamarin.Forms.Platform.Android
 
 		protected override void OnAttachedToWindow()
 		{
-			Element?.SendBeforeAppearing();
-
-			base.OnAttachedToWindow();
-
 			if (!_appearing && !Application.Current.UseLegacyPageEvents)
 				PageController?.SendAppearing();
 			_appearing = true;
@@ -76,6 +66,8 @@ namespace Xamarin.Forms.Platform.Android
 
 			if (Application.Current.UseLegacyPageEvents)
 				PageController?.SendAppearing();
+
+			base.OnAttachedToWindow();
 		}
 
 		protected override void OnDetachedFromWindow()

@@ -167,6 +167,7 @@ namespace Xamarin.Forms.Platform.Android.AppCompat
 
 			UpdateAccessibilityImportance(modal, ImportantForAccessibility.Auto, true);
 
+			// TODO LIFECYCLE
 			// Verify that the modal is still on the stack
 			if (_navModel.CurrentPage == modal)
 				((IPageController)modal).SendAppearing();

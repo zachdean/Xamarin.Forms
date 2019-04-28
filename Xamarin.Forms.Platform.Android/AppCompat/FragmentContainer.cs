@@ -101,6 +101,7 @@ namespace Xamarin.Forms.Platform.Android.AppCompat
 			if (Page == null)
 				return;
 
+			// TODO LIFECYCLE
 			if (hidden)
 				PageController?.SendDisappearing();
 			else

@@ -1088,6 +1088,7 @@ namespace Xamarin.Forms.Platform.Android.AppCompat
 			Device.StartTimer(TimeSpan.FromMilliseconds(duration), () =>
 			{
 				tcs.TrySetResult(true);
+				// TODO LIFECYCLE
 				Current?.SendAppearing();
 				if (shouldUpdateToolbar)
 					UpdateToolbar();

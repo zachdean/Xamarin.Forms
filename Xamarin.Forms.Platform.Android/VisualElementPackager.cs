@@ -192,7 +192,9 @@ namespace Xamarin.Forms.Platform.Android
 					foreach (var child in view.LogicalChildren)
 					{
 						if (child is VisualElement ve)
+						{
 							packager.RemoveChild(ve);
+						}
 					}
 				}
 			}

@@ -22,16 +22,14 @@ namespace Xamarin.Forms.Controls.Issues
 
 		public enum State
 		{
-			PageLoaded,
-			PageUnloaded,
-			PageBeforeAppearing,
 			PageAppearing,
 			PageAppeared,
 			PageDisappearing,
 			PageDisappeared,
-			ElementBeforeAppearing,
-			ElementLoaded,
-			ElementUnloaded,
+			ElementAppearing,
+			ElementAppeared,
+			ElementDisappearing,
+			ElementDisappeared,
 		}
 
 		protected override void Init()
@@ -58,17 +56,15 @@ namespace Xamarin.Forms.Controls.Issues
 					{
 						Text = "Button"
 					};
-					button.Loaded += (_, __) => states.Add(State.ElementLoaded);
-					button.Unloaded += (_, __) => states.Add(State.ElementUnloaded);
-					button.BeforeAppearing += (_, __) => states.Add(State.ElementBeforeAppearing);
+					button.Appeared += (_, __) => states.Add(State.ElementAppeared);
+					button.Disappeared += (_, __) => states.Add(State.ElementDisappeared);
+					button.Disappearing += (_, __) => states.Add(State.ElementDisappearing);
+					button.Appearing += (_, __) => states.Add(State.ElementAppearing);
 
 					var page = new ContentPage
 					{
 						Content = button
 					};
-					page.Loaded += (_, __) => states.Add(State.PageLoaded);
-					page.Unloaded += (_, __) => states.Add(State.PageUnloaded);
-					page.BeforeAppearing += (_, __) => states.Add(State.PageBeforeAppearing);
 					page.Appearing += (_, __) => states.Add(State.PageAppearing);
 					page.Appeared += (_, __) => states.Add(State.PageAppeared);
 					page.Disappearing += (_, __) => states.Add(State.PageDisappearing);
@@ -97,31 +93,24 @@ namespace Xamarin.Forms.Controls.Issues
 							states.Count == 8 &&
 							states.IndexOf(State.PageAppeared) == -1 &&
 							states.IndexOf(State.PageDisappeared) == -1 &&
-							states.IndexOf(State.PageBeforeAppearing) < states.IndexOf(State.PageAppearing) &&
-							states.IndexOf(State.PageBeforeAppearing) < states.IndexOf(State.ElementBeforeAppearing) &&
+							states.IndexOf(State.PageAppearing) < states.IndexOf(State.ElementAppearing) &&
 							states.IndexOf(State.PageAppearing) < states.IndexOf(State.PageDisappearing) &&
-							states.IndexOf(State.PageLoaded) < states.IndexOf(State.PageUnloaded) &&
-							states.IndexOf(State.PageLoaded) < states.IndexOf(State.PageDisappearing) &&
-							states.IndexOf(State.PageLoaded) < states.IndexOf(State.ElementUnloaded) &&
-							states.IndexOf(State.ElementBeforeAppearing) < states.IndexOf(State.ElementLoaded) &&
-							states.IndexOf(State.ElementLoaded) < states.IndexOf(State.ElementUnloaded) &&
-							states.IndexOf(State.ElementUnloaded) < states.IndexOf(State.PageUnloaded);
+							states.IndexOf(State.ElementAppearing) < states.IndexOf(State.ElementAppeared) &&
+							states.IndexOf(State.ElementAppearing) < states.IndexOf(State.ElementAppeared) &&
+							states.IndexOf(State.ElementAppeared) < states.IndexOf(State.ElementDisappearing) &&
+							states.IndexOf(State.ElementDisappearing) < states.IndexOf(State.ElementAppeared);
 					}
 					else
 					{
 						success =
-							states.Count == 10 &&
-							states.IndexOf(State.PageBeforeAppearing) < states.IndexOf(State.PageAppearing) &&
+							states.Count == 8 &&
 							states.IndexOf(State.PageAppearing) < states.IndexOf(State.PageAppeared) &&
-							states.IndexOf(State.PageAppearing) < states.IndexOf(State.ElementBeforeAppearing) &&
+							states.IndexOf(State.PageAppearing) < states.IndexOf(State.ElementAppearing) &&
 							states.IndexOf(State.PageAppeared) < states.IndexOf(State.PageDisappearing) &&
 							states.IndexOf(State.PageDisappearing) < states.IndexOf(State.PageDisappeared) &&
-							states.IndexOf(State.PageLoaded) < states.IndexOf(State.PageUnloaded) &&
-							states.IndexOf(State.PageLoaded) < states.IndexOf(State.PageDisappearing) &&
-							states.IndexOf(State.PageLoaded) < states.IndexOf(State.ElementUnloaded) &&
-							states.IndexOf(State.ElementBeforeAppearing) < states.IndexOf(State.ElementLoaded) &&
-							states.IndexOf(State.ElementLoaded) < states.IndexOf(State.ElementUnloaded) &&
-							states.IndexOf(State.ElementUnloaded) < states.IndexOf(State.PageUnloaded);
+							states.IndexOf(State.ElementAppearing) < states.IndexOf(State.ElementAppeared) &&
+							states.IndexOf(State.ElementAppeared) < states.IndexOf(State.ElementDisappearing) &&
+							states.IndexOf(State.ElementDisappearing) < states.IndexOf(State.ElementAppeared);
 					}
 
 					checkLabel.Text = success ? successlText : "Failed";

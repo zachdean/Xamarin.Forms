@@ -527,8 +527,8 @@ namespace Xamarin.Forms.Core.UnitTests
 			page.Appearing += (sender, args) => countAppearing++;
 			page.Appeared += (sender, args) => countAppeared++;
 
-			page.SendBeforeAppearing();
-			page.SendBeforeAppearing();
+			page.Appearing();
+			page.Appearing();
 			((IPageController)page).SendAppearing();
 			((IPageController)page).SendAppearing();
 			((IPageController)page).SendAppeared();

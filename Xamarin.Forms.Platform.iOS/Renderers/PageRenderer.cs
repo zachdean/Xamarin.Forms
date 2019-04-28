@@ -166,7 +166,7 @@ namespace Xamarin.Forms.Platform.iOS
 		public override void ViewWillAppear(bool animated)
 		{
 			if (!_appearing && !_disposed)
-				Page?.SendBeforeAppearing();
+				Page?.SendAppearing();
 
 			base.ViewWillAppear(animated);
 
@@ -243,7 +243,7 @@ namespace Xamarin.Forms.Platform.iOS
 			_events.LoadEvents(NativeView);
 
 			Element.SendViewInitialized(NativeView);
-			Element.SendLoaded();
+			Element.SendAppeared();
 		}
 
 		public override void ViewWillDisappear(bool animated)
@@ -289,7 +289,7 @@ namespace Xamarin.Forms.Platform.iOS
 					_tracker = null;
 				}
 
-				Element?.SendUnloaded();
+				Element?.SendDisappeared();
 				Element = null;
 				Container?.Dispose();
 				_disposed = true;

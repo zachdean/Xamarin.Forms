@@ -48,7 +48,6 @@ namespace Xamarin.Forms
 		bool _containerAreaSet;
 
 		bool _hasAppearing;
-		bool _hasAppeared;
 
 		ReadOnlyCollection<Element> _logicalChildren;
 
@@ -150,14 +149,6 @@ namespace Xamarin.Forms
 
 		public event EventHandler LayoutChanged;
 
-		public event EventHandler Appearing;
-
-		public event EventHandler Disappearing;
-
-		public event EventHandler Appeared;
-
-		public event EventHandler Disappeared;
-
 		public Task<string> DisplayActionSheet(string title, string cancel, string destruction, params string[] buttons)
 		{
 			var args = new ActionSheetArguments(title, cancel, destruction, buttons);
@@ -219,14 +210,6 @@ namespace Xamarin.Forms
 			}
 		}
 
-		protected virtual void OnAppearing()
-		{
-		}
-
-		protected virtual void OnAppeared()
-		{
-		}
-
 		protected virtual bool OnBackButtonPressed()
 		{
 			var application = RealParent as Application;
@@ -258,14 +241,6 @@ namespace Xamarin.Forms
 		{
 			InvalidationTrigger trigger = (e as InvalidationEventArgs)?.Trigger ?? InvalidationTrigger.Undefined;
 			OnChildMeasureInvalidated((VisualElement)sender, trigger);
-		}
-
-		protected virtual void OnDisappearing()
-		{
-		}
-
-		protected virtual void OnDisappeared()
-		{
 		}
 
 		protected override void OnParentSet()
@@ -342,106 +317,71 @@ namespace Xamarin.Forms
 			}
 		}
 
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        public void SendAppearing()
+		internal override void PreSendAppearing()
 		{
-			if (_hasAppearing)
-				return;
-
 			_hasAppearing = true;
-
 			if (IsBusy)
 				MessagingCenter.Send(this, BusySetSignalName, true);
-
-			OnAppearing();
-			Appearing?.Invoke(this, EventArgs.Empty);
-
-			var pageContainer = this as IPageContainer<Page>;
-			pageContainer?.CurrentPage?.SendAppearing();
-
-			FindApplication(this)?.OnPageAppearing(this);
 		}
 
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        public void SendDisappearing()
+		internal override void PostSendAppearing()
 		{
-			if (!_hasAppearing)
-				return;
+			var pageContainer = this as IPageContainer<Page>;
+			//pageContainer?.CurrentPage?.SendAppearing();
 
+			this.FindApplication()?.OnPageAppearing(this);
+		}
+
+		internal override void PreSendAppeared()
+		{
+			if (IsBusy)
+				MessagingCenter.Send(this, BusySetSignalName, true);
+		}
+
+		internal override void PostSendAppeared()
+		{
+			var pageContainer = this as IPageContainer<Page>;
+			//pageContainer?.CurrentPage?.SendAppeared();
+
+			this.FindApplication()?.OnPageAppeared(this);
+		}
+
+		internal override void PreSendDisappearing()
+		{
 			_hasAppearing = false;
 
 			if (IsBusy)
 				MessagingCenter.Send(this, BusySetSignalName, false);
 
-			var pageContainer = this as IPageContainer<Page>;
-			pageContainer?.CurrentPage?.SendDisappearing();
-
-			OnDisappearing();
-			Disappearing?.Invoke(this, EventArgs.Empty);
-
-			FindApplication(this)?.OnPageDisappearing(this);
+			if (this.FindApplication()?.UseLegacyPageEvents == true)
+			{
+				var pageContainer = this as IPageContainer<Page>;
+				//pageContainer?.CurrentPage?.SendDisappearing();
+			}
 		}
 
-		[EditorBrowsable(EditorBrowsableState.Never)]
-		public void SendAppeared()
+		internal override void PostSendDisappearing()
 		{
-			var app = FindApplication(this);
-			if (app != null && app.UseLegacyPageEvents)
+			if (this.FindApplication()?.UseLegacyPageEvents == false)
 			{
-				SendAppearing();
-				return;
+				var pageContainer = this as IPageContainer<Page>;
+				//pageContainer?.CurrentPage?.SendDisappearing();
 			}
 
-			if (_hasAppeared)
-				return;
-
-			_hasAppeared = true;
-
-			if (IsBusy)
-				MessagingCenter.Send(this, BusySetSignalName, true);
-
-			OnAppeared();
-			Appeared?.Invoke(this, EventArgs.Empty);
-
-			var pageContainer = this as IPageContainer<Page>;
-			pageContainer?.CurrentPage?.SendAppeared();
-
-			app?.OnPageAppeared(this);
+			this.FindApplication()?.OnPageDisappearing(this);
 		}
 
-		[EditorBrowsable(EditorBrowsableState.Never)]
-		public void SendDisappeared()
+		internal override void PreSendDisappeared()
 		{
-			var app = FindApplication(this);
-			if (app != null && app.UseLegacyPageEvents)
-			{
-				SendDisappearing();
-				return;
-			}
-
-			if (!_hasAppeared)
-				return;
-
-			_hasAppeared = false;
-
 			if (IsBusy)
 				MessagingCenter.Send(this, BusySetSignalName, false);
-
-			var pageContainer = this as IPageContainer<Page>;
-			pageContainer?.CurrentPage?.SendDisappeared();
-
-			OnDisappeared();
-			Disappeared?.Invoke(this, EventArgs.Empty);
-
-			app?.OnPageDisappeared(this);
 		}
 
-		Application FindApplication(Element element)
+		internal override void PostSendDisappeared()
 		{
-			if (element == null)
-				return null;
-
-			return (element.Parent is Application app) ? app : FindApplication(element.Parent);
+			var pageContainer = this as IPageContainer<Page>;
+			//pageContainer?.CurrentPage?.SendDisappeared();
+			this.FindApplication()?.OnPageDisappeared(this);
 		}
 
 		void InternalChildrenOnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
