@@ -15,7 +15,7 @@ namespace Xamarin.Forms.Platform.Android.AppCompat
 		Drawable _defaultTrackDrawable;
 		string _defaultContentDescription;
 
-		public SwitchRenderer(Context context) : base(context)
+		public SwitchRenderer(Context context) : base(AppCompatContextThemeWrapper.Create(context))
 		{
 			AutoPackage = false;
 		}

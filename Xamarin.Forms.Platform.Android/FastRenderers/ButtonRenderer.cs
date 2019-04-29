@@ -34,7 +34,7 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 		public event EventHandler<VisualElementChangedEventArgs> ElementChanged;
 		public event EventHandler<PropertyChangedEventArgs> ElementPropertyChanged;
 
-		public ButtonRenderer(Context context) : base(context)
+		public ButtonRenderer(Context context) : base(AppCompatContextThemeWrapper.Create(context))
 		{
 			Initialize();
 		}

@@ -15,7 +15,7 @@ namespace Xamarin.Forms.Platform.Android
 {
 	public class PageRenderer : VisualElementRenderer<Page>, IOrderedTraversalController
 	{
-		public PageRenderer(Context context) : base(context)
+		public PageRenderer(Context context) : base(AppCompatContextThemeWrapper.Create(context))
 		{
 		}
 

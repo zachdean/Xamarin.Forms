@@ -25,7 +25,7 @@ namespace Xamarin.Forms.Platform.Android.AppCompat
 		ButtonLayoutManager _buttonLayoutManager;
 		string _defaultContentDescription;
 
-		public ButtonRenderer(Context context) : base(context)
+		public ButtonRenderer(Context context) : base(AppCompatContextThemeWrapper.Create(context))
 		{
 			AutoPackage = false;
 			_backgroundTracker = new BorderBackgroundManager(this);
