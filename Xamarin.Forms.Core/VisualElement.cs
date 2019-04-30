@@ -245,8 +245,6 @@ namespace Xamarin.Forms
 
 		readonly Dictionary<Size, SizeRequest> _measureCache = new Dictionary<Size, SizeRequest>();
 
-		
-
 		int _batched;
 		LayoutConstraint _computedConstraint;
 
@@ -271,10 +269,16 @@ namespace Xamarin.Forms
 		public event EventHandler Disappeared;
 		public event EventHandler Disappearing;
 
-		bool _hasAppeared;
-		bool _hasAppearing;
-		bool _hasDisappeared;
-		bool _hasDisappearing;
+		[Flags]
+		enum LifeState
+		{
+			Appearing = 1 << 0,
+			Appeared = 1 << 1,
+			Disappearing = 1 << 2,
+			Disappeared = 1 << 3,
+		}
+
+		LifeState _currentLifeState;
 
 		protected virtual void OnAppeared()
 		{
@@ -298,16 +302,13 @@ namespace Xamarin.Forms
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		public void SendAppearing()
 		{
-			if (_hasAppearing)
+			if (_currentLifeState == LifeState.Appearing)
 				return;
 
-			if (_hasAppeared || _hasDisappearing)
+			if (_currentLifeState == LifeState.Appeared)
 				WarnInvalidLifeCycle(nameof(SendAppearing));
 
-			_hasAppearing = true;
-			_hasAppeared = false;
-			_hasDisappearing = false;
-			_hasDisappeared = false;
+			_currentLifeState = LifeState.Appearing;
 
 			PreSendAppearing();
 			OnAppearing();
@@ -319,28 +320,24 @@ namespace Xamarin.Forms
 		internal virtual void PostSendAppeared() { }
 
 		[EditorBrowsable(EditorBrowsableState.Never)]
+		public void SendAppear(bool legacy)
+		{
+			if (legacy)
+				SendAppearing();
+			else
+				SendAppeared();
+		}
+
+		[EditorBrowsable(EditorBrowsableState.Never)]
 		public void SendAppeared()
 		{
-			if (_hasAppeared)
+			if (_currentLifeState == LifeState.Appeared)
 				return;
 
-			if (!_hasAppearing)
+			if (_currentLifeState != LifeState.Appearing)
 				WarnInvalidLifeCycle(nameof(SendAppeared));
 
-			_hasAppearing = false;
-			_hasAppeared = true;
-			_hasDisappeared = false;
-			_hasDisappearing = false;
-
-			if(this is Page)
-			{
-				var app = this.FindApplication();
-				if (app != null && app.UseLegacyPageEvents)
-				{
-					SendAppearing();
-					return;
-				}
-			}
+			_currentLifeState = LifeState.Appeared;
 
 			PreSendAppeared();
 			OnAppeared();
@@ -352,18 +349,24 @@ namespace Xamarin.Forms
 		internal virtual void PostSendDisappearing() { }
 
 		[EditorBrowsable(EditorBrowsableState.Never)]
+		public void SendDisappear(bool legacy)
+		{
+			if (legacy)
+				SendDisappearing();
+			else
+				SendDisappeared();
+		}
+
+		[EditorBrowsable(EditorBrowsableState.Never)]
 		public void SendDisappearing()
 		{
-			if (_hasDisappearing)
+			if (_currentLifeState == LifeState.Disappearing || _currentLifeState == LifeState.Disappeared)
 				return;
 
-			if (!_hasAppeared)
+			if (_currentLifeState != LifeState.Appearing && _currentLifeState != LifeState.Appeared)
 				WarnInvalidLifeCycle(nameof(SendDisappearing));
 
-			_hasAppearing = false;
-			_hasAppeared = false;
-			_hasDisappearing = true;
-			_hasDisappeared = false;
+			_currentLifeState = LifeState.Disappearing;
 
 			PreSendDisappearing();
 			OnDisappearing();
@@ -377,26 +380,13 @@ namespace Xamarin.Forms
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		public void SendDisappeared()
 		{
-			if (_hasDisappeared)
+			if (_currentLifeState == LifeState.Disappeared)
 				return;
 
-			if (this is Page)
-			{
-				var app = this.FindApplication();
-				if (app != null && app.UseLegacyPageEvents)
-				{
-					SendDisappearing();
-					return;
-				}
-			}
-
-			if (!_hasDisappearing)
+			if (_currentLifeState != LifeState.Disappearing)
 				WarnInvalidLifeCycle(nameof(SendDisappeared));
 
-			_hasAppearing = false;
-			_hasAppeared = false;
-			_hasDisappearing = false;
-			_hasDisappeared = true;
+			_currentLifeState = LifeState.Disappeared;
 
 			PreSendDisappeared();
 			OnDisappeared();
@@ -406,8 +396,7 @@ namespace Xamarin.Forms
 
 		void WarnInvalidLifeCycle(string comingFrom)
 		{
-			string currentState = $"Invalid lifecycle state while transitioning to: {comingFrom} Appearing: {_hasAppearing} Appeared: {_hasAppeared} Disappearing: {_hasDisappearing} Disappeared: {_hasDisappeared}";
-
+			string currentState = $"Invalid lifecycle state while transitioning to: {comingFrom} LifeState: {_currentLifeState}";
 #if DEBUG
 			throw new Exception(currentState);
 #else

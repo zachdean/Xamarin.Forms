@@ -35,6 +35,8 @@ namespace Xamarin.Forms.Platform.UWP
 				if (visual == null)
 					continue;
 
+				if (!Application.Current.UseLegacyPageEvents)
+					visual.SendDisappearing();
 				IVisualElementRenderer childRenderer = Platform.GetRenderer(visual);
 				if (childRenderer != null)
 				{

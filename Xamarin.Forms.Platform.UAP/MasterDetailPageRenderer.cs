@@ -159,6 +159,7 @@ namespace Xamarin.Forms.Platform.UWP
 				if (Control == null)
 				{
 					Control = new MasterDetailControl();
+					Control.Loading += OnControlLoading;
 					Control.Loaded += OnControlLoaded;
 					Control.Unloaded += OnControlUnloaded;
 					Control.SizeChanged += OnNativeSizeChanged;
@@ -250,19 +251,28 @@ namespace Xamarin.Forms.Platform.UWP
 			_master = null;
 		}
 
+		void OnControlLoading(FrameworkElement sender, object args)
+		{
+			if (!Application.Current.UseLegacyPageEvents)
+				Element?.SendAppearing();
+		}
+
 		void OnControlLoaded(object sender, RoutedEventArgs routedEventArgs)
 		{
 			if (Element == null)
 				return;
 
-			Element.SendAppearing();
+			Element.SendAppear(Application.Current.UseLegacyPageEvents);
 			UpdateBounds();
 			UpdateFlowDirection();
 		}
 
 		void OnControlUnloaded(object sender, RoutedEventArgs routedEventArgs)
 		{
-			Element?.SendDisappearing();
+			if (!Application.Current.UseLegacyPageEvents)
+				Element?.SendDisappearing();
+
+			Element?.SendDisappear(Application.Current.UseLegacyPageEvents);
 		}
 
 		void OnDetailPropertyChanged(object sender, PropertyChangedEventArgs e)

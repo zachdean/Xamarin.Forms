@@ -15,7 +15,7 @@ namespace Xamarin.Forms.Platform.Android
 {
 	public class PageRenderer : VisualElementRenderer<Page>, IOrderedTraversalController
 	{
-		bool _appearing;
+		//bool _appearing;
 		bool _disposed;
 
 		public PageRenderer(Context context) : base(context)
@@ -46,39 +46,11 @@ namespace Xamarin.Forms.Platform.Android
 			if (disposing && !_disposed)
 			{
 				if (Application.Current.UseLegacyPageEvents)
-				{
 					PageController?.SendDisappearing();
-				}
 
 				_disposed = true;
 			}
 			base.Dispose(disposing);
-		}
-
-		protected override void OnAttachedToWindow()
-		{
-			if (!_appearing && !Application.Current.UseLegacyPageEvents)
-				PageController?.SendAppearing();
-			_appearing = true;
-
-			if (Parent is PageContainer pageContainer && (pageContainer.IsInFragment || pageContainer.Visibility == ViewStates.Gone))
-				return;
-
-			if (Application.Current.UseLegacyPageEvents)
-				PageController?.SendAppearing();
-
-			base.OnAttachedToWindow();
-		}
-
-		protected override void OnDetachedFromWindow()
-		{
-			base.OnDetachedFromWindow();
-
-			if (Parent is PageContainer pageContainer && pageContainer.IsInFragment)
-				return;
-
-			if (Application.Current.UseLegacyPageEvents)
-				PageController?.SendDisappearing();
 		}
 
 		protected override void OnElementChanged(ElementChangedEventArgs<Page> e)

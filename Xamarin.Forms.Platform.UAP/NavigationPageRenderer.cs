@@ -191,6 +191,7 @@ namespace Xamarin.Forms.Platform.UWP
 
 					SetPage(Element.CurrentPage, false, false);
 
+					_container.Loading += OnLoading;
 					_container.Loaded += OnLoaded;
 					_container.Unloaded += OnUnloaded;
 				}
@@ -238,6 +239,7 @@ namespace Xamarin.Forms.Platform.UWP
 
 			_container.PointerPressed -= OnPointerPressed;
 			_container.SizeChanged -= OnNativeSizeChanged;
+			_container.Loading -= OnLoading;
 			_container.Loaded -= OnLoaded;
 			_container.Unloaded -= OnUnloaded;
 
@@ -380,7 +382,7 @@ namespace Xamarin.Forms.Platform.UWP
 				return;
 
 			_navManager = SystemNavigationManager.GetForCurrentView();
-			Element.SendAppearing();
+			Element.SendAppear(Application.Current.UseLegacyPageEvents);
 			UpdateBackButton();
 			UpdateTitleOnParents();
 
@@ -431,9 +433,18 @@ namespace Xamarin.Forms.Platform.UWP
 			SetPage(e.Page, e.Animated, false);
 		}
 
+		void OnLoading(FrameworkElement sender, object args)
+		{
+			if (!Application.Current.UseLegacyPageEvents)
+				Element?.SendAppearing();
+		}
+
 		void OnUnloaded(object sender, RoutedEventArgs args)
 		{
-			Element?.SendDisappearing();
+			if (!Application.Current.UseLegacyPageEvents)
+				Element?.SendDisappearing();
+
+			Element?.SendDisappear(Application.Current.UseLegacyPageEvents);
 		}
 
 		void PushExistingNavigationStack()
@@ -449,7 +460,9 @@ namespace Xamarin.Forms.Platform.UWP
 			if (_currentPage != null)
 			{
 				if (isPopping)
+				{
 					_currentPage.Cleanup();
+				}
 
 				_container.Content = null;
 				_currentPage.PropertyChanged -= OnCurrentPagePropertyChanged;

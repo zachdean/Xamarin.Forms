@@ -94,20 +94,6 @@ namespace Xamarin.Forms.Platform.Android.AppCompat
 			base.OnDestroyView();
 		}
 
-		public override void OnHiddenChanged(bool hidden)
-		{
-			base.OnHiddenChanged(hidden);
-
-			if (Page == null)
-				return;
-
-			// TODO LIFECYCLE
-			if (hidden)
-				PageController?.SendDisappearing();
-			else
-				PageController?.SendAppearing();
-		}
-
 		public override void OnPause()
 		{
 			bool shouldSendEvent = Application.Current.OnThisPlatform().GetSendDisappearingEventOnPause();
@@ -136,9 +122,17 @@ namespace Xamarin.Forms.Platform.Android.AppCompat
 				return;
 
 			if (isAppearing && UserVisibleHint)
+			{
 				PageController?.SendAppearing();
-			else if(!isAppearing)
+				if (!Application.Current.UseLegacyPageEvents)
+					PageController?.SendAppeared();
+			}
+			else if (!isAppearing)
+			{
 				PageController?.SendDisappearing();
+				if (!Application.Current.UseLegacyPageEvents)
+					PageController?.SendDisappeared();
+			}
 		}
 	}
 }

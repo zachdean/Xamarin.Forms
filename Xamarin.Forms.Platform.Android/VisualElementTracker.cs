@@ -51,10 +51,7 @@ namespace Xamarin.Forms.Platform.Android
 		{
 			if (!_loaded && !_disposed)
 			{
-				_element?.SendAppeared();
-
-				if (!Application.Current.UseLegacyPageEvents)
-					(_element as IPageController)?.SendAppeared();
+				_element?.SendAppear(Application.Current.UseLegacyPageEvents);
 
 				_loaded = true;
 
@@ -78,6 +75,8 @@ namespace Xamarin.Forms.Platform.Android
 
 			if (disposing)
 			{
+				_element?.SendDisappear(Application.Current.UseLegacyPageEvents);
+
 				SetElement(_element, null);
 				if (_renderer != null)
 				{
@@ -213,7 +212,8 @@ namespace Xamarin.Forms.Platform.Android
 
 		void HandleViewAttachedToWindow()
 		{
-			_element?.SendAppearing();
+			if (!_loaded && !Application.Current.UseLegacyPageEvents)
+				_element?.SendAppearing();
 
 			if (_initialUpdateNeeded)
 			{
@@ -226,13 +226,8 @@ namespace Xamarin.Forms.Platform.Android
 
 		void HandleViewDetachedFromWindow()
 		{
-			if (_loaded)
-			{
-				_element?.SendDisappeared();
-
-				if (!Application.Current.UseLegacyPageEvents)
-					(_element as IPageController)?.SendDisappeared();
-			}
+			if (_loaded && !Application.Current.UseLegacyPageEvents)
+				_element?.SendDisappearing();
 
 			_loaded = false;
 		}

@@ -1,6 +1,4 @@
-﻿using System;
-using Windows.UI.Xaml;
-using Xamarin.Forms;
+﻿using Windows.UI.Xaml;
 
 namespace Xamarin.Forms.Platform.UWP
 {
@@ -8,8 +6,9 @@ namespace Xamarin.Forms.Platform.UWP
 	{
 		public FormsPresenter()
 		{
-			Loaded += FormsPresenter_Loaded;
-			Unloaded += FormsPresenter_Unloaded;
+			Loading += OnLoading;
+			Loaded += OnLoaded;
+			Unloaded += OnUnloaded;
 			SizeChanged += (s, e) =>
 			{
 				if (ActualWidth > 0 && ActualHeight > 0 && DataContext != null)
@@ -20,10 +19,26 @@ namespace Xamarin.Forms.Platform.UWP
 			};
 		}
 
-		void FormsPresenter_Loaded(object sender, RoutedEventArgs e)
-			=> (DataContext as Page)?.SendAppearing();
+		void OnLoading(FrameworkElement sender, object args)
+		{
+			if (!Application.Current.UseLegacyPageEvents)
+				(DataContext as Page)?.SendAppearing();
+		}
 
-		void FormsPresenter_Unloaded(object sender, RoutedEventArgs e)
-			=> (DataContext as Page)?.SendDisappearing();
+		void OnLoaded(object sender, RoutedEventArgs e)
+		{
+			(DataContext as Page)?.SendAppear(Application.Current.UseLegacyPageEvents);
+		}
+
+		void OnUnloaded(object sender, RoutedEventArgs e)
+		{
+			if (DataContext is Page page)
+			{
+				if (!Application.Current.UseLegacyPageEvents)
+					page.SendDisappearing();
+
+				page.SendDisappear(Application.Current.UseLegacyPageEvents);
+			}
+		}
 	}
 }

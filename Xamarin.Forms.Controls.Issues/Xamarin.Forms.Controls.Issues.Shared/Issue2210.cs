@@ -81,8 +81,11 @@ namespace Xamarin.Forms.Controls.Issues
 					await Task.Delay(200);
 
 					var sb = new StringBuilder();
+					if (Application.Current.UseLegacyPageEvents)
+						sb.AppendLine($"Legacy events");
+
 					for (int i = 0; i < states.Count; i++)
-						sb.AppendLine(states[i].ToString());
+						sb.AppendLine($"{i + 1}. {states[i]}");
 					resultLabel.Text = sb.ToString();
 
 					bool success = false;
@@ -90,27 +93,28 @@ namespace Xamarin.Forms.Controls.Issues
 					if (Application.Current.UseLegacyPageEvents)
 					{
 						success =
-							states.Count == 8 &&
-							states.IndexOf(State.PageAppeared) == -1 &&
-							states.IndexOf(State.PageDisappeared) == -1 &&
-							states.IndexOf(State.PageAppearing) < states.IndexOf(State.ElementAppearing) &&
-							states.IndexOf(State.PageAppearing) < states.IndexOf(State.PageDisappearing) &&
-							states.IndexOf(State.ElementAppearing) < states.IndexOf(State.ElementAppeared) &&
-							states.IndexOf(State.ElementAppearing) < states.IndexOf(State.ElementAppeared) &&
-							states.IndexOf(State.ElementAppeared) < states.IndexOf(State.ElementDisappearing) &&
-							states.IndexOf(State.ElementDisappearing) < states.IndexOf(State.ElementAppeared);
+							states.Count == 4 &&
+							states.Count == new HashSet<State>(states).Count && // all values in a list are unique
+							!states.Contains(State.PageAppeared) &&
+							!states.Contains(State.PageDisappeared) &&
+							!states.Contains(State.ElementAppeared) &&
+							!states.Contains(State.ElementDisappeared) &&
+							states.IndexOf(State.PageAppearing) < states.IndexOf(State.ElementDisappearing) &&
+							states.IndexOf(State.ElementAppearing) < states.IndexOf(State.PageDisappearing) &&
+							states.IndexOf(State.ElementAppearing) < states.IndexOf(State.ElementDisappearing);
 					}
 					else
 					{
 						success =
 							states.Count == 8 &&
+							states.Count == new HashSet<State>(states).Count &&
 							states.IndexOf(State.PageAppearing) < states.IndexOf(State.PageAppeared) &&
 							states.IndexOf(State.PageAppearing) < states.IndexOf(State.ElementAppearing) &&
 							states.IndexOf(State.PageAppeared) < states.IndexOf(State.PageDisappearing) &&
 							states.IndexOf(State.PageDisappearing) < states.IndexOf(State.PageDisappeared) &&
 							states.IndexOf(State.ElementAppearing) < states.IndexOf(State.ElementAppeared) &&
 							states.IndexOf(State.ElementAppeared) < states.IndexOf(State.ElementDisappearing) &&
-							states.IndexOf(State.ElementDisappearing) < states.IndexOf(State.ElementAppeared);
+							states.IndexOf(State.ElementDisappearing) < states.IndexOf(State.ElementDisappeared);
 					}
 
 					checkLabel.Text = success ? successlText : "Failed";

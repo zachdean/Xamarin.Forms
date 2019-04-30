@@ -269,8 +269,6 @@ namespace Xamarin.Forms.Platform.Android.AppCompat
 		{
 			base.OnAttachedToWindow();
 
-			PageController.SendAppearing();
-
 			// If the Appearing handler changed the application's main page for some reason,
 			// this page may no longer be part of the hierarchy; if so, we need to skip
 			// updating the toolbar and pushing the pages to avoid crashing the app
@@ -289,7 +287,6 @@ namespace Xamarin.Forms.Platform.Android.AppCompat
 		protected override void OnDetachedFromWindow()
 		{
 			base.OnDetachedFromWindow();
-			PageController.SendDisappearing();
 			_isAttachedToWindow = false;
 		}
 
@@ -772,7 +769,6 @@ namespace Xamarin.Forms.Platform.Android.AppCompat
 			FragmentManager.EnableDebugLogging(true);
 #endif
 
-			Current?.SendDisappearing();
 			Current = page;
 
 			if (Platform != null)
@@ -1088,8 +1084,6 @@ namespace Xamarin.Forms.Platform.Android.AppCompat
 			Device.StartTimer(TimeSpan.FromMilliseconds(duration), () =>
 			{
 				tcs.TrySetResult(true);
-				// TODO LIFECYCLE
-				Current?.SendAppearing();
 				if (shouldUpdateToolbar)
 					UpdateToolbar();
 

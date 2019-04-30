@@ -43,7 +43,7 @@ namespace Xamarin.Forms.Platform.MacOS
 		string _defaultAccessibilityLabel;
 		string _defaultAccessibilityHint;
 		bool? _defaultIsAccessibilityElement;
-		bool _beforeAppearing;
+		bool _appearing;
 		bool _loaded;
 #endif
 		EventTracker _events;
@@ -312,9 +312,9 @@ namespace Xamarin.Forms.Platform.MacOS
 		{
 			base.WillMoveToWindow (window);
 
-			if (!_beforeAppearing && Element != null) {
+			if (!_appearing && Element != null) {
 				Element?.SendAppearing ();
-				_beforeAppearing = true;
+				_appearing = true;
 			}
 		}
 

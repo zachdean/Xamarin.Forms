@@ -326,9 +326,6 @@ namespace Xamarin.Forms
 
 		internal override void PostSendAppearing()
 		{
-			var pageContainer = this as IPageContainer<Page>;
-			//pageContainer?.CurrentPage?.SendAppearing();
-
 			this.FindApplication()?.OnPageAppearing(this);
 		}
 
@@ -338,11 +335,10 @@ namespace Xamarin.Forms
 				MessagingCenter.Send(this, BusySetSignalName, true);
 		}
 
+		Page CurrentPage => (this as IPageContainer<Page>)?.CurrentPage;
+
 		internal override void PostSendAppeared()
 		{
-			var pageContainer = this as IPageContainer<Page>;
-			//pageContainer?.CurrentPage?.SendAppeared();
-
 			this.FindApplication()?.OnPageAppeared(this);
 		}
 
@@ -350,25 +346,11 @@ namespace Xamarin.Forms
 		{
 			_hasAppearing = false;
 
+			CurrentPage?.SendDisappearing();
+			this.FindApplication()?.OnPageDisappearing(this);
+
 			if (IsBusy)
 				MessagingCenter.Send(this, BusySetSignalName, false);
-
-			if (this.FindApplication()?.UseLegacyPageEvents == true)
-			{
-				var pageContainer = this as IPageContainer<Page>;
-				//pageContainer?.CurrentPage?.SendDisappearing();
-			}
-		}
-
-		internal override void PostSendDisappearing()
-		{
-			if (this.FindApplication()?.UseLegacyPageEvents == false)
-			{
-				var pageContainer = this as IPageContainer<Page>;
-				//pageContainer?.CurrentPage?.SendDisappearing();
-			}
-
-			this.FindApplication()?.OnPageDisappearing(this);
 		}
 
 		internal override void PreSendDisappeared()
@@ -379,8 +361,7 @@ namespace Xamarin.Forms
 
 		internal override void PostSendDisappeared()
 		{
-			var pageContainer = this as IPageContainer<Page>;
-			//pageContainer?.CurrentPage?.SendDisappeared();
+			CurrentPage?.SendDisappeared();
 			this.FindApplication()?.OnPageDisappeared(this);
 		}
 

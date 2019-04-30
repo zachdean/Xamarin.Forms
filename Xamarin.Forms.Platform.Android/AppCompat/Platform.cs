@@ -150,7 +150,6 @@ namespace Xamarin.Forms.Platform.Android.AppCompat
 
 		async Task INavigation.PushModalAsync(Page modal, bool animated)
 		{
-			CurrentPageController?.SendDisappearing();
 			UpdateAccessibilityImportance(CurrentPageController as Page, ImportantForAccessibility.NoHideDescendants, false);
 
 			_navModel.PushModal(modal);
@@ -166,11 +165,6 @@ namespace Xamarin.Forms.Platform.Android.AppCompat
 			await presentModal;
 
 			UpdateAccessibilityImportance(modal, ImportantForAccessibility.Auto, true);
-
-			// TODO LIFECYCLE
-			// Verify that the modal is still on the stack
-			if (_navModel.CurrentPage == modal)
-				((IPageController)modal).SendAppearing();
 		}
 
 		void INavigation.RemovePage(Page page)

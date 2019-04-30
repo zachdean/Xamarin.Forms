@@ -190,21 +190,31 @@ namespace Xamarin.Forms.Platform.UWP
 				FocusManager.TryMoveFocus(focusDirection != FocusNavigationDirection.None ? focusDirection : FocusNavigationDirection.Next);
 		}
 
-		public virtual void OnLoading(FrameworkElement sender, object args) => Element?.SendAppearing();
+		public virtual void OnLoading(FrameworkElement sender, object args)
+		{
+			if (!Application.Current.UseLegacyPageEvents)
+				Element?.SendAppearing();
+		}
 
 		public virtual void OnLoaded(object sender, RoutedEventArgs e)
 		{
 			if (!_loaded && !_disposed)
 			{
-				Element.SendAppeared();
+				Element.SendAppear(Application.Current.UseLegacyPageEvents);
 				_loaded = true;
 			}
 		}
 
 		public virtual void OnUnloaded(object sender, RoutedEventArgs e)
 		{
+			if (Element == null)
+				return;
+
+			if (_loaded && !Application.Current.UseLegacyPageEvents)
+				Element.SendDisappearing();
+
 			_loaded = false;
-			Element?.SendDisappeared();
+			Element.SendDisappear(Application.Current.UseLegacyPageEvents);
 		}
 
 		public event EventHandler<ElementChangedEventArgs<TElement>> ElementChanged;

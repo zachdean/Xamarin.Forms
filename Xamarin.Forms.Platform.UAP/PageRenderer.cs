@@ -29,7 +29,6 @@ namespace Xamarin.Forms.Platform.UWP
 					var visualChild = children[i] as VisualElement;
 					visualChild?.Cleanup();
 				}
-				Element?.SendDisappearing();
 			}
 
 			base.Dispose();
@@ -70,20 +69,7 @@ namespace Xamarin.Forms.Platform.UWP
 			{
 				return;
 			}
-			if (!Application.Current.UseLegacyPageEvents)
-				Element?.SendAppeared();
-			else
-				Element?.SendAppearing();
-		}
-
-		public override void OnUnloaded(object sender, RoutedEventArgs args)
-		{
-			if (!Application.Current.UseLegacyPageEvents)
-				Element?.SendDisappeared();
-			else
-				Element?.SendDisappearing();
-
-			base.OnUnloaded(sender, args);
+			Element.SendAppear(Application.Current.UseLegacyPageEvents);
 		}
 	}
 }
