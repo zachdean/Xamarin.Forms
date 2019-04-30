@@ -65,6 +65,7 @@ namespace Xamarin.Forms.Platform.Android
 		{
 			_embedded = embedded;
 			_context = context ?? throw new ArgumentNullException(nameof(context), "Somehow we're getting a null context passed in");
+			_context = AppCompatContextThemeWrapper.Create(_context);
 			PackageName = context.PackageName;
 			_activity = context.GetActivity();
 

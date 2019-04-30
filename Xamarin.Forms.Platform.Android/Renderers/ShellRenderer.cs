@@ -144,7 +144,7 @@ namespace Xamarin.Forms.Platform.Android
 
 		public ShellRenderer(Context context)
 		{
-			AndroidContext = context;
+			AndroidContext = AppCompatContextThemeWrapper.Create(context);
 		}
 
 		
