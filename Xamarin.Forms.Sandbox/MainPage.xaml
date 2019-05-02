@@ -1,12 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+<Shell xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Xamarin.Forms.Sandbox.MainPage"
              xmlns:ios="clr-namespace:Xamarin.Forms.PlatformConfiguration.iOSSpecific;assembly=Xamarin.Forms.Core"
-             ios:Page.UseSafeArea="true">
-    <ContentPage.Content>
-        <StackLayout>
-            <Button Text="I am a Button"  />
-        </StackLayout>
-    </ContentPage.Content>
-</ContentPage>
+             ios:Page.UseSafeArea="true"
+             xmlns:local="clr-namespace:Xamarin.Forms.Sandbox">
+    <ShellItem Title="Item 1">
+        <ShellContent ContentTemplate="{DataTemplate local:Page1}"></ShellContent>
+    </ShellItem>
+    <ShellItem Title="Item 2">
+        <ShellContent ContentTemplate="{DataTemplate local:Page2}"></ShellContent>
+    </ShellItem>
+</Shell>
