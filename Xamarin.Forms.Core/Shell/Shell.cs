@@ -692,6 +692,15 @@ namespace Xamarin.Forms
 			}
 		}
 
+		protected override void OnPropertyChanged([CallerMemberName] string propertyName = null)
+		{
+			base.OnPropertyChanged(propertyName);
+			if(propertyName == TabBarIsVisibleProperty.PropertyName)
+			{
+				PropertyPropagationExtensions.PropagatePropertyChanged(propertyName, this, LogicalChildrenInternal);
+			}
+		}
+
 		protected override void OnBindingContextChanged()
 		{
 			base.OnBindingContextChanged();

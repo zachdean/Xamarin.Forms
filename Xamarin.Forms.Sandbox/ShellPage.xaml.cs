@@ -16,5 +16,15 @@ namespace Xamarin.Forms.Sandbox
 		{
 			InitializeComponent();
 		}
+
+		private void Button_Clicked(object sender, EventArgs e)
+		{
+			var page = (sender as Element).Parent.Parent as Page;
+
+			if(Shell.GetTabBarIsVisible(this) != false)
+				Shell.SetTabBarIsVisible(this, false);
+			else
+				Shell.SetTabBarIsVisible(this, true);
+		}
 	}
 }

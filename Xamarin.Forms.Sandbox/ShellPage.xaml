@@ -3,7 +3,23 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Xamarin.Forms.Sandbox.ShellPage">
 
-    <ShellContent Title="test">
-        <ContentPage></ContentPage>
-    </ShellContent>
+    <FlyoutItem Title="test">
+        <Tab Title="tab1">
+            <ContentPage >
+                <StackLayout>
+                    <Button Text="switch" Clicked="Button_Clicked"></Button>
+                </StackLayout>
+            </ContentPage>
+        </Tab>
+        <Tab Title="tab2">
+            <ContentPage >
+                <StackLayout>
+                    <Button Text="switch" Clicked="Button_Clicked"></Button>
+                </StackLayout>
+            </ContentPage>
+        </Tab>
+    </FlyoutItem>
+    <FlyoutItem Title="cats">
+        
+    </FlyoutItem>
 </Shell>
