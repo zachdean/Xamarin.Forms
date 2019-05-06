@@ -1,11 +1,10 @@
+using Android.Graphics;
 using System;
 using System.Collections.Generic;
-using System.Text.RegularExpressions;
-using Android.Graphics;
-using AApplication = Android.App.Application;
-using Xamarin.Forms.Internals;
 using System.Diagnostics;
 using Xamarin.Forms.Core;
+using Xamarin.Forms.Internals;
+using AApplication = Android.App.Application;
 
 namespace Xamarin.Forms.Platform.Android
 {
@@ -59,8 +58,8 @@ namespace Xamarin.Forms.Platform.Android
 
 		static (bool success, Typeface typeface) TryGetFromAssets(this string fontName)
 		{
-			var isAssetfont = IsAssetFontFamily(fontName);
-			if (isAssetfont)
+			var isAssetFont = IsAssetFontFamily(fontName);
+			if (isAssetFont)
 			{
 				return LoadTypefaceFromAsset(fontName);
 			}
@@ -95,8 +94,6 @@ namespace Xamarin.Forms.Platform.Android
 					{
 						return (true, Typeface.CreateFromFile(fontPath));
 					}
-
-
 
 					foreach (var folder in folders)
 					{
@@ -154,7 +151,7 @@ namespace Xamarin.Forms.Platform.Android
 			return self.FontFamily == null && self.FontSize == Device.GetNamedSize(NamedSize.Default, typeof(Label), true) && self.FontAttributes == FontAttributes.None;
 		}
 
-		static bool IsAssetFontFamily (string name)
+		static bool IsAssetFontFamily(string name)
 		{
 			return name.Contains(".ttf#") || name.Contains(".otf#");
 		}
