@@ -175,7 +175,7 @@ namespace Xamarin.Forms.Platform.iOS
 				NavigationItem.TitleView = view;
 			}
 		}
-
+		UIBarButtonItem backButton = null;
 		protected virtual async Task UpdateToolbarItems()
 		{
 			if (NavigationItem.RightBarButtonItems != null)
@@ -210,8 +210,6 @@ namespace Xamarin.Forms.Platform.iOS
 				{
 					if(iconDefault == Icon.Back)
 					{
-						NavigationItem.LeftBarButtonItem = new UIBarButtonItem("TEST", UIBarButtonItemStyle.Done, null, null);
-						
 					}
 					else if ((iconDefault == Icon.Flyout || iconDefault == Icon.Default) && _flyoutBehavior == FlyoutBehavior.Flyout)
 					{
