@@ -69,7 +69,10 @@ namespace Xamarin.Forms.Platform.iOS
 		{
 			Delegate = new NavDelegate(this);
 			_context = context;
+			//PushViewController(new DummyController(), false);
 		}
+
+		public class DummyController : UIViewController { }
 
 		public override UIViewController PopViewController(bool animated)
 		{
@@ -78,6 +81,9 @@ namespace Xamarin.Forms.Platform.iOS
 				_popCompletionTask = new TaskCompletionSource<bool>();
 				SendPoppedOnCompletion(_popCompletionTask.Task);
 			}
+
+			if (ViewControllers.Length == 2 && ViewControllers[0] is DummyController)
+				ViewControllers.RemoveAt(0);
 
 			return base.PopViewController(animated);
 		}

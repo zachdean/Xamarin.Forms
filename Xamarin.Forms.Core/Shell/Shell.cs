@@ -124,26 +124,6 @@ namespace Xamarin.Forms
 				propertyChanged: OnShellColorValueChanged);
 
 
-
-		internal static readonly BindableProperty ShellProperty =
-			BindableProperty.CreateAttached("Shell", typeof(Shell), typeof(Shell), null,
-				propertyChanged: OnShellValueChanged);
-
-		static void OnShellValueChanged(BindableObject bindable, object oldValue, object newValue)
-		{
-			if (oldValue is Shell oldShell)
-			{
-				if (GetBackButtonBehavior(bindable) == null)
-					SetBackButtonBehavior(bindable, null);
-			}
-
-			if (newValue is Shell newShell)
-			{
-				if (GetBackButtonBehavior(bindable) == null)
-					SetBackButtonBehavior(bindable, newShell._defaultBackButtonBehavior);
-			}
-		}
-
 		internal static Shell GetShell(BindableObject obj) => (Shell)obj.GetValue(ShellProperty);
 		internal static void SetShell(BindableObject obj, Shell value) => obj.SetValue(ShellProperty, value);
 
@@ -190,6 +170,25 @@ namespace Xamarin.Forms
 					return;
 				}
 				item = item.Parent;
+			}
+		}
+
+		internal static readonly BindableProperty ShellProperty =
+			BindableProperty.CreateAttached("Shell", typeof(Shell), typeof(Shell), null,
+				propertyChanged: OnShellValueChanged);
+
+		static void OnShellValueChanged(BindableObject bindable, object oldValue, object newValue)
+		{
+			if (oldValue is Shell)
+			{
+				if (GetBackButtonBehavior(bindable) == null)
+					SetBackButtonBehavior(bindable, null);
+			}
+
+			if (newValue is Shell newShell)
+			{
+				if (GetBackButtonBehavior(bindable) == null)
+					SetBackButtonBehavior(bindable, newShell._defaultBackButtonBehavior);
 			}
 		}
 

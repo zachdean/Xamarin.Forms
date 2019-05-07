@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using UIKit;
@@ -202,10 +203,27 @@ namespace Xamarin.Forms.Platform.iOS
 				var commandParameter = behavior.CommandParameter;
 				var image = behavior.IconOverride;
 				var enabled = behavior.IsEnabled;
+				var text = BackButtonBehavior.TextOverride;
+				var iconDefault = BackButtonBehavior?.Icon ?? Icon.Default;
 
-				if (image == null)
+				if (text == null && image == null)
 				{
-					var text = BackButtonBehavior.TextOverride;
+					if(iconDefault == Icon.Back)
+					{
+						NavigationItem.LeftBarButtonItem = new UIBarButtonItem("TEST", UIBarButtonItemStyle.Done, null, null);
+						
+					}
+					else if ((iconDefault == Icon.Flyout || iconDefault == Icon.Default) && _flyoutBehavior == FlyoutBehavior.Flyout)
+					{
+						await SetDrawerArrowDrawableFromFlyoutIcon();
+					}
+					else
+					{
+						NavigationItem.LeftBarButtonItem = null;
+					}
+				}
+				else if (image == null)
+				{
 					NavigationItem.LeftBarButtonItem =
 						new UIBarButtonItem(text, UIBarButtonItemStyle.Plain, (s, e) => LeftBarButtonItemHandler(ViewController, command, commandParameter, IsRootPage)) { Enabled = enabled };
 				}
@@ -218,7 +236,6 @@ namespace Xamarin.Forms.Platform.iOS
 			}
 			else if (IsRootPage && _flyoutBehavior == FlyoutBehavior.Flyout)
 			{
-
 				await SetDrawerArrowDrawableFromFlyoutIcon();
 			}
 			else
@@ -325,6 +342,7 @@ namespace Xamarin.Forms.Platform.iOS
 			{
 				BackButtonBehavior.PropertyChanged += OnBackButtonBehaviorPropertyChanged;
 			}
+
 			await UpdateToolbarItems().ConfigureAwait(false);
 		}
 
