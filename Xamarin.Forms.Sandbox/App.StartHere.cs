@@ -11,7 +11,9 @@ namespace Xamarin.Forms.Sandbox
 		{
 			//MainPage = CreateStackLayoutPage(new[] { new Button() { Text = "text" } });
 			//MainPage.Visual = VisualMarker.Material;
-			MainPage = new MainPage();
+			MainPage = new ShellPage();
+
+			Routing.RegisterRoute("somepage", typeof(ContentPage));
 		}
 	}
 }

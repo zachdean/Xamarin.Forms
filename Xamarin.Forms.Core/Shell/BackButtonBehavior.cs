@@ -3,6 +3,14 @@ using System.Windows.Input;
 
 namespace Xamarin.Forms
 {
+	public enum Icon
+	{
+		Default,
+		Flyout,
+		Back,
+		Custom
+	}
+
 	public class BackButtonBehavior : BindableObject
 	{
 		public static readonly BindableProperty CommandParameterProperty =
@@ -22,6 +30,9 @@ namespace Xamarin.Forms
 		public static readonly BindableProperty TextOverrideProperty =
 			BindableProperty.Create(nameof(TextOverride), typeof(string), typeof(BackButtonBehavior), null, BindingMode.OneTime);
 
+		public static readonly BindableProperty IconProperty =
+			BindableProperty.Create(nameof(Icon), typeof(Icon), typeof(BackButtonBehavior), Icon.Default, BindingMode.OneTime);
+
 		public ICommand Command
 		{
 			get { return (ICommand)GetValue(CommandProperty); }
@@ -38,6 +49,12 @@ namespace Xamarin.Forms
 		{
 			get { return (ImageSource)GetValue(IconOverrideProperty); }
 			set { SetValue(IconOverrideProperty, value); }
+		}
+
+		public Icon Icon
+		{
+			get { return (Icon)GetValue(IconProperty); }
+			set { SetValue(IconProperty, value); }
 		}
 
 		public bool IsEnabled

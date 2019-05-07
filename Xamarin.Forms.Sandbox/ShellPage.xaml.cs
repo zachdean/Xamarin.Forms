@@ -16,5 +16,14 @@ namespace Xamarin.Forms.Sandbox
 		{
 			InitializeComponent();
 		}
+
+		private void Button_Clicked(object sender, EventArgs e)
+		{
+			this.GoToAsync("somepage");
+		}
+		private void Route_Clicked(object sender, EventArgs e)
+		{
+			this.GoToAsync("route2");
+		}
 	}
 }

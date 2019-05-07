@@ -17,7 +17,7 @@ namespace Xamarin.Forms
 	public class Shell : Page, IShellController, IPropertyPropagationController
 	{
 		public static readonly BindableProperty BackButtonBehaviorProperty =
-			BindableProperty.CreateAttached("BackButtonBehavior", typeof(BackButtonBehavior), typeof(Shell), null, BindingMode.OneTime,
+			BindableProperty.CreateAttached("BackButtonBehavior", typeof(BackButtonBehavior), typeof(Shell),  null, defaultBindingMode: BindingMode.OneTime,
 				propertyChanged: OnBackButonBehaviorPropertyChanged);
 
 		static void OnBackButonBehaviorPropertyChanged(BindableObject bindable, object oldValue, object newValue)
@@ -122,6 +122,30 @@ namespace Xamarin.Forms
 		public static readonly BindableProperty ShellUnselectedColorProperty =
 			BindableProperty.CreateAttached("ShellUnselectedColor", typeof(Color), typeof(Shell), Color.Default,
 				propertyChanged: OnShellColorValueChanged);
+
+
+
+		internal static readonly BindableProperty ShellProperty =
+			BindableProperty.CreateAttached("Shell", typeof(Shell), typeof(Shell), null,
+				propertyChanged: OnShellValueChanged);
+
+		static void OnShellValueChanged(BindableObject bindable, object oldValue, object newValue)
+		{
+			if (oldValue is Shell oldShell)
+			{
+				if (GetBackButtonBehavior(bindable) == null)
+					SetBackButtonBehavior(bindable, null);
+			}
+
+			if (newValue is Shell newShell)
+			{
+				if (GetBackButtonBehavior(bindable) == null)
+					SetBackButtonBehavior(bindable, newShell._defaultBackButtonBehavior);
+			}
+		}
+
+		internal static Shell GetShell(BindableObject obj) => (Shell)obj.GetValue(ShellProperty);
+		internal static void SetShell(BindableObject obj, Shell value) => obj.SetValue(ShellProperty, value);
 
 		public static Color GetShellBackgroundColor(BindableObject obj) => (Color)obj.GetValue(ShellBackgroundColorProperty);
 		public static void SetShellBackgroundColor(BindableObject obj, Color value) => obj.SetValue(ShellBackgroundColorProperty, value);
@@ -338,51 +362,14 @@ namespace Xamarin.Forms
 
 		public static Shell Current => Application.Current?.MainPage as Shell;
 
-
-		List<RequestDefinition> BuildAllTheRoutes()
-		{
-			List<RequestDefinition> routes = new List<RequestDefinition>();
-			// todo make better maybe
-
-			for (var i = 0; i < Items.Count; i++)
-			{
-				var item = Items[i];
-
-				for (var j = 0; j < item.Items.Count; j++)
-				{
-					var section = item.Items[j];
-
-					for (var k = 0; k < section.Items.Count; k++)
-					{
-						var content = section.Items[k];
-
-						string longUri = $"{RouteScheme}://{RouteHost}/{Routing.GetRoute(this)}/{Routing.GetRoute(item)}/{Routing.GetRoute(section)}/{Routing.GetRoute(content)}";
-
-						longUri = longUri.TrimEnd('/');
-
-						routes.Add(new RequestDefinition(longUri, item, section, content, new List<string>()));
-					}
-				}
-			}
-
-			return routes;
-		}
-
 		public Task GoToAsync(ShellNavigationState state, bool animate = true)
 		{
 			return GoToAsync(state, animate, false);
 		}
 
-		internal async Task GoToAsync(ShellNavigationState state, bool animate, bool enableRelativeShellRoutes)
+
+		internal async Task ProcessNavigationRequest(NavigationRequest navigationRequest)
 		{
-			// FIXME: This should not be none, we need to compute the delta and set flags correctly
-			var accept = ProposeNavigation(ShellNavigationSource.Unknown, state, true);
-			if (!accept)
-				return;
-
-			_accumulateNavigatedEvents = true;
-
-			var navigationRequest = ShellUriHandler.GetNavigationRequest(this, state.FullLocation, enableRelativeShellRoutes);
 			var uri = navigationRequest.Request.FullUri;
 			var queryString = navigationRequest.Query;
 			var queryData = ParseQueryString(queryString);
@@ -420,21 +407,8 @@ namespace Xamarin.Forms
 			}
 			else
 			{
-				await CurrentItem.CurrentItem.GoToAsync(navigationRequest, queryData, animate);
+				await CurrentItem.CurrentItem.GoToAsync(navigationRequest, queryData, navigationRequest.Animate);
 			}
-			
-			//if (Routing.CompareWithRegisteredRoutes(shellItemRoute))
-			//{
-			//	var shellItem = ShellItem.GetShellItemFromRouteName(shellItemRoute);
-
-			//	ApplyQueryAttributes(shellItem, queryData, parts.Count == 1);
-
-			//	if (CurrentItem != shellItem)
-			//		SetValueFromRenderer(CurrentItemProperty, shellItem);
-
-			//	if (parts.Count > 0)
-			//		await ((IShellItemController)shellItem).GoToPart(parts, queryData);
-			//}
 
 			_accumulateNavigatedEvents = false;
 
@@ -442,6 +416,31 @@ namespace Xamarin.Forms
 			if (_accumulatedEvent != null)
 				OnNavigated(_accumulatedEvent);
 		}
+
+		internal async Task GoToAsync(ShellNavigationState state, bool animate, bool enableRelativeShellRoutes)
+		{
+			// FIXME: This should not be none, we need to compute the delta and set flags correctly
+			var accept = ProposeNavigation(ShellNavigationSource.Unknown, state, true);
+			if (!accept)
+				return;
+
+			_accumulateNavigatedEvents = true;
+
+			var navigationRequest = ShellUriHandler.GetNavigationRequest(this, state.FullLocation, enableRelativeShellRoutes);
+
+			_navigationStack.Add(navigationRequest);
+			UpdateBackButtonIcon();
+			await ProcessNavigationRequest(navigationRequest);
+		}
+
+		void UpdateBackButtonIcon()
+		{
+			if (_navigationStack.Count > 1)
+				_defaultBackButtonBehavior.Icon = Forms.Icon.Back;
+			else
+				_defaultBackButtonBehavior.Icon = Forms.Icon.Default;
+		}
+
 
 		internal static void ApplyQueryAttributes(Element element, IDictionary<string, string> query, bool isLastItem)
 		{
@@ -572,9 +571,17 @@ namespace Xamarin.Forms
 		bool _accumulateNavigatedEvents;
 		View _flyoutHeaderView;
 		bool _checkExperimentalFlag = true;
+		List<NavigationRequest> _navigationStack;
+		BackButtonBehavior _defaultBackButtonBehavior;
 
 		public Shell() : this(true)
 		{
+			_defaultBackButtonBehavior = new BackButtonBehavior()
+			{
+				Command = new Command(OnBackButtonClicked)
+			};
+
+			_navigationStack = new List<NavigationRequest>();
 		}
 
 		internal Shell(bool checkFlag)
@@ -610,6 +617,8 @@ namespace Xamarin.Forms
 			get => (ShellItem)GetValue(CurrentItemProperty);
 			set => SetValue(CurrentItemProperty, value);
 		}
+
+		internal Page CurrentPage => (CurrentItem?.CurrentItem as IShellSectionController)?.PresentedPage;
 
 		public ShellNavigationState CurrentState => (ShellNavigationState)GetValue(CurrentStateProperty);
 
@@ -777,12 +786,46 @@ namespace Xamarin.Forms
 			_structureChanged?.Invoke(this, EventArgs.Empty);
 		}
 
+
+
+		void OnBackButtonClicked(object obj)
+		{
+			if (CanNavigateBack)
+				_ = GoBack();
+			else
+				FlyoutIsPresented = !FlyoutIsPresented;
+		}
+
+		bool CanNavigateBack => _navigationStack.Count > 1;
+
+		public async Task<bool> GoBack()
+		{
+			if (!CanNavigateBack)
+				return false;
+
+			var lastNavigation = _navigationStack[_navigationStack.Count - 1];
+			var lastLocation = _navigationStack[_navigationStack.Count - 2];
+
+			_navigationStack.Remove(lastNavigation);
+			UpdateBackButtonIcon();
+
+			if (lastNavigation.Request.GlobalRoutes.Count > 0)
+				_ = CurrentItem?.CurrentItem?.Navigation?.PopAsync();
+			else
+			{
+				await ProcessNavigationRequest(lastLocation);
+			}
+
+			return true;
+		}
+
+
 		protected override bool OnBackButtonPressed()
 		{
 			var currentContent = CurrentItem?.CurrentItem;
-			if (currentContent != null && currentContent.Stack.Count > 1)
+			if (currentContent != null && CanNavigateBack)
 			{
-				currentContent.Navigation.PopAsync();
+				_ = GoBack();
 				return true;
 			}
 			return false;

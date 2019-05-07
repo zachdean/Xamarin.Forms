@@ -292,6 +292,8 @@ namespace Xamarin.Forms
 					DisplayedPage = currentItem.Page;
 			}
 
+			if (Shell != null && DisplayedPage != null)
+				Shell.SetShell(DisplayedPage, Shell);
 		}
 
 		protected override void OnChildAdded(Element child)

@@ -3,7 +3,21 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Xamarin.Forms.Sandbox.ShellPage">
 
-    <ShellContent Title="test">
-        <ContentPage></ContentPage>
+    <ShellContent Title="test" Route="route1">
+        <ContentPage>
+            <StackLayout>
+                <Button Text="push me" Clicked="Button_Clicked"></Button>
+                <Button Text="route me" Clicked="Route_Clicked"></Button>
+            </StackLayout>
+        </ContentPage>
+    </ShellContent>
+    
+    <ShellContent Title="test2" Route="route2">
+        <ContentPage>
+            <StackLayout>
+                <Button Text="pushe me 2" Clicked="Button_Clicked"></Button>
+                <Button Text="route2 me" Clicked="Route_Clicked"></Button>
+            </StackLayout>
+        </ContentPage>
     </ShellContent>
 </Shell>

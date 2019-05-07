@@ -181,6 +181,15 @@ namespace Xamarin.Forms
 			}
 		}
 
+		protected override void OnParentSet()
+		{
+			base.OnParentSet();
+			if(Parent is Shell shell && (CurrentItem as IShellSectionController)?.PresentedPage is Page page)
+			{
+				Shell.SetShell(page, shell);
+			}
+		}
+
 		static void OnCurrentItemChanged(BindableObject bindable, object oldValue, object newValue)
 		{
 			var shellItem = (ShellItem)bindable;
