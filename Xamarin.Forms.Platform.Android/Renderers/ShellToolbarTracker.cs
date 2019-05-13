@@ -382,7 +382,7 @@ namespace Xamarin.Forms.Platform.Android
 
 		protected virtual void UpdateNavBarVisible(Toolbar toolbar, Page page)
 		{
-			var navBarVisible = Shell.GetNavBarIsVisible(page);
+			var navBarVisible = Shell.GetEffectivePropertyValue<bool>(page, Shell.NavBarIsVisibleProperty);
 			toolbar.Visibility = navBarVisible ? ViewStates.Visible : ViewStates.Gone;
 		}
 

@@ -360,7 +360,7 @@ namespace Xamarin.Forms.Platform.iOS
 			if (_displayedPage == null || ShellItem == null)
 				return;
 
-			var hidden = !Shell.GetTabBarIsVisible(_displayedPage);
+			var hidden = !Shell.GetEffectivePropertyValue<bool>(_displayedPage, Shell.TabBarIsVisibleProperty);
 			if (ShellItem.Items.Count > 1)
 			{
 				SetTabBarHidden(hidden);

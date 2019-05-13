@@ -160,6 +160,23 @@ namespace Xamarin.Forms
 		public static Color GetUnselectedColor(BindableObject obj) => (Color)obj.GetValue(UnselectedColorProperty);
 		public static void SetUnselectedColor(BindableObject obj, Color value) => obj.SetValue(UnselectedColorProperty, value);
 
+		public static T GetEffectivePropertyValue<T>(Element element, BindableProperty property)
+		{
+			if (element.IsSet(property))
+				return (T)element.GetValue(property);
+
+			element = element.Parent;
+			while(element != null)
+			{
+				if (element.IsSet(property))
+					return (T)element.GetValue(property);
+
+				element = element.Parent;
+			}
+
+			return (T)property.DefaultValue;
+		}
+
 		static void OnColorValueChanged(BindableObject bindable, object oldValue, object newValue)
 		{
 			var item = (Element)bindable;

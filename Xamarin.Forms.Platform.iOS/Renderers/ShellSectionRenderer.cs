@@ -406,7 +406,7 @@ namespace Xamarin.Forms.Platform.iOS
 
 		void UpdateNavigationBarHidden()
 		{
-			SetNavigationBarHidden(!Shell.GetNavBarIsVisible(_displayedPage), true);
+			SetNavigationBarHidden(!Shell.GetEffectivePropertyValue<bool>(_displayedPage, Shell.NavBarIsVisibleProperty), true);
 		}
 
 		void UpdateShadowImages()
@@ -466,7 +466,7 @@ namespace Xamarin.Forms.Platform.iOS
 				if (element is ShellSection)
 					navBarVisible = _self._renderer.ShowNavBar;
 				else
-					navBarVisible = Shell.GetNavBarIsVisible(element);
+					navBarVisible = Shell.GetEffectivePropertyValue<bool>(element, Shell.NavBarIsVisibleProperty);
 
 				navigationController.SetNavigationBarHidden(!navBarVisible, true);
 			}

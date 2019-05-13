@@ -119,7 +119,7 @@ namespace Xamarin.Forms.Platform.Tizen
 			_navBar.SearchHandler = Shell.GetSearchHandler(page);
 			_navBar.TitleView = Shell.GetTitleView(page);
 			_navBar.CurrentPage = page;
-			NavBarIsVisible = Shell.GetNavBarIsVisible(page);
+			NavBarIsVisible = Shell.GetEffectivePropertyValue<bool>(page, Shell.NavBarIsVisibleProperty);
 
 			if (((IShellContentController)_section.CurrentItem).GetOrCreateContent() != page)
 				_navBar.HasBackButton = true;
@@ -194,7 +194,7 @@ namespace Xamarin.Forms.Platform.Tizen
 			}
 			else if (e.PropertyName == Shell.NavBarIsVisibleProperty.PropertyName)
 			{
-				NavBarIsVisible = Shell.GetNavBarIsVisible(sender as Page);
+				NavBarIsVisible = Shell.GetEffectivePropertyValue<bool>(sender as Page, Shell.NavBarIsVisibleProperty);
 			}
 			else if (e.PropertyName == Shell.TitleViewProperty.PropertyName)
 			{

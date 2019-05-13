@@ -144,14 +144,6 @@ namespace Xamarin.Forms
 			}
 		}
 
-		internal static void PropagateFromParent(BindableProperty property, Element me)
-		{
-			if (me == null || me.Parent == null)
-				return;
-
-			Propagate(property, me.Parent, me, false);
-		}
-
 		internal static void Propagate(BindableProperty property, BindableObject from, BindableObject to, bool onlyToImplicit)
 		{
 			if (from == null || to == null)

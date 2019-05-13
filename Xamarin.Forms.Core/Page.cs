@@ -276,6 +276,9 @@ namespace Xamarin.Forms
 			if (!Application.IsApplicationOrNull(RealParent) && !(RealParent is Page) && !(RealParent is BaseShellItem))
 				throw new InvalidOperationException("Parent of a Page must also be a Page");
 			base.OnParentSet();
+
+			OnPropertyChanged(Shell.NavBarIsVisibleProperty.PropertyName);
+			OnPropertyChanged(Shell.TabBarIsVisibleProperty.PropertyName);
 		}
 
 		protected override void OnSizeAllocated(double width, double height)

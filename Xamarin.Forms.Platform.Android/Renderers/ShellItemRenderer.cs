@@ -373,7 +373,7 @@ namespace Xamarin.Forms.Platform.Android
 			if (DisplayedPage == null)
 				return;
 
-			bool visible = Shell.GetTabBarIsVisible(DisplayedPage);
+			bool visible = Shell.GetEffectivePropertyValue<bool>(DisplayedPage, Shell.TabBarIsVisibleProperty);
 			using (var menu = _bottomView.Menu)
 			{
 				if (menu.Size() == 1)
