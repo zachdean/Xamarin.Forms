@@ -1,0 +1,3 @@
+﻿<Project>
+    <Import Project="..\.nuspec\Xamarin.Forms.targets" />
+</Project>

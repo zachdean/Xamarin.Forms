@@ -5,9 +5,6 @@
     <AssemblyName>Xamarin.Forms.Xaml.UnitTests</AssemblyName>
   </PropertyGroup>
 	
-	<Import Project="..\.nuspec\Xamarin.Forms.props" Condition="'$(BuildingInsideVisualStudio)' == 'true' AND Exists('$(__XFBuildTasksLocation)Xamarin.Forms.Build.Tasks.dll')" />
-  <Import Project="..\.nuspec\Xamarin.Forms.props" Condition="'$(BuildingInsideVisualStudio)' != 'true'" />
-
   <PropertyGroup>
     <WarningLevel>4</WarningLevel>
     <NoWarn>0672;0219;0414</NoWarn>
@@ -18,12 +15,6 @@
     <ErrorReport>prompt</ErrorReport>
     <DebugType>full</DebugType>
     <DebugSymbols>true</DebugSymbols>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
   </PropertyGroup>
 
   <ItemGroup>
@@ -42,6 +33,4 @@
       <Link>BaseTestFixture.cs</Link>
     </Compile>
   </ItemGroup>
-  <Import Project="..\.nuspec\Xamarin.Forms.Debug.targets" Condition="'$(BuildingInsideVisualStudio)' == 'true' AND Exists('$(__XFBuildTasksLocation)Xamarin.Forms.Build.Tasks.dll')" />
-  <Import Project="..\.nuspec\Xamarin.Forms.Debug.targets" Condition="'$(BuildingInsideVisualStudio)' != 'true'" />
 </Project>
