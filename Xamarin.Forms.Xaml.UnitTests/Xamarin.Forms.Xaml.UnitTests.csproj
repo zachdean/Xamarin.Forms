@@ -5,9 +5,9 @@
     <AssemblyName>Xamarin.Forms.Xaml.UnitTests</AssemblyName>
   </PropertyGroup>
 	
-  <Import Project="..\.nuspec\Xamarin.Forms.DefaultItems.props" />
-  <Import Project="..\.nuspec\Xamarin.Forms.DefaultItems.targets" />
-	
+	<Import Project="..\.nuspec\Xamarin.Forms.props" Condition="'$(BuildingInsideVisualStudio)' == 'true' AND Exists('$(__XFBuildTasksLocation)Xamarin.Forms.Build.Tasks.dll')" />
+  <Import Project="..\.nuspec\Xamarin.Forms.props" Condition="'$(BuildingInsideVisualStudio)' != 'true'" />
+
   <PropertyGroup>
     <WarningLevel>4</WarningLevel>
     <NoWarn>0672;0219;0414</NoWarn>

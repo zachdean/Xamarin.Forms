@@ -1,5 +1,9 @@
-<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
+  <ItemGroup>
+    <AvailableItemName Include="Font" />
+  </ItemGroup>
+  
 	<PropertyGroup>
 		<_XFBuildTasksLocation Condition="'$(_XFBuildTasksLocation)' == '' AND '$(MSBuildRuntimeType)' == 'Core'">$(MSBuildThisFileDirectory)netstandard2.0\</_XFBuildTasksLocation>
 		<_XFBuildTasksLocation Condition="'$(_XFBuildTasksLocation)' == ''">$(MSBuildThisFileDirectory)net46\</_XFBuildTasksLocation>
@@ -14,7 +18,9 @@
 		<EnableDefaultXamlItems Condition="'$(EnableDefaultXamlItems)'==''">True</EnableDefaultXamlItems>
 		<_DefaultXamlItemsEnabled>False</_DefaultXamlItemsEnabled>
 		<EnableDefaultCssItems Condition="'$(EnableDefaultCssItems)'==''">True</EnableDefaultCssItems>
-		<_DefaultCssItemsEnabled>False</_DefaultCssItemsEnabled>
+    <_DefaultCssItemsEnabled>False</_DefaultCssItemsEnabled>
+    <EnableDefaultFontItems Condition="'$(EnableDefaultFontItems)'==''">True</EnableDefaultFontItems>
+    <_DefaultFontItemsEnabled>False</_DefaultFontItemsEnabled>
 	</PropertyGroup>
 
 	<Import Project="$(MSBuildThisFileDirectory)Xamarin.Forms.DefaultItems.targets" Condition="'$(MSBuildSDKsPath)'!=''" />
