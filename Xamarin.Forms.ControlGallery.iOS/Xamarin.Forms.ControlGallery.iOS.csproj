@@ -328,6 +328,10 @@
     <BundleResource Include="Resources\icon_search%402x.png" />
     <BundleResource Include="Resources\icon_bookmark%402x.png" />
     <BundleResource Include="Resources\xamarinstore.jpg" />
+    <BundleResource Include="..\Xamarin.Forms.ControlGallery.MacOS\Resources\Fonts\materialdesignicons-webfont.ttf">
+      <Link>Resources\Fonts\materialdesignicons-webfont.ttf</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </BundleResource>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
@@ -347,6 +351,9 @@
     <PackageReference Include="Xamarin.Insights" Version="1.12.3" />
     <PackageReference Include="Xamarin.iOS.MaterialComponents" Version="72.2.0.1" />
     <PackageReference Include="Xamarin.TestCloud.Agent" Version="0.21.7" />
+    <PackageReference Include="Xamarin.Essentials">
+      <Version>1.1.0</Version>
+    </PackageReference>
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="Resources\LaunchScreen.storyboard" />

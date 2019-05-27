@@ -7,9 +7,45 @@ using Xamarin.Forms.Internals;
 
 namespace Xamarin.Forms.Controls.XamStore
 {
-    public class BasePage : ContentPage
+
+	public class PostsPage : ContentPage
 	{
-		private Button MakeButton (string title, Action callback)
+		Label _labelLocation;
+		Label _labelRoute;
+		public PostsPage()
+		{
+			_labelLocation = new Label
+			{
+				Text = $"Location {Shell.Current.CurrentState.FullLocation.ToString()}"
+			};
+
+			_labelRoute = new Label
+			{
+				Text = $"CurrentItem {Shell.Current.CurrentItem.Route}"
+			};
+
+			Content = new ScrollView
+			{
+				Content = new StackLayout
+				{
+					Children = {
+						_labelLocation, _labelRoute
+					}
+				}
+			};
+		}
+
+		protected override void OnAppearing()
+		{
+			base.OnAppearing();
+
+			Title = Shell.Current.CurrentItem.Title;
+		}
+	}
+
+	public class BasePage : ContentPage
+	{
+		private Button MakeButton(string title, Action callback)
 		{
 			var result = new Button();
 			result.Text = title;
@@ -20,7 +56,7 @@ namespace Xamarin.Forms.Controls.XamStore
 		public BasePage(string title, Color tint)
 		{
 			Title = title;
-			Shell.SetForegroundColor(this, tint);
+			//Shell.SetForegroundColor(this, tint);
 			var grid = new Grid()
 			{
 				Padding = 20,
@@ -167,7 +203,8 @@ namespace Xamarin.Forms.Controls.XamStore
 				0, 11);
 
 			grid.Children.Add(MakeButton("Add TitleView",
-					() => Shell.SetTitleView(this, new Label {
+					() => Shell.SetTitleView(this, new Label
+					{
 						BackgroundColor = Color.Purple,
 						Margin = new Thickness(5, 10),
 						Text = "TITLE VIEW"
@@ -202,16 +239,18 @@ namespace Xamarin.Forms.Controls.XamStore
 			grid.Children.Add(MakeSwitch("Tab Visible", out _tabBarVisibleSwitch), 1, 14);
 
 			grid.Children.Add(MakeButton("Push Special",
-					() => {
-					var page = (Page)Activator.CreateInstance(GetType());
-						Shell.SetNavBarIsVisible (page, _navBarVisibleSwitch.IsToggled);
+					() =>
+					{
+						var page = (Page)Activator.CreateInstance(GetType());
+						Shell.SetNavBarIsVisible(page, _navBarVisibleSwitch.IsToggled);
 						Shell.SetTabBarIsVisible(page, _tabBarVisibleSwitch.IsToggled);
 						Navigation.PushAsync(page);
 					}),
 				2, 14);
-			
+
 			grid.Children.Add(MakeButton("Show Alert",
-				async () => {
+				async () =>
+				{
 					var result = await DisplayAlert("Title", "Message", "Ok", "Cancel");
 					Console.WriteLine($"Alert result: {result}");
 				}), 0, 15);
@@ -221,19 +260,21 @@ namespace Xamarin.Forms.Controls.XamStore
 			1, 15);
 
 			grid.Children.Add(MakeButton("Go Back with Text",
-			async () => {
-					var page = (Page)Activator.CreateInstance(GetType());
-					Shell.SetForegroundColor(page, Color.Pink);
-					Shell.SetBackButtonBehavior(page, new BackButtonBehavior()
-					{
-						//IconOverride = "calculator.png",
-						
-						TextOverride = "back"
-					});
-					await Navigation.PushAsync(page);
-				}),2, 15);
+			async () =>
+			{
+				var page = (Page)Activator.CreateInstance(GetType());
+				Shell.SetForegroundColor(page, Color.Pink);
+				Shell.SetBackButtonBehavior(page, new BackButtonBehavior()
+				{
+					//IconOverride = "calculator.png",
 
-			grid.Children.Add(new Label {
+					TextOverride = "back"
+				});
+				await Navigation.PushAsync(page);
+			}), 2, 15);
+
+			grid.Children.Add(new Label
+			{
 				Text = "Navigate to",
 				VerticalOptions = LayoutOptions.CenterAndExpand
 			}, 0, 16);
@@ -272,7 +313,7 @@ namespace Xamarin.Forms.Controls.XamStore
 		Switch _navBarVisibleSwitch;
 		Switch _tabBarVisibleSwitch;
 
-		private View MakeSwitch (string label, out Switch control)
+		private View MakeSwitch(string label, out Switch control)
 		{
 			return new StackLayout
 			{
@@ -295,10 +336,10 @@ namespace Xamarin.Forms.Controls.XamStore
 			var shellSection = (ShellSection)Parent.Parent;
 			shellSection.Items.Add(
 				new Forms.ShellContent()
-					{
-						Title = "New Top Tab",
-						Content = new UpdatesPage()
-					}
+				{
+					Title = "New Top Tab",
+					Content = new UpdatesPage()
+				}
 				);
 		}
 
@@ -397,7 +438,7 @@ namespace Xamarin.Forms.Controls.XamStore
 		}
 	}
 
-	[Preserve (AllMembers = true)]
+	[Preserve(AllMembers = true)]
 	public class UpdatesPage : BasePage
 	{
 		public UpdatesPage() : base("Available Updates", Color.Default)
@@ -406,7 +447,7 @@ namespace Xamarin.Forms.Controls.XamStore
 		}
 	}
 
-	[Preserve (AllMembers = true)]
+	[Preserve(AllMembers = true)]
 	public class InstalledPage : BasePage
 	{
 		public InstalledPage() : base("Installed Items", Color.Default)
@@ -415,7 +456,7 @@ namespace Xamarin.Forms.Controls.XamStore
 		}
 	}
 
-	[Preserve (AllMembers = true)]
+	[Preserve(AllMembers = true)]
 	public class LibraryPage : BasePage
 	{
 		public LibraryPage() : base("My Library", Color.Default)
@@ -424,19 +465,19 @@ namespace Xamarin.Forms.Controls.XamStore
 		}
 	}
 
-	[Preserve (AllMembers = true)]
+	[Preserve(AllMembers = true)]
 	public class NotificationsPage : BasePage
 	{
 		public NotificationsPage() : base("Notifications", Color.Default) { }
 	}
 
-	[Preserve (AllMembers = true)]
+	[Preserve(AllMembers = true)]
 	public class SubscriptionsPage : BasePage
 	{
 		public SubscriptionsPage() : base("My Subscriptions", Color.Default) { }
 	}
 
-	[Preserve (AllMembers = true)]
+	[Preserve(AllMembers = true)]
 	public class HomePage : BasePage
 	{
 		public HomePage() : base("Store Home", Color.Default)
@@ -445,7 +486,7 @@ namespace Xamarin.Forms.Controls.XamStore
 		}
 	}
 
-	[Preserve (AllMembers = true)]
+	[Preserve(AllMembers = true)]
 	public class GamesPage : BasePage
 	{
 		public GamesPage() : base("Games", Color.Default)
@@ -454,7 +495,7 @@ namespace Xamarin.Forms.Controls.XamStore
 		}
 	}
 
-	[Preserve (AllMembers = true)]
+	[Preserve(AllMembers = true)]
 	public class MoviesPage : BasePage
 	{
 		public MoviesPage() : base("Hot Movies", Color.Default)
@@ -463,7 +504,7 @@ namespace Xamarin.Forms.Controls.XamStore
 		}
 	}
 
-	[Preserve (AllMembers = true)]
+	[Preserve(AllMembers = true)]
 	public class BooksPage : BasePage
 	{
 		public BooksPage() : base("Bookstore", Color.Default)
@@ -472,7 +513,7 @@ namespace Xamarin.Forms.Controls.XamStore
 		}
 	}
 
-	[Preserve (AllMembers = true)]
+	[Preserve(AllMembers = true)]
 	public class MusicPage : BasePage
 	{
 		public MusicPage() : base("Music", Color.Default)
@@ -481,7 +522,7 @@ namespace Xamarin.Forms.Controls.XamStore
 		}
 	}
 
-	[Preserve (AllMembers = true)]
+	[Preserve(AllMembers = true)]
 	public class NewsPage : BasePage
 	{
 		public NewsPage() : base("Newspapers", Color.Default)
@@ -490,19 +531,19 @@ namespace Xamarin.Forms.Controls.XamStore
 		}
 	}
 
-	[Preserve (AllMembers = true)]
+	[Preserve(AllMembers = true)]
 	public class AccountsPage : BasePage
 	{
 		public AccountsPage() : base("Account Items", Color.Default) { }
 	}
 
-	[Preserve (AllMembers = true)]
+	[Preserve(AllMembers = true)]
 	public class WishlistPage : BasePage
 	{
 		public WishlistPage() : base("My Wishlist", Color.Default) { }
 	}
 
-	[Preserve (AllMembers = true)]
+	[Preserve(AllMembers = true)]
 	public class SettingsPage : BasePage
 	{
 		public SettingsPage() : base("Settings", Color.Default) { }

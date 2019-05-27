@@ -1,42 +1,69 @@
 ﻿using System;
 using System.Collections.Generic;
-
+using System.Threading.Tasks;
+using System.Windows.Input;
 using Xamarin.Forms;
+using Xamarin.Forms.Controls.Helpers;
+using Xamarin.Forms.Controls.Issues;
 
 namespace Xamarin.Forms.Controls
 {
-	public partial class MyAbout : ContentPage
+	public partial class MyAbout : BaseView
 	{
 		public MyAbout()
 		{
 			InitializeComponent();
+		}
+	}
 
-			twitter.GestureRecognizers.Add(new TapGestureRecognizer()
+	public class AboutViewModel : HBaseViewModel
+	{
+		public List<SocialItem> SocialItems { get; }
+		public AboutViewModel()
+		{
+			SocialItems = new List<SocialItem>
 			{
-				Command = new Command(async () =>
+				new SocialItem
 				{
-
-					await this.Navigation.PushAsync(new WebsiteView("https://m.twitter.com/shanselman", "@shanselman"));
-				})
-			});
-
-			facebook.GestureRecognizers.Add(new TapGestureRecognizer()
-			{
-				Command = new Command(async () =>
+					Icon = IconConstants.TwitterCircle,
+					Url = "https://www.twitter.com/shanselman"
+				},
+				new SocialItem
 				{
-
-					await this.Navigation.PushAsync(new WebsiteView("https://facebook.com/scott.hanselman", "Scott @Facebook"));
-				})
-			});
-
-			instagram.GestureRecognizers.Add(new TapGestureRecognizer()
-			{
-				Command = new Command(async () =>
+					Icon = IconConstants.FacebookBox,
+					Url = "https://www.facebook.com/shanselman"
+				},
+				new SocialItem
 				{
+					Icon = IconConstants.Instagram,
+					Url = "https://www.instagram.com/shanselman"
+				}
+			};
+		}
+	}
 
-					await this.Navigation.PushAsync(new WebsiteView("https://instagram.com/shanselman", "Scott @Instagram"));
-				})
-			});
+	public class SocialItem
+	{
+		public SocialItem()
+		{
+			OpenUrlCommand = new Command(async () => await OpenSocialUrl());
+		}
+
+		public string Icon { get; set; }
+		public string Url { get; set; }
+
+		public ICommand OpenUrlCommand { get; }
+
+		async Task OpenSocialUrl()
+		{
+			await Task.FromResult(true);
+			//if (Url.Contains("twitter"))
+			//{
+			//	var launch = DependencyService.Get<ILaunchTwitter>();
+			//	if (launch?.OpenUserName("shanselman") ?? false)
+			//		return;
+			//}
+			//await Browser.OpenAsync(Url);
 		}
 	}
 }

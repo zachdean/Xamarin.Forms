@@ -1,18 +1,48 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
-<ContentPage Title="Scott Hanselman" xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" x:Class="Xamarin.Forms.Controls.MyAbout">
-	<ContentPage.Content>
-		<ScrollView>
-			<StackLayout Orientation="Vertical" Spacing="10">
-				<Image Aspect="AspectFill" Source="scott.png" />
-				<StackLayout Spacing="10" Padding="10" VerticalOptions="FillAndExpand">
-					<Label Text="My name is Scott Hanselman. I'm a programmer, teacher, and speaker. I work out of my home office in Portland, Oregon for the Web Platform Team at Microsoft, but this blog, its content and opinions are my own. I blog about technology, culture, gadgets, diversity, code, the web, where we're going and where we've been. I'm excited about community, social equity, media, entrepreneurship and above all, the open web." LineBreakMode="WordWrap" />
-					<StackLayout Orientation="Horizontal" HorizontalOptions="CenterAndExpand" Spacing="10">
-						<Image x:Name="twitter" Source="twitter.png" />
-						<Image x:Name="facebook" Source="facebook.png" />
-						<Image x:Name="instagram" Source="instagram.png" />
-					</StackLayout>
-				</StackLayout>
-			</StackLayout>
-		</ScrollView>
-	</ContentPage.Content>
-</ContentPage>
+<local:BaseView Title="Scott Hanselman" xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" x:Class="Xamarin.Forms.Controls.MyAbout"
+              xmlns:local="clr-namespace:Xamarin.Forms.Controls" >
+	 <ContentPage.BindingContext>
+        <local:AboutViewModel />
+    </ContentPage.BindingContext>
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="HFStyles.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+            <Style x:Key="ImageButtonSocial" TargetType="ImageButton">
+                <Setter Property="BackgroundColor" Value="Transparent" />
+            </Style>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <ScrollView>
+        <StackLayout
+            Padding="10"
+            Orientation="Vertical"
+            Spacing="10">
+            <Image
+                Margin="-10,-10,-10,0"
+                Aspect="AspectFill"
+                Source="scott.png" />
+            <Label
+                Margin="0,25"
+                LineBreakMode="WordWrap"
+                Text="My name is Scott Hanselman. I'm a programmer, teacher, and speaker. I work out of my home office in Portland, Oregon for the Web Platform Team at Microsoft, but this blog, its content and opinions are my own. I blog about technology, culture, gadgets, diversity, code, the web, where we're going and where we've been. I'm excited about community, social equity, media, entrepreneurship and above all, the open web." />
+            <StackLayout
+                BindableLayout.ItemsSource="{Binding SocialItems}"
+                HorizontalOptions="CenterAndExpand"
+                Orientation="Horizontal"
+                Spacing="5">
+                <BindableLayout.ItemTemplate>
+                    <DataTemplate>
+                        <Button
+                            Command="{Binding OpenUrlCommand}"
+                            Style="{StaticResource MaterialButton}"
+                            Text="{Binding Icon}" />
+                    </DataTemplate>
+                </BindableLayout.ItemTemplate>
+            </StackLayout>
+        </StackLayout>
+    </ScrollView>
+</local:BaseView>

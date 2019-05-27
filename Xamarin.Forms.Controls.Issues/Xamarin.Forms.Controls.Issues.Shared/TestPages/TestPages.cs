@@ -574,11 +574,17 @@ namespace Xamarin.Forms.Controls
 		protected virtual bool Isolate => true;
 #endif
 
+		protected virtual void RegisterRoutes()
+		{
+
+		}
+
 		protected TestShell() : base()
 		{
 #if APP
 			Init();
 #endif
+			RegisterRoutes();
 		}
 
 		public ContentPage CreateContentPage()

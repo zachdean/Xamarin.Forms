@@ -44,8 +44,14 @@ namespace Xamarin.Forms.Controls.XamStore
 				AutomationId = "shellIcon"
 			};
 
-			FlyoutIcon.SetAutomationPropertiesHelpText("This as Shell FlyoutIcon");
-			FlyoutIcon.SetAutomationPropertiesName("SHELLMAINFLYOUTICON");
+			FlyoutIcon?.SetAutomationPropertiesHelpText("This as Shell FlyoutIcon");
+			FlyoutIcon?.SetAutomationPropertiesName("SHELLMAINFLYOUTICON");
+			
+		}
+
+		protected override void RegisterRoutes()
+		{
+			base.RegisterRoutes();
 			Routing.RegisterRoute("demo", typeof(DemoShellPage));
 			Routing.RegisterRoute("demo/demo", typeof(DemoShellPage));
 		}

@@ -1,20 +1,22 @@
-<?xml version="1.0" encoding="utf-8" ?>
+﻿<?xml version="1.0" encoding="utf-8" ?>
 <localTest:TestShell xmlns="http://xamarin.com/schemas/2014/forms"
 			xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
 			xmlns:local="clr-namespace:Xamarin.Forms.Controls.XamStore"
 			xmlns:localTest="clr-namespace:Xamarin.Forms.Controls"
 			x:Class="Xamarin.Forms.Controls.XamStore.StoreShell">
 	<Shell.Resources>
-		<Style x:Key="BaseStyle" TargetType="Element">
+		<Style x:Key="BaseStyle" TargetType="Element" ApplyToDerivedTypes="True" >
 			<Setter Property="Shell.BackgroundColor" Value="#455A64" />
 			<Setter Property="Shell.ForegroundColor" Value="White" />
 			<Setter Property="Shell.TitleColor" Value="White" />
 			<Setter Property="Shell.DisabledColor" Value="#B4FFFFFF" />
 			<Setter Property="Shell.UnselectedColor" Value="#95FFFFFF" />
 		</Style>
-		<Style TargetType="ShellItem" BasedOn="{StaticResource BaseStyle}" />
+		<Style TargetType="ShellItem" BasedOn="{StaticResource BaseStyle}" ApplyToDerivedTypes="True" />
+        
 		<Style x:Key="GreenShell" TargetType="Element" BasedOn="{StaticResource BaseStyle}">
 			<Setter Property="Shell.BackgroundColor" Value="#689F39" />
+            <Setter Property="Shell.TitleColor" Value="Yellow" />
 		</Style>
 		<Style x:Key="MusicShell" TargetType="Element" BasedOn="{StaticResource BaseStyle}">
 			<Setter Property="Shell.BackgroundColor" Value="#EF6C00" />
@@ -41,6 +43,19 @@
 				</StackLayout>
 			</ContentView>
 		</DataTemplate>
+        
+        <Color x:Key="AccentColor">#bda13e</Color>
+        <Color x:Key="AccentBackgroundColor">#181818</Color>
+        <Color x:Key="AccentDisableColor">#e4e4e4</Color>
+        <Color x:Key="PrimaryColor">White</Color>
+        <Style x:Key="SCEBaseStyle" TargetType="Element">
+            <Setter Property="Shell.BackgroundColor" Value="{StaticResource AccentBackgroundColor}" />
+            <Setter Property="Shell.ForegroundColor" Value="{StaticResource AccentColor}" />
+            <Setter Property="Shell.TitleColor" Value="{StaticResource AccentColor}" />
+            <Setter Property="Shell.DisabledColor" Value="{StaticResource AccentDisableColor}" />
+            <Setter Property="Shell.UnselectedColor" Value="{StaticResource AccentDisableColor}" />
+        </Style>
+        <Style x:Key="SCEShell" TargetType="ShellItem" BasedOn="{StaticResource SCEBaseStyle}" ApplyToDerivedTypes="True" />
 	</Shell.Resources>
 
 	<Shell.FlyoutHeader>
@@ -114,4 +129,11 @@
 			<ShellContent Route="Notificationstabs" Shell.TabBarIsVisible="true" Title="Yes Tabs" ContentTemplate="{DataTemplate local:LibraryPage}" />
 		</ShellSection>
 	</ShellItem>
+    
+    <FlyoutItem Style="{StaticResource SCEBaseStyle}" Title="News" Route="news" Icon="newspaper.png" FlyoutIcon="newspaperflyout.png" >
+        <ShellContent Title="All" Route="last" ContentTemplate="{DataTemplate local:PostsPage}" Icon="books.png" FlyoutIcon="booksflyout.png" />
+        <ShellContent Title="Soccer"  Route="soccer" ContentTemplate="{DataTemplate local:PostsPage}" FlyoutIcon="futebol" />
+        <ShellContent Title="Voleibol" Route="voleibol" ContentTemplate="{DataTemplate local:PostsPage}" />
+        <ShellContent Title="Other"  Route="other" ContentTemplate="{DataTemplate local:PostsPage}" />
+    </FlyoutItem>
 </localTest:TestShell>
