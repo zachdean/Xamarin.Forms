@@ -18,6 +18,8 @@
 #addin "nuget:?package=Cake.Xamarin&version=3.0.0"
 #addin "nuget:?package=Cake.Android.Adb&version=3.0.0"
 #addin "nuget:?package=Cake.Git&version=0.19.0"
+#addin nuget:?package=Cake.ExtendedNuGet&version=1.0.0.27
+
 //////////////////////////////////////////////////////////////////////
 // TOOLS
 //////////////////////////////////////////////////////////////////////
@@ -170,12 +172,38 @@ Task("DeployAndroid")
         AmStartActivity("AndroidControlGallery.AndroidControlGallery/md546303760447087909496d02dc7b17ae8.Activity1");
     });
 
+
+Task("NugetTest")
+    .Does(() =>
+    { 
+       // GitClone("https://github.com/microsoft/SmartHotel360-Mobile.git", "./TestFiles");
+
+        
+       /*  NuGetInstall("Xamarin.Forms", new NuGetInstallSettings {
+            WorkingDirectory = "./TestFiles/Source/",
+            Version = "4.0.0.425677"
+        });*/
+
+        StartProcess("nuget install Xamarin.Forms", new ProcessSettings()
+        {
+            WorkingDirectory = "./TestFiles/Source/SmartHotel.Clients/SmartHotel.Clients.Android/"
+        });
+
+       /* DotNetCoreTool(
+                //projectPath: "./TestFiles/Source/SmartHotel.Clients.sln", 
+                projectPath:"./TestFiles/Source/SmartHotel.Clients/SmartHotel.Clients.Android/SmartHotel.Clients.Android.csproj",
+                command: "add package", 
+                arguments: $"Xamarin.Forms -v 4.0.0.425677"
+            );*/ 
+    });
+
+
 //////////////////////////////////////////////////////////////////////
 // TASK TARGETS
 //////////////////////////////////////////////////////////////////////
 
 Task("Default")
-    .IsDependentOn("Build")
+    .IsDependentOn("NugetTest")
     ;
 
 //////////////////////////////////////////////////////////////////////
