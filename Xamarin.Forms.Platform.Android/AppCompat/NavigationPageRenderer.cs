@@ -834,15 +834,17 @@ namespace Xamarin.Forms.Platform.Android.AppCompat
 			// The fragment transitions don't really SUPPORT telling you when they end
 			// There are some hacks you can do, but they actually are worse than just doing this:
 
+			bool showBackButton = NavigationPage.GetHasBackButton(Element.CurrentPage);
+
 			if (animated)
 			{
 				if (!removed)
 				{
 					UpdateToolbar();
-					if (_drawerToggle != null && NavigationPageController.StackDepth == 2)
+					if (_drawerToggle != null && NavigationPageController.StackDepth == 2 && showBackButton)
 						AnimateArrowIn();
 				}
-				else if (_drawerToggle != null && NavigationPageController.StackDepth == 2)
+				else if (_drawerToggle != null && NavigationPageController.StackDepth == 2 && showBackButton)
 					AnimateArrowOut();
 
 				AddTransitionTimer(tcs, fragment, FragmentManager, fragmentsToRemove, TransitionDuration, removed);
@@ -947,6 +949,8 @@ namespace Xamarin.Forms.Platform.Android.AppCompat
 			bar.NavigationIcon = null;
 			Page currentPage = Element.CurrentPage;
 
+			bool showBackButton = NavigationPage.GetHasBackButton(currentPage);
+
 			if (isNavigated)
 			{
 				if (toggle != null)
@@ -955,7 +959,7 @@ namespace Xamarin.Forms.Platform.Android.AppCompat
 					toggle.SyncState();
 				}
 
-				if (NavigationPage.GetHasBackButton(currentPage) && !Context.IsDesignerContext())
+				if (showBackButton && !Context.IsDesignerContext())
 				{
 					var activity = (global::Android.Support.V7.App.AppCompatActivity)context.GetActivity();
 					var icon = new DrawerArrowDrawable(activity.SupportActionBar.ThemedContext);
@@ -966,7 +970,8 @@ namespace Xamarin.Forms.Platform.Android.AppCompat
 					_defaultNavigationContentDescription = bar.SetNavigationContentDescription(prevPage, _defaultNavigationContentDescription);
 				}
 			}
-			else
+
+			if (!isNavigated || !showBackButton)
 			{
 				if (toggle != null && _masterDetailPage != null)
 				{
