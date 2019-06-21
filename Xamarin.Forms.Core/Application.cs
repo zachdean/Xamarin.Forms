@@ -101,6 +101,7 @@ namespace Xamarin.Forms
 				if (_mainPage != null)
 				{
 					_mainPage.Parent = this;
+					_mainPage.Dispatcher = DispatcherManager.Current.Dispatcher;
 					_mainPage.NavigationProxy.Inner = NavigationProxy;
 					InternalChildren.Add(_mainPage);
 				}

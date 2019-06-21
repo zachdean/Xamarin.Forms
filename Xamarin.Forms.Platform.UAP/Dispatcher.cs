@@ -7,23 +7,16 @@ namespace Xamarin.Forms.Platform.UWP
 	public class Dispatcher : IDispatcher
 	{
 
-		CoreDispatcher _coreDispatcher;
-		CoreDispatcher CoreDispatcher
-		{
-			get
-			{
-				if (_coreDispatcher == null)
-				{
-					_coreDispatcher = CoreApplication.GetCurrentView().Dispatcher;
-				}
-
-				return _coreDispatcher;
-			}
-		}
+		readonly CoreDispatcher _coreDispatcher;
 
 		public void BeginInvokeOnMainThread(Action action)
 		{
-			CoreDispatcher.RunAsync(CoreDispatcherPriority.Normal, () => action()).WatchForError();
+			_coreDispatcher.RunAsync(CoreDispatcherPriority.Normal, () => action()).WatchForError();
+		}
+
+		public Dispatcher()
+		{
+			_coreDispatcher = CoreApplication.GetCurrentView().Dispatcher;
 		}
 
 		bool IDispatcher.IsInvokeRequired => Device.IsInvokeRequired;

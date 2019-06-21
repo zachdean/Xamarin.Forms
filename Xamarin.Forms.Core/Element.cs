@@ -10,17 +10,6 @@ namespace Xamarin.Forms
 {
 	public abstract partial class Element : BindableObject, IElement, INameScope, IElementController
 	{
-		IDispatcher _dispatcher;
-		public virtual IDispatcher Dispatcher
-		{
-			get
-			{
-				if (_dispatcher == null)
-					_dispatcher = Device.GetDispatcher(this);
-
-				return _dispatcher;
-			}
-		}
 		public static readonly BindableProperty MenuProperty = BindableProperty.CreateAttached(nameof(Menu), typeof(Menu), typeof(Element), null);
 
 		public static Menu GetMenu(BindableObject bindable)
@@ -315,6 +304,9 @@ namespace Xamarin.Forms
 
 		protected virtual void OnChildAdded(Element child)
 		{
+			Dispatcher = DispatcherManager.Current.Dispatcher;
+			child.Dispatcher = Dispatcher;
+
 			child.Parent = this;
 
 			child.ApplyBindings(skipBindingContext: false, fromBindingContextChanged: true);

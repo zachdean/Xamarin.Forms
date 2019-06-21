@@ -9,6 +9,22 @@ namespace Xamarin.Forms
 {
 	public abstract class BindableObject : INotifyPropertyChanged, IDynamicResourceHandler
 	{
+		IDispatcher _dispatcher;
+		public virtual IDispatcher Dispatcher
+		{
+			get
+			{
+				if (_dispatcher == null)
+					throw new Exception("There is not a dispatcher associated to this element yet. Use Parent dispatcher instead.");
+
+				return _dispatcher;
+			}
+			internal set
+			{
+				_dispatcher = value;
+			}
+		}
+
 		readonly Dictionary<BindableProperty, BindablePropertyContext> _properties = new Dictionary<BindableProperty, BindablePropertyContext>(4);
 		bool _applying;
 		object _inheritedContext;
@@ -78,6 +94,11 @@ namespace Xamarin.Forms
 				OnPropertyChanged(property.PropertyName);
 				property.PropertyChanged?.Invoke(this, original, newValue);
 			}
+		}
+
+		protected BindableObject()
+		{
+			DispatcherManager.Current.Init();
 		}
 
 		public object GetValue(BindableProperty property)

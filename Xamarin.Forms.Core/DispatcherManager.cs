@@ -13,7 +13,7 @@ namespace Xamarin.Forms
 			get
 			{
 				if (_dispatcher == null)
-					_dispatcher = Device.GetDispatcher();
+					throw new Exception("The Init() method must be called before getting this property");
 
 				return _dispatcher;
 			}
@@ -24,9 +24,20 @@ namespace Xamarin.Forms
 			get
 			{
 				if (s_current == null)
+				{
 					s_current = new DispatcherManager();
-				
+					s_current.Init();
+				}
+
 				return s_current;
+			}
+		}
+
+		internal void Init()
+		{
+			if (_dispatcher == null)
+			{
+				_dispatcher = Device.GetDispatcher();
 			}
 		}
 	}
