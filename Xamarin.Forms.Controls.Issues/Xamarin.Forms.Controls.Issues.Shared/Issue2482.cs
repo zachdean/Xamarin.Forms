@@ -63,8 +63,6 @@ namespace Xamarin.Forms.Controls.Issues
 				}
 			};
 
-
-
 			var labelRunsBackground = new Label() { Text = "This should start updating with the time in a few seconds" };
 			layout.Children.Add(labelRunsBackground);
 
@@ -90,10 +88,6 @@ namespace Xamarin.Forms.Controls.Issues
 			layout.Children.Add(button);
 
 			Content = layout;
-
-			
-
-
 		}
 
 #if UITEST

@@ -9,6 +9,9 @@ namespace Xamarin.Forms.Platform.iOS
 {
 	public class EditorRenderer : EditorRendererBase<UITextView>
 	{
+		// Using same placeholder color as for the Entry
+		readonly UIColor _defaultPlaceholderColor = ColorExtensions.SeventyPercentGrey;
+
 		UILabel _placeholderLabel;
 
 		public EditorRenderer()
@@ -31,15 +34,23 @@ namespace Xamarin.Forms.Platform.iOS
 
 		protected override void OnElementChanged(ElementChangedEventArgs<Editor> e)
 		{
-			// create label so it can get updated during the initial setup loop
-			_placeholderLabel = new UILabel
+			bool initializing = false;
+			if (e.NewElement != null && _placeholderLabel == null)
 			{
-				BackgroundColor = UIColor.Clear
-			};
+				initializing = true;
+				// create label so it can get updated during the initial setup loop
+				_placeholderLabel = new UILabel
+				{
+					BackgroundColor = UIColor.Clear
+				};
+			}
 
 			base.OnElementChanged(e);
 
-			CreatePlaceholderLabel();
+			if (e.NewElement != null && initializing)
+			{
+				CreatePlaceholderLabel();
+			}
 		}
 
 		protected internal override void UpdateFont()
@@ -52,17 +63,23 @@ namespace Xamarin.Forms.Platform.iOS
 		{
 			_placeholderLabel.Text = Element.Placeholder;
 		}
-
+		
 		protected internal override void UpdatePlaceholderColor()
 		{
-			if (Element.PlaceholderColor == Color.Default)
-				_placeholderLabel.TextColor = UIColor.DarkGray;
+			Color placeholderColor = Element.PlaceholderColor;
+			if (placeholderColor.IsDefault)
+				_placeholderLabel.TextColor = _defaultPlaceholderColor;
 			else
-				_placeholderLabel.TextColor = Element.PlaceholderColor.ToUIColor();
+				_placeholderLabel.TextColor = placeholderColor.ToUIColor();
 		}
 
 		void CreatePlaceholderLabel()
 		{
+			if (Control == null)
+			{
+				return;
+			}
+
 			Control.AddSubview(_placeholderLabel);
 
 			var edgeInsets = TextView.TextContainerInset;

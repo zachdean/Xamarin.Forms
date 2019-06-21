@@ -94,7 +94,6 @@
     <Compile Include="AppDelegate.cs" />
     <None Include="Entitlements.plist" />
     <None Include="Info.plist" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="Resources\LaunchScreen.storyboard" />
@@ -183,6 +182,10 @@
     <ProjectReference Include="..\Xamarin.Forms.Sandbox\Xamarin.Forms.Sandbox.csproj">
       <Project>{e155c410-e5de-464d-9ed7-2b1e672438ed}</Project>
       <Name>Xamarin.Forms.Sandbox</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Xamarin.Forms.Xaml\Xamarin.Forms.Xaml.csproj">
+      <Project>{9db2f292-8034-4e06-89ad-98bbda4306b9}</Project>
+      <Name>Xamarin.Forms.Xaml</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
