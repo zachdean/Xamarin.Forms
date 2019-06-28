@@ -14,8 +14,6 @@ namespace Xamarin.Forms
 	[RenderWith(typeof(_PageRenderer))]
 	public class Page : VisualElement, ILayout, IPageController, IElementConfiguration<Page>, IPaddingElement
 	{
-		public override IDispatcher Dispatcher => DispatcherManager.Current?.Dispatcher;
-
 		public const string BusySetSignalName = "Xamarin.BusySet";
 
 		public const string AlertSignalName = "Xamarin.SendAlert";
@@ -57,6 +55,7 @@ namespace Xamarin.Forms
 
 		public Page()
 		{
+			this.Dispatcher = DispatcherManager.Current?.Dispatcher;
 			var toolbarItems = new ObservableCollection<ToolbarItem>();
 			toolbarItems.CollectionChanged += OnToolbarItemsCollectionChanged;
 			ToolbarItems = toolbarItems;

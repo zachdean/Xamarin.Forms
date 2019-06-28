@@ -79,7 +79,7 @@ namespace Xamarin.Forms.Controls.Issues
 
 			threadpoolButton.Clicked += (o, a) => {
 				Task.Run(() => {
-					instructions.Dispatcher.BeginInvokeOnMainThread(() => { instructions.Text = "updated from thread pool 2"; });
+					this.Dispatcher.BeginInvokeOnMainThread(() => { instructions.Text = "updated from thread pool 2"; });
 				});
 			};
 

@@ -14,9 +14,6 @@ namespace Xamarin.Forms
 		{
 			get
 			{
-				if (_dispatcher == null)
-					throw new Exception("There is not a dispatcher associated to this element yet. Use Parent dispatcher instead.");
-
 				return _dispatcher;
 			}
 			internal set
