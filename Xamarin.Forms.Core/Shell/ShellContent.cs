@@ -50,17 +50,7 @@ namespace Xamarin.Forms
 			var template = ContentTemplate;
 			var content = Content;
 
-			Page result = null;
-			if (template == null)
-			{
-				if (content is Page page)
-					result = page;
-			}
-			else
-			{
-				result = ContentCache ?? (Page)template.CreateContent(content, this);
-				ContentCache = result;
-			}
+			Page result = ContentCache ?? ShellContentCreator.Create(new ShellContentCreateArgs(this));
 
 			if (result != null && result.Parent != this)
 				OnChildAdded(result);
@@ -73,6 +63,10 @@ namespace Xamarin.Forms
 
 			return result;
 		}
+
+		#region Navigation Interfaces
+		IShellContentCreator ShellContentCreator => DependencyService.Get<IShellContentCreator>();
+		#endregion
 
 		void IShellContentController.RecyclePage(Page page)
 		{

@@ -343,38 +343,17 @@ namespace Xamarin.Forms
 		public static Shell Current => Application.Current?.MainPage as Shell;
 
 
-		List<RequestDefinition> BuildAllTheRoutes()
-		{
-			List<RequestDefinition> routes = new List<RequestDefinition>();
-			// todo make better maybe
-
-			for (var i = 0; i < Items.Count; i++)
-			{
-				var item = Items[i];
-
-				for (var j = 0; j < item.Items.Count; j++)
-				{
-					var section = item.Items[j];
-
-					for (var k = 0; k < section.Items.Count; k++)
-					{
-						var content = section.Items[k];
-
-						string longUri = $"{RouteScheme}://{RouteHost}/{Routing.GetRoute(this)}/{Routing.GetRoute(item)}/{Routing.GetRoute(section)}/{Routing.GetRoute(content)}";
-
-						longUri = longUri.TrimEnd('/');
-
-						routes.Add(new RequestDefinition(longUri, item, section, content, new List<string>()));
-					}
-				}
-			}
-
-			return routes;
-		}
-
 		public Task GoToAsync(ShellNavigationState state, bool animate = true)
 		{
 			return GoToAsync(state, animate, false);
+		}
+
+		internal ShellRouteState RouteState
+		{
+			get
+			{
+				return new ShellRouteState(this);
+			}
 		}
 
 		internal async Task GoToAsync(ShellNavigationState state, bool animate, bool enableRelativeShellRoutes)
@@ -386,70 +365,87 @@ namespace Xamarin.Forms
 
 			_accumulateNavigatedEvents = true;
 
-			var navigationRequest = ShellUriHandler.GetNavigationRequest(this, state.FullLocation, enableRelativeShellRoutes);
-			var uri = navigationRequest.Request.FullUri;
-			var queryString = navigationRequest.Query;
-			var queryData = ParseQueryString(queryString);
-			var path = uri.AbsolutePath;
-
-			path = path.TrimEnd('/');
-
-			var parts = path.Substring(1).Split('/').ToList();
-
-			if (parts.Count < 2)
-				throw new InvalidOperationException("Path must be at least 2 items long in Shell navigation");
-
-			var shellRoute = parts[0];
-
-			var expectedShellRoute = Routing.GetRoute(this) ?? string.Empty;
-			if (expectedShellRoute != shellRoute)
-				throw new NotImplementedException();
-			else
-				parts.RemoveAt(0);
-
-			ApplyQueryAttributes(this, queryData, false);
-
-			var shellItem = navigationRequest.Request.Item;
-			if (shellItem != null)
+			try
 			{
-				ApplyQueryAttributes(shellItem, queryData, navigationRequest.Request.Section == null);
+
+				ShellRouteState navigationRequest = null;
+
+				if (!enableRelativeShellRoutes)
+					navigationRequest = await ShellUriParser.ParseAsync(new ShellUriParserArgs(this, state.FullLocation));
+				else // this path is really for ui testing only
+					navigationRequest = ShellUriHandler.GetNavigationRequest(this, state.FullLocation, enableRelativeShellRoutes);
+
+				navigationRequest = await ShellNavigationRequest.NavigatingToAsync(new ShellNavigationArgs(this, navigationRequest));
+
+				if (navigationRequest == null || navigationRequest == this.RouteState)
+				{
+					return;
+				}
+
+				var currentRoute = navigationRequest.CurrentRoute;
+				var pathParts = currentRoute.PathParts;
+				ApplyQueryAttributes(this, currentRoute.NavigationParameters, false);
+
+				// Right now this is a rigid structure but later down the road this will have more variations
+				// for example it might only be a ShellContent 
+				ShellItem shellItem = (ShellItem)pathParts[0].ShellPart;
+				ShellSection shellSection = (ShellSection)pathParts[1].ShellPart;
+				ShellContent shellContent = (ShellContent)pathParts[2].ShellPart;
+				bool shellSectionChanged = false;
+
+				ShellApplyParameters.ApplyParameters(new ShellLifecycleArgs(this, null, currentRoute));
+				ShellApplyParameters.ApplyParameters(new ShellLifecycleArgs(shellItem, pathParts[0], currentRoute));
+				ShellApplyParameters.ApplyParameters(new ShellLifecycleArgs(shellSection, pathParts[1], currentRoute));
+				ShellApplyParameters.ApplyParameters(new ShellLifecycleArgs(shellContent, pathParts[2], currentRoute));
 
 				if (CurrentItem != shellItem)
+				{
 					SetValueFromRenderer(CurrentItemProperty, shellItem);
+				}
 
-				parts.RemoveAt(0);
+				if (shellItem.CurrentItem != shellSection)
+				{
+					shellItem.SetValueFromRenderer(ShellItem.CurrentItemProperty, shellSection);
+					shellSectionChanged = true;
+				}
 
-				if (parts.Count > 0)
-					await shellItem.GoToPart(navigationRequest, queryData);
+				if (shellSection.CurrentItem != shellContent)
+				{
+					shellSection.SetValueFromRenderer(ShellSection.CurrentItemProperty, shellContent);
+				}
+
+				if (shellSectionChanged)
+				{
+					if (pathParts.Count > 3)
+					{
+						// TODO get rid of this hack and fix so if there's a stack the current page doesn't display
+						Device.BeginInvokeOnMainThread(async () =>
+						{
+							await shellSection.GoToAsync(navigationRequest, false);
+						});
+					}
+				}
+				else
+				{
+					await shellSection.GoToAsync(navigationRequest, animate);
+				}
 			}
-			else
+			finally
 			{
-				await CurrentItem.CurrentItem.GoToAsync(navigationRequest, queryData, animate);
+				_accumulateNavigatedEvents = false;
 			}
-
-			//if (Routing.CompareWithRegisteredRoutes(shellItemRoute))
-			//{
-			//	var shellItem = ShellItem.GetShellItemFromRouteName(shellItemRoute);
-
-			//	ApplyQueryAttributes(shellItem, queryData, parts.Count == 1);
-
-			//	if (CurrentItem != shellItem)
-			//		SetValueFromRenderer(CurrentItemProperty, shellItem);
-
-			//	if (parts.Count > 0)
-			//		await ((IShellItemController)shellItem).GoToPart(parts, queryData);
-			//}
-
-			_accumulateNavigatedEvents = false;
 
 			// this can be null in the event that no navigation actually took place!
 			if (_accumulatedEvent != null)
 				OnNavigated(_accumulatedEvent);
+
+			return;
 		}
 
-		internal static void ApplyQueryAttributes(Element element, IDictionary<string, string> query, bool isLastItem)
+		// TODO cleanup duplication between here and GetNavigationParameters
+		internal static void ApplyQueryAttributes(Element element, IDictionary<string, string> navigationParameters, bool isLastItem)
 		{
-			if (query.Count == 0)
+			if (navigationParameters == null || navigationParameters.Count == 0)
 				return;
 
 			string prefix = "";
@@ -462,7 +458,44 @@ namespace Xamarin.Forms
 			}
 
 			//if the lastItem is implicitly wrapped, get the actual ShellContent
-			if (isLastItem)
+			else if (isLastItem)
+			{
+				if (element is ShellItem shellitem && shellitem.Items.FirstOrDefault() is ShellSection section)
+					element = section;
+				if (element is ShellSection shellsection && shellsection.Items.FirstOrDefault() is ShellContent content)
+					element = content;
+				if (element is ShellContent shellcontent && shellcontent.Content is Element e)
+					element = e;
+			}
+
+			if (!(element is BaseShellItem baseShellItem))
+				baseShellItem = element?.Parent as BaseShellItem;
+
+			if (baseShellItem != null && baseShellItem is ShellContent)
+				baseShellItem.ApplyQueryAttributes(navigationParameters);
+			else if (isLastItem)
+				element.SetValue(ShellContent.QueryAttributesProperty, navigationParameters);
+		}
+
+		// TODO cleanup duplication between here and GetNavigationParameters
+		internal static Dictionary<string, string> GetNavigationParameters(Element element, string queryString, bool isLastItem)
+		{
+			var query = ParseQueryString(queryString);
+
+			if (query.Count == 0)
+				return new Dictionary<string, string>();
+
+			string prefix = "";
+			if (!isLastItem)
+			{
+				var route = Routing.GetRoute(element);
+				if (string.IsNullOrEmpty(route) || route.StartsWith(Routing.ImplicitPrefix, StringComparison.Ordinal))
+					return new Dictionary<string, string>();
+				prefix = route + ".";
+			}
+
+			//if the lastItem is implicitly wrapped, get the actual ShellContent
+			else if (isLastItem)
 			{
 				if (element is ShellItem shellitem && shellitem.Items.FirstOrDefault() is ShellSection section)
 					element = section;
@@ -487,10 +520,12 @@ namespace Xamarin.Forms
 				filteredQuery.Add(key, q.Value);
 			}
 
-			if (baseShellItem != null)
-				baseShellItem.ApplyQueryAttributes(filteredQuery);
+			if (baseShellItem != null && baseShellItem is ShellContent)
+				return filteredQuery;
 			else if (isLastItem)
-				element.SetValue(ShellContent.QueryAttributesProperty, query);
+				return query;
+
+			return new Dictionary<string, string>();
 		}
 
 		ShellNavigationState GetNavigationState(ShellItem shellItem, ShellSection shellSection, ShellContent shellContent, IReadOnlyList<Page> sectionStack)
@@ -578,7 +613,7 @@ namespace Xamarin.Forms
 		{
 			Navigation = new NavigationImpl(this);
 			((INotifyCollectionChanged)Items).CollectionChanged += (s, e) => SendStructureChanged();
-			Route = Routing.GenerateImplicitRoute("shell");
+			Route = ShellUriHandler.Route;
 		}
 
 		public event EventHandler<ShellNavigatedEventArgs> Navigated;
@@ -668,9 +703,9 @@ namespace Xamarin.Forms
 			set => Routing.SetRoute(this, value);
 		}
 
-		internal string RouteHost { get; set; } = "shell";
+		internal string RouteHost => ShellUriHandler.RouteHost;
 
-		internal string RouteScheme { get; set; } = "app";
+		internal string RouteScheme => ShellUriHandler.RouteScheme;
 
 		View FlyoutHeaderView
 		{
@@ -743,7 +778,7 @@ namespace Xamarin.Forms
 						}
 						else
 						{
-							if(!(shellSection.Parent is TabBar))
+							if (!(shellSection.Parent is TabBar))
 								currentGroup.Add(shellSection);
 
 							// If we have only a single child we will also show the items menu items
@@ -830,6 +865,7 @@ namespace Xamarin.Forms
 		}
 
 		ShellNavigationState _lastNavigating;
+
 		protected virtual void OnNavigating(ShellNavigatingEventArgs args)
 		{
 			Navigating?.Invoke(this, args);
@@ -1083,6 +1119,14 @@ namespace Xamarin.Forms
 			if (FlyoutHeaderView != null)
 				PropertyPropagationExtensions.PropagatePropertyChanged(propertyName, this, new[] { FlyoutHeaderView });
 		}
+
+		#region Navigation Interfaces
+
+		IShellUriParser ShellUriParser => DependencyService.Get<IShellUriParser>();
+		IShellApplyParameters ShellApplyParameters => DependencyService.Get<IShellApplyParameters>();
+		IShellNavigationRequest ShellNavigationRequest => DependencyService.Get<IShellNavigationRequest>();
+
+		#endregion
 
 		class NavigationImpl : NavigationProxy
 		{
