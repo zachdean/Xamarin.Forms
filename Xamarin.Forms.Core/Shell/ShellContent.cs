@@ -29,7 +29,7 @@ namespace Xamarin.Forms
 			BindableProperty.Create(nameof(ContentTemplate), typeof(DataTemplate), typeof(ShellContent), null, BindingMode.OneTime);
 
 		internal static readonly BindableProperty QueryAttributesProperty =
-			BindableProperty.CreateAttached("QueryAttributes", typeof(IDictionary<string, string>), typeof(ShellContent), defaultValue: null, propertyChanged: OnQueryAttributesPropertyChanged);
+			BindableProperty.CreateAttached("QueryAttributes", typeof(IDictionary<string, object>), typeof(ShellContent), defaultValue: null, propertyChanged: OnQueryAttributesPropertyChanged);
 
 		public MenuItemCollection MenuItems => (MenuItemCollection)GetValue(MenuItemsProperty);
 
@@ -47,25 +47,22 @@ namespace Xamarin.Forms
 
 		Page IShellContentController.GetOrCreateContent()
 		{
-			var template = ContentTemplate;
-			var content = Content;
+			ContentCache = ContentCache ?? ShellContentCreator.Create(new ShellContentCreateArgs(this));
 
-			Page result = ContentCache ?? ShellContentCreator.Create(new ShellContentCreateArgs(this));
+			if (ContentCache != null && ContentCache.Parent != this)
+				OnChildAdded(ContentCache);
 
-			if (result != null && result.Parent != this)
-				OnChildAdded(result);
-
-			if (result == null)
+			if (ContentCache == null)
 				throw new InvalidOperationException($"No Content found for {nameof(ShellContent)}, Title:{Title}, Route {Route}");
 
-			if (GetValue(QueryAttributesProperty) is IDictionary<string, string> delayedQueryParams)
-				result.SetValue(QueryAttributesProperty, delayedQueryParams);
+			if (GetValue(QueryAttributesProperty) is IDictionary<string, object> delayedQueryParams)
+				ContentCache.SetValue(QueryAttributesProperty, delayedQueryParams);
 
-			return result;
+			return ContentCache;
 		}
 
 		#region Navigation Interfaces
-		IShellContentCreator ShellContentCreator => DependencyService.Get<IShellContentCreator>();
+		IShellContentCreator ShellContentCreator => (Parent.Parent.Parent as Shell).ShellContentCreator;
 		#endregion
 
 		void IShellContentController.RecyclePage(Page page)
@@ -151,7 +148,7 @@ namespace Xamarin.Forms
 					OnChildRemoved(el);
 		}
 
-		internal override void ApplyQueryAttributes(IDictionary<string, string> query)
+		internal override void ApplyQueryAttributes(IDictionary<string, object> query)
 		{
 			base.ApplyQueryAttributes(query);
 			SetValue(QueryAttributesProperty, query);
@@ -162,11 +159,11 @@ namespace Xamarin.Forms
 
 		static void OnQueryAttributesPropertyChanged(BindableObject bindable, object oldValue, object newValue)
 		{
-			if (newValue is IDictionary<string, string> query)
+			if (newValue is IDictionary<string, object> query)
 				ApplyQueryAttributes(bindable, query);
 		}
 
-		static void ApplyQueryAttributes(object content, IDictionary<string, string> query)
+		static void ApplyQueryAttributes(object content, IDictionary<string, object> query)
 		{
 			if (content is IQueryAttributable attributable)
 				attributable.ApplyQueryAttributes(query);
@@ -181,10 +178,7 @@ namespace Xamarin.Forms
 #else
 			var queryPropertyAttributes = typeInfo.GetCustomAttributes(typeof(QueryPropertyAttribute), true);
 #endif
-
-			if (queryPropertyAttributes.Length == 0)
-				return;
-
+			
 			foreach (QueryPropertyAttribute attrib in queryPropertyAttributes) {
 				if (query.TryGetValue(attrib.QueryId, out var value)) {
 					PropertyInfo prop = type.GetRuntimeProperty(attrib.Name);

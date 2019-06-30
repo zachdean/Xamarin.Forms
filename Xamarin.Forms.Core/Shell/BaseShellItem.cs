@@ -199,13 +199,13 @@ namespace Xamarin.Forms
 		double IFlowDirectionController.Width => (Parent as VisualElement)?.Width ?? 0;
 
 
-		internal virtual void ApplyQueryAttributes(IDictionary<string, string> query)
+		internal virtual void ApplyQueryAttributes(IDictionary<string, object> query)
 		{
 		}
 	}
 
 	public interface IQueryAttributable
 	{
-		void ApplyQueryAttributes(IDictionary<string, string> query);
+		void ApplyQueryAttributes(IDictionary<string, object> query);
 	}
 }

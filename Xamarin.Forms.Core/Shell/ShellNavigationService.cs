@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using Xamarin.Forms;
 using Xamarin.Forms.Internals;
 
-[assembly: Dependency(typeof(ShellNavigationService))]
 namespace Xamarin.Forms
 {
 	public class ShellNavigationService :
@@ -61,7 +60,7 @@ namespace Xamarin.Forms
 	{
 		readonly string _path;
 
-		public PathPart(Element baseShellItem, Dictionary<string, string> navigationParameters)
+		public PathPart(Element baseShellItem, Dictionary<string, object> navigationParameters)
 		{
 			ShellPart = baseShellItem;
 
@@ -74,7 +73,7 @@ namespace Xamarin.Forms
 		}
 
 		public string Path => _path ?? Routing.GetRoute(ShellPart);
-		public Dictionary<string, string> NavigationParameters { get; }
+		public Dictionary<string, object> NavigationParameters { get; }
 
 		public Element ShellPart { get; }
 
@@ -88,7 +87,7 @@ namespace Xamarin.Forms
 	// Do better at immutable stuff
 	public class RoutePath
 	{
-		public RoutePath(IList<PathPart> pathParts, Dictionary<string, string> navigationParameters)
+		public RoutePath(IList<PathPart> pathParts, Dictionary<string, object> navigationParameters)
 		{
 			PathParts = new ReadOnlyCollection<PathPart>(pathParts);
 			NavigationParameters = navigationParameters;
@@ -106,13 +105,13 @@ namespace Xamarin.Forms
 		}
 
 		internal Uri FullUriWithImplicit { get; }
-		public Dictionary<string, string> NavigationParameters { get; }
+		public Dictionary<string, object> NavigationParameters { get; }
 		public IReadOnlyList<PathPart> PathParts { get; }
 	}
 
 	public class ShellRouteState
 	{
-		internal ShellRouteState() : this(new RoutePath(new List<PathPart>(), new Dictionary<string, string>()))
+		internal ShellRouteState() : this(new RoutePath(new List<PathPart>(), new Dictionary<string, object>()))
 		{
 
 		}
@@ -144,7 +143,7 @@ namespace Xamarin.Forms
 				}
 			} 
 
-			CurrentRoute = new RoutePath(pathParts, new Dictionary<string, string>());
+			CurrentRoute = new RoutePath(pathParts, new Dictionary<string, object>());
 			Routes = new[] { CurrentRoute };			
 		}
 

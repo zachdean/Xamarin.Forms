@@ -565,8 +565,8 @@ namespace Xamarin.Forms
 		}
 
 		#region Navigation Interfaces
-		IShellApplyParameters ShellApplyParameters => DependencyService.Get<IShellApplyParameters>();
-		IShellContentCreator ShellContentCreator => DependencyService.Get<IShellContentCreator>();
+		IShellApplyParameters ShellApplyParameters => (Parent.Parent as Shell).ShellApplyParameters;
+		IShellContentCreator ShellContentCreator => (Parent.Parent as Shell).ShellContentCreator;
 		#endregion
 
 		class NavigationImpl : NavigationProxy
