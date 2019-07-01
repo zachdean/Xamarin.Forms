@@ -60,7 +60,7 @@ namespace Xamarin.Forms
 	{
 		readonly string _path;
 
-		public PathPart(Element baseShellItem, Dictionary<string, object> navigationParameters)
+		public PathPart(BaseShellItem baseShellItem, Dictionary<string, string> navigationParameters)
 		{
 			ShellPart = baseShellItem;
 
@@ -73,9 +73,9 @@ namespace Xamarin.Forms
 		}
 
 		public string Path => _path ?? Routing.GetRoute(ShellPart);
-		public Dictionary<string, object> NavigationParameters { get; }
+		public Dictionary<string, string> NavigationParameters { get; }
 
-		public Element ShellPart { get; }
+		public BaseShellItem ShellPart { get; }
 
 		//// This describes how you will transition to and away from this Path Part
 		//ITransitionPlan Transition { get; }
@@ -87,7 +87,7 @@ namespace Xamarin.Forms
 	// Do better at immutable stuff
 	public class RoutePath
 	{
-		public RoutePath(IList<PathPart> pathParts, Dictionary<string, object> navigationParameters)
+		public RoutePath(IList<PathPart> pathParts, Dictionary<string, string> navigationParameters)
 		{
 			PathParts = new ReadOnlyCollection<PathPart>(pathParts);
 			NavigationParameters = navigationParameters;
@@ -105,13 +105,13 @@ namespace Xamarin.Forms
 		}
 
 		internal Uri FullUriWithImplicit { get; }
-		public Dictionary<string, object> NavigationParameters { get; }
+		public Dictionary<string, string> NavigationParameters { get; }
 		public IReadOnlyList<PathPart> PathParts { get; }
 	}
 
 	public class ShellRouteState
 	{
-		internal ShellRouteState() : this(new RoutePath(new List<PathPart>(), new Dictionary<string, object>()))
+		internal ShellRouteState() : this(new RoutePath(new List<PathPart>(), new Dictionary<string, string>()))
 		{
 
 		}
@@ -135,15 +135,15 @@ namespace Xamarin.Forms
 				{
 					if (item == null)
 						continue;
-										
-					if(item.Parent is ShellContent content)
+
+					if (item.Parent is ShellContent content)
 						pathParts.Add(new PathPart(content, null));
 					else
-						pathParts.Add(new PathPart(item, null));
+						throw new Exception($"Invalid Parent Type:{item.Parent}");
 				}
 			} 
 
-			CurrentRoute = new RoutePath(pathParts, new Dictionary<string, object>());
+			CurrentRoute = new RoutePath(pathParts, new Dictionary<string, string>());
 			Routes = new[] { CurrentRoute };			
 		}
 

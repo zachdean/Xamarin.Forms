@@ -339,10 +339,16 @@ namespace Xamarin.Forms
 
 			OnNavigated(new ShellNavigatedEventArgs(oldState, CurrentState, source));
 		}
+
 		IReadOnlyList<ShellItem> IShellController.GetItems() => ((ShellItemCollection)Items).VisibleItems;
 
-		public static Shell Current => Application.Current?.MainPage as Shell;
+		event NotifyCollectionChangedEventHandler IShellController.ItemsCollectionChanged
+		{
+			add { ((ShellItemCollection)Items).VisibleItemsChanged += value; }
+			remove { ((ShellItemCollection)Items).VisibleItemsChanged -= value; }
+		}
 
+		public static Shell Current => Application.Current?.MainPage as Shell;
 
 		public Task GoToAsync(ShellNavigationState state, bool animate = true)
 		{
@@ -444,7 +450,7 @@ namespace Xamarin.Forms
 		}
 
 		// TODO cleanup duplication between here and GetNavigationParameters
-		internal static void ApplyQueryAttributes(Element element, IDictionary<string, object> navigationParameters, bool isLastItem)
+		internal static void ApplyQueryAttributes(Element element, IDictionary<string, string> navigationParameters, bool isLastItem)
 		{
 			if (navigationParameters == null || navigationParameters.Count == 0)
 				return;
@@ -479,19 +485,19 @@ namespace Xamarin.Forms
 		}
 
 		// TODO cleanup duplication between here and GetNavigationParameters
-		internal static Dictionary<string, object> GetNavigationParameters(Element element, string queryString, bool isLastItem)
+		internal static Dictionary<string, string> GetNavigationParameters(Element element, string queryString, bool isLastItem)
 		{
 			var query = ParseQueryString(queryString);
 
 			if (query.Count == 0)
-				return new Dictionary<string, object>();
+				return new Dictionary<string, string>();
 
 			string prefix = "";
 			if (!isLastItem)
 			{
 				var route = Routing.GetRoute(element);
 				if (string.IsNullOrEmpty(route) || route.StartsWith(Routing.ImplicitPrefix, StringComparison.Ordinal))
-					return new Dictionary<string, object>();
+					return new Dictionary<string, string>();
 				prefix = route + ".";
 			}
 
@@ -510,7 +516,7 @@ namespace Xamarin.Forms
 				baseShellItem = element?.Parent as BaseShellItem;
 
 			//filter the query to only apply the keys with matching prefix
-			var filteredQuery = new Dictionary<string, object>(query.Count);
+			var filteredQuery = new Dictionary<string, string>(query.Count);
 			foreach (var q in query)
 			{
 				if (!q.Key.StartsWith(prefix, StringComparison.Ordinal))
@@ -526,7 +532,7 @@ namespace Xamarin.Forms
 			else if (isLastItem)
 				return query;
 
-			return new Dictionary<string, object>();
+			return new Dictionary<string, string>();
 		}
 
 		ShellNavigationState GetNavigationState(ShellItem shellItem, ShellSection shellSection, ShellContent shellContent, IReadOnlyList<Page> sectionStack)
@@ -615,6 +621,17 @@ namespace Xamarin.Forms
 			Navigation = new NavigationImpl(this);
 			((INotifyCollectionChanged)Items).CollectionChanged += (s, e) => SendStructureChanged();
 			Route = ShellUriHandler.Route;
+
+			((IShellController)this).ItemsCollectionChanged += (s, e) =>
+			{
+				if(e.NewItems != null && CurrentItem == null && e.NewItems.Count > 0)
+				{
+					if (e.NewItems[0] is ShellItem shellItem && !(shellItem is MenuShellItem))
+					{
+						((IShellController)this).OnFlyoutItemSelected(shellItem);
+					}
+				}
+			};
 		}
 
 		public event EventHandler<ShellNavigatedEventArgs> Navigated;
@@ -829,16 +846,6 @@ namespace Xamarin.Forms
 			return false;
 		}
 
-		protected override void OnChildAdded(Element child)
-		{
-			base.OnChildAdded(child);
-
-			if (child is ShellItem shellItem && CurrentItem == null && !(child is MenuShellItem))
-			{
-				((IShellController)this).OnFlyoutItemSelected(shellItem);
-			}
-		}
-
 		protected override void OnChildRemoved(Element child)
 		{
 			base.OnChildRemoved(child);
@@ -978,11 +985,11 @@ namespace Xamarin.Forms
 				newView.Parent = owner;
 		}
 
-		static Dictionary<string, object> ParseQueryString(string query)
+		static Dictionary<string, string> ParseQueryString(string query)
 		{
 			if (query.StartsWith("?", StringComparison.Ordinal))
 				query = query.Substring(1);
-			Dictionary<string, object> lookupDict = new Dictionary<string, object>();
+			Dictionary<string, string> lookupDict = new Dictionary<string, string>();
 			if (query == null)
 				return lookupDict;
 			foreach (var part in query.Split('&'))

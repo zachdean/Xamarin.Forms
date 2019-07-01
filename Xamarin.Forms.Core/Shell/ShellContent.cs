@@ -29,7 +29,7 @@ namespace Xamarin.Forms
 			BindableProperty.Create(nameof(ContentTemplate), typeof(DataTemplate), typeof(ShellContent), null, BindingMode.OneTime);
 
 		internal static readonly BindableProperty QueryAttributesProperty =
-			BindableProperty.CreateAttached("QueryAttributes", typeof(IDictionary<string, object>), typeof(ShellContent), defaultValue: null, propertyChanged: OnQueryAttributesPropertyChanged);
+			BindableProperty.CreateAttached("QueryAttributes", typeof(IDictionary<string, string>), typeof(ShellContent), defaultValue: null, propertyChanged: OnQueryAttributesPropertyChanged);
 
 		public MenuItemCollection MenuItems => (MenuItemCollection)GetValue(MenuItemsProperty);
 
@@ -55,7 +55,7 @@ namespace Xamarin.Forms
 			if (ContentCache == null)
 				throw new InvalidOperationException($"No Content found for {nameof(ShellContent)}, Title:{Title}, Route {Route}");
 
-			if (GetValue(QueryAttributesProperty) is IDictionary<string, object> delayedQueryParams)
+			if (GetValue(QueryAttributesProperty) is IDictionary<string, string> delayedQueryParams)
 				ContentCache.SetValue(QueryAttributesProperty, delayedQueryParams);
 
 			return ContentCache;
@@ -148,22 +148,25 @@ namespace Xamarin.Forms
 					OnChildRemoved(el);
 		}
 
-		internal override void ApplyQueryAttributes(IDictionary<string, object> query)
+		internal override void ApplyQueryAttributes(IDictionary<string, string> query)
 		{
 			base.ApplyQueryAttributes(query);
 			SetValue(QueryAttributesProperty, query);
 
 			if (Content is BindableObject bindable)
 				bindable.SetValue(QueryAttributesProperty, query);
+
+			if (ContentCache != Content && ContentCache is BindableObject contentCacheBo)
+				contentCacheBo.SetValue(QueryAttributesProperty, query);
 		}
 
 		static void OnQueryAttributesPropertyChanged(BindableObject bindable, object oldValue, object newValue)
 		{
-			if (newValue is IDictionary<string, object> query)
+			if (newValue is IDictionary<string, string> query)
 				ApplyQueryAttributes(bindable, query);
 		}
 
-		static void ApplyQueryAttributes(object content, IDictionary<string, object> query)
+		static void ApplyQueryAttributes(object content, IDictionary<string, string> query)
 		{
 			if (content is IQueryAttributable attributable)
 				attributable.ApplyQueryAttributes(query);

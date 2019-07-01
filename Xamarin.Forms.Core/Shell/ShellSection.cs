@@ -260,17 +260,21 @@ namespace Xamarin.Forms
 
 				Page content = null;
 
+				if (route.ShellPart != null)
+					route.ShellPart.Parent = this;
+
 				if (route.ShellPart is IShellContentController shellContent)
 					content = shellContent.GetOrCreateContent();
 				else
-					content = Routing.GetOrCreateContent(route.Path) as Page;
+					throw new InvalidOperationException($"Cannot create content from: {route.ShellPart}");
 
-				_navStack[0] = content;
+			//	_navStack[0] = content;
 				if (content == null)
 					break;
-
+				;
 				ShellApplyParameters.ApplyParameters(new ShellLifecycleArgs(content, route, currentRoute));
 				await OnPushAsync(content, i == pathParts.Count - 1 && animate);
+				ShellApplyParameters.ApplyParameters(new ShellLifecycleArgs(content, route, currentRoute));
 			}
 					
 			SendAppearanceChanged();
@@ -304,11 +308,15 @@ namespace Xamarin.Forms
 
 		protected override void OnChildAdded(Element child)
 		{
+			if (!(child is ShellContent))
+				throw new ArgumentException("Shell Section can only have Shell Content Chidren");
+
 			base.OnChildAdded(child);
-			if (CurrentItem == null && Items.Contains(child))
+			if (CurrentItem == null && ((IShellSectionController)this).GetItems().Contains(child))
 				SetValueFromRenderer(CurrentItemProperty, child);
 
-			UpdateDisplayedPage();
+			if(CurrentItem != null)
+				UpdateDisplayedPage();
 		}
 
 		protected override void OnChildRemoved(Element child)
@@ -527,8 +535,23 @@ namespace Xamarin.Forms
 
 		void AddPage(Page page)
 		{
-			_logicalChildren.Add(page);
-			OnChildAdded(page);
+			if (page.Parent is ShellContent content)
+			{
+				_logicalChildren.Add(content);
+				OnChildAdded(content);
+			}
+			else
+			{
+				throw new ArgumentException($"Invalid type on parent: {page.Parent}");
+			}
+		}
+
+		void RemovePage(Page page)
+		{
+			if (page.Parent is ShellContent content && _logicalChildren.Remove(content))
+				OnChildRemoved(content);
+			else
+				throw new InvalidOperationException($"Parent of page {page} has been changed.");
 		}
 
 		void ItemsCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -546,12 +569,6 @@ namespace Xamarin.Forms
 			}
 
 			SendStructureChanged();
-		}
-
-		void RemovePage(Page page)
-		{
-			if (_logicalChildren.Remove(page))
-				OnChildRemoved(page);
 		}
 
 		void SendAppearanceChanged() => ((IShellController)Parent?.Parent)?.AppearanceChanged(this, false);
