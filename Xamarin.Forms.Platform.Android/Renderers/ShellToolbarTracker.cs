@@ -277,7 +277,7 @@ namespace Xamarin.Forms.Platform.Android
 			if (image != null)
 				icon = await context.GetFormsDrawableAsync(image);
 
-			if (text != null && icon == null)
+			if (!String.IsNullOrWhiteSpace(text) && icon == null)
 				icon = new FlyoutIconDrawerDrawable(context, TintColor, icon, text);
 
 			if (CanNavigateBack && icon == null)
