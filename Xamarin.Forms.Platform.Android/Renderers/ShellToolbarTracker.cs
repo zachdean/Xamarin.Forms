@@ -10,6 +10,7 @@ using System;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using ActionBarDrawerToggle = Android.Support.V7.App.ActionBarDrawerToggle;
 using AView = Android.Views.View;
 using LP = Android.Views.ViewGroup.LayoutParams;
@@ -257,6 +258,7 @@ namespace Xamarin.Forms.Platform.Android
 
 			var image = backButtonHandler.GetPropertyIfSet<ImageSource>(BackButtonBehavior.IconOverrideProperty, null);
 			var text = backButtonHandler.GetPropertyIfSet(BackButtonBehavior.TextOverrideProperty, String.Empty);
+			var command = backButtonHandler.GetPropertyIfSet<ICommand>(BackButtonBehavior.CommandProperty, null);
 
 			if (image == null)
 			{
@@ -306,16 +308,26 @@ namespace Xamarin.Forms.Platform.Android
 			}
 			else
 			{
-				var iconState = icon.GetConstantState();
-				if (iconState != null)
+				if (command != null)
 				{
-					var mutatedIcon = iconState.NewDrawable().Mutate();
-					mutatedIcon.SetColorFilter(TintColor.ToAndroid(Color.White), PorterDuff.Mode.SrcAtop);
-					_drawerToggle.DrawerArrowDrawable = new FlyoutIconDrawerDrawable(context, TintColor, mutatedIcon, null);
+					_drawerToggle.DrawerIndicatorEnabled = false;
+					var flyoutIcon = new FlyoutIconDrawerDrawable(context, TintColor, icon, null);
+					flyoutIcon.Progress = 1;
+					toolbar.NavigationIcon = flyoutIcon;
 				}
 				else
 				{
-					_drawerToggle.DrawerArrowDrawable = new FlyoutIconDrawerDrawable(context, TintColor, icon, null);
+					var iconState = icon.GetConstantState();
+					if (iconState != null)
+					{
+						var mutatedIcon = iconState.NewDrawable().Mutate();
+						mutatedIcon.SetColorFilter(TintColor.ToAndroid(Color.White), PorterDuff.Mode.SrcAtop);
+						_drawerToggle.DrawerArrowDrawable = new FlyoutIconDrawerDrawable(context, TintColor, mutatedIcon, null);
+					}
+					else
+					{
+						_drawerToggle.DrawerArrowDrawable = new FlyoutIconDrawerDrawable(context, TintColor, icon, null);
+					}
 				}
 			}
 
