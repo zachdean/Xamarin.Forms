@@ -618,6 +618,8 @@ namespace Xamarin.Forms
 
 		public Shell()
 		{
+			SetNavigationService(navigationService);
+				
 			Navigation = new NavigationImpl(this);
 			((INotifyCollectionChanged)Items).CollectionChanged += (s, e) => SendStructureChanged();
 			Route = ShellUriHandler.Route;
@@ -1139,12 +1141,12 @@ namespace Xamarin.Forms
 
 		#region Navigation Interfaces
 
+		ShellNavigationService navigationService = new ShellNavigationService();
 		internal IShellUriParser ShellUriParser;
 		internal IShellApplyParameters ShellApplyParameters;
 		internal IShellNavigationRequest ShellNavigationRequest;
 		internal IShellContentCreator ShellContentCreator;
 
-		ShellNavigationService navigationService = new ShellNavigationService();
 		public void SetNavigationService(object service)
 		{
 			ShellUriParser = service as IShellUriParser ?? ShellUriParser ?? navigationService;
