@@ -8,9 +8,6 @@
         <Tab>
             <ShellContent>
                 <ContentPage>
-                    <Shell.BackButtonBehavior>
-                        <BackButtonBehavior IconOverride="coffee.png" />
-                    </Shell.BackButtonBehavior>
                     <StackLayout>
                         <Button Text="I am a Button"  />
                     </StackLayout>

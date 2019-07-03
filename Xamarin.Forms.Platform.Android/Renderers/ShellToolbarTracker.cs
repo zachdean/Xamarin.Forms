@@ -117,7 +117,7 @@ namespace Xamarin.Forms.Platform.Android
 			var backButtonHandler = Shell.GetBackButtonBehavior(Page);
 			var isEnabled = backButtonHandler.GetPropertyIfSet(BackButtonBehavior.IsEnabledProperty, true);
 
-			if (!isEnabled)
+			if (isEnabled)
 			{
 				if (backButtonHandler?.Command != null)
 					backButtonHandler.Command.Execute(backButtonHandler.CommandParameter);
@@ -279,16 +279,20 @@ namespace Xamarin.Forms.Platform.Android
 
 			if (!String.IsNullOrWhiteSpace(text) && icon == null)
 				icon = new FlyoutIconDrawerDrawable(context, TintColor, icon, text);
-
-			if (CanNavigateBack && icon == null)
-			{
-				icon = new DrawerArrowDrawable(context.GetThemedContext()) { Progress = 1 };
-				icon.SetColorFilter(TintColor.ToAndroid(Color.White), PorterDuff.Mode.SrcAtop);
-			}
-
+			
 			if (icon == null)
 			{
-				if (_flyoutBehavior == FlyoutBehavior.Flyout)
+				if (CanNavigateBack)
+				{
+					_drawerToggle.DrawerIndicatorEnabled = false;
+					using (var backIcon = new DrawerArrowDrawable(context.GetThemedContext()))
+					{
+						backIcon.SetColorFilter(TintColor.ToAndroid(Color.White), PorterDuff.Mode.SrcAtop);
+						backIcon.Progress = 1;
+						toolbar.NavigationIcon = backIcon;
+					}
+				}
+				else if (_flyoutBehavior == FlyoutBehavior.Flyout)
 				{
 					toolbar.NavigationIcon = null;
 					var drawable = _drawerToggle.DrawerArrowDrawable;
