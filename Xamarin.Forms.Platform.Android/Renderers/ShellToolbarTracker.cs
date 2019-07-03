@@ -55,6 +55,7 @@ namespace Xamarin.Forms.Platform.Android
 			_toolbar = toolbar ?? throw new ArgumentNullException(nameof(toolbar));
 			_drawerLayout = drawerLayout ?? throw new ArgumentNullException(nameof(drawerLayout));
 
+			_toolbar.SetNavigationOnClickListener(this);
 			((IShellController)_shellContext.Shell).AddFlyoutBehaviorObserver(this);
 		}
 
@@ -114,12 +115,17 @@ namespace Xamarin.Forms.Platform.Android
 		void AView.IOnClickListener.OnClick(AView v)
 		{
 			var backButtonHandler = Shell.GetBackButtonBehavior(Page);
-			if (backButtonHandler?.Command != null)
-				backButtonHandler.Command.Execute(backButtonHandler.CommandParameter);
-			else if (CanNavigateBack)
-				OnNavigateBack();
-			else
-				_shellContext.Shell.FlyoutIsPresented = !_shellContext.Shell.FlyoutIsPresented;
+			var isEnabled = backButtonHandler.GetPropertyIfSet(BackButtonBehavior.IsEnabledProperty, true);
+
+			if (!isEnabled)
+			{
+				if (backButtonHandler?.Command != null)
+					backButtonHandler.Command.Execute(backButtonHandler.CommandParameter);
+				else if (CanNavigateBack)
+					OnNavigateBack();
+				else
+					_shellContext.Shell.FlyoutIsPresented = !_shellContext.Shell.FlyoutIsPresented;
+			}
 
 			v.Dispose();
 		}
@@ -234,25 +240,9 @@ namespace Xamarin.Forms.Platform.Android
 
 		protected virtual async void UpdateLeftBarButtonItem(Context context, Toolbar toolbar, DrawerLayout drawerLayout, Page page)
 		{
-			var backButtonHandler = Shell.GetBackButtonBehavior(page);
-			toolbar.SetNavigationOnClickListener(this);
-
-			if (backButtonHandler != null)
-			{
-				await UpdateDrawerArrowFromBackButtonBehavior(context, toolbar, drawerLayout, backButtonHandler);
-			}
-			else
-			{
-				await UpdateDrawerArrow(context, toolbar, drawerLayout);
-			}
-		}
-
-		protected virtual async Task UpdateDrawerArrow(Context context, Toolbar toolbar, DrawerLayout drawerLayout)
-		{
 			if (_drawerToggle == null && !context.IsDesignerContext())
 			{
 				_drawerToggle = new ActionBarDrawerToggle(context.GetActivity(), drawerLayout, toolbar, R.String.Ok, R.String.Ok)
-
 				{
 					ToolbarNavigationClickListener = this,
 				};
@@ -263,31 +253,78 @@ namespace Xamarin.Forms.Platform.Android
 				drawerLayout.AddDrawerListener(_drawerToggle);
 			}
 
-			if (CanNavigateBack)
+			var backButtonHandler = Shell.GetBackButtonBehavior(page);
+
+			var image = backButtonHandler.GetPropertyIfSet<ImageSource>(BackButtonBehavior.IconOverrideProperty, null);
+			var text = backButtonHandler.GetPropertyIfSet(BackButtonBehavior.TextOverrideProperty, String.Empty);
+
+			if(image == null)
 			{
-				_drawerToggle.DrawerIndicatorEnabled = false;
-				using (var icon = new DrawerArrowDrawable(context.GetThemedContext()))
+				Element item = page;
+				while (!Application.IsApplicationOrNull(item))
 				{
-					icon.SetColorFilter(TintColor.ToAndroid(Color.White), PorterDuff.Mode.SrcAtop);
-					icon.Progress = 1;
-					toolbar.NavigationIcon = icon;
+					if (item is IShellController shell)
+					{
+						image = shell.FlyoutIcon;
+						break;
+					}
+					item = item?.Parent;
 				}
 			}
-			else if (_flyoutBehavior == FlyoutBehavior.Flyout)
+
+			Drawable icon = null;
+
+			if (image != null)
+				icon = await context.GetFormsDrawableAsync(image);
+
+			if (text != null && icon == null)
+				icon = new FlyoutIconDrawerDrawable(context, TintColor, icon, text);
+
+			if (CanNavigateBack && icon == null)
 			{
-				toolbar.NavigationIcon = null;
-				var drawable = _drawerToggle.DrawerArrowDrawable;
-				drawable.SetColorFilter(TintColor.ToAndroid(Color.White), PorterDuff.Mode.SrcAtop);
-				_drawerToggle.DrawerIndicatorEnabled = true;
+				icon = new DrawerArrowDrawable(context.GetThemedContext()) { Progress = 1 };
+				icon.SetColorFilter(TintColor.ToAndroid(Color.White), PorterDuff.Mode.SrcAtop);
+			}
+
+			if (icon == null)
+			{
+				if (_flyoutBehavior == FlyoutBehavior.Flyout)
+				{
+					toolbar.NavigationIcon = null;
+					var drawable = _drawerToggle.DrawerArrowDrawable;
+					drawable.SetColorFilter(TintColor.ToAndroid(Color.White), PorterDuff.Mode.SrcAtop);
+					_drawerToggle.DrawerIndicatorEnabled = true;
+				}
+				else
+				{
+					_drawerToggle.DrawerIndicatorEnabled = false;
+				}
 			}
 			else
 			{
-				_drawerToggle.DrawerIndicatorEnabled = false;
+				var iconState = icon.GetConstantState();
+				if (iconState != null)
+				{
+					var mutatedIcon = iconState.NewDrawable().Mutate();
+					mutatedIcon.SetColorFilter(TintColor.ToAndroid(Color.White), PorterDuff.Mode.SrcAtop);
+					_drawerToggle.DrawerArrowDrawable = new FlyoutIconDrawerDrawable(context, TintColor, mutatedIcon, null);
+				}
+				else
+				{
+					_drawerToggle.DrawerArrowDrawable = new FlyoutIconDrawerDrawable(context, TintColor, icon, null);
+				}
 			}
+
 			_drawerToggle.SyncState();
 
 			//this needs to be set after SyncState
 			UpdateToolbarIconAccessibilityText(toolbar, _shellContext.Shell);
+		}
+
+
+		protected virtual Task UpdateDrawerArrow(Context context, Toolbar toolbar, DrawerLayout drawerLayout)
+		{
+			return Task.CompletedTask;
 		}
 
 		protected virtual void UpdateToolbarIconAccessibilityText(Toolbar toolbar, Shell shell)
@@ -305,62 +342,14 @@ namespace Xamarin.Forms.Platform.Android
 			}
 		}
 
-		protected virtual async Task UpdateDrawerArrowFromBackButtonBehavior(Context context, Toolbar toolbar, DrawerLayout drawerLayout, BackButtonBehavior backButtonHandler)
+		protected virtual Task UpdateDrawerArrowFromBackButtonBehavior(Context context, Toolbar toolbar, DrawerLayout drawerLayout, BackButtonBehavior backButtonHandler)
 		{
-			var behavior = backButtonHandler;
-			var command = behavior.Command;
-			var commandParameter = behavior.CommandParameter;
-			var image = behavior.IconOverride;
-			var text = behavior.TextOverride;
-			var enabled = behavior.IsEnabled;
-
-			Drawable icon = null;
-
-			if (image != null)
-				icon = await context.GetFormsDrawableAsync(image);
-
-			if (text != null)
-				icon = new FlyoutIconDrawerDrawable(context, TintColor, icon, text);
-
-			if (CanNavigateBack && icon == null)
-			{
-				icon = new DrawerArrowDrawable(context.GetThemedContext());
-				(icon as DrawerArrowDrawable).Progress = 1;
-			}
-
-			var iconState = icon.GetConstantState();
-			if (iconState != null)
-			{
-				using (var mutatedIcon = iconState.NewDrawable().Mutate())
-				{
-					mutatedIcon.SetColorFilter(TintColor.ToAndroid(Color.White), PorterDuff.Mode.SrcAtop);
-					toolbar.NavigationIcon = mutatedIcon;
-				}
-			}
-			else
-			{
-				toolbar.NavigationIcon = icon;
-			}
+			return Task.CompletedTask;
 		}
 
-		protected virtual async Task UpdateDrawerArrowFromFlyoutIcon(Context context, ActionBarDrawerToggle actionBarDrawerToggle)
+		protected virtual Task UpdateDrawerArrowFromFlyoutIcon(Context context, ActionBarDrawerToggle actionBarDrawerToggle)
 		{
-			Element item = Page;
-			ImageSource icon = null;
-			while (!Application.IsApplicationOrNull(item))
-			{
-				if (item is IShellController shell)
-				{
-					icon = shell.FlyoutIcon;
-					if (icon != null)
-					{
-						var drawable = await context.GetFormsDrawableAsync(icon);
-						actionBarDrawerToggle.DrawerArrowDrawable = new FlyoutIconDrawerDrawable(context, TintColor, drawable, null);
-					}
-					return;
-				}
-				item = item?.Parent;
-			}
+			return Task.CompletedTask;
 		}
 
 		protected virtual void UpdateMenuItemIcon(Context context, IMenuItem menuItem, ToolbarItem toolBarItem)
