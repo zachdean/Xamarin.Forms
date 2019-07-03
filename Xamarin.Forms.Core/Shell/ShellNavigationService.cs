@@ -106,7 +106,7 @@ namespace Xamarin.Forms
 
 		internal Uri FullUriWithImplicit { get; }
 		public Dictionary<string, string> NavigationParameters { get; }
-		public IReadOnlyList<PathPart> PathParts { get; }
+		public IReadOnlyList<PathPart> PathParts { get; set; }
 	}
 
 	public class ShellRouteState

@@ -355,7 +355,7 @@ namespace Xamarin.Forms
 			return GoToAsync(state, animate, false);
 		}
 
-		internal ShellRouteState RouteState
+		public ShellRouteState RouteState
 		{
 			get
 			{
