@@ -352,6 +352,14 @@ namespace Xamarin.Forms.Xaml
 			if (xpe == null && TrySetProperty(xamlelement, localName, value, lineInfo, serviceProvider, context, out xpe))
 				return;
 
+			//If the target is an event, and the value a binding or a ICommand, connect the command
+			if (xpe == null && TryConnectEventCommand(xamlelement, localName, attached, value, rootElement, lineInfo, out xpe))
+				return;
+
+			//If the name is xxxParameter, where xxx is a declared event, set the command parameter
+			if (xpe == null && TrySetEventCommandParameter(xamlelement, localName, attached, value, rootElement, lineInfo, out xpe))
+				return;
+
 			//If it's an already initialized property, add to it
 			if (xpe == null && TryAddToProperty(xamlelement, propertyName, value, xKey, lineInfo, serviceProvider, context, out xpe))
 				return;
@@ -398,16 +406,14 @@ namespace Xamarin.Forms.Xaml
 
 			if (attached)
 				return false;
-
-			var elementType = element.GetType();
-			var eventInfo = elementType.GetRuntimeEvent(localName);
-			var stringValue = value as string;
-
-			if (eventInfo == null || IsNullOrEmpty(stringValue))
+			if (!(element.GetType().GetRuntimeEvent(localName) is EventInfo eventInfo))
+				return false;
+			if (!(value is string stringValue))
 				return false;
 
+			//Connect event to handler in codebehind
 			foreach (var mi in rootElement.GetType().GetRuntimeMethods()) {
-				if (mi.Name == (string)value) {
+				if (mi.Name == stringValue) {
 					try {
 						eventInfo.AddEventHandler(element, mi.CreateDelegate(eventInfo.EventHandlerType, mi.IsStatic ? null : rootElement));
 						return true;
@@ -420,6 +426,50 @@ namespace Xamarin.Forms.Xaml
 			exception = new XamlParseException($"No method {value} with correct signature found on type {rootElement.GetType()}", lineInfo);
 			return false;
 		}
+
+		static bool TryConnectEventCommand(object element, string localName, bool attached, object value, object rootElement, IXmlLineInfo lineInfo, out Exception exception)
+		{
+			exception = null;
+
+			if (attached)
+				return false;
+			if (!(element.GetType().GetRuntimeEvent(localName) is EventInfo eventInfo))
+				return false;
+			
+			//Binding Command to event
+			if (value is BindingBase commandBinding && element is BindableObject bindable) {
+				var handler = Event2CommandHelper.GetHandlerAndSetBinding(bindable, localName, commandBinding);
+				eventInfo.AddEventHandler(element, handler);
+				return true;
+			}
+
+			//Setting Command value to event
+			if (value is System.Windows.Input.ICommand command) {
+				var handler = Event2CommandHelper.GetHandlerFor(element, localName, command);
+				eventInfo.AddEventHandler(element, handler);
+				return true;
+			}
+			return false;
+		}
+
+		static bool TrySetEventCommandParameter(object element, string localName, bool attached, object value, object rootElement, IXmlLineInfo lineInfo, out Exception exception)
+		{
+			exception = null;
+
+			if (attached)
+				return false;
+			if (!localName.EndsWith("Parameter", StringComparison.Ordinal))
+				return false;
+			var eventName = localName.Substring(0, localName.Length - 9);
+			if (!(element.GetType().GetRuntimeEvent(eventName) is EventInfo))
+				return false;
+			if (value is BindingBase parameterBinding && element is BindableObject bindable)
+				Event2CommandHelper.SetParameterFor(bindable, eventName, parameterBinding);
+			else
+				Event2CommandHelper.SetParameterFor(element, eventName, value);
+			return true;
+		}
+
 
 		static bool TrySetDynamicResource(object element, BindableProperty property, object value, IXmlLineInfo lineInfo, out Exception exception)
 		{

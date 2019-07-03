@@ -845,7 +845,7 @@ namespace Xamarin.Forms.Build.Tasks
 			var localName = propertyName.LocalName;
 			var bpRef = GetBindablePropertyReference(parent, propertyName.NamespaceURI, ref localName, out System.Boolean attached, context, iXmlLineInfo);
 
-			//If the target is an event, connect
+			//If the target is an event and the value a string, connect
 			if (CanConnectEvent(parent, localName, valueNode, attached))
 				return ConnectEvent(parent, localName, valueNode, iXmlLineInfo, context);
 
@@ -864,6 +864,14 @@ namespace Xamarin.Forms.Build.Tasks
 			//If it's a property, set it
 			if (CanSet(parent, localName, valueNode, context))
 				return Set(parent, localName, valueNode, iXmlLineInfo, context);
+
+			//If the target is an event and the value a binding or a command, connect
+			if (CanConnectCommandToEvent(parent, localName, valueNode, attached, context))
+				return ConnectCommandEvent(parent, localName, valueNode, iXmlLineInfo, context);
+
+			//If it's xxxParameter and xxx is an event, set the parameter on the command
+			if (CanSetCommandEventParameter(parent, localName, valueNode, attached, context))
+				return SetCommandEventParameter(parent, localName, valueNode, iXmlLineInfo, context);
 
 			//If it's an already initialized property, add to it
 			if (CanAdd(parent, propertyName, valueNode, iXmlLineInfo, context))
@@ -992,16 +1000,97 @@ namespace Xamarin.Forms.Build.Tasks
 			yield return Create(Callvirt, module.ImportReference(adder));
 		}
 
+		static bool CanConnectCommandToEvent(VariableDefinition parent, string localName, INode valueNode, bool attached, ILContext context)
+		{
+			var module = context.Body.Method.Module;
+
+			if (attached)
+				return false;
+			if (parent.VariableType.GetEvent(ed => ed.Name == localName, out _) == null)
+				return false;
+			if (!context.Variables.TryGetValue(valueNode as IElementNode, out VariableDefinition varValue))
+				return false;
+			//TODO: check if parent is a BP
+			if (varValue.VariableType.InheritsFromOrImplements(module.ImportReference(("Xamarin.Forms.Core", "Xamarin.Forms", "BindingBase"))))
+				return true;
+			//if (varValue.VariableType.InheritsFromOrImplements(module.ImportReference(("netstandard", "System.Windows.Input", "ICommand"))))
+				return true;
+			
+		}
+
+		static IEnumerable<Instruction> ConnectCommandEvent(VariableDefinition parent, string localName, INode valueNode, IXmlLineInfo iXmlLineInfo, ILContext context)
+		{
+			var module = context.Body.Method.Module;
+			var varValue = context.Variables[valueNode as IElementNode];
+
+			if (varValue.VariableType.InheritsFromOrImplements(module.ImportReference(("Xamarin.Forms.Core", "Xamarin.Forms", "BindingBase"))))
+				return ConnectBindingCommandEvent(parent, localName, valueNode, iXmlLineInfo, context);	
+			return ConnectICommandCommandEvent(parent, localName, valueNode, iXmlLineInfo, context);
+		}
+
+		static IEnumerable<Instruction> ConnectBindingCommandEvent(VariableDefinition parent, string localName, INode valueNode, IXmlLineInfo iXmlLineInfo, ILContext context)
+		{
+			var elementType = parent.VariableType;
+			var module = context.Body.Method.Module;
+			TypeReference eventDeclaringTypeRef;
+			var eventinfo = elementType.GetEvent(ed => ed.Name == localName, out eventDeclaringTypeRef);
+			var adder = module.ImportReference(eventinfo.AddMethod);
+			adder = adder.ResolveGenericParameters(eventDeclaringTypeRef, module);
+			var varValue = context.Variables[valueNode as IElementNode];
+
+			yield return Create(Ldloc, parent);
+			yield return Create(Ldloc, parent);
+			yield return Create(Ldstr, localName);
+			yield return Create(Ldloc, varValue);
+			yield return Create(Callvirt, module.ImportMethodReference(("Xamarin.Forms.Xaml", "Xamarin.Forms.Xaml.Internals", "Event2CommandHelper"),
+														   methodName: "GetHandlerAndSetBinding",
+														   parameterTypes: new[] {
+																		   ("Xamarin.Forms.Core", "Xamarin.Forms", "BindableObject"),
+																		   ("mscorlib", "System", "String"),
+																		   ("Xamarin.Forms.Core", "Xamarin.Forms", "BindingBase"),
+														   }, isStatic: true));
+			yield return Create(Callvirt, module.ImportReference(adder));
+		}
+
+		static IEnumerable<Instruction> ConnectICommandCommandEvent(VariableDefinition parent, string localName, INode valueNode, IXmlLineInfo iXmlLineInfo, ILContext context)
+		{
+			var elementType = parent.VariableType;
+			var module = context.Body.Method.Module;
+			TypeReference eventDeclaringTypeRef;
+			var eventinfo = elementType.GetEvent(ed => ed.Name == localName, out eventDeclaringTypeRef);
+			var adder = module.ImportReference(eventinfo.AddMethod);
+			adder = adder.ResolveGenericParameters(eventDeclaringTypeRef, module);
+			var varValue = context.Variables[valueNode as IElementNode];
+
+//			IL_0009: ldloc.0 <== the element
+//			IL_000a: ldloc.0
+//			IL_000b: ldstr "Happened"
+//			IL_0010: ldloc.1 <== the ICommand
+//			IL_0011: call class [mscorlib] System.EventHandler Helpers::GetHandlerFor(object, string, class [System] System.Windows.Input.ICommand)
+//			IL_0016: callvirt instance void C::add_Happened(class [mscorlib] System.EventHandler)
+
+			yield return Create(Ldloc, parent);
+			yield return Create(Ldloc, parent);
+			yield return Create(Ldstr, localName);
+			yield return Create(Ldloc, varValue);
+			yield return Create(Castclass, module.ImportReference(("netstandard", "System.Windows.Input", "ICommand")));
+			yield return Create(Callvirt, module.ImportMethodReference(("Xamarin.Forms.Xaml", "Xamarin.Forms.Xaml.Internals", "Event2CommandHelper"),
+														   methodName: "GetHandlerFor",
+														   parameterTypes: new[] {
+																		   ("mscorlib", "System", "Object"),
+																		   ("mscorlib", "System", "String"),
+																		   ("netstandard", "System.Windows.Input", "ICommand"),
+														   }, isStatic: true));
+			yield return Create(Callvirt, module.ImportReference(adder));
+		}
+
 		static bool CanSetDynamicResource(FieldReference bpRef, INode valueNode, ILContext context)
 		{
 			if (bpRef == null)
 				return false;
-			var elementNode = valueNode as IElementNode;
-			if (elementNode == null)
+			if (!(valueNode is IElementNode))
 				return false;
-			
-			VariableDefinition varValue;
-			if (!context.Variables.TryGetValue(valueNode as IElementNode, out varValue))
+			if (!context.Variables.TryGetValue(valueNode as IElementNode, out VariableDefinition varValue))
 				return false;
 			return varValue.VariableType.FullName == typeof(DynamicResource).FullName;
 		}
@@ -1032,14 +1121,14 @@ namespace Xamarin.Forms.Build.Tasks
 
 			if (bpRef == null)
 				return false;
-			if (!(valueNode is IElementNode elementNode))
+			if (!(valueNode is IElementNode))
 				return false;
-
 			if (!context.Variables.TryGetValue(valueNode as IElementNode, out VariableDefinition varValue))
 				return false;
 			var implicitOperator = varValue.VariableType.GetImplicitOperatorTo(module.ImportReference(("Xamarin.Forms.Core","Xamarin.Forms","BindingBase")), module);
 			if (implicitOperator != null)
 				return true;
+			//TODO: check if parent is a BP
 
 			return varValue.VariableType.InheritsFromOrImplements(module.ImportReference(("Xamarin.Forms.Core", "Xamarin.Forms", "BindingBase")));
 		}
@@ -1053,7 +1142,6 @@ namespace Xamarin.Forms.Build.Tasks
 				("Xamarin.Forms.Core", "Xamarin.Forms", "BindingBase"),
 			};
 
-			//TODO: check if parent is a BP
 			foreach (var instruction in parent.LoadAs(module.GetTypeDefinition(bindableObjectType), module))
 				yield return instruction;
 			yield return Create(Ldsfld, bpRef);
@@ -1285,6 +1373,75 @@ namespace Xamarin.Forms.Build.Tasks
 					Instruction.Create(OpCodes.Ldloc, parent),
 					Instruction.Create(OpCodes.Callvirt, propertyGetterRef),
 				};
+		}
+
+		static bool CanSetCommandEventParameter(VariableDefinition parent, string localName, INode valueNode, bool attached, ILContext context)
+		{
+			var module = context.Body.Method.Module;
+
+			if (attached)
+				return false;
+			if (!localName.EndsWith("Parameter", StringComparison.Ordinal))
+				return false;
+			var eventName = localName.Substring(0, localName.Length - 9);
+			if (parent.VariableType.GetEvent(ed => ed.Name == eventName, out _) == null)
+				return false;
+			if (valueNode is ValueNode value && value.Value is string)
+				return true;
+			if (!context.Variables.TryGetValue(valueNode as IElementNode, out VariableDefinition varValue))
+				return false;
+			return true;
+		}
+
+		static IEnumerable<Instruction> SetCommandEventParameter(VariableDefinition parent, string localName, INode valueNode, IXmlLineInfo iXmlLineInfo, ILContext context)
+		{
+			var module = context.Body.Method.Module;
+			var eventName = localName.Substring(0, localName.Length - 9);
+
+			if (valueNode is IElementNode && context.Variables[valueNode as IElementNode] is VariableDefinition varValue && varValue.VariableType.InheritsFromOrImplements(module.ImportReference(("Xamarin.Forms.Core", "Xamarin.Forms", "BindingBase"))))
+				return SetBindingCommandEventParamter(parent, eventName, valueNode, iXmlLineInfo, context);
+			return SetValueCommandEventParameter(parent, eventName, valueNode, iXmlLineInfo, context);
+		}
+
+		static IEnumerable<Instruction> SetBindingCommandEventParamter(VariableDefinition parent, string eventName, INode valueNode, IXmlLineInfo iXmlLineInfo, ILContext context)
+		{
+			var module = context.Body.Method.Module;			
+			var varValue = context.Variables[valueNode as IElementNode];
+
+			yield return Create(Ldloc, parent);
+			yield return Create(Ldstr, eventName);
+			yield return Create(Ldloc, varValue);
+			yield return Create(Callvirt, module.ImportMethodReference(("Xamarin.Forms.Xaml", "Xamarin.Forms.Xaml.Internals", "Event2CommandHelper"),
+														   methodName: "SetParameterFor",
+														   parameterTypes: new[] {
+																		   ("mscorlib", "System", "Object"),
+																		   ("mscorlib", "System", "String"),
+																		   ("Xamarin.Forms.Core", "Xamarin.Forms", "BindingBase"),
+														   }, isStatic: true));
+		}
+
+		static IEnumerable<Instruction> SetValueCommandEventParameter(VariableDefinition parent, string eventName, INode valueNode, IXmlLineInfo iXmlLineInfo, ILContext context)
+		{
+			var module = context.Body.Method.Module;
+
+			yield return Create(Ldloc, parent);
+			yield return Create(Ldstr, eventName);
+			if (valueNode is IElementNode) {
+				var varValue = context.Variables[valueNode as IElementNode];
+				yield return Create(Ldloc, varValue);
+			}
+			else if (valueNode is ValueNode value && value.Value is string str)
+				yield return Create(Ldstr, str);
+			else
+				yield return Create(Ldnull);
+
+			yield return Create(Callvirt, module.ImportMethodReference(("Xamarin.Forms.Xaml", "Xamarin.Forms.Xaml.Internals", "Event2CommandHelper"),
+														   methodName: "SetParameterFor",
+														   parameterTypes: new[] {
+																		   ("mscorlib", "System", "Object"),
+																		   ("mscorlib", "System", "String"),
+																		   ("mscorlib", "System", "Object"),
+														   }, isStatic: true));
 		}
 
 		static bool CanAdd(VariableDefinition parent, XmlName propertyName, INode node, IXmlLineInfo lineInfo, ILContext context)

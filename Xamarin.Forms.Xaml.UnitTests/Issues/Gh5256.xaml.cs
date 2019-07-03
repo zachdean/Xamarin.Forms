@@ -19,7 +19,6 @@ namespace Xamarin.Forms.Xaml.UnitTests
 		}
 	}
 
-	//[XamlCompilation(XamlCompilationOptions.Skip)]
 	public partial class Gh5256 : ContentPage
 	{
 		public Gh5256() => InitializeComponent();

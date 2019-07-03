@@ -199,9 +199,10 @@ namespace Xamarin.Forms.Build.Tasks
 															(string assemblyName, string clrNamespace, string typeName)[] classArguments = null,
 															bool isStatic = false)
 		{
-			var methodKey = $"{(isStatic ? "static " : "")}{type}<{(classArguments == null ? "" : string.Join(",", classArguments))}>.({(parameterTypes == null ? "" : string.Join(",", parameterTypes))})";
+			var methodKey = $"{(isStatic ? "static " : "")}{type}<{(classArguments == null ? "" : string.Join(",", classArguments))}>.{methodName}({(parameterTypes == null ? "" : string.Join(",", parameterTypes))})";
 			if (MethodRefCache.TryGetValue((module, methodKey), out var methodReference))
 				return methodReference;
+			module.ImportReference(type);
 			methodReference = module.ImportMethodReference(module.GetTypeDefinition(type),
 														   methodName: methodName,
 														   predicate: md => {
@@ -226,9 +227,10 @@ namespace Xamarin.Forms.Build.Tasks
 													(string assemblyName, string clrNamespace, string typeName)[] classArguments = null,
 													bool isStatic = false)
 		{
-			var methodKey = $"{(isStatic ? "static " : "")}{type}<{(classArguments == null ? "" : string.Join(",", classArguments))}>.({(string.Join(",", Enumerable.Repeat("_", paramCount)))})";
+			var methodKey = $"{(isStatic ? "static " : "")}{type}<{(classArguments == null ? "" : string.Join(",", classArguments))}>.{methodName}({(string.Join(",", Enumerable.Repeat("_", paramCount)))})";
 			if (MethodRefCache.TryGetValue((module, methodKey), out var methodReference))
 				return methodReference;
+			module.ImportReference(type);
 			methodReference = module.ImportMethodReference(module.GetTypeDefinition(type),
 														   methodName: methodName,
 														   predicate: md => {
