@@ -4,23 +4,24 @@
              x:Class="Xamarin.Forms.Sandbox.ShellPage"
              xmlns:ios="clr-namespace:Xamarin.Forms.PlatformConfiguration.iOSSpecific;assembly=Xamarin.Forms.Core"
              ios:Page.UseSafeArea="true">
-    <!--<Shell.Resources>
-        <StyleSheet Source="/Styles.css" />
-    </Shell.Resources>-->
-    <!--<Shell.FlyoutHeader>
-        <StackLayout>
-            <Button Text="I am a Button"  />
-        </StackLayout>
-    </Shell.FlyoutHeader>-->
     <FlyoutItem Title="Sandbox">
         <Tab>
             <ShellContent>
                 <ContentPage>
-                    <!--<Shell.TitleView>
-                        <StackLayout>
-                            <Button Text="I am a Button"  />
-                        </StackLayout>
-                    </Shell.TitleView>-->
+                    <Shell.BackButtonBehavior>
+                        <BackButtonBehavior IconOverride="coffee.png" />
+                    </Shell.BackButtonBehavior>
+                    <StackLayout>
+                        <Button Text="I am a Button"  />
+                    </StackLayout>
+                </ContentPage>
+            </ShellContent>
+        </Tab>
+    </FlyoutItem>
+    <FlyoutItem Title="Normal">
+        <Tab>
+            <ShellContent>
+                <ContentPage>
                     <StackLayout>
                         <Button Text="I am a Button"  />
                     </StackLayout>

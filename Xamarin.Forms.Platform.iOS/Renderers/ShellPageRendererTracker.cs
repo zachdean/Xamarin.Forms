@@ -199,35 +199,61 @@ namespace Xamarin.Forms.Platform.iOS
 			items.Reverse();
 			NavigationItem.SetRightBarButtonItems(items.ToArray(), false);
 
-			if (BackButtonBehavior != null)
-			{
-				var behavior = BackButtonBehavior;
-				var command = behavior.Command;
-				var commandParameter = behavior.CommandParameter;
-				var image = behavior.IconOverride;
-				var enabled = behavior.IsEnabled;
+			var behavior = BackButtonBehavior;
+			var command = behavior.GetPropertyIfSet(BackButtonBehavior.CommandProperty,  new Command(() => OnMenuButtonPressed(this, EventArgs.Empty)));
+			var commandParameter = behavior.GetPropertyIfSet<object>(BackButtonBehavior.CommandParameterProperty, null);
+			var image = behavior.GetPropertyIfSet<ImageSource>(BackButtonBehavior.IconOverrideProperty, null);
+			var enabled = behavior.GetPropertyIfSet(BackButtonBehavior.IsEnabledProperty, true);
+			var text = behavior.GetPropertyIfSet(BackButtonBehavior.TextOverrideProperty, String.Empty);
+			
+			UIImage icon = null;
 
-				if (image == null)
+			if (image == null && String.IsNullOrWhiteSpace(text) && (!IsRootPage || _flyoutBehavior != FlyoutBehavior.Flyout))
+			{
+				NavigationItem.LeftBarButtonItem = null;
+			}
+			else
+			{
+				if (String.IsNullOrWhiteSpace(text) && image == null)
 				{
-					var text = BackButtonBehavior.TextOverride;
+					Element item = Page;
+					while (!Application.IsApplicationOrNull(item))
+					{
+						if (item is IShellController shell)
+						{
+							image = shell.FlyoutIcon;
+							item = null;
+						}
+						item = item?.Parent;
+					}
+
+					if (image != null)
+						icon = await image.GetNativeImageAsync();
+					else
+						icon = DrawHamburger();
+				}
+
+				if (icon == null)
+				{
 					NavigationItem.LeftBarButtonItem =
 						new UIBarButtonItem(text, UIBarButtonItemStyle.Plain, (s, e) => LeftBarButtonItemHandler(ViewController, command, commandParameter, IsRootPage)) { Enabled = enabled };
 				}
 				else
 				{
-					var icon = await image.GetNativeImageAsync();
 					NavigationItem.LeftBarButtonItem =
 						new UIBarButtonItem(icon, UIBarButtonItemStyle.Plain, (s, e) => LeftBarButtonItemHandler(ViewController, command, commandParameter, IsRootPage)) { Enabled = enabled };
 				}
-			}
-			else if (IsRootPage && _flyoutBehavior == FlyoutBehavior.Flyout)
-			{
 
-				await SetDrawerArrowDrawableFromFlyoutIcon();
-			}
-			else
-			{
-				NavigationItem.LeftBarButtonItem = null;
+				if (String.IsNullOrWhiteSpace(image?.AutomationId))
+					NavigationItem.LeftBarButtonItem.AccessibilityIdentifier = "OK";
+				else
+					NavigationItem.LeftBarButtonItem.AccessibilityIdentifier = image.AutomationId;
+
+				if (image != null)
+				{
+					NavigationItem.LeftBarButtonItem.SetAccessibilityHint(image);
+					NavigationItem.LeftBarButtonItem.SetAccessibilityLabel(image);
+				}
 			}
 		}
 
@@ -241,37 +267,6 @@ namespace Xamarin.Forms.Platform.iOS
 			command?.Execute(commandParameter);
 		}
 
-		async Task SetDrawerArrowDrawableFromFlyoutIcon()
-		{
-			Element item = Page;
-			ImageSource image = null;
-			while (!Application.IsApplicationOrNull(item))
-			{
-				if (item is IShellController shell)
-				{
-					image = shell.FlyoutIcon;
-					item = null;
-				}
-				item = item?.Parent;
-			}
-
-			UIImage icon = null;
-
-			if (image != null)
-				icon = await image.GetNativeImageAsync();
-			else
-				icon = DrawHamburger();
-
-			var barButtonItem = new UIBarButtonItem(icon, UIBarButtonItemStyle.Plain, OnMenuButtonPressed);
-
-			barButtonItem.AccessibilityIdentifier = "OK";
-			NavigationItem.LeftBarButtonItem = barButtonItem;
-			if(image == null)
-				return;
-			NavigationItem.LeftBarButtonItem.AccessibilityIdentifier = image.AutomationId;
-			NavigationItem.LeftBarButtonItem.SetAccessibilityHint(image);
-			NavigationItem.LeftBarButtonItem.SetAccessibilityLabel(image);
-		}
 
 		UIImage DrawHamburger()
 		{
