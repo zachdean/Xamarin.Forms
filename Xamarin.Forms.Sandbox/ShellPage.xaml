@@ -6,23 +6,7 @@
              ios:Page.UseSafeArea="true">
     <FlyoutItem Title="Sandbox">
         <Tab>
-            <ShellContent>
-                <ContentPage>
-                    <StackLayout>
-                        <Button Text="I am a Button"  />
-                    </StackLayout>
-                </ContentPage>
-            </ShellContent>
-        </Tab>
-    </FlyoutItem>
-    <FlyoutItem Title="Normal">
-        <Tab>
-            <ShellContent>
-                <ContentPage>
-                    <StackLayout>
-                        <Button Text="I am a Button"  />
-                    </StackLayout>
-                </ContentPage>
+            <ShellContent x:Name="shellContent">
             </ShellContent>
         </Tab>
     </FlyoutItem>
