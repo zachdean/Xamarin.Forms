@@ -429,7 +429,7 @@ namespace Xamarin.Forms
 					// TODO get rid of this hack and fix so if there's a stack the current page doesn't display
 					Device.BeginInvokeOnMainThread(async () =>
 					{
-						await shellSection.GoToAsync(navigationRequest, queryData, false);
+						await CurrentItem.CurrentItem.GoToAsync(navigationRequest, queryData, false);
 					});
 				}
 			}
