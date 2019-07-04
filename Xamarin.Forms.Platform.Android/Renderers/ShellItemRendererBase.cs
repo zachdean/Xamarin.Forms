@@ -115,23 +115,25 @@ namespace Xamarin.Forms.Platform.Android
 			if (!_fragmentMap.ContainsKey(ShellSection))
 			{
 				_fragmentMap[ShellSection] = GetOrCreateFragmentForTab(ShellSection);
-				foreach (var pageItem in stack)
-				{
-					if (pageItem != null && !_fragmentMap.ContainsKey(pageItem))
-						_fragmentMap[pageItem] = CreateFragmentForPage(pageItem);
-				}
+			}
+			if (stack.Count > 1)
+			{
+				var pageItem = stack[stack.Count - 1];
+				if (! _fragmentMap.ContainsKey(pageItem))
+					_fragmentMap[pageItem] = CreateFragmentForPage(pageItem);
 			}
 
 			switch (navSource)
 			{
 				case ShellNavigationSource.Push:
-				case ShellNavigationSource.Insert:
 					if (!_fragmentMap.ContainsKey(page))
 						_fragmentMap[page] = CreateFragmentForPage(page);
 					if (!isForCurrentTab)
-					{
 						return Task.FromResult(true);
-					}
+					break;
+				case ShellNavigationSource.Insert:
+					if (!isForCurrentTab)
+						return Task.FromResult(true);
 					break;
 
 				case ShellNavigationSource.Pop:

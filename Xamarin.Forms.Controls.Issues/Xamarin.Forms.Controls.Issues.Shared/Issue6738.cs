@@ -18,21 +18,62 @@ namespace Xamarin.Forms.Controls.Issues
 	[Issue(IssueTracker.Github, 6738, "Flyout Navigation fails when coupled with tabs that have a stack", PlatformAffected.Android)]
 	public class Issue6738 : TestShell
 	{
-		Tab tabOne = new Tab { Title = "One" };
-		Tab tabTwo = new Tab { Title = "Two " };
 		Tab flyoutContent = new Tab();
 		Button pushPageButton = new Button { Text = "Tap to push new page to stack" };
+		Button insertPageButton = new Button { Text = "Push another page to the stack, then go to tab two" };
+		ContentPage pushedPage;
+		Tab tabOne = new Tab { Title = "TabOne" };
+		Tab tabTwo = new Tab { Title = "TabTwo " };
+
+
+		void OnReturnTapped(object sender, EventArgs e)
+		{
+			ForceTabSwitch();
+		}
 
 		void OnPushTapped(object sender, EventArgs e)
 		{
-			Navigation.PushAsync(new ContentPage { Content = new Label { Text = "If this is the second time you have been to this page, the test has passed. Otherwise, go to tab two now." } });
+			pushedPage = new ContentPage { Content = insertPageButton };
+			Navigation.PushAsync(pushedPage);
+		}
+
+		void OnInsertTapped(object sender, EventArgs e)
+		{
+			Navigation.InsertPageBefore(new ContentPage { Content = new Label { Text = "This is an extra page" } }, pushedPage);
+			ForceTabSwitch();
+		}
+
+		void ForceTabSwitch()
+		{
+			if (CurrentItem != null)
+			{
+				if (CurrentItem.CurrentItem == tabOne)
+				{
+					CurrentItem.CurrentItem = tabTwo;
+				}
+				else
+					CurrentItem.CurrentItem = tabOne;
+			}
 		}
 
 		protected override void Init()
 		{
+			var tabOnePage = new ContentPage { Content = pushPageButton };
+			var stackLayout = new StackLayout();
+			stackLayout.Children.Add(new Label { Text = "If you've been here already, go to tab one now. Otherwise, go to Other Page in the flyout." });
+			var returnButton = new Button { Text = "Go back to tab 1" };
+			returnButton.AutomationId = "GoToFirstTabButton";
+			returnButton.Clicked += OnReturnTapped;
+			stackLayout.Children.Add(returnButton);
+
+			var tabTwoPage = new ContentPage { Content =  stackLayout };
+			tabOne.Items.Add(tabOnePage);
+			tabTwo.Items.Add(tabTwoPage);
+
+			pushPageButton.AutomationId = "PushPageButton";
 			pushPageButton.Clicked += OnPushTapped;
-			tabOne.Items.Add(new ContentPage { Content = pushPageButton });
-			tabTwo.Items.Add(new ContentPage { Content = new Label { Text = "If you've been here already, go to tab one now. Otherwise, go to Other Page in the flyout." } });
+			insertPageButton.AutomationId = "InsertPageButton";
+			insertPageButton.Clicked += OnInsertTapped;
 			flyoutContent.Items.Add(new ContentPage { Content = new Label { Text = "Go back to main page via the flyout" } });
 
 			Items.Add(
@@ -55,6 +96,18 @@ namespace Xamarin.Forms.Controls.Issues
 		[Test]
 		public void Issue6738Test()
 		{
+			RunningApp.WaitForElement(pushPageButton.AutomationId);
+			RunningApp.Tap(pushPageButton.AutomationId);
+			RunningApp.WaitForElement(insertPageButton.AutomationId);
+			RunningApp.Tap(insertPageButton.AutomationId);
+
+			TapInFlyout("Other Page");
+			TapInFlyout("Main");
+
+			RunningApp.WaitForElement("GoToFirstTabButton");
+			RunningApp.Tap("GoToFirstTabButton");
+			RunningApp.NavigateBack();
+			RunningApp.NavigateBack();
 		}
 #endif
 	}
