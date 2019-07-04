@@ -307,11 +307,15 @@ namespace Xamarin.Forms.Platform.Android
 
 			Drawable icon = null;
 
+			var tintColor = Color.White;
+			if (TintColor != Color.Default)
+				tintColor = TintColor;
+
 			if (image != null)
 				icon = await context.GetFormsDrawableAsync(image);
 
 			if (!String.IsNullOrWhiteSpace(text) && icon == null)
-				icon = new FlyoutIconDrawerDrawable(context, TintColor, icon, text);
+				icon = new FlyoutIconDrawerDrawable(context, tintColor, icon, text);
 
 			if (icon == null)
 			{
@@ -322,7 +326,7 @@ namespace Xamarin.Forms.Platform.Android
 					_drawerToggle.DrawerIndicatorEnabled = false;
 					using (var backIcon = new DrawerArrowDrawable(context.GetThemedContext()))
 					{
-						backIcon.SetColorFilter(TintColor.ToAndroid(Color.White), PorterDuff.Mode.SrcAtop);
+						backIcon.SetColorFilter(tintColor.ToAndroid(Color.White), PorterDuff.Mode.SrcAtop);
 						backIcon.Progress = 1;
 						toolbar.NavigationIcon = backIcon;
 					}
@@ -338,7 +342,7 @@ namespace Xamarin.Forms.Platform.Android
 					{
 						toolbar.NavigationIcon = null;
 						var drawable = _drawerToggle.DrawerArrowDrawable;
-						drawable.SetColorFilter(TintColor.ToAndroid(Color.White), PorterDuff.Mode.SrcAtop);
+						drawable.SetColorFilter(tintColor.ToAndroid(Color.White), PorterDuff.Mode.SrcAtop);
 						_drawerToggle.DrawerIndicatorEnabled = true;
 					}
 				}
@@ -352,23 +356,35 @@ namespace Xamarin.Forms.Platform.Android
 				if (command != null)
 				{
 					_drawerToggle.DrawerIndicatorEnabled = false;
-					var flyoutIcon = new FlyoutIconDrawerDrawable(context, TintColor, icon, null);
+					var flyoutIcon = new FlyoutIconDrawerDrawable(context, tintColor, icon, null);
 					flyoutIcon.Progress = 1;
-					toolbar.NavigationIcon = flyoutIcon;
+
+					var iconState = flyoutIcon.GetConstantState();
+					if (iconState != null)
+					{
+						var mutatedIcon = iconState.NewDrawable().Mutate();
+						mutatedIcon.SetColorFilter(tintColor.ToAndroid(Color.White), PorterDuff.Mode.SrcAtop);
+						toolbar.NavigationIcon = mutatedIcon;
+					}
+					else
+					{
+						toolbar.NavigationIcon = flyoutIcon;
+					}
 				}
 				else
 				{
+					_drawerToggle.DrawerIndicatorEnabled = true;
 					toolbar.NavigationIcon = null;
 					var iconState = icon.GetConstantState();
 					if (iconState != null)
 					{
 						var mutatedIcon = iconState.NewDrawable().Mutate();
-						mutatedIcon.SetColorFilter(TintColor.ToAndroid(Color.White), PorterDuff.Mode.SrcAtop);
-						_drawerToggle.DrawerArrowDrawable = new FlyoutIconDrawerDrawable(context, TintColor, mutatedIcon, null);
+						mutatedIcon.SetColorFilter(tintColor.ToAndroid(Color.White), PorterDuff.Mode.SrcAtop);
+						_drawerToggle.DrawerArrowDrawable = new FlyoutIconDrawerDrawable(context, tintColor, mutatedIcon, null);
 					}
 					else
 					{
-						_drawerToggle.DrawerArrowDrawable = new FlyoutIconDrawerDrawable(context, TintColor, icon, null);
+						_drawerToggle.DrawerArrowDrawable = new FlyoutIconDrawerDrawable(context, tintColor, icon, null);
 					}
 				}
 			}
@@ -611,6 +627,7 @@ namespace Xamarin.Forms.Platform.Android
 				bool pressed = false;
 				if (_iconBitmap != null)
 				{
+					global::Android.Support.V4.Graphics.Drawable.DrawableCompat.SetTint(_iconBitmap, _defaultColor.ToAndroid());
 					_iconBitmap.SetBounds(Bounds.Left, Bounds.Top, Bounds.Right, Bounds.Bottom);
 					_iconBitmap.Draw(canvas);
 				}
