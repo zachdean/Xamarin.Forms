@@ -16,6 +16,7 @@ using AView = Android.Views.View;
 using LP = Android.Views.ViewGroup.LayoutParams;
 using R = Android.Resource;
 using Toolbar = Android.Support.V7.Widget.Toolbar;
+using ADrawableCompat = Android.Support.V4.Graphics.Drawable.DrawableCompat;
 
 namespace Xamarin.Forms.Platform.Android
 {
@@ -305,88 +306,44 @@ namespace Xamarin.Forms.Platform.Android
 				}
 			}
 
-			Drawable icon = null;
+			DrawerArrowDrawable icon = null;
 
 			var tintColor = Color.White;
 			if (TintColor != Color.Default)
 				tintColor = TintColor;
 
 			if (image != null)
-				icon = await context.GetFormsDrawableAsync(image);
+			{
+				var customIcon = await context.GetFormsDrawableAsync(image);
+
+				if(customIcon != null)
+					icon = new FlyoutIconDrawerDrawable(context, tintColor, customIcon, text);
+			}
 
 			if (!String.IsNullOrWhiteSpace(text) && icon == null)
 				icon = new FlyoutIconDrawerDrawable(context, tintColor, icon, text);
 
-			if (icon == null)
+			if(icon == null)
+			{
+				icon = new DrawerArrowDrawable(context.GetThemedContext());
+				//icon.SetColorFilter(tintColor.ToAndroid(Color.White), PorterDuff.Mode.SrcAtop);
+
+				ADrawableCompat.SetTint(icon, tintColor.ToAndroid());
+				ADrawableCompat.SetTintMode(icon, PorterDuff.Mode.SrcAtop);
+			}
+
+			icon.Progress = (CanNavigateBack) ? 1 : 0;
+
+			if (command != null || CanNavigateBack)
+			{
+				_drawerToggle.DrawerIndicatorEnabled = false;
+				toolbar.NavigationIcon = icon;
+			}
+			else 
 			{
 				toolbar.NavigationIcon = null;
-				_drawerToggle.DrawerArrowDrawable = _defaultDrawerArrowDrawable;
-				if (CanNavigateBack)
-				{
-					_drawerToggle.DrawerIndicatorEnabled = false;
-					using (var backIcon = new DrawerArrowDrawable(context.GetThemedContext()))
-					{
-						backIcon.SetColorFilter(tintColor.ToAndroid(Color.White), PorterDuff.Mode.SrcAtop);
-						backIcon.Progress = 1;
-						toolbar.NavigationIcon = backIcon;
-					}
-				}
-				else if (_flyoutBehavior == FlyoutBehavior.Flyout)
-				{
-					if (command != null)
-					{
-						_drawerToggle.DrawerIndicatorEnabled = false;
-						toolbar.NavigationIcon = _defaultDrawerArrowDrawable;
-					}
-					else
-					{
-						toolbar.NavigationIcon = null;
-						var drawable = _drawerToggle.DrawerArrowDrawable;
-						drawable.SetColorFilter(tintColor.ToAndroid(Color.White), PorterDuff.Mode.SrcAtop);
-						_drawerToggle.DrawerIndicatorEnabled = true;
-					}
-				}
-				else
-				{
-					_drawerToggle.DrawerIndicatorEnabled = false;
-				}
-			}
-			else
-			{
-				if (command != null)
-				{
-					_drawerToggle.DrawerIndicatorEnabled = false;
-					var flyoutIcon = new FlyoutIconDrawerDrawable(context, tintColor, icon, null);
-					flyoutIcon.Progress = 1;
-
-					var iconState = flyoutIcon.GetConstantState();
-					if (iconState != null)
-					{
-						var mutatedIcon = iconState.NewDrawable().Mutate();
-						mutatedIcon.SetColorFilter(tintColor.ToAndroid(Color.White), PorterDuff.Mode.SrcAtop);
-						toolbar.NavigationIcon = mutatedIcon;
-					}
-					else
-					{
-						toolbar.NavigationIcon = flyoutIcon;
-					}
-				}
-				else
-				{
-					_drawerToggle.DrawerIndicatorEnabled = true;
-					toolbar.NavigationIcon = null;
-					var iconState = icon.GetConstantState();
-					if (iconState != null)
-					{
-						var mutatedIcon = iconState.NewDrawable().Mutate();
-						mutatedIcon.SetColorFilter(tintColor.ToAndroid(Color.White), PorterDuff.Mode.SrcAtop);
-						_drawerToggle.DrawerArrowDrawable = new FlyoutIconDrawerDrawable(context, tintColor, mutatedIcon, null);
-					}
-					else
-					{
-						_drawerToggle.DrawerArrowDrawable = new FlyoutIconDrawerDrawable(context, tintColor, icon, null);
-					}
-				}
+				_drawerToggle.DrawerIndicatorEnabled = true;
+				_drawerToggle.DrawerArrowDrawable = icon;
 			}
 
 			_drawerToggle.SyncState();
@@ -627,7 +584,9 @@ namespace Xamarin.Forms.Platform.Android
 				bool pressed = false;
 				if (_iconBitmap != null)
 				{
-					global::Android.Support.V4.Graphics.Drawable.DrawableCompat.SetTint(_iconBitmap, _defaultColor.ToAndroid());
+					ADrawableCompat.SetTint(_iconBitmap, _defaultColor.ToAndroid());
+					ADrawableCompat.SetTintMode(_iconBitmap, PorterDuff.Mode.SrcAtop);
+
 					_iconBitmap.SetBounds(Bounds.Left, Bounds.Top, Bounds.Right, Bounds.Bottom);
 					_iconBitmap.Draw(canvas);
 				}
