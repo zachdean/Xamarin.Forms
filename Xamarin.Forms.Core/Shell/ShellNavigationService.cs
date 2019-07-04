@@ -93,17 +93,43 @@ namespace Xamarin.Forms
 			NavigationParameters = navigationParameters;
 
 			StringBuilder builder = new StringBuilder();
+			StringBuilder builderWithoutImplicit = new StringBuilder();
+			StringBuilder queryString = new StringBuilder();
 
 			for (var i = 0; i < pathParts.Count; i++)
-			{
+			{				
 				var path = pathParts[i];
+
+				if(path.NavigationParameters != null)
+					foreach(var param in path.NavigationParameters)
+					{
+						string prefix = String.Empty;
+						if(i != pathParts.Count - 1)
+						{
+							prefix = path.Path + ".";
+						}
+
+						queryString.Append(prefix + param.Key);
+						queryString.Append("=");
+						queryString.Append(prefix + param.Value);
+						queryString.Append("&");
+					}
+
 				builder.Append(path.Path);
 				builder.Append("/");
+
+				if(!Routing.IsImplicit(path.Path))
+				{
+					builderWithoutImplicit.Append(path.Path);
+					builderWithoutImplicit.Append("/");
+				}
 			}
 
-			FullUriWithImplicit = ShellUriHandler.ConvertToStandardFormat(new Uri(builder.ToString(), UriKind.Relative));
+			FullUriWithImplicit = ShellUriHandler.ConvertToStandardFormat(new Uri(builder.ToString() + "?" + queryString.ToString(), UriKind.Relative));
+			FullUri = ShellUriHandler.ConvertToStandardFormat(new Uri(builderWithoutImplicit.ToString() + "?" + queryString.ToString(), UriKind.Relative));
 		}
 
+		public Uri FullUri { get; }
 		internal Uri FullUriWithImplicit { get; }
 		public Dictionary<string, string> NavigationParameters { get; }
 		public IReadOnlyList<PathPart> PathParts { get; set; }

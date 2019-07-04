@@ -40,7 +40,7 @@ namespace Xamarin.Forms
 
 		static object CreateDefaultRoute(BindableObject bindable)
 		{
-			return bindable.GetType().Name + ++s_routeCount;
+			return String.Concat(ImplicitPrefix, bindable.GetType().Name, ++s_routeCount);
 		}
 
 		internal static string[] GetRouteKeys()
