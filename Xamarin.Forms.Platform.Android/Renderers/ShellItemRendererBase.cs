@@ -108,19 +108,11 @@ namespace Xamarin.Forms.Platform.Android
 		protected virtual Task<bool> HandleFragmentUpdate(ShellNavigationSource navSource, ShellSection shellSection, Page page, bool animated)
 		{
 			TaskCompletionSource<bool> result = new TaskCompletionSource<bool>();
-
-			var stack = ShellSection.Stack;
 			bool isForCurrentTab = shellSection == ShellSection;
 
 			if (!_fragmentMap.ContainsKey(ShellSection))
 			{
 				_fragmentMap[ShellSection] = GetOrCreateFragmentForTab(ShellSection);
-			}
-			if (stack.Count > 1)
-			{
-				var pageItem = stack[stack.Count - 1];
-				if (! _fragmentMap.ContainsKey(pageItem))
-					_fragmentMap[pageItem] = CreateFragmentForPage(pageItem);
 			}
 
 			switch (navSource)
@@ -173,6 +165,7 @@ namespace Xamarin.Forms.Platform.Android
 					throw new InvalidOperationException("Unexpected navigation type");
 			}
 
+			IReadOnlyList<Page> stack = ShellSection.Stack;
 			Element targetElement = null;
 			IShellObservableFragment target = null;
 			if (stack.Count == 1 || navSource == ShellNavigationSource.PopToRoot)
@@ -183,6 +176,8 @@ namespace Xamarin.Forms.Platform.Android
 			else
 			{
 				targetElement = stack[stack.Count - 1];
+				if (!_fragmentMap.ContainsKey(targetElement))
+					_fragmentMap[targetElement] = CreateFragmentForPage(targetElement as Page);
 				target = _fragmentMap[targetElement];
 			}
 
