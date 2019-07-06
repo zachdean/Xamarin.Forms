@@ -400,7 +400,8 @@ namespace Xamarin.Forms
 				ShellContent shellContent = (ShellContent)pathParts[2].ShellPart;
 				bool shellSectionChanged = false;
 
-				ShellApplyParameters.ApplyParameters(new ShellLifecycleArgs(this, null, currentRoute));
+				// TODO SHELL
+				//ShellApplyParameters.ApplyParameters(new ShellLifecycleArgs(this, null, currentRoute));
 				ShellApplyParameters.ApplyParameters(new ShellLifecycleArgs(shellItem, pathParts[0], currentRoute));
 				ShellApplyParameters.ApplyParameters(new ShellLifecycleArgs(shellSection, pathParts[1], currentRoute));
 				ShellApplyParameters.ApplyParameters(new ShellLifecycleArgs(shellContent, pathParts[2], currentRoute));
@@ -1152,13 +1153,15 @@ namespace Xamarin.Forms
 		internal IShellApplyParameters ShellApplyParameters;
 		internal IShellNavigationRequest ShellNavigationRequest;
 		internal IShellContentCreator ShellContentCreator;
+		internal IShellPartAppearing ShellPartAppearing;
 
 		public void SetNavigationService(object service)
 		{
 			ShellUriParser = service as IShellUriParser ?? ShellUriParser ?? navigationService;
 			ShellApplyParameters = service as IShellApplyParameters ?? ShellApplyParameters ?? navigationService;
-			ShellNavigationRequest = service as IShellNavigationRequest ?? ShellNavigationRequest ?? navigationService; 
+			ShellNavigationRequest = service as IShellNavigationRequest ?? ShellNavigationRequest ?? navigationService;
 			ShellContentCreator = service as IShellContentCreator ?? ShellContentCreator ?? navigationService;
+			ShellPartAppearing = service as IShellPartAppearing ?? ShellPartAppearing ?? navigationService;
 		}
 
 		#endregion

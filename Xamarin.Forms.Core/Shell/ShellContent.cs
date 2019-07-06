@@ -3,10 +3,8 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
-
-#if NETSTANDARD1_0
 using System.Linq;
-#endif
+
 
 using System.Reflection;
 using Xamarin.Forms.Internals;
@@ -47,22 +45,35 @@ namespace Xamarin.Forms
 
 		Page IShellContentController.GetOrCreateContent()
 		{
-			ContentCache = ContentCache ?? ShellContentCreator.Create(new ShellContentCreateArgs(this));
+			if (ContentCache != null)
+			{
+				if (GetValue(QueryAttributesProperty) is IDictionary<string, string> delayedQueryParams)
+					ContentCache.SetValue(QueryAttributesProperty, delayedQueryParams);
+			}
+			else
+			{
+				var newPage = ContentCache ?? ShellContentCreator.Create(new ShellContentCreateArgs(this));
 
-			if (ContentCache != null && ContentCache.Parent != this)
-				OnChildAdded(ContentCache);
+				if (newPage == null)
+					throw new InvalidOperationException($"No Content found for {nameof(ShellContent)}, Title:{Title}, Route {Route}");
 
-			if (ContentCache == null)
-				throw new InvalidOperationException($"No Content found for {nameof(ShellContent)}, Title:{Title}, Route {Route}");
+				if (GetValue(QueryAttributesProperty) is IDictionary<string, string> delayedQueryParams)
+					newPage.SetValue(QueryAttributesProperty, delayedQueryParams);
 
-			if (GetValue(QueryAttributesProperty) is IDictionary<string, string> delayedQueryParams)
-				ContentCache.SetValue(QueryAttributesProperty, delayedQueryParams);
+				newPage.Appearing += OnPageAppearing;
+
+				if (newPage != null && newPage.Parent != this)
+					OnChildAdded(newPage);
+
+				ContentCache = newPage;
+			}
 
 			return ContentCache;
 		}
 
 		#region Navigation Interfaces
 		IShellContentCreator ShellContentCreator => (Parent.Parent.Parent as Shell).ShellContentCreator;
+		IShellPartAppearing ShellPartAppearing => (Parent.Parent.Parent as Shell).ShellPartAppearing;
 		#endregion
 
 		void IShellContentController.RecyclePage(Page page)
@@ -98,11 +109,12 @@ namespace Xamarin.Forms
 		protected override void OnChildAdded(Element child)
 		{
 			base.OnChildAdded(child);
-			if (child is Page page && IsVisibleContent)
-			{
-				SendAppearing();
-				page.SendAppearing();
-			}
+		}
+
+		async void OnPageAppearing(object sender, EventArgs e)
+		{			
+			var routePath = (this.Parent.Parent.Parent as Shell).RouteState;
+			await ShellPartAppearing.AppearingAsync(new ShellLifecycleArgs(this, routePath.CurrentRoute.PathParts.FirstOrDefault(x => x.ShellPart == this), routePath.CurrentRoute));
 		}
 
 		Page ContentCache

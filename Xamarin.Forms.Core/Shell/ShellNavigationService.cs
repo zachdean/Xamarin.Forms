@@ -12,11 +12,18 @@ namespace Xamarin.Forms
 		IShellUriParser,
 		IShellContentCreator,
 		IShellApplyParameters,
-		IShellNavigationRequest
+		IShellNavigationRequest,
+		IShellPartAppearing
 	{
 		public ShellNavigationService()
 		{
 		}
+
+		public virtual Task AppearingAsync(ShellLifecycleArgs args)
+		{
+			return Task.Delay(0);
+		}
+
 		public virtual void ApplyParameters(ShellLifecycleArgs args)
 		{
 			Shell.ApplyQueryAttributes(args.Element, args.PathPart?.NavigationParameters ?? args.RoutePath?.NavigationParameters, args.IsLast);
@@ -87,24 +94,29 @@ namespace Xamarin.Forms
 	// Do better at immutable stuff
 	public class RoutePath
 	{
+		private IReadOnlyList<PathPart> _pathParts;
+
 		public RoutePath(IList<PathPart> pathParts, Dictionary<string, string> navigationParameters)
 		{
-			PathParts = new ReadOnlyCollection<PathPart>(pathParts);
 			NavigationParameters = navigationParameters;
+			PathParts = new ReadOnlyCollection<PathPart>(pathParts);
+		}
 
+		void UpdateUris()
+		{
 			StringBuilder builder = new StringBuilder();
 			StringBuilder builderWithoutImplicit = new StringBuilder();
 			StringBuilder queryString = new StringBuilder();
 
-			for (var i = 0; i < pathParts.Count; i++)
-			{				
-				var path = pathParts[i];
+			for (var i = 0; i < PathParts.Count; i++)
+			{
+				var path = PathParts[i];
 
-				if(path.NavigationParameters != null)
-					foreach(var param in path.NavigationParameters)
+				if (path.NavigationParameters != null)
+					foreach (var param in path.NavigationParameters)
 					{
 						string prefix = String.Empty;
-						if(i != pathParts.Count - 1)
+						if (i != PathParts.Count - 1)
 						{
 							prefix = path.Path + ".";
 						}
@@ -118,7 +130,7 @@ namespace Xamarin.Forms
 				builder.Append(path.Path);
 				builder.Append("/");
 
-				if(!Routing.IsImplicit(path.Path))
+				if (!Routing.IsImplicit(path.Path))
 				{
 					builderWithoutImplicit.Append(path.Path);
 					builderWithoutImplicit.Append("/");
@@ -129,10 +141,18 @@ namespace Xamarin.Forms
 			FullUri = ShellUriHandler.ConvertToStandardFormat(new Uri(builderWithoutImplicit.ToString() + "?" + queryString.ToString(), UriKind.Relative));
 		}
 
-		public Uri FullUri { get; }
-		internal Uri FullUriWithImplicit { get; }
+		public Uri FullUri { get; private set; }
+		internal Uri FullUriWithImplicit { get; private set; }
 		public Dictionary<string, string> NavigationParameters { get; }
-		public IReadOnlyList<PathPart> PathParts { get; set; }
+		public IReadOnlyList<PathPart> PathParts
+		{
+			get => _pathParts;
+			set
+			{
+				_pathParts = value;
+				UpdateUris();
+			}
+		}
 	}
 
 	public class ShellRouteState
@@ -270,6 +290,11 @@ namespace Xamarin.Forms
 		void ApplyParameters(ShellLifecycleArgs args);
 	}
 
+	public interface IShellPartAppearing
+	{
+		Task AppearingAsync(ShellLifecycleArgs args);
+	}
+
 	public class ShellNavigationArgs : EventArgs
 	{
 		public ShellNavigationArgs(Shell shell, ShellRouteState futureState)
@@ -291,16 +316,17 @@ namespace Xamarin.Forms
 
 		public ShellContent Content { get; }
 	}
+
 	public class ShellLifecycleArgs : EventArgs
 	{
-		public ShellLifecycleArgs(Element element, PathPart pathPart, RoutePath routePath)
+		public ShellLifecycleArgs(BaseShellItem element, PathPart pathPart, RoutePath routePath)
 		{
 			Element = element;
 			PathPart = pathPart;
 			RoutePath = routePath;
 		}
 
-		public Element Element { get; }
+		public BaseShellItem Element { get; }
 		public PathPart PathPart { get; }
 		public RoutePath RoutePath { get; }
 

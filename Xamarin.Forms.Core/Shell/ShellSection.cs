@@ -270,7 +270,7 @@ namespace Xamarin.Forms
 				{
 					if (Routing.GetRoute(navPage) == route.Path)
 					{
-						ShellApplyParameters.ApplyParameters(new ShellLifecycleArgs(navPage, route, currentRoute));
+						ShellApplyParameters.ApplyParameters(new ShellLifecycleArgs(route.ShellPart, route, currentRoute));
 						continue;
 					}
 					else
@@ -295,10 +295,9 @@ namespace Xamarin.Forms
 			//	_navStack[0] = content;
 				if (content == null)
 					break;
-				;
-				ShellApplyParameters.ApplyParameters(new ShellLifecycleArgs(content, route, currentRoute));
+
+				ShellApplyParameters.ApplyParameters(new ShellLifecycleArgs(route.ShellPart, route, currentRoute));
 				await OnPushAsync(content, i == pathParts.Count - 1 && animate);
-				ShellApplyParameters.ApplyParameters(new ShellLifecycleArgs(content, route, currentRoute));
 			}
 					
 			SendAppearanceChanged();
@@ -566,14 +565,16 @@ namespace Xamarin.Forms
 			}
 		}
 
+		// TODO SHELL
 		void PresentedPageAppearing()
 		{
 			if (IsVisibleSection && this is IShellSectionController sectionController)
 			{
-				if(_navStack.Count == 1)
+				if (_navStack.Count == 1)
 					CurrentItem?.SendAppearing();
 
-				sectionController.PresentedPage?.SendAppearing();
+				var presentedPage = sectionController?.PresentedPage?.Parent as BaseShellItem;
+				presentedPage?.SendAppearing();
 			}
 		}
 
@@ -670,6 +671,7 @@ namespace Xamarin.Forms
 		#region Navigation Interfaces
 		IShellApplyParameters ShellApplyParameters => (Parent.Parent as Shell).ShellApplyParameters;
 		IShellContentCreator ShellContentCreator => (Parent.Parent as Shell).ShellContentCreator;
+		IShellPartAppearing ShellPartAppearing => (Parent.Parent as Shell).ShellPartAppearing;
 		#endregion
 
 		class NavigationImpl : NavigationProxy
