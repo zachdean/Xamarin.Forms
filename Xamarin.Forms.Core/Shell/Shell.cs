@@ -489,9 +489,6 @@ namespace Xamarin.Forms
 		{
 			var query = ParseQueryString(queryString);
 
-			if (query.Count == 0)
-				return new Dictionary<string, string>();
-
 			string prefix = "";
 			if (!isLastItem)
 			{
@@ -874,12 +871,15 @@ namespace Xamarin.Forms
 				_accumulatedEvent = args;
 			else
 			{
-				/* Removing this check for now as it doesn't properly cover all implicit scenarios
-				 * if (args.Current.Location.AbsolutePath.TrimEnd('/') != _lastNavigating.Location.AbsolutePath.TrimEnd('/'))
-					throw new InvalidOperationException($"Navigation: Current location doesn't match navigation uri {args.Current.Location.AbsolutePath} != {_lastNavigating.Location.AbsolutePath}");
-					*/
-				Navigated?.Invoke(this, args);
-				//System.Diagnostics.Debug.WriteLine("Navigated: " + args.Current.Location);
+				var content = CurrentItem?.CurrentItem?.CurrentItem;
+				if (content != null)
+				{
+					content.OnAppearing(() => Navigated?.Invoke(this, args));
+				}
+				else
+				{
+					Navigated?.Invoke(this, args);
+				}
 			}
 		}
 
@@ -893,6 +893,12 @@ namespace Xamarin.Forms
 
 		static void OnCurrentItemChanged(BindableObject bindable, object oldValue, object newValue)
 		{
+			if (oldValue is ShellItem oldShellItem)
+				oldShellItem.SendDisappearing();
+
+			if (newValue is ShellItem newShellItem)
+				newShellItem.SendAppearing();
+
 			var shell = (Shell)bindable;
 			UpdateChecked(shell);
 
@@ -1176,6 +1182,25 @@ namespace Xamarin.Forms
 			protected override Task OnPushAsync(Page page, bool animated) => SectionProxy.PushAsync(page, animated);
 
 			protected override void OnRemovePage(Page page) => SectionProxy.RemovePage(page);
+
+			protected override Task<Page> OnPopModal(bool animated)
+			{
+				if (ModalStack.Count > 0)
+					ModalStack[ModalStack.Count - 1].SendDisappearing();
+
+				if (ModalStack.Count == 1)
+					_shell.CurrentItem.SendAppearing();
+
+				return base.OnPopModal(animated);
+			}
+			protected override Task OnPushModal(Page modal, bool animated)
+			{
+				if (ModalStack.Count == 0)
+					_shell.CurrentItem.SendDisappearing();
+
+				modal.SendAppearing();
+				return base.OnPushModal(modal, animated);
+			}
 		}
 	}
 }

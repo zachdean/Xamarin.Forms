@@ -228,7 +228,15 @@ namespace Xamarin.Forms
 
 		static void OnCurrentItemChanged(BindableObject bindable, object oldValue, object newValue)
 		{
+			if (oldValue is BaseShellItem oldShellItem)
+				oldShellItem.SendDisappearing();
+
 			var shellItem = (ShellItem)bindable;
+			if (shellItem.Parent is Shell parentShell && parentShell.CurrentItem == shellItem)
+			{
+				if (newValue is BaseShellItem newShellItem)
+					newShellItem.SendAppearing();
+			}
 
 			if (shellItem.Parent is IShellController shell)
 			{
@@ -254,6 +262,24 @@ namespace Xamarin.Forms
 			}
 
 			SendStructureChanged();
-		}	
+		}
+
+		internal override void SendAppearing()
+		{
+			base.SendAppearing();
+			if(CurrentItem != null && Parent is Shell shell && shell.CurrentItem == this)
+			{
+				CurrentItem.SendAppearing();
+			}
+		}
+
+		internal override void SendDisappearing()
+		{
+			base.SendDisappearing();
+			if (CurrentItem != null)
+			{
+				CurrentItem.SendDisappearing();
+			}
+		}
 	}
 }
