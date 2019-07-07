@@ -94,12 +94,12 @@ namespace Xamarin.Forms
 			 * <tab></tab>
 			 * </shell>
 			 * */
-			if (Routing.IsImplicit(item) &&
+			if (Routing.IsImplicit(item, true) &&
 				item is TabBar
 				)
 			{
 				int i = Count - 1;
-				if (i >= 0 && this[i] is TabBar && Routing.IsImplicit(this[i]))
+				if (i >= 0 && this[i] is TabBar && Routing.IsImplicit(this[i], true))
 				{
 					this[i].Items.Add(item.Items[0]);
 					return;

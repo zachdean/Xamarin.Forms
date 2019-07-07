@@ -9,22 +9,32 @@ namespace Xamarin.Forms
 		static int s_routeCount = 0;
 		static Dictionary<string, RouteFactory> s_routes = new Dictionary<string, RouteFactory>();
 
+		// This is a route that's implicitly created from casting something like a ShellContent to a ShellItem
 		internal const string ImplicitPrefix = "IMPL_";
+
+		// These are routes where the user has specified the item in xaml but haven't supplied a route
+		internal const string ImplicitDefaultPrefix = "IMPL_DEFAULT_";
+
 		const string _pathSeparator = "/";
 
 		internal static string GenerateImplicitRoute(string source)
 		{
+			source = source.Replace(ImplicitDefaultPrefix, ImplicitPrefix);
 			if (IsImplicit(source))
 				return source;
 			return String.Concat(ImplicitPrefix, source);
 		}
-		internal static bool IsImplicit(string source)
+
+		internal static bool IsImplicit(string source, bool excludeDefault = false)
 		{
+			if (excludeDefault && source.StartsWith(ImplicitDefaultPrefix, StringComparison.Ordinal))
+				return false;
+
 			return source.StartsWith(ImplicitPrefix, StringComparison.Ordinal);
 		}
-		internal static bool IsImplicit(BindableObject source)
+		internal static bool IsImplicit(BindableObject source, bool excludeDefault = false)
 		{
-			return IsImplicit(GetRoute(source));
+			return IsImplicit(GetRoute(source), excludeDefault);
 		}
 		
 		internal static void Clear()
@@ -38,7 +48,7 @@ namespace Xamarin.Forms
 
 		static object CreateDefaultRoute(BindableObject bindable)
 		{
-			return String.Concat(ImplicitPrefix, bindable.GetType().Name, ++s_routeCount);
+			return String.Concat(ImplicitDefaultPrefix, bindable.GetType().Name, ++s_routeCount);
 		}
 
 		internal static string[] GetRouteKeys()

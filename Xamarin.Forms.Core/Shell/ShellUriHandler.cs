@@ -75,9 +75,10 @@ namespace Xamarin.Forms
 			Uri request = ConvertToStandardFormat(uri);
 			List<RouteRequestBuilder> possibleRouteMatches = GenerateRoutePaths(shell, request, uri, enableRelativeShellRoutes);
 
-			if (possibleRouteMatches.Count == 0)
-				throw new ArgumentException($"unable to figure out route for: {uri}", nameof(uri));
-			else if (possibleRouteMatches.Count > 1)
+			while (possibleRouteMatches.Count == 0)
+				possibleRouteMatches = GenerateRoutePaths(shell, request, uri, enableRelativeShellRoutes);
+
+			if (possibleRouteMatches.Count > 1)
 			{
 				string[] matches = new string[possibleRouteMatches.Count];
 				int i = 0;

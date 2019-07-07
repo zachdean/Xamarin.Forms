@@ -327,7 +327,7 @@ namespace Xamarin.Forms.Core.UnitTests
 				return pagetoTest;
 			});
 
-			
+
 			var page = (two.CurrentItem.CurrentItem as IShellContentController).GetOrCreateContent();
 			Assert.AreEqual("1234", (page as ShellTestPage).SomeQueryParameter);
 
@@ -494,7 +494,7 @@ namespace Xamarin.Forms.Core.UnitTests
 		public async Task FlyoutNavigateToImplicitContentPage()
 		{
 			var shell = new Shell();
-			var shellITem = new ShellItem() { FlyoutDisplayOptions = FlyoutDisplayOptions.AsMultipleItems,  };
+			var shellITem = new ShellItem() { FlyoutDisplayOptions = FlyoutDisplayOptions.AsMultipleItems, };
 			var shellSection = new ShellSection() { Title = "can navigate to" };
 			shellSection.Items.Add(new ContentPage());
 
@@ -609,7 +609,7 @@ namespace Xamarin.Forms.Core.UnitTests
 			ContentPage page = new ContentPage();
 			shell.Items.Add(CreateShellItem(page));
 
-			
+
 			// setup title view
 			StackLayout flyoutView = new StackLayout() { BackgroundColor = Color.White };
 			Button button = new Button();
@@ -668,7 +668,7 @@ namespace Xamarin.Forms.Core.UnitTests
 			Assert.AreEqual(bindingContext, menuItem2.BindingContext);
 		}
 
-    [Test]
+		[Test]
 		public async Task TitleViewLogicalChild()
 		{
 			Shell shell = new Shell();
@@ -709,9 +709,18 @@ namespace Xamarin.Forms.Core.UnitTests
 			shell.FlyoutHeader = null;
 
 			Assert.False(shell.ChildrenNotDrawnByThisElement.Contains(layout));
-    }
-    
-    
+		}
+
+
+		[Test]
+		public async Task ImplicitDefaultPrefixForInstantiatedRoute()
+		{
+			Tab tab = new Tab();
+
+			Assert.IsTrue(Routing.IsImplicit(tab));
+			Assert.IsFalse(Routing.IsImplicit(tab, true));
+		}
+
 		[Test]
 		public async Task TabBarAutoCreation()
 		{
