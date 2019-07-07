@@ -7,29 +7,29 @@
             <ShellContent Title="Visible">
                 <ContentPage>
                     <StackLayout>
-                        <Button Text="I am a Button"  Clicked="Button_Clicked" />
+                        <Button Text="I am a Button"   />
                     </StackLayout>
                 </ContentPage>
             </ShellContent>
-            <ShellContent Title="NotVisible" IsVisible="False">
+            <ShellContent Title="NotVisible" >
                 <ContentPage>
                     <StackLayout>
-                        <Button Text="I am a Button"  Clicked="Button_Clicked" />
+                        <Button Text="I am a Button"   />
                     </StackLayout>
                 </ContentPage>
             </ShellContent>
         </Tab>
-        <Tab Title="NotVisible" IsVisible="False">
+        <Tab Title="NotVisible" >
             <ShellContent>
                 <ContentPage>
                     <StackLayout>
-                        <Button Text="I am a Button"  Clicked="Button_Clicked" />
+                        <Button Text="I am a Button"   />
                     </StackLayout>
                 </ContentPage>
             </ShellContent>
         </Tab>
     </FlyoutItem>
-    <FlyoutItem Title="SandboxDisabled" IsEnabled="False">
+    <FlyoutItem Title="SandboxDisabled" >
         <Tab>
             <ShellContent>
                 <ContentPage>
@@ -40,7 +40,7 @@
             </ShellContent>
         </Tab>
     </FlyoutItem>
-    <FlyoutItem Title="SandboxInVisible" IsVisible="False">
+    <FlyoutItem Title="SandboxInVisible" >
         <Tab>
             <ShellContent>
                 <ContentPage>
