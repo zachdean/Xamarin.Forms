@@ -13,7 +13,7 @@ namespace Xamarin.Forms.Core.UnitTests
 		[Test]
 		public void DefaultState()
 		{
-			var shell = new Shell();
+			Shell shell = CreateShell();
 
 			Assert.IsEmpty(shell.Items);
 		}
@@ -21,7 +21,7 @@ namespace Xamarin.Forms.Core.UnitTests
 		[Test]
 		public void CurrentItemAutoSets()
 		{
-			var shell = new Shell();
+			Shell shell = CreateShell();
 			var shellItem = new ShellItem();
 			var shellSection = new ShellSection();
 			var shellContent = new ShellContent { Content = new ContentPage() };
@@ -35,7 +35,7 @@ namespace Xamarin.Forms.Core.UnitTests
 		[Test]
 		public void ShellChildrenBindingContext()
 		{
-			var shell = new Shell();
+			Shell shell = CreateShell();
 
 			var shellItem = CreateShellItem();
 			shell.Items.Add(shellItem);
@@ -53,7 +53,7 @@ namespace Xamarin.Forms.Core.UnitTests
 		[Test]
 		public void ShellPropagateBindingContextWhenAddingNewShellItem()
 		{
-			var shell = new Shell();
+			Shell shell = CreateShell();
 
 			shell.Items.Add(CreateShellItem());
 
@@ -71,7 +71,7 @@ namespace Xamarin.Forms.Core.UnitTests
 		[Test]
 		public void ShellPropagateBindingContextWhenAddingNewShellSection()
 		{
-			var shell = new Shell();
+			Shell shell = CreateShell();
 
 			shell.Items.Add(CreateShellItem());
 
@@ -88,7 +88,7 @@ namespace Xamarin.Forms.Core.UnitTests
 		[Test]
 		public void ShellPropagateBindingContextWhenAddingNewShellContent()
 		{
-			var shell = new Shell();
+			Shell shell = CreateShell();
 
 			shell.Items.Add(CreateShellItem());
 
@@ -104,7 +104,7 @@ namespace Xamarin.Forms.Core.UnitTests
 		[Test]
 		public void ShellPropagateBindingContextWhenChangingContent()
 		{
-			var shell = new Shell();
+			Shell shell = CreateShell();
 
 			shell.Items.Add(CreateShellItem());
 
@@ -119,7 +119,7 @@ namespace Xamarin.Forms.Core.UnitTests
 		[Test]
 		public async Task ShellPropagateBindingContextWhenPushingContent()
 		{
-			var shell = new Shell();
+			Shell shell = CreateShell();
 			shell.Items.Add(CreateShellItem());
 
 			object viewModel = new object();
@@ -134,7 +134,7 @@ namespace Xamarin.Forms.Core.UnitTests
 		public void NavigationProxyWireUpTest()
 		{
 			var page = new ContentPage();
-			var shell = new Shell();
+			Shell shell = CreateShell();
 			var shellItem = new ShellItem();
 			var shellSection = new ShellSection();
 			var shellContent = new ShellContent { Content = page };
@@ -153,7 +153,7 @@ namespace Xamarin.Forms.Core.UnitTests
 		[Test]
 		public void CurrentItemDoesNotChangeOnSecondAdd()
 		{
-			var shell = new Shell();
+			Shell shell = CreateShell();
 			var shellItem = new ShellItem();
 			var shellSection = new ShellSection();
 			var shellContent = new ShellContent { Content = new ContentPage() };
@@ -171,7 +171,7 @@ namespace Xamarin.Forms.Core.UnitTests
 		[Test]
 		public void SimpleGoTo()
 		{
-			var shell = new Shell();
+			Shell shell = CreateShell();
 
 			var one = new ShellItem { Route = "one" };
 			var two = new ShellItem { Route = "two" };
@@ -304,7 +304,7 @@ namespace Xamarin.Forms.Core.UnitTests
 		[Test]
 		public async Task NavigationWithQueryStringWhenPageMatchesBindingContext()
 		{
-			var shell = new Shell();
+			Shell shell = CreateShell();
 
 			var one = new ShellItem { Route = "one" };
 			var two = new ShellItem { Route = "two" };
@@ -337,7 +337,7 @@ namespace Xamarin.Forms.Core.UnitTests
 		[Test]
 		public async Task NavigationWithQueryStringThenWithoutQueryString()
 		{
-			var shell = new Shell();
+			Shell shell = CreateShell();
 
 			var one = new ShellItem { Route = "one" };
 			var two = new ShellItem { Route = "two" };
@@ -372,7 +372,7 @@ namespace Xamarin.Forms.Core.UnitTests
 		[Test]
 		public async Task NavigationBetweenShellContentsPassesQueryString()
 		{
-			var shell = new Shell();
+			Shell shell = CreateShell();
 
 			var item = CreateShellItem(shellSectionRoute: "section2");
 			var content = CreateShellContent(shellContentRoute: "content");
@@ -395,7 +395,7 @@ namespace Xamarin.Forms.Core.UnitTests
 		[Test]
 		public async Task NavigationWithQueryStringAndNoDataTemplate()
 		{
-			var shell = new Shell();
+			Shell shell = CreateShell();
 
 			var one = new ShellItem { Route = "one" };
 			var two = new ShellItem { Route = "two" };
@@ -416,7 +416,7 @@ namespace Xamarin.Forms.Core.UnitTests
 		[Test]
 		public void CancelNavigation()
 		{
-			var shell = new Shell();
+			Shell shell = CreateShell();
 
 			var one = new ShellItem { Route = "one" };
 			var two = new ShellItem { Route = "two" };
@@ -464,7 +464,7 @@ namespace Xamarin.Forms.Core.UnitTests
 		[Test]
 		public void FlyoutHeaderProjection()
 		{
-			var shell = new Shell();
+			Shell shell = CreateShell();
 
 			var label = new Label();
 
@@ -493,7 +493,7 @@ namespace Xamarin.Forms.Core.UnitTests
 		[Test]
 		public async Task FlyoutNavigateToImplicitContentPage()
 		{
-			var shell = new Shell();
+			Shell shell = CreateShell();
 			var shellITem = new ShellItem() { FlyoutDisplayOptions = FlyoutDisplayOptions.AsMultipleItems, };
 			var shellSection = new ShellSection() { Title = "can navigate to" };
 			shellSection.Items.Add(new ContentPage());
@@ -525,7 +525,7 @@ namespace Xamarin.Forms.Core.UnitTests
 		[Test]
 		public async Task UriNavigationTests()
 		{
-			var shell = new Shell();
+			Shell shell = CreateShell();
 			var item1 = CreateShellItem(asImplicit: true, shellContentRoute: "rootlevelcontent1");
 			var item2 = CreateShellItem(asImplicit: true, shellContentRoute: "rootlevelcontent2");
 
@@ -542,7 +542,7 @@ namespace Xamarin.Forms.Core.UnitTests
 		[Test]
 		public async Task TitleViewBindingContext()
 		{
-			Shell shell = new Shell();
+			Shell shell = CreateShell();
 			ContentPage page = new ContentPage();
 			shell.Items.Add(CreateShellItem(page));
 			page.BindingContext = new { Text = "Binding" };
@@ -562,7 +562,7 @@ namespace Xamarin.Forms.Core.UnitTests
 		[Test]
 		public async Task VisualPropagationPageLevel()
 		{
-			Shell shell = new Shell();
+			Shell shell = CreateShell();
 			ContentPage page = new ContentPage();
 			shell.Items.Add(CreateShellItem(page));
 
@@ -584,7 +584,7 @@ namespace Xamarin.Forms.Core.UnitTests
 		[Test]
 		public async Task VisualPropagationShellLevel()
 		{
-			Shell shell = new Shell();
+			Shell shell = CreateShell();
 			ContentPage page = new ContentPage();
 			shell.Items.Add(CreateShellItem(page));
 
@@ -605,7 +605,7 @@ namespace Xamarin.Forms.Core.UnitTests
 		[Test]
 		public async Task FlyoutViewVisualPropagation()
 		{
-			Shell shell = new Shell();
+			Shell shell = CreateShell();
 			ContentPage page = new ContentPage();
 			shell.Items.Add(CreateShellItem(page));
 
@@ -625,7 +625,7 @@ namespace Xamarin.Forms.Core.UnitTests
 		[Test]
 		public async Task FlyoutViewBindingContext()
 		{
-			Shell shell = new Shell();
+			Shell shell = CreateShell();
 			ContentPage page = new ContentPage();
 			shell.Items.Add(CreateShellItem(page));
 			shell.BindingContext = new { Text = "Binding" };
@@ -647,7 +647,7 @@ namespace Xamarin.Forms.Core.UnitTests
 		[Test]
 		public void MenuItemBindingContext()
 		{
-			Shell shell = new Shell();
+			Shell shell = CreateShell();
 			ContentPage page = new ContentPage();
 			shell.Items.Add(CreateShellItem(page));
 			shell.BindingContext = new { Text = "Binding" };
@@ -671,7 +671,7 @@ namespace Xamarin.Forms.Core.UnitTests
 		[Test]
 		public async Task TitleViewLogicalChild()
 		{
-			Shell shell = new Shell();
+			Shell shell = CreateShell();
 			ContentPage page = new ContentPage();
 			shell.Items.Add(CreateShellItem(page));
 			page.BindingContext = new { Text = "Binding" };
@@ -691,7 +691,7 @@ namespace Xamarin.Forms.Core.UnitTests
 		[Test]
 		public async Task FlyoutHeaderLogicalChild()
 		{
-			Shell shell = new Shell();
+			Shell shell = CreateShell();
 			ContentPage page = new ContentPage();
 			shell.Items.Add(CreateShellItem(page));
 
@@ -724,7 +724,7 @@ namespace Xamarin.Forms.Core.UnitTests
 		[Test]
 		public async Task TabBarAutoCreation()
 		{
-			Shell shell = new Shell();
+			Shell shell = CreateShell();
 			shell.Items.Add(ShellItem.CreateFromShellSection(new Tab()));
 			shell.Items.Add(ShellItem.CreateFromShellSection(new Tab()));
 			shell.Items.Add(ShellItem.CreateFromShellSection(new Tab()));
@@ -766,7 +766,7 @@ namespace Xamarin.Forms.Core.UnitTests
 		public async Task NavigatedFiresAfterContentIsCreatedWhenUsingTemplate()
 		{
 
-			var shell = new Shell();
+			Shell shell = CreateShell();
 			var item1 = CreateShellItem(asImplicit: true, shellContentRoute: "rootlevelcontent1");
 
 			shell.Items.Add(item1);

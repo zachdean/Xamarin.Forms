@@ -9,6 +9,14 @@ namespace Xamarin.Forms.Core.UnitTests
 	[TestFixture]
 	public class ShellTestBase : BaseTestFixture
 	{
+
+		protected Shell CreateShell()
+		{
+			Shell returnValue = new Shell();
+			(returnValue as IShellController).Initialize();
+			return returnValue;
+		}
+
 		[SetUp]
 		public override void Setup()
 		{

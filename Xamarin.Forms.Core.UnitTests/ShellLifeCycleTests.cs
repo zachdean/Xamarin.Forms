@@ -13,10 +13,11 @@ namespace Xamarin.Forms.Core.UnitTests
 		const string SectionRoute = "section";
 		const string ItemRoute = "item";
 
+
 		[Test]
 		public void AppearingOnCreate()
 		{
-			Shell shell = new Shell();
+			Shell shell = CreateShell();
 
 			FlyoutItem flyoutItem = new FlyoutItem();
 			Tab tab = new Tab();
@@ -43,7 +44,7 @@ namespace Xamarin.Forms.Core.UnitTests
 		[Test]
 		public void AppearingOnCreateFromTemplate()
 		{
-			Shell shell = new Shell();
+			Shell shell = CreateShell();
 
 			FlyoutItem flyoutItem = new FlyoutItem();
 			Tab tab = new Tab();
@@ -83,7 +84,7 @@ namespace Xamarin.Forms.Core.UnitTests
 		[Test]
 		public async Task NavigatedFiresAfterContentIsCreatedWhenUsingTemplate()
 		{
-			Shell shell = new Shell();
+			Shell shell = CreateShell();
 
 			FlyoutItem flyoutItem = new FlyoutItem();
 			Tab tab = new Tab();
@@ -128,7 +129,7 @@ namespace Xamarin.Forms.Core.UnitTests
 		[Test]
 		public void AppearingOnShellContentChanged()
 		{
-			Shell shell = new Shell();
+			Shell shell = CreateShell();
 			var item = CreateShellItem(shellContentRoute: ContentRoute, shellSectionRoute: SectionRoute, shellItemRoute: ItemRoute);
 			var section = item.SearchForRoute<ShellSection>(SectionRoute);
 
@@ -155,7 +156,7 @@ namespace Xamarin.Forms.Core.UnitTests
 		[Test]
 		public void AppearingOnShellSectionChanged()
 		{
-			Shell shell = new Shell();
+			Shell shell = CreateShell();
 			var item = CreateShellItem(shellContentRoute: ContentRoute, shellSectionRoute: SectionRoute, shellItemRoute: ItemRoute);
 			var section = item.SearchForRoute<ShellSection>(SectionRoute);
 			var newSection = CreateShellSection();
@@ -183,7 +184,7 @@ namespace Xamarin.Forms.Core.UnitTests
 		[Test]
 		public void AppearingOnShellItemChanged()
 		{
-			Shell shell = new Shell();
+			Shell shell = CreateShell();
 			var item = CreateShellItem(shellContentRoute: ContentRoute, shellSectionRoute: SectionRoute, shellItemRoute: ItemRoute);
 			var item2 = CreateShellItem();
 			shell.Items.Add(item2);
@@ -211,7 +212,7 @@ namespace Xamarin.Forms.Core.UnitTests
 		[Test]
 		public async Task ShellPartWithModalPush()
 		{
-			Shell shell = new Shell();
+			Shell shell = CreateShell();
 			var item = CreateShellItem(shellContentRoute: ContentRoute, shellSectionRoute: SectionRoute, shellItemRoute: ItemRoute);
 			ShellLifeCycleState lifeCycleState = new ShellLifeCycleState(item);
 			shell.Items.Add(item);
@@ -229,7 +230,7 @@ namespace Xamarin.Forms.Core.UnitTests
 		[Test]
 		public async Task ShellPartWithPagePush()
 		{
-			Shell shell = new Shell();
+			Shell shell = CreateShell();
 			var item = CreateShellItem(shellContentRoute: ContentRoute, shellSectionRoute: SectionRoute, shellItemRoute: ItemRoute);
 			ShellLifeCycleState lifeCycleState = new ShellLifeCycleState(item);
 			shell.Items.Add(item);
@@ -261,7 +262,7 @@ namespace Xamarin.Forms.Core.UnitTests
 		[Test]
 		public async Task ShellPartWithPopToRoot()
 		{
-			Shell shell = new Shell();
+			Shell shell = CreateShell();
 			var item = CreateShellItem(shellContentRoute: ContentRoute, shellSectionRoute: SectionRoute, shellItemRoute: ItemRoute);
 			ShellLifeCycleState lifeCycleState = new ShellLifeCycleState(item);
 			shell.Items.Add(item);
@@ -285,7 +286,7 @@ namespace Xamarin.Forms.Core.UnitTests
 		[Test]
 		public async Task PagePushModal()
 		{
-			Shell shell = new Shell();
+			Shell shell = CreateShell();
 			var item = CreateShellItem(shellContentRoute: ContentRoute, shellSectionRoute: SectionRoute, shellItemRoute: ItemRoute);
 			ShellLifeCycleState lifeCycleState = new ShellLifeCycleState(item);
 			shell.Items.Add(item);
@@ -309,7 +310,7 @@ namespace Xamarin.Forms.Core.UnitTests
 		[Test]
 		public async Task PagePush()
 		{
-			Shell shell = new Shell();
+			Shell shell = CreateShell();
 			var item = CreateShellItem(shellContentRoute: ContentRoute, shellSectionRoute: SectionRoute, shellItemRoute: ItemRoute);
 			shell.Items.Add(item);
 
@@ -330,7 +331,7 @@ namespace Xamarin.Forms.Core.UnitTests
 		public async Task OnNavigatedOnlyFiresOnce()
 		{
 			int navigated = 0;
-			Shell shell = new Shell();
+			Shell shell = CreateShell();
 			shell.Navigated += (_, __) =>
 			{
 				navigated++;

@@ -377,10 +377,36 @@ namespace Xamarin.Forms
 		{
 			((INotifyCollectionChanged)Items).CollectionChanged += (s, e) => SendStructureChanged();
 
+			SetCurrentItem();
+
 			if (CurrentItem == null)
 			{
-				var shellItem = (this as IShellController).GetItems()[0];
-				((IShellController)this).OnFlyoutItemSelected(shellItem);
+				((IShellController)this).ItemsCollectionChanged += (s, e) =>
+				{
+					SetCurrentItem();
+				};
+			}
+
+			void SetCurrentItem()
+			{
+				if (CurrentItem != null)
+					return;
+
+
+				var shellItems = (this as IShellController).GetItems();
+				ShellItem shellItem = null;
+
+				foreach (var item in shellItems)
+				{
+					if (item is ShellItem)
+					{
+						shellItem = item;
+						break;
+					}
+				}
+
+				if(shellItem != null)
+					((IShellController)this).OnFlyoutItemSelected(shellItem);
 			}
 		}
 

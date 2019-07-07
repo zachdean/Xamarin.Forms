@@ -20,7 +20,7 @@ namespace Xamarin.Forms.Core.UnitTests
 		public async Task RouteWithGlobalPageRoute()
 		{
 
-			var shell = new Shell();
+			Shell shell = CreateShell();
 			var item1 = CreateShellItem(asImplicit: true, shellItemRoute: "animals", shellSectionRoute: "domestic", shellContentRoute: "dogs");
 			var item2 = CreateShellItem(asImplicit: true, shellItemRoute: "animals", shellSectionRoute: "domestic", shellContentRoute: "cats");
 
@@ -37,7 +37,7 @@ namespace Xamarin.Forms.Core.UnitTests
 		public async Task AbsoluteRoutingToPage()
 		{
 
-			var shell = new Shell();
+			Shell shell = CreateShell();
 			var item1 = CreateShellItem(asImplicit: true, shellItemRoute: "animals", shellSectionRoute: "domestic", shellContentRoute: "dogs");
 			shell.Items.Add(item1);
 
@@ -51,7 +51,7 @@ namespace Xamarin.Forms.Core.UnitTests
 		public async Task LocationRemovesImplicit()
 		{
 
-			var shell = new Shell();
+			Shell shell = CreateShell();
 			var item1 = CreateShellItem(asImplicit: true, shellContentRoute: "rootlevelcontent1");
 
 			shell.Items.Add(item1);
@@ -64,7 +64,7 @@ namespace Xamarin.Forms.Core.UnitTests
 		public async Task GlobalNavigateTwice()
 		{
 
-			var shell = new Shell();
+			Shell shell = CreateShell();
 			var item1 = CreateShellItem(asImplicit: true, shellContentRoute: "rootlevelcontent1");
 
 			shell.Items.Add(item1);
@@ -83,7 +83,7 @@ namespace Xamarin.Forms.Core.UnitTests
 		[Test]
 		public async Task GlobalRegisterAbsoluteMatching()	
 		{
-			var shell = new Shell();
+			Shell shell = CreateShell();
 			Routing.RegisterRoute("/seg1/seg2/seg3", typeof(object));			
 			var request = ShellUriHandler.GetNavigationRequest(shell, CreateUri("/seg1/seg2/seg3"));
 
@@ -93,7 +93,7 @@ namespace Xamarin.Forms.Core.UnitTests
 		[Test]
 		public async Task ShellContentOnlyWithGlobalEdit()
 		{
-			var shell = new Shell();
+			Shell shell = CreateShell();
 			var item1 = CreateShellItem(asImplicit: true, shellContentRoute: "rootlevelcontent1");
 			var item2 = CreateShellItem(asImplicit: true, shellContentRoute: "rootlevelcontent2");
 
@@ -107,7 +107,7 @@ namespace Xamarin.Forms.Core.UnitTests
 		[Test]
 		public async Task ShellRelativeGlobalRegistration()
 		{
-			var shell = new Shell();
+			Shell shell = CreateShell();
 			var item1 = CreateShellItem(asImplicit: true, shellItemRoute: "item1", shellContentRoute: "rootlevelcontent1", shellSectionRoute: "section1");
 			var item2 = CreateShellItem(asImplicit: true, shellItemRoute: "item2", shellContentRoute: "rootlevelcontent1", shellSectionRoute: "section1");
 
@@ -127,7 +127,7 @@ namespace Xamarin.Forms.Core.UnitTests
 		[Test]
 		public async Task ShellSectionWithRelativeEditUpOneLevelMultiple()
 		{
-			var shell = new Shell();
+			Shell shell = CreateShell();
 			var item1 = CreateShellItem(asImplicit: true, shellContentRoute: "rootlevelcontent1", shellSectionRoute: "section1");
 
 			Routing.RegisterRoute("section1/edit", typeof(ContentPage));
@@ -145,7 +145,7 @@ namespace Xamarin.Forms.Core.UnitTests
 		[Test]
 		public async Task ShellSectionWithGlobalRouteAbsolute()
 		{
-			var shell = new Shell();
+			Shell shell = CreateShell();
 			var item1 = CreateShellItem(asImplicit: true, shellContentRoute: "rootlevelcontent1", shellSectionRoute: "section1");
 
 			Routing.RegisterRoute("edit", typeof(ContentPage));
@@ -161,7 +161,7 @@ namespace Xamarin.Forms.Core.UnitTests
 		[Test]
 		public async Task ShellSectionWithGlobalRouteRelative()
 		{
-			var shell = new Shell();
+			Shell shell = CreateShell();
 			var item1 = CreateShellItem(asImplicit: true, shellContentRoute: "rootlevelcontent1", shellSectionRoute: "section1");
 
 			Routing.RegisterRoute("edit", typeof(ContentPage));
@@ -179,7 +179,7 @@ namespace Xamarin.Forms.Core.UnitTests
 		[Test]
 		public async Task ShellSectionWithRelativeEditUpOneLevel()
 		{
-			var shell = new Shell();
+			Shell shell = CreateShell();
 			var item1 = CreateShellItem(asImplicit: true, shellContentRoute: "rootlevelcontent1", shellSectionRoute: "section1");
 
 			Routing.RegisterRoute("section1/edit", typeof(ContentPage));
@@ -195,7 +195,7 @@ namespace Xamarin.Forms.Core.UnitTests
 		[Test]
 		public async Task ShellSectionWithRelativeEdit()
 		{
-			var shell = new Shell();
+			Shell shell = CreateShell();
 			var item1 = CreateShellItem(asImplicit: true, shellContentRoute: "rootlevelcontent1", shellSectionRoute:"section1");
 			var editShellContent = CreateShellContent(shellContentRoute: "edit");
 
@@ -215,7 +215,7 @@ namespace Xamarin.Forms.Core.UnitTests
 		[Test]
 		public async Task ShellContentOnly()
 		{
-			var shell = new Shell();
+			Shell shell = CreateShell();
 			var item1 = CreateShellItem(asImplicit: true, shellContentRoute: "rootlevelcontent1");
 			var item2 = CreateShellItem(asImplicit: true, shellContentRoute: "rootlevelcontent2");
 
@@ -237,7 +237,7 @@ namespace Xamarin.Forms.Core.UnitTests
 		[Test]
 		public async Task ShellSectionAndContentOnly()
 		{
-			var shell = new Shell();
+			Shell shell = CreateShell();
 			var item1 = CreateShellItem(asImplicit: true, shellContentRoute: "rootlevelcontent", shellSectionRoute:"section1");
 			var item2 = CreateShellItem(asImplicit: true, shellContentRoute: "rootlevelcontent", shellSectionRoute: "section2");
 
@@ -258,7 +258,7 @@ namespace Xamarin.Forms.Core.UnitTests
 		[Test]
 		public async Task ShellItemAndContentOnly()
 		{
-			var shell = new Shell();
+			Shell shell = CreateShell();
 			var item1 = CreateShellItem(asImplicit: true, shellContentRoute: "rootlevelcontent", shellItemRoute: "item1");
 			var item2 = CreateShellItem(asImplicit: true, shellContentRoute: "rootlevelcontent", shellItemRoute: "item2");
 
@@ -279,7 +279,7 @@ namespace Xamarin.Forms.Core.UnitTests
 		[Test]
 		public async Task PoppingRemovesRouteFromStack()
 		{
-			var shell = new Shell();
+			Shell shell = CreateShell();
 			var item1 = CreateShellItem(asImplicit: true, shellSectionRoute: "domestic", shellContentRoute: "cats", shellItemRoute: "animals");
 
 			shell.Items.Add(item1);
@@ -299,7 +299,7 @@ namespace Xamarin.Forms.Core.UnitTests
 		[Test]
 		public async Task AbsoluteNavigationToRelativeWithGlobal()
 		{
-			var shell = new Shell();
+			Shell shell = CreateShell();
 
 			var item1 = CreateShellItem(asImplicit: true, shellContentRoute: "dogs");
 			var item2 = CreateShellItem(asImplicit: true, shellSectionRoute: "domestic", shellContentRoute: "cats", shellItemRoute: "animals");
@@ -319,7 +319,7 @@ namespace Xamarin.Forms.Core.UnitTests
 		[Test]
 		public async Task RelativeNavigationWithRoute()
 		{
-			var shell = new Shell();
+			Shell shell = CreateShell();
 
 			var item1 = CreateShellItem(asImplicit: true, shellContentRoute: "dogs");
 			var item2 = CreateShellItem(asImplicit: true, shellSectionRoute: "domestic", shellContentRoute: "cats", shellItemRoute: "animals");
@@ -343,7 +343,7 @@ namespace Xamarin.Forms.Core.UnitTests
 		[Test]
 		public async Task ConvertToStandardFormat()
 		{
-			var shell = new Shell();
+			Shell shell = CreateShell();
 
 			Uri[] TestUris = new Uri[] {
 				CreateUri("path"),
