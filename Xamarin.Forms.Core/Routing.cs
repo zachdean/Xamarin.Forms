@@ -94,7 +94,7 @@ namespace Xamarin.Forms
 				if (!IsImplicit(parts[i]))
 					toKeep.Add(parts[i]);
 
-			return new Uri(string.Join(_pathSeparator, toKeep), UriKind.Relative);
+			return new Uri(string.Join(_pathSeparator, toKeep), UriKind.RelativeOrAbsolute);
 		}
 
 		public static string FormatRoute(List<string> segments)

@@ -539,6 +539,27 @@ namespace Xamarin.Forms.Core.UnitTests
 			Assert.AreEqual(shell.CurrentItem, item1);
 		}
 
+
+
+		[Test]
+		public async Task RoutingRemoveImplicitAbsolute()
+		{
+			Uri uri = new Uri("app://shell/IMPL_Shell/content/content1");
+			var result = Routing.RemoveImplicit(uri);
+
+			Assert.AreEqual(new Uri("app://shell/content/content1"), result);
+		}
+
+		[Test]
+		public async Task RoutingRemoveImplicitRelative()
+		{
+			Uri uri = new Uri("/IMPL_Shell/content/content1", UriKind.Relative);
+			var result = Routing.RemoveImplicit(uri);
+
+			Assert.AreEqual(new Uri("/content/content1", UriKind.Relative), result);
+		}
+
+
 		[Test]
 		public async Task TitleViewBindingContext()
 		{
