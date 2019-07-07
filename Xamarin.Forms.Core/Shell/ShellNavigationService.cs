@@ -5,6 +5,7 @@ using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 using Xamarin.Forms.Internals;
+using System.Linq;
 
 namespace Xamarin.Forms
 {
@@ -137,8 +138,13 @@ namespace Xamarin.Forms
 				}
 			}
 
-			FullUriWithImplicit = ShellUriHandler.ConvertToStandardFormat(new Uri(builder.ToString() + "?" + queryString.ToString(), UriKind.Relative));
-			FullUri = ShellUriHandler.ConvertToStandardFormat(new Uri(builderWithoutImplicit.ToString() + "?" + queryString.ToString(), UriKind.Relative));
+			if (queryString.Length > 0)
+				queryString.Insert(0, "?");
+
+			builder.Append(queryString);
+
+			FullUriWithImplicit = ShellUriHandler.ConvertToStandardFormat(new Uri(builder.ToString(), UriKind.Relative));
+			FullUri = ShellUriHandler.ConvertToStandardFormat(new Uri(builderWithoutImplicit.ToString(), UriKind.Relative));
 		}
 
 		public Uri FullUri { get; private set; }
@@ -152,6 +158,15 @@ namespace Xamarin.Forms
 				_pathParts = value;
 				UpdateUris();
 			}
+		}
+
+		public PathPart GetCurrent()
+		{
+			return PathParts.LastOrDefault();
+		}
+		public Page GetCurrentPage()
+		{
+			return (GetCurrent()?.ShellPart as IShellContentController)?.Page;
 		}
 	}
 
@@ -204,6 +219,18 @@ namespace Xamarin.Forms
 		{
 			Routes = routePaths;
 			CurrentRoute = currentRoute;
+		}
+
+
+
+		public PathPart GetCurrent()
+		{
+			return CurrentRoute?.GetCurrent();
+		}
+
+		public Page GetCurrentPage()
+		{
+			return CurrentRoute?.GetCurrentPage();
 		}
 
 		public RoutePath[] Routes { get; }

@@ -210,7 +210,7 @@ namespace Xamarin.Forms
 		protected override void OnChildAdded(Element child)
 		{
 			base.OnChildAdded(child);
-			if (CurrentItem == null)
+			if (CurrentItem == null && child is BaseShellItem bsi && bsi.IsVisible)
 				SetValueFromRenderer(CurrentItemProperty, child);
 		}
 

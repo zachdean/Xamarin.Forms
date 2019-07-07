@@ -600,6 +600,15 @@ namespace Xamarin.Forms
 
 		void AddPage(Page page)
 		{
+			if(page.Parent == null)
+			{
+				page.Parent = new ShellContent()
+				{
+					Content = page,
+					Route = page.GetType().Name
+				};
+			}
+
 			if (page.Parent is ShellContent content)
 			{
 				_logicalChildren.Add(content);

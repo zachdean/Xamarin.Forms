@@ -301,7 +301,32 @@ namespace Xamarin.Forms
 			if (FlyoutIsPresented && FlyoutBehavior == FlyoutBehavior.Flyout)
 				SetValueFromRenderer(FlyoutIsPresentedProperty, false);
 
-			await GoToAsync(state).ConfigureAwait(false);
+			if (shellSection == null)
+			{
+				shellItem.PropertyChanged += OnShellItemPropertyChanged;
+				return;
+			}
+
+			if (shellContent == null)
+			{
+				shellSection.PropertyChanged += OnShellItemPropertyChanged;
+				return;
+			}
+
+			if (shellItem != null && shellSection != null && shellContent != null)
+				await GoToAsync(state).ConfigureAwait(false);
+		}
+
+		void OnShellItemPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+		{
+			if (e.PropertyName == CurrentItemProperty.PropertyName)
+			{
+				(sender as BindableObject).PropertyChanged -= OnShellItemPropertyChanged;
+				if(sender is ShellItem item)
+					((IShellController)this).OnFlyoutItemSelected(item);
+				else if(sender is ShellSection section)
+					((IShellController)this).OnFlyoutItemSelected(section.Parent);
+			}
 		}
 
 		bool IShellController.ProposeNavigation(ShellNavigationSource source, ShellItem shellItem, ShellSection shellSection, ShellContent shellContent, IReadOnlyList<Page> stack, bool canCancel)
@@ -453,9 +478,6 @@ namespace Xamarin.Forms
 		// TODO cleanup duplication between here and GetNavigationParameters
 		internal static void ApplyQueryAttributes(Element element, IDictionary<string, string> navigationParameters, bool isLastItem)
 		{
-			if (navigationParameters == null || navigationParameters.Count == 0)
-				return;
-
 			string prefix = "";
 			if (!isLastItem)
 			{

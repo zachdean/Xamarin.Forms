@@ -94,6 +94,12 @@ namespace Xamarin.Forms
 				if (!IsImplicit(parts[i]))
 					toKeep.Add(parts[i]);
 
+			if(uri.IsAbsoluteUri)
+			{
+				var returnMe =  new Uri(string.Join(_pathSeparator, toKeep), UriKind.Absolute);
+				return returnMe;
+			}
+
 			return new Uri(string.Join(_pathSeparator, toKeep), UriKind.Relative);
 		}
 
