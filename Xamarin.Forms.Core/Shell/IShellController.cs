@@ -48,5 +48,7 @@ namespace Xamarin.Forms
 		IReadOnlyList<ShellItem> GetItems();
 
 		event NotifyCollectionChangedEventHandler ItemsCollectionChanged;
+
+		void Initialize();
 	}
 }

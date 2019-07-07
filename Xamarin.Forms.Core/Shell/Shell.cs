@@ -373,6 +373,17 @@ namespace Xamarin.Forms
 			remove { ((ShellItemCollection)Items).VisibleItemsChanged -= value; }
 		}
 
+		void IShellController.Initialize()
+		{
+			((INotifyCollectionChanged)Items).CollectionChanged += (s, e) => SendStructureChanged();
+
+			if (CurrentItem == null)
+			{
+				var shellItem = (this as IShellController).GetItems()[0];
+				((IShellController)this).OnFlyoutItemSelected(shellItem);
+			}
+		}
+
 		public static Shell Current => Application.Current?.MainPage as Shell;
 
 		public Task GoToAsync(ShellNavigationState state, bool animate = true)
@@ -641,19 +652,7 @@ namespace Xamarin.Forms
 			SetNavigationService(navigationService);
 				
 			Navigation = new NavigationImpl(this);
-			((INotifyCollectionChanged)Items).CollectionChanged += (s, e) => SendStructureChanged();
 			Route = ShellUriHandler.Route;
-
-			((IShellController)this).ItemsCollectionChanged += (s, e) =>
-			{
-				if(e.NewItems != null && CurrentItem == null && e.NewItems.Count > 0)
-				{
-					if (e.NewItems[0] is ShellItem shellItem && !(shellItem is MenuShellItem))
-					{
-						((IShellController)this).OnFlyoutItemSelected(shellItem);
-					}
-				}
-			};
 		}
 
 		public event EventHandler<ShellNavigatedEventArgs> Navigated;

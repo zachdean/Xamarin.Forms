@@ -166,7 +166,6 @@ namespace Xamarin.Forms.Platform.Android
 		protected virtual IShellFlyoutContentRenderer CreateShellFlyoutContentRenderer()
 		{
 			return new ShellFlyoutTemplatedContentRenderer(this);
-			//return new ShellFlyoutContentRenderer(this, AndroidContext);
 		}
 
 		protected virtual IShellFlyoutRenderer CreateShellFlyoutRenderer()
@@ -214,6 +213,7 @@ namespace Xamarin.Forms.Platform.Android
 
 		protected virtual void OnElementSet(Shell shell)
 		{
+			(shell as IShellController).Initialize();
 			_flyoutRenderer = CreateShellFlyoutRenderer();
 			_frameLayout = new CustomFrameLayout(AndroidContext)
 			{
