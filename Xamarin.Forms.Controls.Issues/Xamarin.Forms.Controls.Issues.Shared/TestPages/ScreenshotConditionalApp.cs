@@ -237,7 +237,7 @@ namespace Xamarin.Forms.Controls
 		public void SwipeRight()
 		{
 #pragma warning disable 618
-			_app.SwipeRight();
+			SwipeLeftToRight();
 #pragma warning restore 618
 		}
 
@@ -254,7 +254,7 @@ namespace Xamarin.Forms.Controls
 		public void SwipeLeft()
 		{
 #pragma warning disable 618
-			_app.SwipeLeft();
+			SwipeRightToLeft();
 #pragma warning restore 618
 		}
 

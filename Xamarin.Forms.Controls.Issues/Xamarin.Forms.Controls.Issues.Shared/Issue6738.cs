@@ -39,7 +39,11 @@ namespace Xamarin.Forms.Controls.Issues
 
 		void OnInsertTapped(object sender, EventArgs e)
 		{
-			Navigation.InsertPageBefore(new ContentPage { Content = new Label { Text = "This is an extra page" } }, pushedPage);
+			Navigation.InsertPageBefore(new ContentPage
+			{
+				Content = new Label { Text = "This is an extra page" },
+				AutomationId = "ExtraPage"
+			}, pushedPage);
 			ForceTabSwitch();
 		}
 

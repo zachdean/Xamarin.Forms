@@ -104,9 +104,13 @@ namespace Xamarin.Forms.Platform.iOS
 					if (_renderers.TryGetValue(shellContent, out var oldRenderer))
 					{
 						_renderers.Remove(shellContent);
-						oldRenderer.NativeView.RemoveFromSuperview();
-						oldRenderer.ViewController.RemoveFromParentViewController();
-						oldRenderer.Dispose();
+
+						if (oldRenderer.NativeView != null)
+						{
+							oldRenderer.NativeView.RemoveFromSuperview();
+							oldRenderer.ViewController.RemoveFromParentViewController();
+							oldRenderer.Dispose();
+						}
 					}
 				}
 			}

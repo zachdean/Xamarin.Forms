@@ -253,7 +253,10 @@ namespace Xamarin.Forms.Platform.iOS
 
 		protected override void Dispose(bool disposing)
 		{
-			if (disposing && !_disposed)
+			if (_disposed)
+				return;
+
+			if (disposing)
 			{
 				if (_shellSection != null)
 				{
@@ -289,8 +292,9 @@ namespace Xamarin.Forms.Platform.iOS
 				Element = null;
 				Container?.Dispose();
 				_pageContainer = null;
-				_disposed = true;
 			}
+
+			_disposed = true;
 
 			base.Dispose(disposing);
 		}

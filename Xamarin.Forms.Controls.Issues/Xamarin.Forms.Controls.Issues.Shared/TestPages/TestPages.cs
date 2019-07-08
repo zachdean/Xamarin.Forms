@@ -79,6 +79,7 @@ namespace Xamarin.Forms.Controls
 			// Running on a device
 			var app = ConfigureApp.iOS.InstalledApp(AppPaths.BundleId).Debug()
 				//Uncomment to run from a specific iOS SIM, get the ID from XCode -> Devices
+				.DeviceIdentifier("C56857FC-000A-428D-9F48-CC9F56DF65C6")
 				.StartApp(Xamarin.UITest.Configuration.AppDataMode.DoNotClear);
 			int _iosVersion;
 			if (int.TryParse(app.Invoke("iOSVersion").ToString(), out _iosVersion))

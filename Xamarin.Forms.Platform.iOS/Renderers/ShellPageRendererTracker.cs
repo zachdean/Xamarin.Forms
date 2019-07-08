@@ -578,25 +578,29 @@ namespace Xamarin.Forms.Platform.iOS
 
 		protected virtual void Dispose(bool disposing)
 		{
-			if (!_disposed)
-			{
-				if (disposing)
-				{
-					_searchHandlerAppearanceTracker?.Dispose();
-					Page.Appearing -= PageAppearing;
-					Page.PropertyChanged -= OnPagePropertyChanged;
-					((INotifyCollectionChanged)Page.ToolbarItems).CollectionChanged -= OnToolbarItemsChanged;
-					((IShellController)_context.Shell).RemoveFlyoutBehaviorObserver(this);
-				}
+			if (_disposed)
+				return;
 
-				SearchHandler = null;
-				Page = null;
-				SetBackButtonBehavior(null);
-				_rendererRef = null;
-				NavigationItem = null;
-				_searchHandlerAppearanceTracker = null;
-				_disposed = true;
+			if (disposing)
+			{
+				_searchHandlerAppearanceTracker?.Dispose();
+				Page.Appearing -= PageAppearing;
+				Page.PropertyChanged -= OnPagePropertyChanged;
+				Platform.GetRenderer(Page)?.Dispose();
+				Page.ClearValue(Platform.RendererProperty);
+				((INotifyCollectionChanged)Page.ToolbarItems).CollectionChanged -= OnToolbarItemsChanged;
+				((IShellController)_context.Shell).RemoveFlyoutBehaviorObserver(this);
 			}
+
+			SearchHandler = null;
+			Page = null;
+			SetBackButtonBehavior(null);
+			_rendererRef = null;
+			NavigationItem = null;
+			_searchHandlerAppearanceTracker = null;
+			
+
+			_disposed = true;
 		}
 
 		#endregion IDisposable Support
