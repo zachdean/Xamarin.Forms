@@ -61,6 +61,13 @@ namespace Xamarin.Forms.Platform.MacOS
 				var location = currentLocation;
 				var length = span.Text?.Length ?? 0;
 
+				if (span is HtmlSpan htmlSpan)
+				{
+					var attrHtmlString = htmlSpan.ToHtml();
+
+					length = (int)attrHtmlString.Length;
+				}
+
 				if (length == 0)
 					continue;
 

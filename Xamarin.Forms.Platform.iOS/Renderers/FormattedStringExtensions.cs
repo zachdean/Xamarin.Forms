@@ -132,6 +132,11 @@ namespace Xamarin.Forms.Platform.MacOS
 				underlineStyle: hasUnderline ? NSUnderlineStyle.Single : NSUnderlineStyle.None,
 				strikethroughStyle: hasStrikethrough ? NSUnderlineStyle.Single : NSUnderlineStyle.None, paragraphStyle: style);
 
+			if (span is HtmlSpan htmlSpan)
+			{
+				return htmlSpan.ToHtml();
+			}
+
 			return attrString;
 		}
 
@@ -155,6 +160,17 @@ namespace Xamarin.Forms.Platform.MacOS
 			}
 
 			return attributed;
+		}
+
+		internal static NSAttributedString ToHtml(this HtmlSpan htmlSpan)
+		{
+			NSError error = null;
+			var attrHtmlString = new NSAttributedString(htmlSpan.Text, new NSAttributedStringDocumentAttributes { DocumentType = NSDocumentType.HTML }, ref error);
+
+			if (error != null)
+				return new NSAttributedString();
+
+			return attrHtmlString;
 		}
 	}
 }

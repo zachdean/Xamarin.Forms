@@ -218,6 +218,54 @@ namespace Xamarin.Forms.Controls
 				}
 			);
 
+			var singleLineLabel = new Label();
+			singleLineLabel.FormattedText = new FormattedString
+			{
+				Spans =
+				{
+					new HtmlSpan
+					{
+						Text = "<h1>Hello world!</h1>"
+					}
+				}
+			};
+
+			var htmlLabel = new ViewContainer<Label>(Test.Label.Html, singleLineLabel);
+
+			var multiLineLabel = new Label
+			{
+				MaxLines = 3
+			};
+
+			multiLineLabel.FormattedText = new FormattedString
+			{
+				Spans =
+				{
+					new HtmlSpan
+					{
+						Text = "<h1>Hello world!</h1><p>Lorem <strong>ipsum</strong> bla di bla <i>blabla</i> blablabl ablabla blablablablabl ablabl ablablabl ablablabla blablablablablablab lablablabla blablab lablablabla blablabl ablablablab lablabla blab lablablabla blablab lablabla blablablablab lablabla blablab lablablabl ablablabla blablablablablabla blablabla</p>"
+					}
+				}
+			};
+
+			var htmlLabelMultipleLines = new ViewContainer<Label>(Test.Label.Html, multiLineLabel);
+
+			var mixedSpansLabel = new Label();
+			mixedSpansLabel.FormattedText = new FormattedString
+			{
+				Spans =
+				{
+					new HtmlSpan
+					{
+						Text = "<h1>Hello HTML world!</h1>"
+					},
+					new Span { Text = "Hello regular world\n" },
+					new Span { Text = "Hello formatted world", BackgroundColor = Color.Yellow, ForegroundColor = Color.Red }
+				}
+			};
+
+			var mixedLabel = new ViewContainer<Label>(Test.Label.Html, mixedSpansLabel);
+
 			Add (namedSizeMediumBoldContainer);
 			Add (namedSizeMediumItalicContainer);
 			Add (namedSizeMediumUnderlineContainer);
@@ -252,6 +300,9 @@ namespace Xamarin.Forms.Controls
 			Add (maxlinesNoWrapContainer);
 			Add (maxlinesTailTruncContainer);
 			Add (maxlinesWordWrapContainer);
+			Add (htmlLabel);
+			Add (htmlLabelMultipleLines);
+			Add (mixedLabel);
 		}
 	}
 }
