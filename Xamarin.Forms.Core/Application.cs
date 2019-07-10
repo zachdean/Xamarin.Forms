@@ -57,7 +57,7 @@ namespace Xamarin.Forms
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public static void SetCurrentApplication(Application value) => Current = value;
+		public static void SetCurrentApplication(Application value) => Current = value; 
 
 		public static Application Current { get; set; }
 
@@ -114,16 +114,7 @@ namespace Xamarin.Forms
 		static NavigationProxy _navigationProxy;
 
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public NavigationProxy NavigationProxy
-		{
-			get
-			{
-				if(_navigationProxy == null)
-					_navigationProxy = new NavigationImpl(this);
-
-				return _navigationProxy;
-			}
-		}
+		public NavigationProxy NavigationProxy { get; private set; }
 
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		public int PanGestureId { get; set; }
@@ -359,6 +350,21 @@ namespace Xamarin.Forms
 				SaveSemaphore.Release();
 			}
 
+		}
+
+		protected internal virtual void CleanUp()
+		{
+			// Unhook everything that's referencing the main page so it can be collected
+			// This only comes up if we're disposing of an embedded Forms app, and will
+			// eventually go away when we fully support multiple windows
+			if (_mainPage != null)
+			{
+				InternalChildren.Remove(_mainPage);
+				_mainPage.Parent = null;
+				_mainPage = null;
+			}
+
+			NavigationProxy = null;
 		}
 
 		class NavigationImpl : NavigationProxy
