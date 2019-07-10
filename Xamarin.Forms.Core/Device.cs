@@ -164,16 +164,6 @@ namespace Xamarin.Forms
 			return ret;
 		}
 
-		internal static IDispatcher GetDispatcher(Element element)
-		{
-			return GetElementPage(element)?.Dispatcher ?? default(IDispatcher);
-		}
-
-		internal static IDispatcher GetDispatcher()
-		{
-			return PlatformServices.GetDispatcher();
-		}
-
 		static Page GetElementPage(Element element)
 		{
 			if (element == null)

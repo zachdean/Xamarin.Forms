@@ -754,11 +754,6 @@ namespace Xamarin.Forms
 				Internals.Log.Warning(nameof(AndroidPlatformServices), "Platform doesn't implement QuitApp");
 			}
 
-			public IDispatcher GetDispatcher()
-			{
-				return new Dispatcher();
-			}
-
 			public SizeRequest GetNativeSize(VisualElement view, double widthConstraint, double heightConstraint)
 			{
 				return Platform.Android.Platform.GetNativeSize(view, widthConstraint, heightConstraint);

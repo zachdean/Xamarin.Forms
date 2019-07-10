@@ -37,7 +37,7 @@ namespace Xamarin.Forms
 		{
 			if (_dispatcher == null)
 			{
-				_dispatcher = Device.GetDispatcher();
+				_dispatcher = DependencyService.Get<IDispatcherProvider>().GetDispatcher();
 			}
 		}
 	}

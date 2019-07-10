@@ -111,11 +111,6 @@ namespace Xamarin.Forms.Platform.GTK
 			Gtk.Application.Quit();
 		}
 
-		public IDispatcher GetDispatcher()
-		{
-			return new GtkDispatcher();
-		}
-
 		public SizeRequest GetNativeSize(VisualElement view, double widthConstraint, double heightConstraint)
 		{
 			return Platform.GetNativeSize(view, widthConstraint, heightConstraint);

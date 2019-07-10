@@ -74,6 +74,9 @@
     <Compile Include="..\Xamarin.Forms.Platform.iOS\Dispatcher.cs">
       <Link>Dispatcher.cs</Link>
     </Compile>
+    <Compile Include="..\Xamarin.Forms.Platform.iOS\DispatcherProvider.cs">
+      <Link>DispatcherProvider.cs</Link>
+    </Compile>
     <Compile Include="..\Xamarin.Forms.Platform.iOS\Extensions\LabelExtensions.cs">
       <Link>Extensions\LabelExtensions.cs</Link>
     </Compile>

@@ -275,15 +275,23 @@ namespace Xamarin.Forms
 
 		static void DoAction(IAnimatable self, Action action)
 		{
+			if (self is BindableObject element)
+			{
+				if (element.Dispatcher.IsInvokeRequired)
+				{
+					element.Dispatcher.BeginInvokeOnMainThread(action);
+				}
+				else
+				{
+					action();
+				}
+
+				return;
+			}
+
 			if (Device.IsInvokeRequired)
 			{
-				if (self is Element element)
-					if (element.Dispatcher.IsInvokeRequired)
-						element.Dispatcher.BeginInvokeOnMainThread(action);
-					else
-						action();
-				else
-					Device.BeginInvokeOnMainThread(action);
+				Device.BeginInvokeOnMainThread(action);
 			}
 			else
 			{

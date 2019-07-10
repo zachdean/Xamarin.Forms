@@ -380,11 +380,6 @@ namespace Xamarin.Forms
 				return Platform.MacOS.Platform.GetNativeSize(view, widthConstraint, heightConstraint);
 #endif
 			}
-
-			public IDispatcher GetDispatcher()
-			{
-				return new Dispatcher();
-			}
 		}
 	}
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using Xamarin.Forms;
 
 #if __MOBILE__
 namespace Xamarin.Forms.Platform.iOS

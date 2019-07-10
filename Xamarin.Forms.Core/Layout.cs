@@ -370,21 +370,21 @@ namespace Xamarin.Forms
 
 					if (Dispatcher != null && Dispatcher.IsInvokeRequired)
 					{
-						Dispatcher.BeginInvokeOnMainThread(UpdateContext);
+						Dispatcher.BeginInvokeOnMainThread(ResolveLayoutChanges);
 					}
 					else if(Device.IsInvokeRequired)
 					{
-						Device.BeginInvokeOnMainThread(UpdateContext);
+						Device.BeginInvokeOnMainThread(ResolveLayoutChanges);
 					}			
 					else
 					{
-						UpdateContext();
+						ResolveLayoutChanges();
 					}
 				}
 			}
 		}
 
-		internal void UpdateContext()
+		internal void ResolveLayoutChanges()
 		{
 			// if thread safety mattered we would need to lock this and compareexchange above
 			var copy = s_resolutionList.OrderBy(kvp => kvp.Value);

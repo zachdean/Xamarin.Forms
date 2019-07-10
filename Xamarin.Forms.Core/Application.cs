@@ -15,7 +15,7 @@ namespace Xamarin.Forms
 		Task<IDictionary<string, object>> _propertiesTask;
 		readonly Lazy<PlatformConfigurationRegistry<Application>> _platformConfigurationRegistry;
 
-		public override IDispatcher Dispatcher => DispatcherManager.Current?.Dispatcher;
+		public override IDispatcher Dispatcher => DispatcherManager.Current.Dispatcher;
 
 		IAppIndexingProvider _appIndexProvider;
 		ReadOnlyCollection<Element> _logicalChildren;

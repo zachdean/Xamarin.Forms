@@ -176,11 +176,6 @@ namespace Xamarin.Forms.Platform.Tizen
 			Forms.Context.Exit();
 		}
 
-		public IDispatcher GetDispatcher()
-		{
-			return new Dispatcher();
-		}
-
 		public bool IsInvokeRequired
 		{
 			get

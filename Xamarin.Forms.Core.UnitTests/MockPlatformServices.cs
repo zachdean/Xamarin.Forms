@@ -216,11 +216,6 @@ namespace Xamarin.Forms.Core.UnitTests
 
 			return new SizeRequest(new Size (100, 20));
 		}
-
-		public IDispatcher GetDispatcher()
-		{
-			return new MockDispatcher();
-		}
 	}
 
 	internal class MockDeserializer : Internals.IDeserializer

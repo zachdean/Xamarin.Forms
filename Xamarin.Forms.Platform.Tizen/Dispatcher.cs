@@ -1,4 +1,6 @@
 ﻿using System;
+using Xamarin.Forms;
+using Xamarin.Forms.Platform.Tizen;
 
 namespace Xamarin.Forms.Platform.Tizen
 {
