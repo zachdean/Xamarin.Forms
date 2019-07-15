@@ -114,7 +114,18 @@ namespace Xamarin.Forms
 		static NavigationProxy _navigationProxy;
 
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public NavigationProxy NavigationProxy { get; private set; }
+		public NavigationProxy NavigationProxy
+		{
+			get
+			{
+				if (_navigationProxy == null)
+					_navigationProxy = new NavigationImpl(this);
+
+				return _navigationProxy;
+			}
+
+			private set { _navigationProxy = value; }
+		}
 
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		public int PanGestureId { get; set; }
