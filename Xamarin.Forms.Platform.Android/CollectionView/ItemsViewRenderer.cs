@@ -33,14 +33,20 @@ namespace Xamarin.Forms.Platform.Android
 		DataChangeObserver _dataChangeViewObserver;
 		bool _watchingForEmpty;
 
+		ScrollBarVisibility _defaultHorizontalScrollVisibility = ScrollBarVisibility.Default;
+		ScrollBarVisibility _defaultVerticalScrollVisibility = ScrollBarVisibility.Default;
+
 		RecyclerView.ItemDecoration _itemDecoration;
 
-		public ItemsViewRenderer(Context context) : base(context)
+		public ItemsViewRenderer(Context context) : base(new ContextThemeWrapper(context, Resource.Style.collectionViewStyle))
 		{
 			CollectionView.VerifyCollectionViewFlagEnabled(nameof(ItemsViewRenderer));
 
 			_automationPropertiesProvider = new AutomationPropertiesProvider(this);
 			_effectControlProvider = new EffectControlProvider(this);
+
+			VerticalScrollBarEnabled = false;
+			HorizontalScrollBarEnabled = false;
 		}
 
 		ScrollHelper ScrollHelper => _scrollHelper ?? (_scrollHelper = new ScrollHelper(this));
@@ -210,6 +216,14 @@ namespace Xamarin.Forms.Platform.Android
 			{
 				UpdateAdapter();
 			}
+			else if(changedProperty.Is(ItemsView.HorizontalScrollBarVisibilityProperty))
+			{
+				UpdateHorizontalScrollBarVisibility();
+			}
+			else if (changedProperty.Is(ItemsView.VerticalScrollBarVisibilityProperty))
+			{
+				UpdateVerticalScrollBarVisibility();
+			}
 		}
 
 		protected virtual void UpdateItemsSource()
@@ -296,14 +310,44 @@ namespace Xamarin.Forms.Platform.Android
 			UpdateFlowDirection();
 			UpdateItemSpacing();
 
+			UpdateHorizontalScrollBarVisibility();
+			UpdateVerticalScrollBarVisibility();
+
 			// Keep track of the ItemsLayout's property changes
 			if (_layout != null)
 			{
-				_layout.PropertyChanged += LayoutOnPropertyChanged;
+				_layout.PropertyChanged += LayoutPropertyChanged;
 			}
 
 			// Listen for ScrollTo requests
 			ItemsView.ScrollToRequested += ScrollToRequested;
+		}
+
+		void UpdateVerticalScrollBarVisibility()
+		{
+			if (_defaultVerticalScrollVisibility == ScrollBarVisibility.Default)
+				_defaultVerticalScrollVisibility = VerticalScrollBarEnabled ? ScrollBarVisibility.Always : ScrollBarVisibility.Never;
+
+			var newVerticalScrollVisibility = ItemsView.VerticalScrollBarVisibility;
+
+			if (newVerticalScrollVisibility == ScrollBarVisibility.Default)
+				newVerticalScrollVisibility = _defaultVerticalScrollVisibility;
+
+			VerticalScrollBarEnabled = newVerticalScrollVisibility == ScrollBarVisibility.Always;
+		}
+
+		void UpdateHorizontalScrollBarVisibility()
+		{
+			if (_defaultHorizontalScrollVisibility == ScrollBarVisibility.Default)
+				_defaultHorizontalScrollVisibility =
+					HorizontalScrollBarEnabled ? ScrollBarVisibility.Always : ScrollBarVisibility.Never;
+
+			var newHorizontalScrollVisiblility = ItemsView.HorizontalScrollBarVisibility;
+
+			if (newHorizontalScrollVisiblility == ScrollBarVisibility.Default)
+				newHorizontalScrollVisiblility = _defaultHorizontalScrollVisibility;
+
+			HorizontalScrollBarEnabled = newHorizontalScrollVisiblility == ScrollBarVisibility.Always;
 		}
 
 		protected virtual void TearDownOldElement(ItemsView oldElement)
@@ -316,7 +360,7 @@ namespace Xamarin.Forms.Platform.Android
 			// Stop listening for layout property changes
 			if (_layout != null)
 			{
-				_layout.PropertyChanged -= LayoutOnPropertyChanged;
+				_layout.PropertyChanged -= LayoutPropertyChanged;
 			}
 
 			// Stop listening for property changes
@@ -346,7 +390,7 @@ namespace Xamarin.Forms.Platform.Android
 			}
 		}
 
-		protected virtual void LayoutOnPropertyChanged(object sender, PropertyChangedEventArgs propertyChanged)
+		protected virtual void LayoutPropertyChanged(object sender, PropertyChangedEventArgs propertyChanged)
 		{
 			if (propertyChanged.Is(GridItemsLayout.SpanProperty))
 			{
