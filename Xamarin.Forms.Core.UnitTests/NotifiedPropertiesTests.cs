@@ -9,7 +9,6 @@ namespace Xamarin.Forms.Core.UnitTests
 	[TestFixture]
 	public class NotifiedPropertiesTests : BaseTestFixture
 	{
-
 		public abstract class PropertyTestCase
 		{
 			public string Name { get; set;}
