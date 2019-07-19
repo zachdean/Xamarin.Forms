@@ -33,7 +33,7 @@ namespace Xamarin.Forms
 			}
 		}
 
-		internal void Init()
+		private void Init()
 		{
 			if (_dispatcher == null)
 			{

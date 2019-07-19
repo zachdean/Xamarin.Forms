@@ -95,7 +95,7 @@ namespace Xamarin.Forms
 
 		protected BindableObject()
 		{
-			DispatcherManager.Current.Init();
+			Dispatcher = DispatcherManager.Current.Dispatcher;
 		}
 
 		public object GetValue(BindableProperty property)
