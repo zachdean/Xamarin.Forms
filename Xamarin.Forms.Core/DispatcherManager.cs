@@ -1,4 +1,5 @@
 ﻿using System;
+using Xamarin.Forms.Internals;
 
 namespace Xamarin.Forms
 {
@@ -12,9 +13,6 @@ namespace Xamarin.Forms
 		{
 			get
 			{
-				if (_dispatcher == null)
-					throw new Exception("The Init() method must be called before getting this property");
-
 				return _dispatcher;
 			}
 		}
@@ -37,7 +35,15 @@ namespace Xamarin.Forms
 		{
 			if (_dispatcher == null)
 			{
-				_dispatcher = DependencyService.Get<IDispatcherProvider>().GetDispatcher();
+				try
+				{
+					_dispatcher = DependencyService.Get<IDispatcherProvider>().GetDispatcher();
+				}
+				catch
+				{
+					_dispatcher = null;
+					Log.Warning("DispatcherManager.Init", "The Dispacther could not be recovered correctly, ensure that the Xamarin.Forms.Init(); was called.");
+				}
 			}
 		}
 	}
