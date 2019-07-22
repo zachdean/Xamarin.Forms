@@ -319,84 +319,84 @@ namespace Xamarin.Forms
 			child.Layout(region);
 		}
 
-		static object locker = new object();
 		internal virtual void OnChildMeasureInvalidated(VisualElement child, InvalidationTrigger trigger)
 		{
-			lock (locker)
+			ReadOnlyCollection<Element> children = LogicalChildrenInternal;
+			int count = children.Count;
+			for (var index = 0; index < count; index++)
 			{
-				ReadOnlyCollection<Element> children = LogicalChildrenInternal;
-				int count = children.Count;
-				for (var index = 0; index < count; index++)
-				{
-					var v = LogicalChildrenInternal[index] as VisualElement;
-					if (v != null && v.IsVisible && (!v.IsPlatformEnabled || !v.IsNativeStateConsistent))
-						return;
-				}
+				var v = LogicalChildrenInternal[index] as VisualElement;
+				if (v != null && v.IsVisible && (!v.IsPlatformEnabled || !v.IsNativeStateConsistent))
+					return;
+			}
 
-				var view = child as View;
-				if (view != null)
+			var view = child as View;
+			if (view != null)
+			{
+				// we can ignore the request if we are either fully constrained or when the size request changes and we were already fully constrainted
+				if ((trigger == InvalidationTrigger.MeasureChanged && view.Constraint == LayoutConstraint.Fixed) ||
+					(trigger == InvalidationTrigger.SizeRequestChanged && view.ComputedConstraint == LayoutConstraint.Fixed))
 				{
-					// we can ignore the request if we are either fully constrained or when the size request changes and we were already fully constrainted
-					if ((trigger == InvalidationTrigger.MeasureChanged && view.Constraint == LayoutConstraint.Fixed) ||
-						(trigger == InvalidationTrigger.SizeRequestChanged && view.ComputedConstraint == LayoutConstraint.Fixed))
-					{
-						return;
-					}
-					if (trigger == InvalidationTrigger.HorizontalOptionsChanged || trigger == InvalidationTrigger.VerticalOptionsChanged)
-					{
-						ComputeConstraintForView(view);
-					}
+					return;
 				}
+				if (trigger == InvalidationTrigger.HorizontalOptionsChanged || trigger == InvalidationTrigger.VerticalOptionsChanged)
+				{
+					ComputeConstraintForView(view);
+				}
+			}
 
-				_allocatedFlag = false;
-				if (trigger == InvalidationTrigger.RendererReady)
+			_allocatedFlag = false;
+			if (trigger == InvalidationTrigger.RendererReady)
+			{
+				InvalidateMeasureInternal(InvalidationTrigger.RendererReady);
+			}
+			else
+			{
+				InvalidateMeasureInternal(InvalidationTrigger.MeasureChanged);
+			}
+
+			s_resolutionList.Add(new KeyValuePair<Layout, int>(this, GetElementDepth(this)));
+			if (!s_relayoutInProgress)
+			{
+				s_relayoutInProgress = true;
+
+				// Rather than recomputing the layout for each change as it happens, we accumulate them in 
+				// s_resolutionList and schedule a single layout update operation to handle them all at once.
+				// This avoids a lot of unnecessary layout operations if something is triggering many property
+				// changes at once (e.g., a BindingContext change)
+
+				if (Dispatcher != null && Dispatcher.IsInvokeRequired)
 				{
-					InvalidateMeasureInternal(InvalidationTrigger.RendererReady);
+					Dispatcher.BeginInvokeOnMainThread(ResolveLayoutChanges);
 				}
+				else if(Device.IsInvokeRequired)
+				{
+					Device.BeginInvokeOnMainThread(ResolveLayoutChanges);
+				}			
 				else
 				{
-					InvalidateMeasureInternal(InvalidationTrigger.MeasureChanged);
-				}
-
-				s_resolutionList.Add(new KeyValuePair<Layout, int>(this, GetElementDepth(this)));
-				if (!s_relayoutInProgress)
-				{
-					s_relayoutInProgress = true;
-
-					// Rather than recomputing the layout for each change as it happens, we accumulate them in 
-					// s_resolutionList and schedule a single layout update operation to handle them all at once.
-					// This avoids a lot of unnecessary layout operations if something is triggering many property
-					// changes at once (e.g., a BindingContext change)
-
-					if (Dispatcher != null && Dispatcher.IsInvokeRequired)
-					{
-						Dispatcher.BeginInvokeOnMainThread(ResolveLayoutChanges);
-					}
-					else if(Device.IsInvokeRequired)
-					{
-						Device.BeginInvokeOnMainThread(ResolveLayoutChanges);
-					}			
-					else
-					{
-						ResolveLayoutChanges();
-					}
+					ResolveLayoutChanges();
 				}
 			}
 		}
 
+		static object locker = new object();
 		internal void ResolveLayoutChanges()
 		{
-			// if thread safety mattered we would need to lock this and compareexchange above
-			var copy = s_resolutionList.OrderBy(kvp => kvp.Value);
-			s_relayoutInProgress = false;
-
-			foreach (KeyValuePair<Layout, int> kvp in copy)
+			lock (locker)
 			{
-				Layout layout = kvp.Key;
-				double width = layout.Width, height = layout.Height;
-				if (!layout._allocatedFlag && width >= 0 && height >= 0)
+				// if thread safety mattered we would need to lock this and compareexchange above
+				var copy = s_resolutionList.OrderBy(kvp => kvp.Value);
+				s_relayoutInProgress = false;
+
+				foreach (KeyValuePair<Layout, int> kvp in copy)
 				{
-					layout.SizeAllocated(width, height);
+					Layout layout = kvp.Key;
+					double width = layout.Width, height = layout.Height;
+					if (!layout._allocatedFlag && width >= 0 && height >= 0)
+					{
+						layout.SizeAllocated(width, height);
+					}
 				}
 			}
 		}
