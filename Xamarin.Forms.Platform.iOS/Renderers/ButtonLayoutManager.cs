@@ -143,7 +143,8 @@ namespace Xamarin.Forms.Platform.iOS
 				UpdatePadding();
 			else if (e.PropertyName == Button.ImageSourceProperty.PropertyName)
 				_ = UpdateImageAsync();
-			else if (e.PropertyName == Button.TextProperty.PropertyName)
+			else if (e.PropertyName == Button.TextProperty.PropertyName ||
+					 e.PropertyName == Button.CharacterSpacingProperty.PropertyName)
 				UpdateText();
 			else if (e.PropertyName == Button.ContentLayoutProperty.PropertyName)
 				UpdateEdgeInsets();
@@ -160,8 +161,11 @@ namespace Xamarin.Forms.Platform.iOS
 			if (control == null)
 				return;
 
-			control.SetTitle(_element.Text, UIControlState.Normal);
+			var attributedString = new NSMutableAttributedString(_element.Text ?? string.Empty).AddCharacterSpacing(_element.Text, _element.CharacterSpacing);
 
+			Control.SetAttributedTitle(attributedString, UIControlState.Normal);
+			Control.SetAttributedTitle(attributedString, UIControlState.Highlighted);
+			Control.SetAttributedTitle(attributedString, UIControlState.Disabled);
 			UpdateEdgeInsets();
 		}
 
