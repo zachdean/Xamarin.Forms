@@ -376,24 +376,20 @@ namespace Xamarin.Forms
 			}
 		}
 
-		static object locker = new object();
 		internal void ResolveLayoutChanges()
 		{
-			lock (locker)
-			{
-				// if thread safety mattered we would need to lock this and compareexchange above
-				IList<KeyValuePair<Layout, int>> copy = s_resolutionList;
-				s_resolutionList = new List<KeyValuePair<Layout, int>>();
-				s_relayoutInProgress = false;
+			// if thread safety mattered we would need to lock this and compareexchange above
+			IList<KeyValuePair<Layout, int>> copy = s_resolutionList;
+			s_resolutionList = new List<KeyValuePair<Layout, int>>();
+			s_relayoutInProgress = false;
 
-				foreach (KeyValuePair<Layout, int> kvp in copy)
+			foreach (KeyValuePair<Layout, int> kvp in copy)
+			{
+				Layout layout = kvp.Key;
+				double width = layout.Width, height = layout.Height;
+				if (!layout._allocatedFlag && width >= 0 && height >= 0)
 				{
-					Layout layout = kvp.Key;
-					double width = layout.Width, height = layout.Height;
-					if (!layout._allocatedFlag && width >= 0 && height >= 0)
-					{
-						layout.SizeAllocated(width, height);
-					}
+					layout.SizeAllocated(width, height);
 				}
 			}
 		}
