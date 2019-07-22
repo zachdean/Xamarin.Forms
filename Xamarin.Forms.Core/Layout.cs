@@ -365,18 +365,14 @@ namespace Xamarin.Forms
 				// This avoids a lot of unnecessary layout operations if something is triggering many property
 				// changes at once (e.g., a BindingContext change)
 
-				if (Dispatcher != null && Dispatcher.IsInvokeRequired)
+				if (Dispatcher != null)
 				{
 					Dispatcher.BeginInvokeOnMainThread(ResolveLayoutChanges);
 				}
-				else if(Device.IsInvokeRequired)
+				else
 				{
 					Device.BeginInvokeOnMainThread(ResolveLayoutChanges);
 				}			
-				else
-				{
-					ResolveLayoutChanges();
-				}
 			}
 		}
 
@@ -386,7 +382,8 @@ namespace Xamarin.Forms
 			lock (locker)
 			{
 				// if thread safety mattered we would need to lock this and compareexchange above
-				var copy = s_resolutionList.OrderBy(kvp => kvp.Value);
+				IList<KeyValuePair<Layout, int>> copy = s_resolutionList;
+				s_resolutionList = new List<KeyValuePair<Layout, int>>();
 				s_relayoutInProgress = false;
 
 				foreach (KeyValuePair<Layout, int> kvp in copy)
