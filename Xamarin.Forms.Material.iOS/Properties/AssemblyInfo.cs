@@ -5,6 +5,7 @@ using Xamarin.Forms;
 
 [assembly: AssemblyTitle("Xamarin.Forms.Material")]
 [assembly: Preserve]
+[assembly: PleaseDontLeaveMe]
 [assembly: ExportRenderer(typeof(Xamarin.Forms.ActivityIndicator), typeof(Xamarin.Forms.Material.iOS.MaterialActivityIndicatorRenderer), new[] { typeof(VisualMarker.MaterialVisual) })]
 [assembly: ExportRenderer(typeof(Xamarin.Forms.Button), typeof(Xamarin.Forms.Material.iOS.MaterialButtonRenderer), new[] { typeof(VisualMarker.MaterialVisual) })]
 [assembly: ExportRenderer(typeof(Xamarin.Forms.Entry), typeof(Xamarin.Forms.Material.iOS.MaterialEntryRenderer), new[] { typeof(VisualMarker.MaterialVisual) })]

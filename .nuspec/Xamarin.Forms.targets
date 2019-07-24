@@ -8,6 +8,7 @@
 	<UsingTask TaskName="Xamarin.Forms.Build.Tasks.XamlGTask" AssemblyFile="$(_XFBuildTasksLocation)Xamarin.Forms.Build.Tasks.dll" />
 	<UsingTask TaskName="Xamarin.Forms.Build.Tasks.CssGTask" AssemblyFile="$(_XFBuildTasksLocation)Xamarin.Forms.Build.Tasks.dll" />
 	<UsingTask TaskName="Xamarin.Forms.Build.Tasks.XamlCTask" AssemblyFile="$(_XFBuildTasksLocation)Xamarin.Forms.Build.Tasks.dll" />
+  <UsingTask TaskName="Xamarin.Forms.Build.Tasks.PleaseDontLeaveMeTask" AssemblyFile="$(_XFBuildTasksLocation)Xamarin.Forms.Build.Tasks.dll" />
 
 	<PropertyGroup>
 		<SynthesizeLinkMetadata>true</SynthesizeLinkMetadata>
@@ -94,6 +95,25 @@
 			<Compile Include="@(_XamlGOutputs)" />
 		</ItemGroup>
 	</Target>
+  
+  <Target
+		Name="PleaseDontLeaveMe"
+		BeforeTargets="BeforeCompile"
+		DependsOnTargets="AfterResolveReferences">
+		<PropertyGroup>
+			<ReferencedAssemblies>@(ReferencePath)</ReferencedAssemblies>
+		</PropertyGroup>
+    <PleaseDontLeaveMeTask
+			AssemblyName="$(IntermediateOutputPath)$(TargetFileName)"
+			References = "$(ReferencedAssemblies)"
+      		GenerationLocation="$(IntermediateOutputPath)">
+        <Output TaskParameter="GeneratedFiles" ItemName="_PleaseDontLeaveMeFile"/>
+    </PleaseDontLeaveMeTask>
+    <ItemGroup>
+      <FileWrites Include="@(_PleaseDontLeaveMeFile)" />
+      <Compile Include="@(_PleaseDontLeaveMeFile)" />
+    </ItemGroup>
+  </Target>
 
 	<!-- XamlC -->
 	<PropertyGroup>
