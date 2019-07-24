@@ -99,7 +99,7 @@
   <Target
 		Name="PleaseDontLeaveMe"
 		BeforeTargets="BeforeCompile"
-		DependsOnTargets="AfterResolveReferences">
+		DependsOnTargets="_FindXamlGFiles; PrepareResourceNames; AfterResolveReferences">
 		<PropertyGroup>
 			<ReferencedAssemblies>@(ReferencePath)</ReferencedAssemblies>
 		</PropertyGroup>
