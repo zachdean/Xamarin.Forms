@@ -113,25 +113,12 @@ namespace Xamarin.Forms.Platform.iOS
 			}
 		}
 
-		internal static NSMutableAttributedString AddCharacterSpacing(this NSMutableAttributedString attributedString, string text, double characterSpacing)
-		{
-			if (attributedString == null || attributedString.Length == 0)
-			{
-				attributedString = text == null ? new NSMutableAttributedString() : new NSMutableAttributedString(text);
-			}
-			else
-			{
-				attributedString = new NSMutableAttributedString(attributedString);
-			}
-
-			AddKerningAdjustment(attributedString, text, characterSpacing);
-
-			return attributedString;
-		}
-
 		internal static NSMutableAttributedString AddCharacterSpacing(this NSAttributedString attributedString, string text, double characterSpacing)
 		{
-			NSMutableAttributedString mutableAttributedString;
+			if (attributedString == null && characterSpacing == 0)
+				return null;
+
+			NSMutableAttributedString mutableAttributedString = attributedString as NSMutableAttributedString;
 			if (attributedString == null || attributedString.Length == 0)
 			{
 				mutableAttributedString = text == null ? new NSMutableAttributedString() : new NSMutableAttributedString(text);
@@ -146,10 +133,55 @@ namespace Xamarin.Forms.Platform.iOS
 			return mutableAttributedString;
 		}
 
+		/*internal static void RemoveCharacterAdjustment(this NSAttributedString attributedString)
+		{
+			if (attributedString is NSMutableAttributedString mutableAttributedString)
+				RemoveCharacterAdjustment(mutableAttributedString);
+		}
+
+		internal static void RemoveCharacterAdjustment(this NSMutableAttributedString mutableAttributedString)
+		{
+			if (mutableAttributedString == null)
+				return;
+
+			NSRange removalRange;
+			var attributes = mutableAttributedString.GetAttributes(0, out removalRange);
+
+			for (uint i = 0; i < attributes.Count; i++)
+			{
+				var attribute = attributes.Keys[i];
+				if (attribute is NSString nSString && nSString == UIStringAttributeKey.KerningAdjustment)
+				{
+					mutableAttributedString.RemoveAttribute(UIStringAttributeKey.KerningAdjustment, removalRange);
+				}
+			}
+
+			return;
+		}*/
+
+
+		internal static bool HasCharacterAdjustment(this NSMutableAttributedString mutableAttributedString)
+		{
+			if (mutableAttributedString == null)
+				return false;
+
+			NSRange removalRange;
+			var attributes = mutableAttributedString.GetAttributes(0, out removalRange);
+
+			for (uint i = 0; i < attributes.Count; i++)
+				if (attributes.Keys[i] is NSString nSString && nSString == UIStringAttributeKey.KerningAdjustment)
+					return true;
+
+			return false;
+		}
+
 		internal static void AddKerningAdjustment(NSMutableAttributedString mutableAttributedString, string text, double characterSpacing)
 		{
 			if (!string.IsNullOrEmpty(text))
 			{
+				if (characterSpacing == 0 && !mutableAttributedString.HasCharacterAdjustment())
+					return;
+
 				mutableAttributedString.AddAttribute
 				(
 					UIStringAttributeKey.KerningAdjustment,

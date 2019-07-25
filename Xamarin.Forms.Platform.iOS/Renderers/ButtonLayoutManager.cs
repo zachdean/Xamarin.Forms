@@ -152,7 +152,7 @@ namespace Xamarin.Forms.Platform.iOS
 				UpdateEdgeInsets();
 		}
 
-		void UpdateText()
+		internal void UpdateText()
 		{
 			if (_disposed || _renderer == null || _element == null)
 				return;
@@ -161,11 +161,55 @@ namespace Xamarin.Forms.Platform.iOS
 			if (control == null)
 				return;
 
-			var attributedString = new NSMutableAttributedString(_element.Text ?? string.Empty).AddCharacterSpacing(_element.Text, _element.CharacterSpacing);
+			var normalTitle = control
+				.GetAttributedTitle(UIControlState.Normal);
 
-			Control.SetAttributedTitle(attributedString, UIControlState.Normal);
-			Control.SetAttributedTitle(attributedString, UIControlState.Highlighted);
-			Control.SetAttributedTitle(attributedString, UIControlState.Disabled);
+			if (_element.CharacterSpacing == 0 && normalTitle == null)
+			{
+				control.SetTitle(_element.Text, UIControlState.Normal);
+				return;
+			}
+
+			if (control.Title(UIControlState.Normal) != null)
+				control.SetTitle(null, UIControlState.Normal);
+
+			string text = _element.Text ?? string.Empty;
+			var colorRange = new NSRange(0, text.Length);
+
+			var normal =
+				control
+					.GetAttributedTitle(UIControlState.Normal)
+					.AddCharacterSpacing(text, _element.CharacterSpacing);
+
+			var highlighted =
+				control
+					.GetAttributedTitle(UIControlState.Highlighted)
+					.AddCharacterSpacing(text, _element.CharacterSpacing);
+
+			var disabled =
+				control
+					.GetAttributedTitle(UIControlState.Disabled)
+					.AddCharacterSpacing(text, _element.CharacterSpacing);
+
+			normal.AddAttribute(
+				UIStringAttributeKey.ForegroundColor,
+				Control.TitleColor(UIControlState.Normal),
+				colorRange);
+
+			highlighted.AddAttribute(
+				UIStringAttributeKey.ForegroundColor,
+				Control.TitleColor(UIControlState.Highlighted),
+				colorRange);
+
+			disabled.AddAttribute(
+				UIStringAttributeKey.ForegroundColor,
+				Control.TitleColor(UIControlState.Disabled),
+				colorRange);
+
+			Control.SetAttributedTitle(normal, UIControlState.Normal);
+			Control.SetAttributedTitle(highlighted, UIControlState.Highlighted);
+			Control.SetAttributedTitle(disabled, UIControlState.Disabled);
+
 			UpdateEdgeInsets();
 		}
 
