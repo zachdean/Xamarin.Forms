@@ -133,33 +133,6 @@ namespace Xamarin.Forms.Platform.iOS
 			return mutableAttributedString;
 		}
 
-		/*internal static void RemoveCharacterAdjustment(this NSAttributedString attributedString)
-		{
-			if (attributedString is NSMutableAttributedString mutableAttributedString)
-				RemoveCharacterAdjustment(mutableAttributedString);
-		}
-
-		internal static void RemoveCharacterAdjustment(this NSMutableAttributedString mutableAttributedString)
-		{
-			if (mutableAttributedString == null)
-				return;
-
-			NSRange removalRange;
-			var attributes = mutableAttributedString.GetAttributes(0, out removalRange);
-
-			for (uint i = 0; i < attributes.Count; i++)
-			{
-				var attribute = attributes.Keys[i];
-				if (attribute is NSString nSString && nSString == UIStringAttributeKey.KerningAdjustment)
-				{
-					mutableAttributedString.RemoveAttribute(UIStringAttributeKey.KerningAdjustment, removalRange);
-				}
-			}
-
-			return;
-		}*/
-
-
 		internal static bool HasCharacterAdjustment(this NSMutableAttributedString mutableAttributedString)
 		{
 			if (mutableAttributedString == null)
