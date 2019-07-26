@@ -41,8 +41,6 @@ namespace Xamarin.Forms.Platform.UWP
 
 				UpdateHorizontalTextAlignment();
 				UpdateVerticalTextAlignment();
-				UpdateCharacterSpacing();
-				UpdateAlignment();
 				UpdateFont();
 				UpdateTextColor();
 				UpdatePlaceholderColor();
