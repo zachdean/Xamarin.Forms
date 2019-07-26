@@ -71,7 +71,6 @@ namespace Xamarin.Forms.Platform.iOS
 							UpdatePickerSelectedIndex(0);
 						UpdatePickerFromModel(s);
 						entry.ResignFirstResponder();
-						UpdateCharacterSpacing();
 					});
 
 					toolbar.SetItems(new[] { spacer, doneButton }, false);
@@ -100,7 +99,6 @@ namespace Xamarin.Forms.Platform.iOS
 				UpdateFont();
 				UpdatePicker();
 				UpdateTextColor();
-				UpdateCharacterSpacing();
 
 				((INotifyCollectionChanged)e.NewElement.Items).CollectionChanged += RowsCollectionChanged;
 			}
@@ -112,24 +110,13 @@ namespace Xamarin.Forms.Platform.iOS
 		{
 			base.OnElementPropertyChanged(sender, e);
 			if (e.PropertyName == Picker.TitleProperty.PropertyName || e.PropertyName == Picker.TitleColorProperty.PropertyName)
-			{
 				UpdatePicker();
-				UpdateCharacterSpacing();
-			}
 			else if (e.PropertyName == Picker.SelectedIndexProperty.PropertyName)
-			{
 				UpdatePicker();
-				UpdateCharacterSpacing();
-			}
-			else if (e.PropertyName == Picker.CharacterSpacingProperty.PropertyName)
-				UpdateCharacterSpacing();
 			else if (e.PropertyName == Picker.TextColorProperty.PropertyName || e.PropertyName == VisualElement.IsEnabledProperty.PropertyName)
 				UpdateTextColor();
-			else if (e.PropertyName == Picker.FontAttributesProperty.PropertyName || e.PropertyName == Picker.FontFamilyProperty.PropertyName ||
-			         e.PropertyName == Picker.FontSizeProperty.PropertyName)
-			{
+			else if (e.PropertyName == Picker.FontAttributesProperty.PropertyName || e.PropertyName == Picker.FontFamilyProperty.PropertyName || e.PropertyName == Picker.FontSizeProperty.PropertyName)
 				UpdateFont();
-			}
 		}
 
 		void OnEditing(object sender, EventArgs eventArgs)
@@ -160,16 +147,9 @@ namespace Xamarin.Forms.Platform.iOS
 		void RowsCollectionChanged(object sender, EventArgs e)
 		{
 			UpdatePicker();
-			UpdateCharacterSpacing();
 		}
 
-        protected void UpdateCharacterSpacing()
-        {
-	        Control.AttributedText = Control.AttributedText.AddCharacterSpacing(Control.Text, Element.CharacterSpacing);
-			Control.AttributedPlaceholder = Control.AttributedPlaceholder.AddCharacterSpacing(Element.Title, Element.CharacterSpacing);
-        }
-
-        protected internal virtual void UpdateFont()
+		protected internal virtual void UpdateFont()
 		{
 			Control.Font = Element.ToUIFont();
 		}
@@ -195,8 +175,6 @@ namespace Xamarin.Forms.Platform.iOS
 				var color = targetColor.IsDefault ? _defaultPlaceholderColor : targetColor;
 				Control.AttributedPlaceholder = formatted.ToAttributed(Element, color);
 			}
-
-			Control.AttributedPlaceholder = Control.AttributedPlaceholder.AddCharacterSpacing(Element.Title, Element.CharacterSpacing);
 		}
 
 
@@ -215,7 +193,6 @@ namespace Xamarin.Forms.Platform.iOS
 				return;
 
 			UpdatePickerSelectedIndex(selectedIndex);
-			UpdateCharacterSpacing();
 		}
 
 		void UpdatePickerFromModel(PickerSource s)

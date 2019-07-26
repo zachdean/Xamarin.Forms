@@ -89,7 +89,6 @@ namespace Xamarin.Forms.Platform.iOS
 			UpdateMaximumDate();
 			UpdateMinimumDate();
 			UpdateTextColor();
-			UpdateCharacterSpacing();
 			UpdateFlowDirection();
 		}
 
@@ -98,25 +97,17 @@ namespace Xamarin.Forms.Platform.iOS
 			base.OnElementPropertyChanged(sender, e);
 
 			if (e.PropertyName == DatePicker.DateProperty.PropertyName || e.PropertyName == DatePicker.FormatProperty.PropertyName)
-			{
 				UpdateDateFromModel(true);
-				UpdateCharacterSpacing();
-			}
 			else if (e.PropertyName == DatePicker.MinimumDateProperty.PropertyName)
 				UpdateMinimumDate();
 			else if (e.PropertyName == DatePicker.MaximumDateProperty.PropertyName)
 				UpdateMaximumDate();
-			else if (e.PropertyName == DatePicker.CharacterSpacingProperty.PropertyName)
-				UpdateCharacterSpacing();
 			else if (e.PropertyName == DatePicker.TextColorProperty.PropertyName || e.PropertyName == VisualElement.IsEnabledProperty.PropertyName)
 				UpdateTextColor();
 			else if (e.PropertyName == VisualElement.FlowDirectionProperty.PropertyName)
 				UpdateFlowDirection();
-			else if (e.PropertyName == DatePicker.FontAttributesProperty.PropertyName ||
-			         e.PropertyName == DatePicker.FontFamilyProperty.PropertyName || e.PropertyName == DatePicker.FontSizeProperty.PropertyName)
-			{
+			else if (e.PropertyName == DatePicker.FontAttributesProperty.PropertyName || e.PropertyName == DatePicker.FontFamilyProperty.PropertyName || e.PropertyName == DatePicker.FontSizeProperty.PropertyName)
 				UpdateFont();
-			}
 		}
 
 		void HandleValueChanged(object sender, EventArgs e)
@@ -152,10 +143,6 @@ namespace Xamarin.Forms.Platform.iOS
 			Control.Font = Element.ToUIFont();
 		}
 
-		void UpdateCharacterSpacing()
-		{
-			Control.AttributedText = Control.AttributedText.AddCharacterSpacing(Control.Text, Element.CharacterSpacing);
-		}
 		void UpdateMaximumDate()
 		{
 			_picker.MaximumDate = Element.MaximumDate.ToNSDate();

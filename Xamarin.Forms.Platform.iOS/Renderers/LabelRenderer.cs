@@ -172,7 +172,6 @@ namespace Xamarin.Forms.Platform.MacOS
 				UpdateTextColor();
 				UpdateFont();
 				UpdateMaxLines();
-				UpdateCharacterSpacing();
 				UpdatePadding();
 			}
 
@@ -195,10 +194,7 @@ namespace Xamarin.Forms.Platform.MacOS
 			{
 				UpdateText();
 				UpdateTextDecorations();
-				UpdateCharacterSpacing();
 			}
-			else if (e.PropertyName == Label.CharacterSpacingProperty.PropertyName)
-				UpdateCharacterSpacing();
 			else if (e.PropertyName == Label.TextDecorationsProperty.PropertyName)
 				UpdateTextDecorations();
 			else if (e.PropertyName == Label.FormattedTextProperty.PropertyName)
@@ -271,8 +267,7 @@ namespace Xamarin.Forms.Platform.MacOS
 				newAttributedText.AddAttribute(underlineStyleKey, NSNumber.FromInt32((int)NSUnderlineStyle.Single), range);
 
 #if __MOBILE__
-
-			Control.AttributedText = newAttributedText.AddCharacterSpacing(Element.Text, Element.CharacterSpacing);
+			Control.AttributedText = newAttributedText;
 #else
 			Control.AttributedStringValue = newAttributedText;
 #endif
@@ -366,13 +361,6 @@ namespace Xamarin.Forms.Platform.MacOS
 					Control.LineBreakMode = NSLineBreakMode.TruncatingTail;
 					break;
 			}
-#endif
-		}
-
-		void UpdateCharacterSpacing()
-		{
-#if __MOBILE__
-			Control.AttributedText = Control.AttributedText.AddCharacterSpacing(Element.Text, Element.CharacterSpacing);
 #endif
 		}
 

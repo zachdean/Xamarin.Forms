@@ -3,7 +3,6 @@ using System.ComponentModel;
 using System.Linq;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Text;
 using Windows.UI.Xaml.Media;
 using Xamarin.Forms.Internals;
 
@@ -47,7 +46,6 @@ namespace Xamarin.Forms.Platform.UWP
 				}
 
 				UpdateTime();
-				UpdateCharacterSpacing();
 				UpdateFlowDirection();
 			}
 		}
@@ -88,8 +86,6 @@ namespace Xamarin.Forms.Platform.UWP
 				UpdateTextColor();
 			else if (e.PropertyName == TimePicker.FontAttributesProperty.PropertyName || e.PropertyName == TimePicker.FontFamilyProperty.PropertyName || e.PropertyName == TimePicker.FontSizeProperty.PropertyName)
 				UpdateFont();
-			else if (e.PropertyName == TimePicker.CharacterSpacingProperty.PropertyName)
-				UpdateCharacterSpacing();
 
 			if (e.PropertyName == VisualElement.FlowDirectionProperty.PropertyName)
 				UpdateFlowDirection();
@@ -149,11 +145,6 @@ namespace Xamarin.Forms.Platform.UWP
 		void UpdateTime()
 		{
 			Control.Time = Element.Time;
-		}
-
-		void UpdateCharacterSpacing()
-		{
-			Control.CharacterSpacing = Element.CharacterSpacing.ToEm();
 		}
 
 		void UpdateTextColor()

@@ -15,8 +15,6 @@ namespace Xamarin.Forms
 	{
 		public static readonly BindableProperty TextColorProperty = TextElement.TextColorProperty;
 
-		public static readonly BindableProperty CharacterSpacingProperty = TextElement.CharacterSpacingProperty;
-
 		public static readonly BindableProperty TitleProperty =
 			BindableProperty.Create(nameof(Title), typeof(string), typeof(Picker), default(string));
 
@@ -102,20 +100,12 @@ namespace Xamarin.Forms
 			set { SetValue(SelectedItemProperty, value); }
 		}
 
-		public Color TextColor
-		{
+		public Color TextColor {
 			get { return (Color)GetValue(TextElement.TextColorProperty); }
 			set { SetValue(TextElement.TextColorProperty, value); }
 		}
 
-		public double CharacterSpacing
-		{
-			get { return (double)GetValue(TextElement.CharacterSpacingProperty); }
-			set { SetValue(TextElement.CharacterSpacingProperty, value); }
-		}
-
-		public string Title
-		{
+		public string Title {
 			get { return (string)GetValue(TitleProperty); }
 			set { SetValue(TitleProperty, value); }
 		}
@@ -284,11 +274,5 @@ namespace Xamarin.Forms
 		void ITextElement.OnTextColorPropertyChanged(Color oldValue, Color newValue)
 		{
 		}
-
-		void ITextElement.OnCharacterSpacingPropertyChanged(double oldValue, double newValue)
-		{
-			InvalidateMeasure();
-		}
-
 	}
 }

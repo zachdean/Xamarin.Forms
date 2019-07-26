@@ -1,7 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
 using CoreGraphics;
-using Foundation;
 using MaterialComponents;
 using UIKit;
 using Xamarin.Forms.Platform.iOS;
@@ -77,7 +76,6 @@ namespace Xamarin.Forms.Material.iOS
 				UpdateTextColor();
 				_buttonLayoutManager?.Update();
 				ApplyTheme();
-				UpdateCharacterSpacing();
 			}
 		}
 
@@ -112,10 +110,6 @@ namespace Xamarin.Forms.Material.iOS
 			else if (e.PropertyName == Button.BorderWidthProperty.PropertyName || e.PropertyName == Button.BorderColorProperty.PropertyName)
 			{
 				UpdateBorder();
-			}
-			else if (e.PropertyName == Button.CharacterSpacingProperty.PropertyName)
-			{
-				UpdateCharacterSpacing();
 			}
 			else if (e.PropertyName == Button.CornerRadiusProperty.PropertyName)
 			{
@@ -230,13 +224,6 @@ namespace Xamarin.Forms.Material.iOS
 			}
 		}
 
-		void UpdateCharacterSpacing()
-		{
-			var attributedString = new NSMutableAttributedString(Element.Text ?? string.Empty).AddCharacterSpacing(Element.Text, Element.CharacterSpacing);
-			Control.SetAttributedTitle(attributedString, UIControlState.Normal);
-			Control.SetAttributedTitle(attributedString, UIControlState.Highlighted);
-			Control.SetAttributedTitle(attributedString, UIControlState.Disabled);
-		}
 		void UpdateTextColor()
 		{
 			if (_buttonScheme.ColorScheme is SemanticColorScheme colorScheme)
