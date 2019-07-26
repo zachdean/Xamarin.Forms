@@ -8,6 +8,7 @@ using AView = Android.Views.View;
 using Xamarin.Forms.Platform.Android.FastRenderers;
 using Android.Runtime;
 using Android.Support.V4.View;
+using Android.Views.Accessibility;
 
 namespace Xamarin.Forms.Platform.Android
 {
@@ -408,7 +409,14 @@ namespace Xamarin.Forms.Platform.Android
 		}
 
 		protected virtual void SetAutomationId(string id)
-			=> AutomationPropertiesProvider.SetAutomationId(this, Element, id);
+		{
+			var accessibilityManager = Context.GetSystemService(Context.AccessibilityService) as AccessibilityManager;
+
+			if (accessibilityManager?.IsTouchExplorationEnabled ?? false)
+				return;
+
+			AutomationPropertiesProvider.SetAutomationId(this, Element, id);
+		}
 
 		protected virtual void SetContentDescription()
 			=> AutomationPropertiesProvider.SetContentDescription(this, Element, ref _defaultContentDescription, ref _defaultHint);
