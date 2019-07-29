@@ -4,7 +4,7 @@ using Xamarin.Forms.Platform.WPF;
 
 namespace Xamarin.Forms.Platform.WPF
 {
-	public class Dispatcher : IDispatcher
+	internal class Dispatcher : IDispatcher
 	{
 		public void BeginInvokeOnMainThread(Action action)
 		{

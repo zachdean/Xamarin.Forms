@@ -2,7 +2,7 @@
 
 namespace Xamarin.Forms.Platform.GTK
 {
-	public class GtkDispatcher : IDispatcher
+	internal class GtkDispatcher : IDispatcher
 	{
 		public void BeginInvokeOnMainThread(Action action)
 		{
