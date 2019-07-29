@@ -57,7 +57,6 @@ namespace Xamarin.Forms
 
 		public Page()
 		{
-			this.Dispatcher = DispatcherManager.Current.Dispatcher;
 			var toolbarItems = new ObservableCollection<ToolbarItem>();
 			toolbarItems.CollectionChanged += OnToolbarItemsCollectionChanged;
 			ToolbarItems = toolbarItems;

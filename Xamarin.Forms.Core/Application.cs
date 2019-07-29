@@ -33,7 +33,7 @@ namespace Xamarin.Forms
 				Loader.Load();
 
 			SetCurrentApplication(this);
-
+			NavigationProxy = new NavigationImpl(this);
 			SystemResources = DependencyService.Get<ISystemResourcesProvider>().GetSystemResources();
 			SystemResources.ValuesChanged += OnParentResourcesChanged;
 			_platformConfigurationRegistry = new Lazy<PlatformConfigurationRegistry<Application>>(() => new PlatformConfigurationRegistry<Application>(this));
@@ -110,22 +110,8 @@ namespace Xamarin.Forms
 			get { return _logicalChildren ?? (_logicalChildren = new ReadOnlyCollection<Element>(InternalChildren)); }
 		}
 
-		[ThreadStatic]
-		static NavigationProxy _navigationProxy;
-
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public NavigationProxy NavigationProxy
-		{
-			get
-			{
-				if (_navigationProxy == null)
-					_navigationProxy = new NavigationImpl(this);
-
-				return _navigationProxy;
-			}
-
-			private set { _navigationProxy = value; }
-		}
+		public NavigationProxy NavigationProxy { get; private set; }
 
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		public int PanGestureId { get; set; }

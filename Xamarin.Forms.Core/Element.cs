@@ -358,9 +358,6 @@ namespace Xamarin.Forms
 
 		protected virtual void OnChildAdded(Element child)
 		{
-			Dispatcher = DispatcherManager.Current.Dispatcher;
-			child.Dispatcher = Dispatcher;
-
 			child.Parent = this;
 
 			child.ApplyBindings(skipBindingContext: false, fromBindingContextChanged: true);
