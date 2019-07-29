@@ -22,6 +22,11 @@ namespace Xamarin.Forms
 			}
 		}
 
+		protected BindableObject()
+		{
+			_dispatcher = this.GetDispatcher();
+		}
+
 		readonly Dictionary<BindableProperty, BindablePropertyContext> _properties = new Dictionary<BindableProperty, BindablePropertyContext>(4);
 		bool _applying;
 		object _inheritedContext;
@@ -91,11 +96,6 @@ namespace Xamarin.Forms
 				OnPropertyChanged(property.PropertyName);
 				property.PropertyChanged?.Invoke(this, original, newValue);
 			}
-		}
-
-		protected BindableObject()
-		{
-			Dispatcher = DispatcherManager.Current.Dispatcher;
 		}
 
 		public object GetValue(BindableProperty property)

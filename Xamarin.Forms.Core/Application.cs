@@ -15,7 +15,7 @@ namespace Xamarin.Forms
 		Task<IDictionary<string, object>> _propertiesTask;
 		readonly Lazy<PlatformConfigurationRegistry<Application>> _platformConfigurationRegistry;
 
-		public override IDispatcher Dispatcher => DispatcherManager.Current.Dispatcher;
+		public override IDispatcher Dispatcher => this.GetDispatcher();
 
 		IAppIndexingProvider _appIndexProvider;
 		ReadOnlyCollection<Element> _logicalChildren;
@@ -84,7 +84,6 @@ namespace Xamarin.Forms
 				if (_mainPage != null)
 				{
 					_mainPage.Parent = this;
-					_mainPage.Dispatcher = DispatcherManager.Current.Dispatcher;
 					_mainPage.NavigationProxy.Inner = NavigationProxy;
 					InternalChildren.Add(_mainPage);
 				}

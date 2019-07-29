@@ -11,7 +11,7 @@ namespace Xamarin.Forms.Core.UnitTests
 {
 	public class MockDispatcherProvider : IDispatcherProvider
 	{
-		public IDispatcher GetDispatcher()
+		public IDispatcher GetDispatcher(object context)
 		{
 			return new MockDispatcher();
 		}

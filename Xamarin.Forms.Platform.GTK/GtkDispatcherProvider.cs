@@ -9,11 +9,13 @@ using Xamarin.Forms.Platform.GTK;
 [assembly: Dependency(typeof(GtkDispatcherProvider))]
 namespace Xamarin.Forms.Platform.GTK
 {
-	public class GtkDispatcherProvider : IDispatcherProvider
+	internal class GtkDispatcherProvider : IDispatcherProvider
 	{
-		public IDispatcher GetDispatcher()
+		IDispatcher _dispatcher = new GtkDispatcher();
+
+		public IDispatcher GetDispatcher(object context)
 		{
-			return new GtkDispatcher();
+			return _dispatcher;
 		}
 	}
 }

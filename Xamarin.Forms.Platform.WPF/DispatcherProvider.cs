@@ -9,11 +9,13 @@ using Xamarin.Forms.Platform.WPF;
 [assembly: Dependency(typeof(DispatcherProvider))]
 namespace Xamarin.Forms.Platform.WPF
 {
-	public class DispatcherProvider : IDispatcherProvider
+	internal class DispatcherProvider : IDispatcherProvider
 	{
-		public IDispatcher GetDispatcher()
+		IDispatcher _dispatcher = new Dispatcher();
+
+		public IDispatcher GetDispatcher(object context)
 		{
-			return new Dispatcher();
+			return _dispatcher;
 		}
 	}
 }

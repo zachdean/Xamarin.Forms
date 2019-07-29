@@ -4,16 +4,20 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Xamarin.Forms;
+using Xamarin.Forms.Internals;
 using Xamarin.Forms.Platform.UWP;
 
 [assembly: Dependency(typeof(DispatcherProvider))]
 namespace Xamarin.Forms.Platform.UWP
 {
-	public class DispatcherProvider : IDispatcherProvider
+	internal class DispatcherProvider : IDispatcherProvider
 	{
-		public IDispatcher GetDispatcher()
+		[ThreadStatic]
+		static Dispatcher s_current;
+
+		public IDispatcher GetDispatcher(object context)
 		{
-			return new Dispatcher();
+			return s_current = s_current ?? new Dispatcher();
 		}
 	}
 }

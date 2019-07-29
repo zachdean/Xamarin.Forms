@@ -8,6 +8,6 @@ namespace Xamarin.Forms
 {
 	public interface IDispatcherProvider
 	{
-		IDispatcher GetDispatcher();
+		IDispatcher GetDispatcher(object context);
 	}
 }

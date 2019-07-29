@@ -19,11 +19,13 @@ namespace Xamarin.Forms.Platform.iOS
 namespace Xamarin.Forms.Platform.MacOS
 #endif
 {
-	public class DispatcherProvider : IDispatcherProvider
+	internal class DispatcherProvider : IDispatcherProvider
 	{
-		public IDispatcher GetDispatcher()
+		IDispatcher _dispatcher = new Dispatcher();
+
+		public IDispatcher GetDispatcher(object context)
 		{
-			return new Dispatcher();
+			return _dispatcher;
 		}
 	}
 }
