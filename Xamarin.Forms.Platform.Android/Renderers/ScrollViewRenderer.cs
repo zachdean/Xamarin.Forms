@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Android.Animation;
 using Android.Content;
 using Android.Graphics;
+using Android.Support.Design.Widget;
 using Android.Support.V4.Widget;
 using Android.Views;
 using Android.Widget;
@@ -30,6 +31,7 @@ namespace Xamarin.Forms.Platform.Android
 
 		public ScrollViewRenderer(Context context) : base(context)
 		{
+			
 		}
 
 		[Obsolete("This constructor is obsolete as of version 2.5. Please use ScrollViewRenderer(Context) instead.")]
@@ -256,8 +258,24 @@ namespace Xamarin.Forms.Platform.Android
 				changed(this, e);
 		}
 
+		public override ViewGroup.LayoutParams LayoutParameters
+		{
+			get => base.LayoutParameters;
+			set
+			{
+				value = new CoordinatorLayout.LayoutParams(value.Height, value.Width);
+
+				if (value is CoordinatorLayout.LayoutParams coordParams)
+					coordParams.Behavior = new AppBarLayout.ScrollingViewBehavior();
+
+				base.LayoutParameters = value;
+			}
+		}
+
 		protected override void OnLayout(bool changed, int left, int top, int right, int bottom)
 		{
+
+
 			// If the scroll view has changed size because of soft keyboard dismissal
 			// (while WindowSoftInputModeAdjust is set to Resize), then we may need to request a 
 			// layout of the ScrollViewContainer

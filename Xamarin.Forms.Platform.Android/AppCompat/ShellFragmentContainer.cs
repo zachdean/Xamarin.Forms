@@ -28,7 +28,7 @@ namespace Xamarin.Forms.Platform.Android.AppCompat
 		{
 			return new ShellPageContainer(context, child, inFragment)
 			{
-				LayoutParameters = new LP(LP.MatchParent, LP.MatchParent)
+				LayoutParameters = new LP(LP.MatchParent, LP.WrapContent)
 			};
 		}
 

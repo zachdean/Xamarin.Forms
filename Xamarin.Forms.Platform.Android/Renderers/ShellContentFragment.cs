@@ -10,6 +10,7 @@ using System;
 using AndroidAnimation = Android.Views.Animations.Animation;
 using AnimationSet = Android.Views.Animations.AnimationSet;
 using AView = Android.Views.View;
+using LP = Android.Views.ViewGroup.LayoutParams;
 
 namespace Xamarin.Forms.Platform.Android
 {
@@ -118,7 +119,10 @@ namespace Xamarin.Forms.Platform.Android
 			_renderer = Platform.CreateRenderer(_page, Context);
 			Platform.SetRenderer(_page, _renderer);
 
-			_shellPageContainer = new ShellPageContainer(Context, _renderer);
+			_shellPageContainer = new ShellPageContainer(Context, _renderer)
+			{
+				LayoutParameters = new LP(LP.MatchParent, LP.WrapContent)
+			};
 
 			scrollview.AddView(_shellPageContainer);
 

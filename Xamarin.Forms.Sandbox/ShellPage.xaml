@@ -4,26 +4,58 @@
              x:Class="Xamarin.Forms.Sandbox.ShellPage"
              xmlns:ios="clr-namespace:Xamarin.Forms.PlatformConfiguration.iOSSpecific;assembly=Xamarin.Forms.Core"
              ios:Page.UseSafeArea="true">
-    <!--<Shell.Resources>
-        <StyleSheet Source="/Styles.css" />
-    </Shell.Resources>-->
-    <!--<Shell.FlyoutHeader>
-        <StackLayout>
-            <Button Text="I am a Button"  />
-        </StackLayout>
-    </Shell.FlyoutHeader>-->
     <FlyoutItem Title="Sandbox">
         <Tab>
             <ShellContent>
                 <ContentPage>
-                    <!--<Shell.TitleView>
+                    <ScrollView>
                         <StackLayout>
-                            <Button Text="I am a Button"  />
+                            <Label Text="I am a asdf"  />
+                            <Label Text="I am a Label"  />
+                            <Label Text="I am a Label"  />
+                            <Label Text="I am a Label"  />
+                            <Label Text="I am a Label"  />
+                            <Label Text="I am a Label"  />
+                            <Label Text="I am a Label"  />
+                            <Label Text="I am a Label"  />
+                            <Label Text="I am a Label"  />
+                            <Label Text="I am a Label"  />
+                            <Label Text="I am a Label"  />
+                            <Label Text="I am a Label"  />
+                            <Label Text="I am a Label"  />
+                            <Label Text="I am a Label"  />
+                            <Label Text="I am a Label"  />
+                            <Label Text="I am a Label"  />
+                            <Label Text="I am a Label"  />
+                            <Label Text="I am a Label"  />
+                            <Label Text="I am a Label"  />
+                            <Label Text="I am a Label"  />
+                            <Label Text="I am a Label"  />
+                            <Label Text="I am a Label"  />
+                            <Label Text="I am a Label"  />
+                            <Label Text="I am a Label"  />
+                            <Label Text="I am a Label"  />
+                            <Label Text="I am a Label"  />
+                            <Label Text="I am a Label"  />
+                            <Label Text="I am a Label"  />
+                            <Label Text="I am a Label"  />
+                            <Label Text="I am a Label"  />
+                            <Label Text="I am a Label"  />
+                            <Label Text="I am a Label"  />
+                            <Label Text="I am a Label"  />
+                            <Label Text="I am a Label"  />
+                            <Label Text="I am a Label"  />
+                            <Label Text="I am a Label"  />
+                            <Label Text="I am a Label"  />
+                            <Label Text="I am a Label"  />
+                            <Label Text="I am a Label"  />
+                            <Label Text="I am a Label"  />
+                            <Label Text="I am a Label"  />
+                            <Label Text="I am a Label"  />
+                            <Label Text="I am a Label"  />
+                            <Label Text="I am a Label"  />
                         </StackLayout>
-                    </Shell.TitleView>-->
-                    <StackLayout>
-                        <Button Text="I am a Button"  />
-                    </StackLayout>
+                    </ScrollView>
                 </ContentPage>
             </ShellContent>
         </Tab>

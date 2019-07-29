@@ -140,10 +140,10 @@ namespace Xamarin.Forms.Platform.Android
 			_toolbar = root.FindViewById<Toolbar>(Resource.Id.main_toolbar);
 			_scrollview = root.FindViewById<NestedScrollView>(Resource.Id.main_scrollview);
 			_tablayout = root.FindViewById<TabLayout>(Resource.Id.main_tablayout);
-
+			_scrollview.NestedScrollingEnabled = true;
 			_viewPager = new FormsViewPager(Context)
 			{
-				LayoutParameters = new LP(LP.MatchParent, LP.MatchParent),
+				LayoutParameters = new LP(LP.MatchParent, LP.WrapContent),
 			};
 
 			_viewPager.AddOnPageChangeListener(this);
