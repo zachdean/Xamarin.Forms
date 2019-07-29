@@ -8,7 +8,7 @@ namespace Xamarin.Forms.Platform.iOS
 namespace Xamarin.Forms.Platform.MacOS
 #endif
 {
-	public class Dispatcher : IDispatcher
+	internal class Dispatcher : IDispatcher
 	{
 		public void BeginInvokeOnMainThread(Action action)
 		{

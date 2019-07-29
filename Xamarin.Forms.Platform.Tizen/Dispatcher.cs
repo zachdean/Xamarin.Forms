@@ -4,7 +4,7 @@ using Xamarin.Forms.Platform.Tizen;
 
 namespace Xamarin.Forms.Platform.Tizen
 {
-	public class Dispatcher : IDispatcher
+	internal class Dispatcher : IDispatcher
 	{
 		public void BeginInvokeOnMainThread(Action action)
 		{

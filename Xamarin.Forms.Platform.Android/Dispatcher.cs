@@ -4,7 +4,7 @@ using Xamarin.Forms.Platform.Android;
 
 namespace Xamarin.Forms.Platform.Android
 {
-	public class Dispatcher : IDispatcher
+	internal class Dispatcher : IDispatcher
 	{
 		public void BeginInvokeOnMainThread(Action action)
 		{

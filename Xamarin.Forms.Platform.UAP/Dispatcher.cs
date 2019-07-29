@@ -6,9 +6,8 @@ using Xamarin.Forms.Platform.UWP;
 
 namespace Xamarin.Forms.Platform.UWP
 {
-	public class Dispatcher : IDispatcher
+	internal class Dispatcher : IDispatcher
 	{
-
 		readonly CoreDispatcher _coreDispatcher;
 
 		public void BeginInvokeOnMainThread(Action action)
