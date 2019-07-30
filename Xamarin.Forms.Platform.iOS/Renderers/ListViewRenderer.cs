@@ -12,6 +12,7 @@ using RectangleF = CoreGraphics.CGRect;
 using SizeF = CoreGraphics.CGSize;
 using Xamarin.Forms.PlatformConfiguration.iOSSpecific;
 using Specifics = Xamarin.Forms.PlatformConfiguration.iOSSpecific.ListView;
+using CoreGraphics;
 
 namespace Xamarin.Forms.Platform.iOS
 {
@@ -1060,7 +1061,7 @@ namespace Xamarin.Forms.Platform.iOS
 					var cell = TemplatedItemsView.TemplatedItems[(int)section];
 					nfloat height = (float)cell.RenderHeight;
 					if (height == -1)
-						height = _defaultSectionHeight;
+						height = UITableView.AutomaticDimension;
 
 					return height;
 				}
@@ -1080,8 +1081,7 @@ namespace Xamarin.Forms.Platform.iOS
 					throw new NotSupportedException("Header cells do not support context actions");
 
 				var renderer = (CellRenderer)Internals.Registrar.Registered.GetHandlerForObject<IRegisterable>(cell);
-				view = new HeaderWrapperView { Cell = cell };
-				view.AddSubview(renderer.GetCell(cell, null, tableView));
+				view = new HeaderWrapperView(cell, renderer.GetCell(cell, null, tableView));
 
 				return view;
 			}
@@ -1422,11 +1422,26 @@ namespace Xamarin.Forms.Platform.iOS
 	internal class HeaderWrapperView : UIView
 	{
 		public Cell Cell { get; set; }
+		public UIView Subview { get; private set; }
+
+		public HeaderWrapperView(Cell cell, UIView subview)
+		{
+			Cell = cell;
+			Subview = subview;
+			AddSubview(subview);
+		}
+
+		public override SizeF SizeThatFits(SizeF size)
+		{
+			return Subview.SizeThatFits(size);
+		}
+
+		public override SizeF IntrinsicContentSize => Subview.IntrinsicContentSize;
+
 		public override void LayoutSubviews()
 		{
 			base.LayoutSubviews();
-			foreach (var item in Subviews)
-				item.Frame = Bounds;
+			Subview.Frame = Bounds;
 		}
 	}
 
