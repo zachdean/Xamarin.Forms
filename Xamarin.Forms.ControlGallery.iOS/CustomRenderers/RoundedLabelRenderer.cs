@@ -12,13 +12,14 @@ namespace Xamarin.Forms.ControlGallery.iOS.CustomRenderers
 	{
 		protected override void OnElementChanged(ElementChangedEventArgs<Label> e)
 		{
-			if (Control == null)
-			{
-				SetNativeControl(new TagUiLabel());
-			}
+			
 			base.OnElementChanged(e);
 			if (e.NewElement != null)
 			{
+				if (Control == null)
+				{
+					SetNativeControl(new TagUiLabel());
+				}
 				this.Layer.CornerRadius = 10;
 				this.Layer.BorderColor = ColorExtensions.ToCGColor(ColorExtensions.ToColor(UIColor.FromRGB(3, 169, 244)));
 				this.Layer.BackgroundColor = ColorExtensions.ToCGColor(Color.GhostWhite);

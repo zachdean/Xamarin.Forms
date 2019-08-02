@@ -13,7 +13,7 @@ namespace Xamarin.Forms.Controls.Issues
 #if UITEST
 	[Category(UITestCategories.CustomRenderers)]
 #endif
-	[Preserve(AllMembers = true)]
+	[Preserve(AllMembers = true)]	
 	[Issue(IssueTracker.Github, 6368, "[CustomRenderer]Crash when navigating back from page with custom renderer control", PlatformAffected.iOS)]
 	public class Issue6368 : TestNavigationPage 
 	{
@@ -25,7 +25,7 @@ namespace Xamarin.Forms.Controls.Issues
 		{
 		}
 
-		protected override void Init()
+		protected override async void Init()
 		{
 			var rootPage = new ContentPage();
 			var button = new Button()
@@ -40,7 +40,7 @@ namespace Xamarin.Forms.Controls.Issues
 			var content = GetContent();
 			content.Children.Add(button);
 			rootPage.Content = content;
-			PushAsync(rootPage);
+			await PushAsync(rootPage);
 		}
 
 		static StackLayout GetContent()
@@ -60,7 +60,7 @@ namespace Xamarin.Forms.Controls.Issues
 			RunningApp.WaitForElement (q => q.Marked ("btnGo"));
 			RunningApp.Tap(q => q.Marked("btnGo"));
 			RunningApp.WaitForElement(q => q.Marked("Go to next Page"));
-			RunningApp.NavigateBack();
+			RunningApp.Back();
 		}
 #endif
 	}
