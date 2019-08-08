@@ -266,6 +266,9 @@ namespace Xamarin.Forms.Xaml
 					case "Arguments":
 						propertyName = XmlName.xArguments;
 						break;
+					case "Shared":
+						propertyName = XmlName.xShared;
+						break;
 					default:
 						Debug.WriteLine("Unhandled attribute {0}", reader.Name);
 						continue;

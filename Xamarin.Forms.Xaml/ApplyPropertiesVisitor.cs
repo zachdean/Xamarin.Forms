@@ -19,7 +19,8 @@ namespace Xamarin.Forms.Xaml
 			XmlName.xArguments,
 			XmlName.xFactoryMethod,
 			XmlName.xName,
-			XmlName.xDataType
+			XmlName.xDataType,
+			XmlName.xShared,
 		};
 
 		public ApplyPropertiesVisitor(HydrationContext context, bool stopOnResourceDictionary = false)
@@ -56,7 +57,7 @@ namespace Xamarin.Forms.Xaml
 					return;
 				if (propertyName.Equals(XamlParser.McUri, "Ignorable"))
 					return;
-				SetPropertyValue(source, propertyName, value, Context.RootElement, node, Context, node);
+				SetPropertyValue(source, propertyName, value, valueCreator: null, Context.RootElement, node, Context, node);
 			} else if (IsCollectionItem(node, parentNode) && parentNode is IElementNode) {
 				// Collection element, implicit content, or implicit collection element.
 				var contentProperty = GetContentPropertyName(Context.Types[parentElement].GetTypeInfo());
@@ -66,7 +67,7 @@ namespace Xamarin.Forms.Xaml
 						return;
 					if (parentElement.SkipProperties.Contains(propertyName))
 						return;
-					SetPropertyValue(source, name, value, Context.RootElement, node, Context, node);
+					SetPropertyValue(source, name, value, valueCreator: null, Context.RootElement, node, Context, node);
 				}
 			}
 		}
@@ -97,7 +98,8 @@ namespace Xamarin.Forms.Xaml
 				parentElement = parentNode as IElementNode;
 			}
 
-			if (!Values.TryGetValue(node, out var value) && Context.ExceptionHandler != null)
+			Func<object> valueCreator = null;
+			if (!Values.TryGetValue(node, out var value) && !Context.ValueCreators.TryGetValue(node, out valueCreator) && Context.ExceptionHandler != null)
 				return;
 
 			if (propertyName != XmlName.Empty || TryGetPropertyName(node, parentNode, out propertyName)) {
@@ -109,7 +111,9 @@ namespace Xamarin.Forms.Xaml
 				if (!Values.TryGetValue(parentNode, out var source) && Context.ExceptionHandler != null)
 					return;
 				ProvideValue(ref value, node, source, propertyName);
-				SetPropertyValue(source, propertyName, value, Context.RootElement, node, Context, node);
+				Context.ValueCreators.TryGetValue(node, out valueCreator);
+				var vCreate = valueCreator != null ? () => { var v = valueCreator(); ProvideValue(ref v, node, source, propertyName); return v; } : (Func<object>)null;
+				SetPropertyValue(source, propertyName, value, vCreate, Context.RootElement, node, Context, node);
 			}
 			else if (IsCollectionItem(node, parentNode) && parentNode is IElementNode) {
 				if (!Values.TryGetValue(parentNode, out var source) && Context.ExceptionHandler != null)
@@ -120,7 +124,17 @@ namespace Xamarin.Forms.Xaml
 				var xKey = node.Properties.ContainsKey(XmlName.xKey) ? ((ValueNode)node.Properties[XmlName.xKey]).Value as string : null;
 
 				//ResourceDictionary
-				if (xpe == null && TryAddToResourceDictionary(source as ResourceDictionary, value, xKey, node, out xpe))
+				bool xShared = true;
+				if (node.Properties.ContainsKey(XmlName.xShared)) {
+					if (!(((ValueNode)node.Properties[XmlName.xShared]).Value is string shared))
+						throw new XamlParseException($"Invalid value for x:Shared.", node);
+					if (!bool.TryParse(shared, out xShared))
+						throw new XamlParseException($"Invalid boolean value for x:Shared.", node);
+				}
+				Context.ValueCreators.TryGetValue(node, out valueCreator);
+				var vCreate = valueCreator != null ? () => { var v = valueCreator(); ProvideValue(ref v, node, source, propertyName); return v; } : (Func<object>)null;
+
+				if (xpe == null && TryAddToResourceDictionary(source as ResourceDictionary, value, xKey, xShared, vCreate, node, out xpe))
 					return;
 
 				// Collection element, implicit content, or implicit collection element.
@@ -138,7 +152,7 @@ namespace Xamarin.Forms.Xaml
 					if (parentElement.SkipProperties.Contains(propertyName))
 						return;
 
-					SetPropertyValue(source, name, value, Context.RootElement, node, Context, node);
+					SetPropertyValue(source, name, value, null, Context.RootElement, node, Context, node);
 					return;
 				}
 				xpe = xpe ?? new XamlParseException($"Can not set the content of {((IElementNode)parentNode).XmlType.Name} as it doesn't have a ContentPropertyAttribute", node);
@@ -156,13 +170,21 @@ namespace Xamarin.Forms.Xaml
 					return;
 				Exception xpe = null;
 				var xKey = node.Properties.ContainsKey(XmlName.xKey) ? ((ValueNode)node.Properties[XmlName.xKey]).Value as string : null;
+				bool xShared = true;
+				if (node.Properties.ContainsKey(XmlName.xShared)) {
+					if (!(((ValueNode)node.Properties[XmlName.xShared]).Value is string shared))
+						throw new XamlParseException($"Invalid value for x:Shared.", node);
+					if (!bool.TryParse(shared, out xShared))
+						throw new XamlParseException($"Invalid boolean value for x:Shared.", node);
+				}
 
-				object _;
 				var collection = GetPropertyValue(source, parentList.XmlName, Context, parentList, out _) as IEnumerable;
 				if (collection == null)
 					xpe = new XamlParseException($"Property {parentList.XmlName.LocalName} is null or is not IEnumerable", node);
 
-				if (xpe == null && TryAddToResourceDictionary(collection as ResourceDictionary, value, xKey, node, out xpe))
+				Context.ValueCreators.TryGetValue(node, out valueCreator);
+				var vCreate = valueCreator != null ? () => { var v = valueCreator(); ProvideValue(ref v, node, source, propertyName); return v; } : (Func<object>)null;
+				if (xpe == null && TryAddToResourceDictionary(collection as ResourceDictionary, value, xKey, xShared, vCreate, node, out xpe))
 					return;
 
 				MethodInfo addMethod;
@@ -320,12 +342,15 @@ namespace Xamarin.Forms.Xaml
 			return propertyInfo;
 		}
 
-		public static void SetPropertyValue(object xamlelement, XmlName propertyName, object value, object rootElement, INode node, HydrationContext context, IXmlLineInfo lineInfo)
+		public static void SetPropertyValue(object xamlelement, XmlName propertyName, object value, Func<object> valueCreator, object rootElement, INode node, HydrationContext context, IXmlLineInfo lineInfo)
 		{
 			var localName = propertyName.LocalName;
 			var serviceProvider = new XamlServiceProvider(node, context);
 			Exception xpe = null;
 			var xKey = node is IElementNode && ((IElementNode)node).Properties.ContainsKey(XmlName.xKey) ? ((ValueNode)((IElementNode)node).Properties[XmlName.xKey]).Value as string : null;
+			bool xShared = true;
+			if (node is IElementNode eNode && eNode.Properties.ContainsKey(XmlName.xShared) && (((ValueNode)eNode.Properties[XmlName.xShared]).Value is string shared) && bool.TryParse(shared, out xShared))
+			{ } //validation already happenend in CreateValueVisitor
 
 			//If it's an attached BP, update elementType and propertyName
 			var bpOwnerType = xamlelement.GetType();
@@ -333,27 +358,27 @@ namespace Xamarin.Forms.Xaml
 			var property = GetBindableProperty(bpOwnerType, localName, lineInfo, false);
 
 			//If the target is an event, connect
-			if (xpe == null && TryConnectEvent(xamlelement, localName, attached, value, rootElement, lineInfo, out xpe))
+			if (xpe == null && xShared && TryConnectEvent(xamlelement, localName, attached, value, rootElement, lineInfo, out xpe))
 				return;
 
 			//If Value is DynamicResource and it's a BP, SetDynamicResource
-			if (xpe == null && TrySetDynamicResource(xamlelement, property, value, lineInfo, out xpe))
+			if (xpe == null && xShared && TrySetDynamicResource(xamlelement, property, value, lineInfo, out xpe))
 				return;
 
 			//If value is BindingBase, SetBinding
-			if (xpe == null && TrySetBinding(xamlelement, property, localName, value, lineInfo, out xpe))
+			if (xpe == null && xShared && TrySetBinding(xamlelement, property, localName, value, lineInfo, out xpe))
 				return;
 
-			//If it's a BindableProberty, SetValue
-			if (xpe == null && TrySetValue(xamlelement, property, attached, value, lineInfo, serviceProvider, out xpe))
+			//If it's a BindableProperty, SetValue
+			if (xpe == null && xShared && TrySetValue(xamlelement, property, attached, value, lineInfo, serviceProvider, out xpe))
 				return;
 
 			//If we can assign that value to a normal property, let's do it
-			if (xpe == null && TrySetProperty(xamlelement, localName, value, lineInfo, serviceProvider, context, out xpe))
+			if (xpe == null && xShared && TrySetProperty(xamlelement, localName, value, lineInfo, serviceProvider, context, out xpe))
 				return;
 
 			//If it's an already initialized property, add to it
-			if (xpe == null && TryAddToProperty(xamlelement, propertyName, value, xKey, lineInfo, serviceProvider, context, out xpe))
+			if (xpe == null && TryAddToProperty(xamlelement, propertyName, value, xKey, xShared, valueCreator, lineInfo, serviceProvider, context, out xpe))
 				return;
 
 			xpe = xpe ?? new XamlParseException($"Cannot assign property \"{localName}\": Property does not exist, or is not assignable, or mismatching type between value and property", lineInfo);
@@ -635,7 +660,7 @@ namespace Xamarin.Forms.Xaml
 			return false;
 		}
 
-		static bool TryAddToProperty(object element, XmlName propertyName, object value, string xKey, IXmlLineInfo lineInfo, XamlServiceProvider serviceProvider, HydrationContext context, out Exception exception)
+		static bool TryAddToProperty(object element, XmlName propertyName, object value, string xKey, bool xShared, Func<object> valueCreator, IXmlLineInfo lineInfo, XamlServiceProvider serviceProvider, HydrationContext context, out Exception exception)
 		{
 			exception = null;
 
@@ -645,7 +670,7 @@ namespace Xamarin.Forms.Xaml
 			if (collection == null)
 				return false;
 
-			if (exception == null && TryAddToResourceDictionary(collection as ResourceDictionary, value, xKey, lineInfo, out exception))
+			if (exception == null && TryAddToResourceDictionary(collection as ResourceDictionary, value, xKey, xShared, valueCreator, lineInfo, out exception))
 				return true;
 
 			if (exception != null)
@@ -667,15 +692,17 @@ namespace Xamarin.Forms.Xaml
 			return exception == null;
 		}
 
-		static bool TryAddToResourceDictionary(ResourceDictionary resourceDictionary, object value, string xKey, IXmlLineInfo lineInfo, out Exception exception)
+		static bool TryAddToResourceDictionary(ResourceDictionary resourceDictionary, object value, string xKey, bool xShared, Func<object> valueCreator, IXmlLineInfo lineInfo, out Exception exception)
 		{
 			exception = null;
 
 			if (resourceDictionary == null)
 				return false;
 
-			if (xKey != null)
+			if (xKey != null && xShared)
 				resourceDictionary.Add(xKey, value);
+			else if (xKey != null && !xShared)
+				resourceDictionary.AddValueCreator(xKey, valueCreator);
 			else if (value is Style)
 				resourceDictionary.Add((Style)value);
 			else if (value is ResourceDictionary)
@@ -748,7 +775,7 @@ namespace Xamarin.Forms.Xaml
 			if (runTimeName == null)
 				return false;
 
-			SetPropertyValue(source, new XmlName("", runTimeName.Name), value, Context.RootElement, node, Context, node);
+			SetPropertyValue(source, new XmlName("", runTimeName.Name), value, valueCreator: null, Context.RootElement, node, Context, node);
 			return true;
 		}
 	}

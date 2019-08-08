@@ -18,6 +18,7 @@ namespace Xamarin.Forms
 	{
 		static ConditionalWeakTable<Type, ResourceDictionary> s_instances = new ConditionalWeakTable<Type, ResourceDictionary>();
 		readonly Dictionary<string, object> _innerDictionary = new Dictionary<string, object>();
+		readonly Dictionary<string, Func<object>> _valueCreators = new Dictionary<string, Func<object>>();
 		ResourceDictionary _mergedInstance;
 		Type _mergedWith;
 		Uri _source;
@@ -151,6 +152,7 @@ namespace Xamarin.Forms
 		public void Clear()
 		{
 			_innerDictionary.Clear();
+			_valueCreators.Clear();
 		}
 
 		bool ICollection<KeyValuePair<string, object>>.Contains(KeyValuePair<string, object> item)
@@ -166,7 +168,7 @@ namespace Xamarin.Forms
 
 		public int Count
 		{
-			get { return _innerDictionary.Count; }
+			get { return _innerDictionary.Count + _valueCreators.Count; }
 		}
 
 		bool ICollection<KeyValuePair<string, object>>.IsReadOnly
@@ -187,9 +189,17 @@ namespace Xamarin.Forms
 			OnValueChanged(key, value);
 		}
 
+		public void AddValueCreator(string key, Func<object> valueCreator)
+		{
+			if (ContainsKey(key))
+				throw new ArgumentException($"A resource with the key '{key}' is already present in the ResourceDictionary.");
+			_valueCreators.Add(key, valueCreator);
+			OnValueChanged(key, valueCreator());
+		}
+
 		public bool ContainsKey(string key)
 		{
-			return _innerDictionary.ContainsKey(key);
+			return _innerDictionary.ContainsKey(key) || _valueCreators.ContainsKey(key);
 		}
 
 		[IndexerName("Item")]
@@ -199,6 +209,8 @@ namespace Xamarin.Forms
 			{
 				if (_innerDictionary.ContainsKey(index))
 					return _innerDictionary[index];
+				if (_valueCreators.ContainsKey(index))
+					return _valueCreators[index]();
 				if (_mergedInstance != null && _mergedInstance.ContainsKey(index))
 					return _mergedInstance[index];
 				if (MergedDictionaries != null)
@@ -221,7 +233,7 @@ namespace Xamarin.Forms
 
 		public bool Remove(string key)
 		{
-			return _innerDictionary.Remove(key);
+			return _innerDictionary.Remove(key) || _valueCreators.Remove(key);
 		}
 
 		public ICollection<object> Values
@@ -266,6 +278,7 @@ namespace Xamarin.Forms
 		{
 			source = this;
 			return _innerDictionary.TryGetValue(key, out value)
+				|| (_valueCreators.TryGetValue(key, out var vCreator) && ((value = vCreator()) != null))
 				|| (_mergedInstance != null && _mergedInstance.TryGetValueAndSource(key, out value, out source))
 				|| (MergedDictionaries != null && TryGetMergedDictionaryValue(key, out value, out source));
 		}

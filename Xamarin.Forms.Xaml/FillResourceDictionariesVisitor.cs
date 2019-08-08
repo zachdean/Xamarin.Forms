@@ -37,7 +37,7 @@ namespace Xamarin.Forms.Xaml
 
 		public void Visit(ElementNode node, INode parentNode)
 		{
-			if (!Values.TryGetValue(node, out var value) && Context.ExceptionHandler != null)
+			if (!Values.TryGetValue(node, out var value) && !Context.ValueCreators.TryGetValue(node, out _) && Context.ExceptionHandler != null)
 				return;
 			
 			//Set RD to VE
@@ -45,7 +45,7 @@ namespace Xamarin.Forms.Xaml
 				if ((propertyName.LocalName == "Resources" ||
 					 propertyName.LocalName.EndsWith(".Resources", StringComparison.Ordinal)) && value is ResourceDictionary) {
 					var source = Values[parentNode];
-					ApplyPropertiesVisitor.SetPropertyValue(source, propertyName, value, Context.RootElement, node, Context, node);
+					ApplyPropertiesVisitor.SetPropertyValue(source, propertyName, value, valueCreator: null, Context.RootElement, node, Context, node);
 					return;
 				}
 			}

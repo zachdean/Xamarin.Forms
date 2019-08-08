@@ -11,15 +11,10 @@ namespace Xamarin.Forms.Xaml
 {
 	class CreateValuesVisitor : IXamlNodeVisitor
 	{
-		public CreateValuesVisitor(HydrationContext context)
-		{
-			Context = context;
-		}
+		public CreateValuesVisitor(HydrationContext context) => Context = context;
 
-		Dictionary<INode, object> Values
-		{
-			get { return Context.Values; }
-		}
+		Dictionary<INode, object> Values => Context.Values;
+		Dictionary<INode, Func<object>> ValueCreators => Context.ValueCreators;
 
 		HydrationContext Context { get; }
 
@@ -41,7 +36,15 @@ namespace Xamarin.Forms.Xaml
 
 		public void Visit(ElementNode node, INode parentNode)
 		{
-			object value = null;
+			bool xShared = true;
+			if (node.Properties.ContainsKey(XmlName.xShared)) {
+				if (!(((ValueNode)node.Properties[XmlName.xShared]).Value is string shared))
+					throw new XamlParseException($"Invalid value for x:Shared.", node);
+				if (!bool.TryParse(shared, out xShared))
+					throw new XamlParseException($"Invalid boolean value for x:Shared.", node);
+			}
+
+			//TODO add validation. x:Shared is only valid on resources
 
 			var type = XamlParser.GetElementType(node.XmlType, node, Context.RootElement?.GetType().GetTypeInfo().Assembly,
 				out XamlParseException xpe);
@@ -53,6 +56,31 @@ namespace Xamarin.Forms.Xaml
 				throw xpe;
 			}
 			Context.Types[node] = type;
+
+			Func<object> valueCreator = () => {
+				object value = CreateValue(node, parentNode, type, out Exception exception);
+				if (exception != null) {
+					if (Context.ExceptionHandler != null) {
+						Context.ExceptionHandler(exception);
+						return null;
+					}
+					throw exception;
+				}
+				Values[node] = value;
+				return value;
+			};
+
+			if (xShared)
+				valueCreator();
+			else
+				ValueCreators[node] = valueCreator;
+		}
+
+		object CreateValue(ElementNode node, INode parentNode, Type type, out Exception exc)
+		{
+			object value = null;
+			exc = null;
+
 			if (IsXaml2009LanguagePrimitive(node))
 				value = CreateLanguagePrimitive(type, node);
 			else if (node.Properties.ContainsKey(XmlName.xArguments) || node.Properties.ContainsKey(XmlName.xFactoryMethod))
@@ -67,7 +95,8 @@ namespace Xamarin.Forms.Xaml
 				value = CreateFromParameterizedConstructor(type, node);
 			else if (!type.GetTypeInfo().DeclaredConstructors.Any(ci => ci.IsPublic && ci.GetParameters().Length == 0) &&
 					 !ValidateCtorArguments(type, node, out ctorargname)) {
-				throw new XamlParseException($"The Property {ctorargname} is required to create a {type.FullName} object.", node);
+				exc = new XamlParseException($"The Property {ctorargname} is required to create a {type.FullName} object.", node);
+				return null;
 			}
 			else {
 				//this is a trick as the DataTemplate parameterless ctor is internal, and we can't CreateInstance(..., false) on WP7
@@ -79,14 +108,9 @@ namespace Xamarin.Forms.Xaml
 					if (value == null && node.CollectionItems.Any() && node.CollectionItems.First() is ValueNode) {
 						var serviceProvider = new XamlServiceProvider(node, Context);
 						var converted = ((ValueNode)node.CollectionItems.First()).Value.ConvertTo(type, () => type.GetTypeInfo(),
-							serviceProvider, out Exception exception);
-						if (exception != null) {
-							if (Context.ExceptionHandler != null) {
-								Context.ExceptionHandler(exception);
-								return;
-							}
-							throw exception;
-						} 
+							serviceProvider, out exc);
+						if (exc != null)
+							return null;
 						if (converted != null && converted.GetType() == type)
 							value = converted;
 					}
@@ -100,10 +124,12 @@ namespace Xamarin.Forms.Xaml
 					}
 				}
 				catch (TargetInvocationException e) when (e.InnerException is XamlParseException || e.InnerException is XmlException) {
-					throw e.InnerException;
+					exc = e.InnerException;
+					return null;
 				}
 				catch (MissingMemberException mme) {
-					throw new XamlParseException(mme.Message, node, mme);
+					exc = new XamlParseException(mme.Message, node, mme);
+					return null;
 				}
 			}
 
@@ -150,6 +176,7 @@ namespace Xamarin.Forms.Xaml
 					name = name.Substring(name.LastIndexOf(':') + 1);
 				XamlLoader.ValueCreatedCallback(new XamlLoader.CallbackTypeInfo { XmlNamespace = node.XmlType.NamespaceUri, XmlTypeName = name }, value);
 			}
+			return value;
 		}
 
 		public void Visit(RootNode node, INode parentNode)
