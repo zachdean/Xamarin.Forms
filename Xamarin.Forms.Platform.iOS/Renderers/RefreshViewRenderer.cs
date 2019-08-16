@@ -1,32 +1,14 @@
-﻿/*
- * Copyright (C) 2015 Refractored LLC & James Montemagno: 
- * http://github.com/JamesMontemagno
- * http://twitter.com/JamesMontemagno
- * http://refractored.com
- * 
- * The MIT License (MIT) see GitHub For more information
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-using System;
+﻿using System;
 using System.ComponentModel;
-using Foundation;
 using UIKit;
 
 namespace Xamarin.Forms.Platform.iOS
 {
-	[Preserve(AllMembers = true)]
-    public class RefreshViewRenderer : ViewRenderer<RefreshView, UIView>
+	public class RefreshViewRenderer : ViewRenderer<RefreshView, UIView>
 	{
 		bool _isRefreshing;
 		bool _set;
 		nfloat _origininalY;
-		BindableProperty _rendererProperty; 
         UIView _refreshControlParent;
 		UIRefreshControl _refreshControl;
 
@@ -54,22 +36,6 @@ namespace Xamarin.Forms.Platform.iOS
 			}
 		}
 
-		public BindableProperty RendererProperty
-		{
-			get
-			{
-				if (_rendererProperty != null)
-					return _rendererProperty;
-
-				var type = Type.GetType("Xamarin.Forms.Platform.iOS.Platform, Xamarin.Forms.Platform.iOS");
-				var prop = type.GetField("RendererProperty");
-				var val = prop.GetValue(null);
-				_rendererProperty = val as BindableProperty;
-
-				return _rendererProperty;
-			}
-		}
-
 		protected override void OnElementChanged(ElementChangedEventArgs<RefreshView> e)
         {
             base.OnElementChanged(e);
@@ -83,9 +49,9 @@ namespace Xamarin.Forms.Platform.iOS
 
             _refreshControlParent = this;
 
-            UpdateColors();
+			UpdateColors();
             UpdateIsRefreshing();
-            UpdateIsSwipeToRefreshEnabled();
+			UpdateIsEnabled();
         }
 
 		protected override void OnElementPropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -93,7 +59,7 @@ namespace Xamarin.Forms.Platform.iOS
 			base.OnElementPropertyChanged(sender, e);
 
 			if (e.PropertyName == VisualElement.IsEnabledProperty.PropertyName)
-				UpdateIsSwipeToRefreshEnabled();
+				UpdateIsEnabled();
 			else if (e.PropertyName == RefreshView.IsRefreshingProperty.PropertyName)
 				UpdateIsRefreshing();
 			else if (e.IsOneOf(RefreshView.RefreshColorProperty, VisualElement.BackgroundColorProperty))
@@ -120,6 +86,7 @@ namespace Xamarin.Forms.Platform.iOS
 				if (_refreshControl != null)
 				{
 					_refreshControl.ValueChanged -= OnRefresh;
+					_refreshControl.Dispose();
 					_refreshControl = null;
 				}
 
@@ -205,13 +172,12 @@ namespace Xamarin.Forms.Platform.iOS
 
             return false;
         }
-
-
+        
         bool TryInsertRefresh(UIView view, int index = 0)
         {
-            _refreshControlParent = view;
-            
-            if (view is UITableView || view is UICollectionView)
+			_refreshControlParent = view;
+
+			if (view is UITableView || view is UICollectionView)
             {
                 view.InsertSubview(_refreshControl, index);
                 return true;
@@ -261,9 +227,9 @@ namespace Xamarin.Forms.Platform.iOS
             IsRefreshing = RefreshView.IsRefreshing;
         }
 
-        void UpdateIsSwipeToRefreshEnabled()
+        void UpdateIsEnabled()
         {
-            if (RefreshView.IsEnabled)
+			if (RefreshView.IsEnabled)
             {
                 TryInsertRefresh(_refreshControlParent);
             }
@@ -282,6 +248,6 @@ namespace Xamarin.Forms.Platform.iOS
             {
                 RefreshView.Command.Execute(RefreshView?.CommandParameter);
             }
-        }
-    }
+		}
+	}
 }

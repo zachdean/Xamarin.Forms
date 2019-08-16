@@ -1,383 +1,262 @@
-﻿/*
- * Copyright (C) 2015 Refractored LLC & James Montemagno: 
- * http://github.com/JamesMontemagno
- * http://twitter.com/JamesMontemagno
- * http://refractored.com
- * 
- * The MIT License (MIT) see GitHub For more information
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-using System;
+﻿using System;
 using System.ComponentModel;
-using System.Reflection;
 using Android.Content;
-using Android.Graphics;
-using Android.Runtime;
+using Android.Support.V4.View;
 using Android.Support.V4.Widget;
 using Android.Views;
-using Xamarin.Forms;
-using Xamarin.Forms.Platform.Android;
+using Xamarin.Forms.Internals;
 using AView = Android.Views.View;
 
 namespace Xamarin.Forms.Platform.Android
 {
-    /// <summary>
-    /// Pull to refresh layout renderer.
-    /// </summary>
-    [Preserve(AllMembers = true)]
-    public class RefreshViewRenderer : SwipeRefreshLayout,
-        IVisualElementRenderer,
-        SwipeRefreshLayout.IOnRefreshListener
-    {
+	public class RefreshViewRenderer : SwipeRefreshLayout, IVisualElementRenderer, IEffectControlProvider, SwipeRefreshLayout.IOnRefreshListener
+	{
+		bool _init;
+		bool _refreshing;
+		IVisualElementRenderer _renderer;
+		int? _defaultLabelFor;
 
-        /// <summary>
-        /// Initializes a new instance of the
-        /// <see cref="Refractored.XamForms.PullToRefresh.Droid.RefreshViewRenderer"/> class.
-        /// </summary>
-        public RefreshViewRenderer(Context context)
-            : base(context)
-        {
-            
-        }
+		public event EventHandler<VisualElementChangedEventArgs> ElementChanged;
+		public event EventHandler<PropertyChangedEventArgs> ElementPropertyChanged;
 
-        /// <summary>
-        /// Occurs when element changed.
-        /// </summary>
-        public event EventHandler<VisualElementChangedEventArgs> ElementChanged;
-        public event EventHandler<PropertyChangedEventArgs> ElementPropertyChanged;
+		public RefreshViewRenderer(Context context)
+			: base(context)
+		{
 
-        bool init;
-        IVisualElementRenderer packed;
-        /// <summary>
-        /// Setup our SwipeRefreshLayout and register for property changed notifications.
-        /// </summary>
-        /// <param name="element">Element.</param>
-        public void SetElement(VisualElement element)
-        {
-            var oldElement = Element;
+		}
 
-            //unregister old and re-register new
-            if (oldElement != null)
-                oldElement.PropertyChanged -= HandlePropertyChanged;
+		public VisualElementTracker Tracker { get; private set; }
 
-            Element = element;
-            if (Element != null)
-            {
-                UpdateContent();
-                Element.PropertyChanged += HandlePropertyChanged;
-            }
+		public ViewGroup ViewGroup => this;
 
-            if (!init)
-            {
-                init = true;
-                //sizes to match the forms view
-                //updates properties, handles visual element properties
-                Tracker = new VisualElementTracker(this);
-                SetOnRefreshListener(this);
-            }
+		public AView View => this;
 
-            UpdateColors();
-            UpdateIsRefreshing();
-            UpdateIsSwipeToRefreshEnabled();
+		public SwipeRefreshLayout SwipeRefreshLayout => View as SwipeRefreshLayout;
 
-            if (ElementChanged != null)
-                ElementChanged(this, new VisualElementChangedEventArgs(oldElement, this.Element));
-        }
+		public VisualElement Element { get; private set; }
 
-        /// <summary>
-        /// Managest adding and removing the android viewgroup to our actual swiperefreshlayout
-        /// </summary>
-        void UpdateContent()
-        {
-            if (RefreshView.Content == null)
-                return;
+		public RefreshView RefreshView => Element != null ? (RefreshView)Element : null;
 
-            if (packed != null)
-                RemoveView(packed.View);
+		public override bool Refreshing
+		{
+			get
+			{
+				return _refreshing;
+			}
+			set
+			{
+				_refreshing = value;
 
-            packed = Platform.CreateRendererWithContext(RefreshView.Content, Context);
+				if (RefreshView != null && RefreshView.IsRefreshing != _refreshing)
+					RefreshView.IsRefreshing = _refreshing;
 
-            try
-            {
-                RefreshView.Content.SetValue(RendererProperty, packed);
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine("Unable to sent renderer property, maybe an issue: " + ex);
-            }
+				if (base.Refreshing == _refreshing)
+					return;
 
-            AddView(packed.View, LayoutParams.MatchParent);
+				base.Refreshing = _refreshing;
+			}
+		}
 
-        }
+		public override bool CanChildScrollUp() => CanScrollUp(_renderer.View);
 
-        BindableProperty rendererProperty = null;
+		public void SetElement(VisualElement element)
+		{
+			var oldElement = Element;
 
-        /// <summary>
-        /// Gets the bindable property.
-        /// </summary>
-        /// <returns>The bindable property.</returns>
-        BindableProperty RendererProperty
-        {
-            get
-            {
-                if (rendererProperty != null)
-                    return rendererProperty;
+			if (oldElement != null)
+				oldElement.PropertyChanged -= HandlePropertyChanged;
 
-                var type = Type.GetType("Xamarin.Forms.Platform.Android.Platform, Xamarin.Forms.Platform.Android");
-                var prop = type.GetField("RendererProperty", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static);
-                var val = prop.GetValue(null);
-                rendererProperty = val as BindableProperty;
+			Element = element;
 
-                return rendererProperty;
-            }
-        }
+			if (Element != null)
+			{
+				UpdateContent();
+				Element.PropertyChanged += HandlePropertyChanged;
+			}
 
-        void UpdateColors()
-        {
-            if (RefreshView == null)
-                return;
-            if (RefreshView.RefreshColor != Color.Default)
-                SetColorSchemeColors(RefreshView.RefreshColor.ToAndroid());
+			if (!_init)
+			{
+				_init = true;
+				Tracker = new VisualElementTracker(this);
+				SetOnRefreshListener(this);
+			}
+
+			UpdateColors();
+			UpdateIsRefreshing();
+			UpdateIsEnabled();
+
+			ElementChanged?.Invoke(this, new VisualElementChangedEventArgs(oldElement, Element));
+			EffectUtilities.RegisterEffectControlProvider(this, oldElement, element);
+		}
+
+		void UpdateContent()
+		{
+			if (RefreshView.Content == null)
+				return;
+
+			if (_renderer != null)
+			{
+				_renderer.View.RemoveFromParent();
+				_renderer.Dispose();
+				_renderer = null;
+			}
+
+			if (RefreshView.Content != null)
+			{
+				_renderer = Platform.CreateRenderer(RefreshView.Content, Context);
+
+				Platform.SetRenderer(RefreshView.Content, _renderer);
+
+				if (_renderer.View.Parent != null)
+					_renderer.View.RemoveFromParent();
+
+				using (var layout = new LayoutParams(LayoutParams.MatchParent, LayoutParams.MatchParent))
+					SwipeRefreshLayout.AddView(_renderer.View, layout);
+			}
+		}
+
+		void UpdateColors()
+		{
+			if (RefreshView == null)
+				return;
+
+			if (RefreshView.RefreshColor != Color.Default)
+				SetColorSchemeColors(RefreshView.RefreshColor.ToAndroid());
 			if (RefreshView.BackgroundColor != Color.Default)
 				SetProgressBackgroundColorSchemeColor(RefreshView.BackgroundColor.ToAndroid());
-        }
+		}
 
-		bool refreshing;
-        /// <summary>
-        /// Gets or sets a value indicating whether this
-        /// <see cref="Refractored.XamForms.PullToRefresh.Droid.RefreshViewRenderer"/> is refreshing.
-        /// </summary>
-        /// <value><c>true</c> if refreshing; otherwise, <c>false</c>.</value>
-        public override bool Refreshing
-        {
-            get
-            {
-                return refreshing;
-            }
-            set
-            {
-                try
-                {
-                    refreshing = value;
-                    //this will break binding :( sad panda we need to wait for next version for this
-                    //right now you can't update the binding.. so it is 1 way
-                    if (RefreshView != null && RefreshView.IsRefreshing != refreshing)
-                        RefreshView.IsRefreshing = refreshing;
+		void UpdateIsRefreshing() => Refreshing = RefreshView.IsRefreshing;
 
-                    if (base.Refreshing == refreshing)
-                        return;
+		void UpdateIsEnabled() => SwipeRefreshLayout.Enabled = RefreshView.IsEnabled;
 
-                    base.Refreshing = refreshing;
-                }
-                catch (Exception)
-                {
-                }
-            }
-        }
+		bool CanScrollUp(AView view)
+		{
+			if (!(view is ViewGroup viewGroup))
+				return base.CanChildScrollUp();
 
-        void UpdateIsRefreshing() =>
-            Refreshing = RefreshView.IsRefreshing;
-        
+			var sdk = (int)global::Android.OS.Build.VERSION.SdkInt;
 
-        void UpdateIsSwipeToRefreshEnabled() =>
-            Enabled = RefreshView.IsEnabled;
-        
+			if (sdk >= 16)
+			{
+				if (viewGroup.IsScrollContainer)
+				{
+					return base.CanChildScrollUp();
+				}
+			}
 
+			for (int i = 0; i < viewGroup.ChildCount; i++)
+			{
+				var child = viewGroup.GetChildAt(i);
+				if (child is global::Android.Widget.AbsListView)
+				{
+					if (child is global::Android.Widget.AbsListView list)
+					{
+						if (list.FirstVisiblePosition == 0)
+						{
+							var subChild = list.GetChildAt(0);
 
-        /// <summary>
-        /// Determines whether this instance can child scroll up.
-        /// We do this since the actual swipe refresh can't figure it out
-        /// </summary>
-        /// <returns><c>true</c> if this instance can child scroll up; otherwise, <c>false</c>.</returns>
-        public override bool CanChildScrollUp() =>
-            CanScrollUp(packed.View);
-        
+							return subChild != null && subChild.Top != 0;
+						}
 
-        bool CanScrollUp(AView view)
-        {
-            var viewGroup = view as ViewGroup;
-            if (viewGroup == null)
-                return base.CanChildScrollUp();
+						return true;
+					}
+				}
+				else if (child is global::Android.Widget.ScrollView)
+				{
+					var scrollview = child as global::Android.Widget.ScrollView;
+					return scrollview.ScrollY <= 0.0;
+				}
+				else if (child is global::Android.Webkit.WebView)
+				{
+					var webView = child as global::Android.Webkit.WebView;
+					return webView.ScrollY > 0.0;
+				}
+				else if (child is SwipeRefreshLayout)
+				{
+					return CanScrollUp(child as ViewGroup);
+				}
+			}
 
-            var sdk = (int)global::Android.OS.Build.VERSION.SdkInt;
-            if (sdk >= 16)
-            {
-                //is a scroll container such as listview, scroll view, gridview
-                if (viewGroup.IsScrollContainer)
-                {
-                    return base.CanChildScrollUp();
-                }
-            }
+			return false;
+		}
 
-            //if you have something custom and you can't scroll up you might need to enable this
-            //for instance on a custom recycler view where the code above isn't working!
-            for (int i = 0; i < viewGroup.ChildCount; i++)
-            {
-                var child = viewGroup.GetChildAt(i);
-                if (child is global::Android.Widget.AbsListView)
-                {
-                    var list = child as global::Android.Widget.AbsListView;
-                    if (list != null)
-                    {
-                        if (list.FirstVisiblePosition == 0)
-                        {
-                            var subChild = list.GetChildAt(0);
+		public void OnRefresh()
+		{
+			if (RefreshView?.Command?.CanExecute(RefreshView?.CommandParameter) ?? false)
+			{
+				RefreshView.Command.Execute(RefreshView?.CommandParameter);
+			}
+		}
 
-                            return subChild != null && subChild.Top != 0;
-                        }
-
-                        //if children are in list and we are scrolled a bit... sure you can scroll up
-                        return true;
-                    }
-
-                }
-                else if (child is global::Android.Widget.ScrollView)
-                {
-                    var scrollview = child as global::Android.Widget.ScrollView;
-                    return (scrollview.ScrollY <= 0.0);
-                }
-                else if (child is global::Android.Webkit.WebView)
-                {
-                    var webView = child as global::Android.Webkit.WebView;
-                    return (webView.ScrollY > 0.0);
-                }
-                else if (child is global::Android.Support.V4.Widget.SwipeRefreshLayout)
-                {
-                    return CanScrollUp(child as ViewGroup);
-                }
-                //else if something else like a recycler view?
-
-            }
-
-            return false;
-        }
-
-
-        /// <summary>
-        /// Helpers to cast our element easily
-        /// Will throw an exception if the Element is not correct
-        /// </summary>
-        /// <value>The refresh view.</value>
-        public RefreshView RefreshView =>
-            Element == null ? null : (RefreshView)Element;
-
-        /// <summary>
-        /// The refresh view has been refreshed
-        /// </summary>
-        public void OnRefresh()
-        {
-            if (RefreshView?.Command?.CanExecute(RefreshView?.CommandParameter) ?? false)
-            {
-                RefreshView.Command.Execute(RefreshView?.CommandParameter);
-            }
-        }
-
-
-        /// <summary>
-        /// Handles the property changed.
-        /// Update the control and trigger refreshing
-        /// </summary>
-        /// <param name="sender">Sender.</param>
-        /// <param name="e">E.</param>
-        void HandlePropertyChanged(object sender, PropertyChangedEventArgs e)
-        {
-            if (e.PropertyName == "Content")
-                UpdateContent();
-            else if (e.PropertyName == RefreshView.IsEnabledProperty.PropertyName)
-                UpdateIsSwipeToRefreshEnabled();
-            else if (e.PropertyName == RefreshView.IsRefreshingProperty.PropertyName)
-                UpdateIsRefreshing();
-            else if (e.IsOneOf(RefreshView.RefreshColorProperty, RefreshView.BackgroundColorProperty))
-                UpdateColors();
+		void HandlePropertyChanged(object sender, PropertyChangedEventArgs e)
+		{
+			if (e.PropertyName == ContentView.ContentProperty.PropertyName)
+				UpdateContent();
+			else if (e.PropertyName == VisualElement.IsEnabledProperty.PropertyName)
+				UpdateIsEnabled();
+			else if (e.PropertyName == RefreshView.IsRefreshingProperty.PropertyName)
+				UpdateIsRefreshing();
+			else if (e.IsOneOf(RefreshView.RefreshColorProperty, VisualElement.BackgroundColorProperty))
+				UpdateColors();
 
 			ElementPropertyChanged?.Invoke(sender, e);
 
 		}
 
-        /// <summary>
-        /// Gets the size of the desired.
-        /// </summary>
-        /// <returns>The desired size.</returns>
-        /// <param name="widthConstraint">Width constraint.</param>
-        /// <param name="heightConstraint">Height constraint.</param>
-        public SizeRequest GetDesiredSize(int widthConstraint, int heightConstraint)
-        {
-            packed.View.Measure(widthConstraint, heightConstraint);
+		public SizeRequest GetDesiredSize(int widthConstraint, int heightConstraint)
+		{
+			_renderer.View.Measure(widthConstraint, heightConstraint);
 
-            //Measure child here and determine size
-            return new SizeRequest(new Size(packed.View.MeasuredWidth, packed.View.MeasuredHeight));
-        }
+			return new SizeRequest(new Size(_renderer.View.MeasuredWidth, _renderer.View.MeasuredHeight), new Size(40, 40));
+		}
 
-        /// <summary>
-        /// Updates the layout.
-        /// </summary>
-        public void UpdateLayout() => Tracker?.UpdateLayout();
-        
+		public void UpdateLayout() => Tracker?.UpdateLayout();
 
-        /// <summary>
-        /// Gets the tracker.
-        /// </summary>
-        /// <value>The tracker.</value>
-        public VisualElementTracker Tracker { get; private set; }
-        
+		protected override void Dispose(bool disposing)
+		{
+			base.Dispose(disposing);
 
-        /// <summary>
-        /// Gets the view group.
-        /// </summary>
-        /// <value>The view group.</value>
-        public global::Android.Views.ViewGroup ViewGroup => this;
+			if (disposing)
+			{
+				if (Element != null)
+				{
+					Element.PropertyChanged -= HandlePropertyChanged;
+				}
 
+				if (_renderer != null)
+					_renderer.View.RemoveFromParent();
+			}
 
-        public AView View => this;
+			_renderer?.Dispose();
+			_renderer = null;
 
-        /// <summary>
-        /// Gets the element.
-        /// </summary>
-        /// <value>The element.</value>
-        public VisualElement Element { get; private set; }
+			Tracker?.Dispose();
+			Tracker = null;
 
-        /// <summary>
-        /// Cleanup layout.
-        /// </summary>
-        /// <param name="disposing"></param>
-        protected override void Dispose(bool disposing)
-        {
-            base.Dispose(disposing);
+			_init = false;
+		}
 
-            /*if (disposing)
-            {
-                if (Element != null)
-                {
-                    Element.PropertyChanged -= HandlePropertyChanged;
-                }
+		public void SetLabelFor(int? id)
+		{
+			if (_defaultLabelFor == null)
+			{
+				_defaultLabelFor = ViewCompat.GetLabelFor(this);
+			}
 
-                if (packed != null)
-                    RemoveView(packed.ViewGroup);
-            }
+			ViewCompat.SetLabelFor(this, (int)(id ?? _defaultLabelFor));
+		}
 
-            packed?.Dispose();
-            packed = null;
+		void IEffectControlProvider.RegisterEffect(Effect effect)
+		{
+			if (effect is PlatformEffect platformEffect)
+				OnRegisterEffect(platformEffect);
+		}
 
-            Tracker?.Dispose();
-            Tracker = null;
-            
-
-            if (rendererProperty != null)
-            {
-                rendererProperty = null;
-            }
-            init = false;*/
-        }
-
-        public void SetLabelFor(int? id)
-        {
-            
-        }
-    }
+		void OnRegisterEffect(PlatformEffect effect)
+		{
+			effect.SetContainer(this);
+			effect.SetControl(this);
+		}
+	}
 }
-
