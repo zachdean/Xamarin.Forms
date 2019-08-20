@@ -26,19 +26,21 @@ namespace Xamarin.Forms.Controls.GalleryPages.RefreshViewGalleries
 		}
 	}
 
+	[Preserve(AllMembers = true)]
 	public class RefreshItem
 	{
 		public string Name { get; set; }
 		public Color Color { get; set; }
 	}
 
+	[Preserve(AllMembers = true)]
 	public class RefreshViewModel : BindableObject
 	{
 		const int RefreshDuration = 2;
 
-		private readonly Random _random;
-		private bool _isRefresing;
-		private ObservableCollection<RefreshItem> _items;
+		readonly Random _random;
+		bool _isRefresing;
+		ObservableCollection<RefreshItem> _items;
 
 		public RefreshViewModel()
 		{
@@ -69,7 +71,7 @@ namespace Xamarin.Forms.Controls.GalleryPages.RefreshViewGalleries
 
 		public ICommand RefreshCommand => new Command(ExecuteRefresh);
 
-		private void LoadItems()
+		void LoadItems()
 		{
 			Items.Clear();
 
@@ -83,7 +85,7 @@ namespace Xamarin.Forms.Controls.GalleryPages.RefreshViewGalleries
 			}
 		}
 
-		private void ExecuteRefresh()
+		void ExecuteRefresh()
 		{
 			IsRefreshing = true;
 
