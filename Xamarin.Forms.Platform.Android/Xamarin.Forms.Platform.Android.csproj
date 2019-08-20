@@ -244,6 +244,7 @@
     <Compile Include="Renderers\ShellToolbarTracker.cs" />
     <Compile Include="Renderers\ShellSectionRenderer.cs" />
     <Compile Include="Renderers\StreamImagesourceHandler.cs" />
+    <Compile Include="Renderers\SwipeViewRenderer.cs" />
     <Compile Include="Renderers\ViewCellExtensions.cs" />
     <Compile Include="Renderers\ViewGroupExtensions.cs" />
     <AndroidResource Include="Resources\Layout\RootLayout.axml" />
