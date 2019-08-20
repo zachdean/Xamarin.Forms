@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
+using Xamarin.Forms.Internals;
 
 namespace Xamarin.Forms.Controls.GalleryPages.RefreshViewGalleries
 {
+	[Preserve(AllMembers = true)]
 	public class RefreshViewGallery : ContentPage
 	{
 		public RefreshViewGallery()

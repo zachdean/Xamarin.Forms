@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Windows.Input;
 using Xamarin.Forms.CustomAttributes;
+using Xamarin.Forms.Internals;
 
 namespace Xamarin.Forms.Controls
 {
+	[Preserve(AllMembers = true)]
 	internal class RefreshViewCoreGalleryPage : CoreGalleryPage<RefreshView>
 	{
 		protected override bool SupportsFocus

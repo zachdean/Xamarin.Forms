@@ -1,5 +1,8 @@
-﻿namespace Xamarin.Forms.Controls.GalleryPages.RefreshViewGalleries
+﻿using Xamarin.Forms.Internals;
+
+namespace Xamarin.Forms.Controls.GalleryPages.RefreshViewGalleries
 {
+	[Preserve(AllMembers = true)]
 	public partial class RefreshCollectionViewGallery : ContentPage
 	{
 		public RefreshCollectionViewGallery()
