@@ -15,7 +15,7 @@
 		<_DefaultXamlItemsEnabled>False</_DefaultXamlItemsEnabled>
 		<EnableDefaultCssItems Condition="'$(EnableDefaultCssItems)'==''">True</EnableDefaultCssItems>
 		<_DefaultCssItemsEnabled>False</_DefaultCssItemsEnabled>
-    <SkipMicrosoftUIXamlCheckTargetPlatformVersion Condition="'$(SkipMicrosoftUIXamlCheckTargetPlatformVersion)'==''">True</SkipMicrosoftUIXamlCheckTargetPlatformVersion>
+		<SkipMicrosoftUIXamlCheckTargetPlatformVersion Condition="'$(SkipMicrosoftUIXamlCheckTargetPlatformVersion)'==''">True</SkipMicrosoftUIXamlCheckTargetPlatformVersion>
 	</PropertyGroup>
 
 	<Import Project="$(MSBuildThisFileDirectory)Xamarin.Forms.DefaultItems.targets" Condition="'$(MSBuildSDKsPath)'!=''" />
