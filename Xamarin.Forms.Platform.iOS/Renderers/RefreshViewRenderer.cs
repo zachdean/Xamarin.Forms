@@ -9,7 +9,7 @@ namespace Xamarin.Forms.Platform.iOS
 		bool _isRefreshing;
 		bool _set;
 		nfloat _origininalY;
-        UIView _refreshControlParent;
+		UIView _refreshControlParent;
 		UIRefreshControl _refreshControl;
 
 		public RefreshView RefreshView
@@ -37,22 +37,22 @@ namespace Xamarin.Forms.Platform.iOS
 		}
 
 		protected override void OnElementChanged(ElementChangedEventArgs<RefreshView> e)
-        {
-            base.OnElementChanged(e);
+		{
+			base.OnElementChanged(e);
 
-            if (e.OldElement != null || Element == null)
-                return;
+			if (e.OldElement != null || Element == null)
+				return;
 
-            _refreshControl = new UIRefreshControl();
+			_refreshControl = new UIRefreshControl();
 
-            _refreshControl.ValueChanged += OnRefresh;
+			_refreshControl.ValueChanged += OnRefresh;
 
-            _refreshControlParent = this;
+			_refreshControlParent = this;
 
 			UpdateColors();
-            UpdateIsRefreshing();
+			UpdateIsRefreshing();
 			UpdateIsEnabled();
-        }
+		}
 
 		protected override void OnElementPropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
@@ -95,159 +95,159 @@ namespace Xamarin.Forms.Platform.iOS
 		}
 
 		bool TryOffsetRefresh(UIView view, bool refreshing)
-        {
-            if (view is UITableView)
-            {
-                var uiTableView = view as UITableView;
-                if (!_set)
-                {
-                    _origininalY = uiTableView.ContentOffset.Y;
-                    _set = true;
-                }
+		{
+			if (view is UITableView)
+			{
+				var uiTableView = view as UITableView;
+				if (!_set)
+				{
+					_origininalY = uiTableView.ContentOffset.Y;
+					_set = true;
+				}
 
-                if (_origininalY < 0)
-                    return true;
+				if (_origininalY < 0)
+					return true;
 
-                if (refreshing)
-                    uiTableView.SetContentOffset(new CoreGraphics.CGPoint(0, _origininalY - _refreshControl.Frame.Size.Height), true);
-                else
-                    uiTableView.SetContentOffset(new CoreGraphics.CGPoint(0, _origininalY), true);
-                return true;
-            }
+				if (refreshing)
+					uiTableView.SetContentOffset(new CoreGraphics.CGPoint(0, _origininalY - _refreshControl.Frame.Size.Height), true);
+				else
+					uiTableView.SetContentOffset(new CoreGraphics.CGPoint(0, _origininalY), true);
+				return true;
+			}
 
-            if (view is UICollectionView)
-            {
-                var uiCollectionView = view as UICollectionView;
-                if (!_set)
-                {
-                    _origininalY = uiCollectionView.ContentOffset.Y;
-                    _set = true;
-                }
+			if (view is UICollectionView)
+			{
+				var uiCollectionView = view as UICollectionView;
+				if (!_set)
+				{
+					_origininalY = uiCollectionView.ContentOffset.Y;
+					_set = true;
+				}
 
-                if (_origininalY < 0)
-                    return true;
+				if (_origininalY < 0)
+					return true;
 
-                if (refreshing)
-                    uiCollectionView.SetContentOffset(new CoreGraphics.CGPoint(0, _origininalY - _refreshControl.Frame.Size.Height), true);
-                else
-                    uiCollectionView.SetContentOffset(new CoreGraphics.CGPoint(0, _origininalY), true);
-                return true;
-            }
+				if (refreshing)
+					uiCollectionView.SetContentOffset(new CoreGraphics.CGPoint(0, _origininalY - _refreshControl.Frame.Size.Height), true);
+				else
+					uiCollectionView.SetContentOffset(new CoreGraphics.CGPoint(0, _origininalY), true);
+				return true;
+			}
 
-            if (view is UIWebView)
-            {
-                // Can't do anything
-                return true;
-            }
+			if (view is UIWebView)
+			{
+				// Can't do anything
+				return true;
+			}
 
-            if (view is UIScrollView)
-            {
-                var uiScrollView = view as UIScrollView;
+			if (view is UIScrollView)
+			{
+				var uiScrollView = view as UIScrollView;
 
-                if (!_set)
-                {
-                    _origininalY = uiScrollView.ContentOffset.Y;
-                    _set = true;
-                }
+				if (!_set)
+				{
+					_origininalY = uiScrollView.ContentOffset.Y;
+					_set = true;
+				}
 
-                if (_origininalY < 0)
-                    return true;
+				if (_origininalY < 0)
+					return true;
 
-                if (refreshing)
-                    uiScrollView.SetContentOffset(new CoreGraphics.CGPoint(0, _origininalY - _refreshControl.Frame.Size.Height), true);
-                else
-                    uiScrollView.SetContentOffset(new CoreGraphics.CGPoint(0, _origininalY), true);
-                return true;
-            }
+				if (refreshing)
+					uiScrollView.SetContentOffset(new CoreGraphics.CGPoint(0, _origininalY - _refreshControl.Frame.Size.Height), true);
+				else
+					uiScrollView.SetContentOffset(new CoreGraphics.CGPoint(0, _origininalY), true);
+				return true;
+			}
 
-            if (view.Subviews == null)
-                return false;
+			if (view.Subviews == null)
+				return false;
 
-            for (int i = 0; i < view.Subviews.Length; i++)
-            {
-                var control = view.Subviews[i];
-                if (TryOffsetRefresh(control, refreshing))
-                    return true;
-            }
+			for (int i = 0; i < view.Subviews.Length; i++)
+			{
+				var control = view.Subviews[i];
+				if (TryOffsetRefresh(control, refreshing))
+					return true;
+			}
 
-            return false;
-        }
-        
-        bool TryInsertRefresh(UIView view, int index = 0)
-        {
+			return false;
+		}
+
+		bool TryInsertRefresh(UIView view, int index = 0)
+		{
 			_refreshControlParent = view;
 
 			if (view is UITableView || view is UICollectionView)
-            {
-                view.InsertSubview(_refreshControl, index);
-                return true;
-            }
+			{
+				view.InsertSubview(_refreshControl, index);
+				return true;
+			}
 
-            if (view is UIWebView)
-            {
-                var uiWebView = view as UIWebView;
-                uiWebView.ScrollView.InsertSubview(_refreshControl, index);
-                return true;
-            }
+			if (view is UIWebView)
+			{
+				var uiWebView = view as UIWebView;
+				uiWebView.ScrollView.InsertSubview(_refreshControl, index);
+				return true;
+			}
 
-            if (view is UIScrollView)
-            {
-                var uiScrollView = view as UIScrollView;
-                view.InsertSubview(_refreshControl, index);
-                uiScrollView.AlwaysBounceVertical = true;
-                return true;
-            }
-            
+			if (view is UIScrollView)
+			{
+				var uiScrollView = view as UIScrollView;
+				view.InsertSubview(_refreshControl, index);
+				uiScrollView.AlwaysBounceVertical = true;
+				return true;
+			}
+
 			if (view.Subviews == null)
-                return false;
+				return false;
 
-            for (int i = 0; i < view.Subviews.Length; i++)
-            {
-                var control = view.Subviews[i];
-                if (TryInsertRefresh(control, i))
-                    return true;
-            }
+			for (int i = 0; i < view.Subviews.Length; i++)
+			{
+				var control = view.Subviews[i];
+				if (TryInsertRefresh(control, i))
+					return true;
+			}
 
-            return false;
-        }
+			return false;
+		}
 
-        void UpdateColors()
-        {
-            if (RefreshView == null || _refreshControl == null)
-                return;
+		void UpdateColors()
+		{
+			if (RefreshView == null || _refreshControl == null)
+				return;
 
-            if (RefreshView.RefreshColor != Color.Default)
-                _refreshControl.TintColor = RefreshView.RefreshColor.ToUIColor();
+			if (RefreshView.RefreshColor != Color.Default)
+				_refreshControl.TintColor = RefreshView.RefreshColor.ToUIColor();
 
 			SetBackgroundColor(RefreshView.BackgroundColor);
-        }
-       
-		void UpdateIsRefreshing()
-        {
-            IsRefreshing = RefreshView.IsRefreshing;
-        }
+		}
 
-        void UpdateIsEnabled()
-        {
+		void UpdateIsRefreshing()
+		{
+			IsRefreshing = RefreshView.IsRefreshing;
+		}
+
+		void UpdateIsEnabled()
+		{
 			if (RefreshView.IsEnabled)
-            {
-                TryInsertRefresh(_refreshControlParent);
-            }
-            else
-            {
-                if (_refreshControl.Superview != null)
-                {
-                    _refreshControl.RemoveFromSuperview();
-                }
-            }
-        }
-                       
-        void OnRefresh(object sender, EventArgs e)
-        {
-            if (RefreshView?.Command?.CanExecute(RefreshView?.CommandParameter) ?? false)
-            {
-                RefreshView.Command.Execute(RefreshView?.CommandParameter);
-            }
+			{
+				TryInsertRefresh(_refreshControlParent);
+			}
+			else
+			{
+				if (_refreshControl.Superview != null)
+				{
+					_refreshControl.RemoveFromSuperview();
+				}
+			}
+		}
+
+		void OnRefresh(object sender, EventArgs e)
+		{
+			if (RefreshView?.Command?.CanExecute(RefreshView?.CommandParameter) ?? false)
+			{
+				RefreshView.Command.Execute(RefreshView?.CommandParameter);
+			}
 		}
 	}
 }

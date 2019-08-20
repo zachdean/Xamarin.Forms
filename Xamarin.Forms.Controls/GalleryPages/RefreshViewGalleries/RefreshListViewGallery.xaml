@@ -5,36 +5,39 @@
     x:Class="Xamarin.Forms.Controls.GalleryPages.RefreshViewGalleries.RefreshListViewGallery"
     Title="ListView (Pull To Refresh)">
     <ContentPage.Content>
-        <RefreshView
+        <StackLayout>
+            <Button Text="Trigger Refresh" Command="{Binding TriggerRefreshCommand}"></Button>
+            <RefreshView
             IsRefreshing="{Binding IsRefreshing}"
             RefreshColor="Purple"
             Command="{Binding RefreshCommand}"
             HorizontalOptions="FillAndExpand"
             VerticalOptions="FillAndExpand">
-            <ListView
+                <ListView
                 ItemsSource="{Binding Items}"
                 HasUnevenRows="True"
                 SeparatorVisibility="None">
-                <ListView.ItemTemplate>
-                    <DataTemplate>
-                        <ViewCell>
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="48" />
-                                    <ColumnDefinition Width="*" />
-                                </Grid.ColumnDefinitions>
-                                <BoxView
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <ViewCell>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="48" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <BoxView
                                     Grid.Column="0"
                                     Color="{Binding Color}"
                                     HeightRequest="48"/>
-                                <Label
+                                    <Label
                                     Grid.Column="1"
                                     Text="{Binding Name}"/>
-                            </Grid>
-                        </ViewCell>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-            </ListView>
-        </RefreshView>
+                                </Grid>
+                            </ViewCell>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </RefreshView>
+        </StackLayout>
     </ContentPage.Content>
 </ContentPage>

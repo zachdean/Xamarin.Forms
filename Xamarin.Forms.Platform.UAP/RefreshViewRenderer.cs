@@ -7,7 +7,7 @@ namespace Xamarin.Forms.Platform.UWP
 {
 	public class RefreshViewRenderer : ViewRenderer<RefreshView, RefreshContainer>
 	{
-		private Deferral _refreshCompletionDeferral;
+		Deferral _refreshCompletionDeferral;
 
 		public RefreshViewRenderer()
 		{
@@ -80,7 +80,7 @@ namespace Xamarin.Forms.Platform.UWP
 				Control.Background = Color.White.ToBrush();
 		}
 
-		private void UpdateContent()
+		void UpdateContent()
 		{
 			if (Element.Content == null)
 				return;
@@ -89,20 +89,24 @@ namespace Xamarin.Forms.Platform.UWP
 			Control.Content = renderer.ContainerElement;
 		}
 
-		private void UpdateIsEnabled()
+		void UpdateIsEnabled()
 		{
 			Control.IsEnabled = Element.IsEnabled;
 		}
 
-		private void UpdateIsRefreshing()
+		void UpdateIsRefreshing()
 		{
 			if (!Element.IsRefreshing)
 			{
 				CompleteRefresh();
 			}
+			else if(_refreshCompletionDeferral == null)
+			{
+				Control.RequestRefresh();
+			}
 		}
 
-		private void UpdateColors()
+		void UpdateColors()
 		{
 			Control.Foreground = Element.RefreshColor != Color.Default
 				? Element.RefreshColor.ToBrush()
@@ -111,7 +115,7 @@ namespace Xamarin.Forms.Platform.UWP
 			UpdateBackgroundColor();
 		}
 
-		private void CompleteRefresh()
+		void CompleteRefresh()
 		{
 			if (_refreshCompletionDeferral != null)
 			{
@@ -121,7 +125,7 @@ namespace Xamarin.Forms.Platform.UWP
 			}
 		}
 
-		private void OnRefresh(object sender, RefreshRequestedEventArgs args)
+		void OnRefresh(object sender, RefreshRequestedEventArgs args)
 		{
 			_refreshCompletionDeferral = args.GetDeferral();
 

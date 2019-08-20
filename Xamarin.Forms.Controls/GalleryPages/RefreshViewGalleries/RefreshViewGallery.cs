@@ -41,7 +41,7 @@ namespace Xamarin.Forms.Controls.GalleryPages.RefreshViewGalleries
 		readonly Random _random;
 		bool _isRefresing;
 		ObservableCollection<RefreshItem> _items;
-
+		
 		public RefreshViewModel()
 		{
 			_random = new Random();
@@ -70,6 +70,7 @@ namespace Xamarin.Forms.Controls.GalleryPages.RefreshViewGalleries
 		}
 
 		public ICommand RefreshCommand => new Command(ExecuteRefresh);
+		public ICommand TriggerRefreshCommand => new Command(() => IsRefreshing = true);
 
 		void LoadItems()
 		{
