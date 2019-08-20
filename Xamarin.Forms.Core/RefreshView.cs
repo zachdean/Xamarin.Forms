@@ -4,6 +4,7 @@ using Xamarin.Forms.Platform;
 
 namespace Xamarin.Forms
 {
+	[ContentProperty("Content")]
 	[RenderWith(typeof(_RefreshViewRenderer))]
 	public class RefreshView : ContentView
     {

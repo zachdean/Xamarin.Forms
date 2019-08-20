@@ -71,6 +71,8 @@ namespace Xamarin.Forms.Controls.GalleryPages.RefreshViewGalleries
 
 		private void LoadItems()
 		{
+			Items.Clear();
+
 			for (int i = 0; i < 100; i++)
 			{
 				Items.Add(new RefreshItem
@@ -84,8 +86,6 @@ namespace Xamarin.Forms.Controls.GalleryPages.RefreshViewGalleries
 		private void ExecuteRefresh()
 		{
 			IsRefreshing = true;
-
-			Items.Clear();
 
 			Device.StartTimer(TimeSpan.FromSeconds(RefreshDuration), () =>
 			{
