@@ -9,6 +9,7 @@ namespace Xamarin.Forms.Platform.UWP
 {
 	public class RefreshViewRenderer : ViewRenderer<RefreshView, RefreshContainer>
 	{
+		bool _isDisposed;
 		Deferral _refreshCompletionDeferral;
 
 		public RefreshViewRenderer()
@@ -18,6 +19,9 @@ namespace Xamarin.Forms.Platform.UWP
 
 		protected override void Dispose(bool disposing)
 		{
+			if (_isDisposed)
+				return;
+
 			if (Control != null && disposing)
 			{
 				Control.RefreshRequested -= OnRefresh;
@@ -29,6 +33,8 @@ namespace Xamarin.Forms.Platform.UWP
 					_refreshCompletionDeferral = null;
 				}
 			}
+
+			_isDisposed = true;
 
 			base.Dispose(disposing);
 		}
