@@ -14,6 +14,7 @@ namespace Xamarin.Forms.Platform.Android
 {
 	public class RefreshViewRenderer : SwipeRefreshLayout, IVisualElementRenderer, IEffectControlProvider, SwipeRefreshLayout.IOnRefreshListener
 	{
+		bool _isDisposed;
 		bool _init;
 		bool _refreshing;
 		IVisualElementRenderer _renderer;
@@ -232,7 +233,8 @@ namespace Xamarin.Forms.Platform.Android
 
 		protected override void Dispose(bool disposing)
 		{
-			base.Dispose(disposing);
+			if (_isDisposed)
+				return;
 
 			if (disposing)
 			{
@@ -252,6 +254,9 @@ namespace Xamarin.Forms.Platform.Android
 			Tracker = null;
 
 			_init = false;
+			_isDisposed = true;
+
+			base.Dispose(disposing);
 		}
 
 		public void SetLabelFor(int? id)

@@ -4,7 +4,7 @@ using UIKit;
 
 namespace Xamarin.Forms.Platform.iOS
 {
-	public class RefreshViewRenderer : ViewRenderer<RefreshView, UIView>
+	public class RefreshViewRenderer : ViewRenderer<RefreshView, UIView>, IEffectControlProvider
 	{
 		bool _isDisposed;
 		bool _isRefreshing;
@@ -238,6 +238,11 @@ namespace Xamarin.Forms.Platform.iOS
 			{
 				Element.Command.Execute(Element?.CommandParameter);
 			}
+		}
+
+		void IEffectControlProvider.RegisterEffect(Effect effect)
+		{
+			VisualElementRenderer<VisualElement>.RegisterEffect(effect, this, NativeView);
 		}
 	}
 }
