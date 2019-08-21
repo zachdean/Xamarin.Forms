@@ -9,8 +9,8 @@
 
              <DataTemplate x:Key="RefreshItemTemplate">
                  <Grid
-                     HeightRequest="100"
-                     WidthRequest="100">
+                     HeightRequest="120"
+                     WidthRequest="120">
                      <Grid.RowDefinitions>
                          <RowDefinition Height="*" />
                          <RowDefinition Height="Auto" />

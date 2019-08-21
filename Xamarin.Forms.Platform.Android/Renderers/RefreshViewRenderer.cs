@@ -1,9 +1,12 @@
 ﻿using System;
 using System.ComponentModel;
 using Android.Content;
+using Android.OS;
 using Android.Support.V4.View;
 using Android.Support.V4.Widget;
+using Android.Support.V7.Widget;
 using Android.Views;
+using Android.Widget;
 using Xamarin.Forms.Internals;
 using AView = Android.Views.View;
 
@@ -135,9 +138,7 @@ namespace Xamarin.Forms.Platform.Android
 			if (!(view is ViewGroup viewGroup))
 				return base.CanChildScrollUp();
 
-			var sdk = (int)global::Android.OS.Build.VERSION.SdkInt;
-
-			if (sdk >= 16)
+			if (Forms.SdkInt < BuildVersionCodes.JellyBean)
 			{
 				if (viewGroup.IsScrollContainer)
 				{
@@ -145,40 +146,56 @@ namespace Xamarin.Forms.Platform.Android
 				}
 			}
 
+			if (!CanScrollUpViewByType(view))
+				return false;
+
 			for (int i = 0; i < viewGroup.ChildCount; i++)
 			{
 				var child = viewGroup.GetChildAt(i);
-				if (child is global::Android.Widget.AbsListView)
-				{
-					if (child is global::Android.Widget.AbsListView list)
-					{
-						if (list.FirstVisiblePosition == 0)
-						{
-							var subChild = list.GetChildAt(0);
 
-							return subChild != null && subChild.Top != 0;
-						}
+				if (!CanScrollUpViewByType(child))
+					return false;
 
-						return true;
-					}
-				}
-				else if (child is global::Android.Widget.ScrollView)
-				{
-					var scrollview = child as global::Android.Widget.ScrollView;
-					return scrollview.ScrollY <= 0.0;
-				}
-				else if (child is global::Android.Webkit.WebView)
-				{
-					var webView = child as global::Android.Webkit.WebView;
-					return webView.ScrollY > 0.0;
-				}
-				else if (child is SwipeRefreshLayout)
+				if (child is SwipeRefreshLayout)
 				{
 					return CanScrollUp(child as ViewGroup);
 				}
 			}
 
-			return false;
+			return true;
+		}
+
+		bool CanScrollUpViewByType(AView view)
+		{
+			if (view is AbsListView)
+			{
+				var absListView = view as AbsListView;
+				if (absListView.FirstVisiblePosition == 0)
+				{
+					var subChild = absListView.GetChildAt(0);
+
+					return subChild != null && subChild.Top != 0;
+				}
+
+				return true;
+			}
+			if(view is RecyclerView)
+			{
+				var recyclerView = view as RecyclerView;
+				return recyclerView.ScrollY < 0;
+			}
+			if (view is global::Android.Widget.ScrollView)
+			{
+				var scrollview = view as global::Android.Widget.ScrollView;
+				return scrollview.ScrollY < 0;
+			}
+			if (view is NestedScrollView)
+			{
+				var nestedScrollView = view as NestedScrollView;
+				return nestedScrollView.ScrollY < 0;
+			}
+
+			return true;
 		}
 
 		public void OnRefresh()

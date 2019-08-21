@@ -6,17 +6,21 @@
     Title="ListView (Pull To Refresh)">
     <ContentPage.Content>
         <StackLayout>
-            <Button Text="Trigger Refresh" Command="{Binding TriggerRefreshCommand}"></Button>
+            <Button
+                Text="Trigger Refresh"
+                Command="{Binding RefreshCommand}"/>
             <RefreshView
-            IsRefreshing="{Binding IsRefreshing}"
-            RefreshColor="Purple"
-            Command="{Binding RefreshCommand}"
-            HorizontalOptions="FillAndExpand"
-            VerticalOptions="FillAndExpand">
+                IsRefreshing="{Binding IsRefreshing}"
+                RefreshColor="Purple"
+                Command="{Binding RefreshCommand}"
+                HorizontalOptions="FillAndExpand"
+                VerticalOptions="FillAndExpand">
                 <ListView
-                ItemsSource="{Binding Items}"
-                HasUnevenRows="True"
-                SeparatorVisibility="None">
+                    ItemsSource="{Binding Items}"
+                    Header = "Header"
+                    Footer = "Footer"
+                    HasUnevenRows="True"
+                    SeparatorVisibility="None">
                     <ListView.ItemTemplate>
                         <DataTemplate>
                             <ViewCell>
@@ -26,12 +30,12 @@
                                         <ColumnDefinition Width="*" />
                                     </Grid.ColumnDefinitions>
                                     <BoxView
-                                    Grid.Column="0"
-                                    Color="{Binding Color}"
-                                    HeightRequest="48"/>
+                                        Grid.Column="0"
+                                        Color="{Binding Color}"
+                                        HeightRequest="48"/>
                                     <Label
-                                    Grid.Column="1"
-                                    Text="{Binding Name}"/>
+                                        Grid.Column="1"
+                                        Text="{Binding Name}"/>
                                 </Grid>
                             </ViewCell>
                         </DataTemplate>

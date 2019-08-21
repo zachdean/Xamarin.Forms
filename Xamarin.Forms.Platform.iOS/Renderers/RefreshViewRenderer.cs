@@ -12,11 +12,6 @@ namespace Xamarin.Forms.Platform.iOS
 		UIView _refreshControlParent;
 		UIRefreshControl _refreshControl;
 
-		public RefreshView RefreshView
-		{
-			get { return Element; }
-		}
-
 		public bool IsRefreshing
 		{
 			get { return _isRefreshing; }
@@ -24,15 +19,15 @@ namespace Xamarin.Forms.Platform.iOS
 			{
 				bool changed = IsRefreshing != value;
 
+				if (changed)
+					TryOffsetRefresh(this, IsRefreshing);
+
 				_isRefreshing = value;
 
 				if (_isRefreshing)
 					_refreshControl.BeginRefreshing();
 				else
 					_refreshControl.EndRefreshing();
-
-				if (changed)
-					TryOffsetRefresh(this, IsRefreshing);
 			}
 		}
 
@@ -98,10 +93,11 @@ namespace Xamarin.Forms.Platform.iOS
 		{
 			if (view is UITableView)
 			{
-				var uiTableView = view as UITableView;
+				var tableView = view as UITableView;
+
 				if (!_set)
 				{
-					_origininalY = uiTableView.ContentOffset.Y;
+					_origininalY = tableView.ContentOffset.Y;
 					_set = true;
 				}
 
@@ -109,18 +105,19 @@ namespace Xamarin.Forms.Platform.iOS
 					return true;
 
 				if (refreshing)
-					uiTableView.SetContentOffset(new CoreGraphics.CGPoint(0, _origininalY - _refreshControl.Frame.Size.Height), true);
+					tableView.SetContentOffset(new CoreGraphics.CGPoint(0, _origininalY - _refreshControl.Frame.Size.Height), true);
 				else
-					uiTableView.SetContentOffset(new CoreGraphics.CGPoint(0, _origininalY), true);
+					tableView.SetContentOffset(new CoreGraphics.CGPoint(0, _origininalY), true);
 				return true;
 			}
 
 			if (view is UICollectionView)
 			{
-				var uiCollectionView = view as UICollectionView;
+				var collectionView = view as UICollectionView;
+
 				if (!_set)
 				{
-					_origininalY = uiCollectionView.ContentOffset.Y;
+					_origininalY = collectionView.ContentOffset.Y;
 					_set = true;
 				}
 
@@ -128,15 +125,14 @@ namespace Xamarin.Forms.Platform.iOS
 					return true;
 
 				if (refreshing)
-					uiCollectionView.SetContentOffset(new CoreGraphics.CGPoint(0, _origininalY - _refreshControl.Frame.Size.Height), true);
+					collectionView.SetContentOffset(new CoreGraphics.CGPoint(0, _origininalY - _refreshControl.Frame.Size.Height), true);
 				else
-					uiCollectionView.SetContentOffset(new CoreGraphics.CGPoint(0, _origininalY), true);
+					collectionView.SetContentOffset(new CoreGraphics.CGPoint(0, _origininalY), true);
 				return true;
 			}
 
 			if (view is UIWebView)
 			{
-				// Can't do anything
 				return true;
 			}
 
@@ -213,23 +209,23 @@ namespace Xamarin.Forms.Platform.iOS
 
 		void UpdateColors()
 		{
-			if (RefreshView == null || _refreshControl == null)
+			if (Element == null || _refreshControl == null)
 				return;
 
-			if (RefreshView.RefreshColor != Color.Default)
-				_refreshControl.TintColor = RefreshView.RefreshColor.ToUIColor();
+			if (Element.RefreshColor != Color.Default)
+				_refreshControl.TintColor = Element.RefreshColor.ToUIColor();
 
-			SetBackgroundColor(RefreshView.BackgroundColor);
+			SetBackgroundColor(Element.BackgroundColor);
 		}
 
 		void UpdateIsRefreshing()
 		{
-			IsRefreshing = RefreshView.IsRefreshing;
+			IsRefreshing = Element.IsRefreshing;
 		}
 
 		void UpdateIsEnabled()
 		{
-			if (RefreshView.IsEnabled)
+			if (Element.IsEnabled)
 			{
 				TryInsertRefresh(_refreshControlParent);
 			}
@@ -244,9 +240,9 @@ namespace Xamarin.Forms.Platform.iOS
 
 		void OnRefresh(object sender, EventArgs e)
 		{
-			if (RefreshView?.Command?.CanExecute(RefreshView?.CommandParameter) ?? false)
+			if (Element?.Command?.CanExecute(Element?.CommandParameter) ?? false)
 			{
-				RefreshView.Command.Execute(RefreshView?.CommandParameter);
+				Element.Command.Execute(Element?.CommandParameter);
 			}
 		}
 	}

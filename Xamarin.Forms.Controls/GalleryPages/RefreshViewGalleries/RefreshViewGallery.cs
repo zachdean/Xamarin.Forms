@@ -19,8 +19,7 @@ namespace Xamarin.Forms.Controls.GalleryPages.RefreshViewGalleries
 					GalleryBuilder.NavButton("Refresh Layout Gallery", () => new RefreshLayoutGallery(), Navigation),
 					GalleryBuilder.NavButton("Refresh ScrollView Gallery", () => new RefreshScrollViewGallery(), Navigation),
 					GalleryBuilder.NavButton("Refresh ListView Gallery", () => new RefreshListViewGallery(), Navigation),
-					GalleryBuilder.NavButton("Refresh CollectionView Gallery", () => new RefreshCollectionViewGallery(), Navigation),
-					GalleryBuilder.NavButton("Refresh CarouselView Gallery", () => new RefreshCarouselViewGallery(), Navigation)
+					GalleryBuilder.NavButton("Refresh CollectionView Gallery", () => new RefreshCollectionViewGallery(), Navigation)
 				}
 			};
 		}
@@ -70,15 +69,12 @@ namespace Xamarin.Forms.Controls.GalleryPages.RefreshViewGalleries
 		}
 
 		public ICommand RefreshCommand => new Command(ExecuteRefresh);
-		public ICommand TriggerRefreshCommand => new Command(() => IsRefreshing = true);
 
 		void LoadItems()
 		{
-			Items.Clear();
-
-			for (int i = 0; i < 100; i++)
+			for (int i = 0; i < 50; i++)
 			{
-				Items.Add(new RefreshItem
+				Items.Insert(i, new RefreshItem
 				{
 					Color = Color.FromRgb(_random.Next(0, 255), _random.Next(0, 255), _random.Next(0, 255)),
 					Name = DateTime.Now.AddMinutes(i).ToString("F")
