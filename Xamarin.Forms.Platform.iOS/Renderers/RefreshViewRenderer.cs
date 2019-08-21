@@ -224,15 +224,11 @@ namespace Xamarin.Forms.Platform.iOS
 		void UpdateIsEnabled()
 		{
 			if (Element.IsEnabled)
-			{
 				TryInsertRefresh(_refreshControlParent);
-			}
 			else
 			{
 				if (_refreshControl.Superview != null)
-				{
 					_refreshControl.RemoveFromSuperview();
-				}
 			}
 		}
 
