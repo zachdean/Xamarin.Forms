@@ -2,6 +2,8 @@
 using Microsoft.UI.Xaml.Controls;
 using Windows.Foundation;
 using Windows.UI.Xaml.Media;
+using Xamarin.Forms.PlatformConfiguration.WindowsSpecific;
+using Specifics = Xamarin.Forms.PlatformConfiguration.WindowsSpecific.RefreshView;
 
 namespace Xamarin.Forms.Platform.UWP
 {
@@ -51,6 +53,7 @@ namespace Xamarin.Forms.Platform.UWP
 				UpdateIsEnabled();
 				UpdateIsRefreshing();
 				UpdateColors();
+				UpdateRefreshPullDirection();
 			}
 
 			base.OnElementChanged(e);
@@ -68,6 +71,8 @@ namespace Xamarin.Forms.Platform.UWP
 				UpdateIsRefreshing();
 			else if (e.PropertyName == RefreshView.RefreshColorProperty.PropertyName)
 				UpdateColors();
+			else if (e.PropertyName == Specifics.RefreshPullDirectionProperty.PropertyName)
+				UpdateRefreshPullDirection();
 		}
 
 		protected override void UpdateBackgroundColor()
@@ -101,7 +106,7 @@ namespace Xamarin.Forms.Platform.UWP
 			{
 				CompleteRefresh();
 			}
-			else if(_refreshCompletionDeferral == null)
+			else if (_refreshCompletionDeferral == null)
 			{
 				Control.RequestRefresh();
 			}
@@ -114,6 +119,32 @@ namespace Xamarin.Forms.Platform.UWP
 				: (Brush)Windows.UI.Xaml.Application.Current.Resources["DefaultTextForegroundThemeBrush"];
 
 			UpdateBackgroundColor();
+		}
+
+		void UpdateRefreshPullDirection()
+		{
+			if (Element.IsSet(Specifics.RefreshPullDirectionProperty))
+			{
+				var refreshPullDirection = Element.OnThisPlatform().GetRefreshPullDirection();
+
+				switch (refreshPullDirection)
+				{
+					case Specifics.RefreshPullDirection.TopToBottom:
+						Control.PullDirection = RefreshPullDirection.TopToBottom;
+						break;
+					case Specifics.RefreshPullDirection.BottomToTop:
+						Control.PullDirection = RefreshPullDirection.BottomToTop;
+						break;
+					case Specifics.RefreshPullDirection.LeftToRight:
+						Control.PullDirection = RefreshPullDirection.LeftToRight;
+						break;
+					case Specifics.RefreshPullDirection.RightToLeft:
+						Control.PullDirection = RefreshPullDirection.RightToLeft;
+						break;
+					default:
+						goto case Specifics.RefreshPullDirection.TopToBottom;
+				}
+			}
 		}
 
 		void CompleteRefresh()
