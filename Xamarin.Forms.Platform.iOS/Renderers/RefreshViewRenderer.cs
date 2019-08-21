@@ -6,6 +6,7 @@ namespace Xamarin.Forms.Platform.iOS
 {
 	public class RefreshViewRenderer : ViewRenderer<RefreshView, UIView>
 	{
+		bool _isDisposed;
 		bool _isRefreshing;
 		bool _set;
 		nfloat _origininalY;
@@ -66,27 +67,24 @@ namespace Xamarin.Forms.Platform.iOS
 			if (_refreshControl == null)
 				return;
 
-			if (color != Color.Default)
-				_refreshControl.BackgroundColor = color.ToUIColor();
-			else
-				_refreshControl.BackgroundColor = null;
+			_refreshControl.BackgroundColor = color != Color.Default ? color.ToUIColor() : null;
 		}
 
 		protected override void Dispose(bool disposing)
 		{
-			base.Dispose(disposing);
+			if (_isDisposed)
+				return;
 
-			if (disposing)
+			if (disposing && Control != null)
 			{
-				if (_refreshControl != null)
-				{
-					_refreshControl.ValueChanged -= OnRefresh;
-					_refreshControl.Dispose();
-					_refreshControl = null;
-				}
-
+				_refreshControl.ValueChanged -= OnRefresh;
+				_refreshControl.Dispose();
+				_refreshControl = null;
 				_refreshControlParent = null;
 			}
+
+			_isDisposed = true;
+			base.Dispose(disposing);
 		}
 
 		bool TryOffsetRefresh(UIView view, bool refreshing)
