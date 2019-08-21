@@ -11,7 +11,8 @@
                 Command="{Binding RefreshCommand}"/>
             <RefreshView
                 IsRefreshing="{Binding IsRefreshing}"
-                RefreshColor="Purple"
+                BackgroundColor="Red"
+                RefreshColor="Yellow"
                 Command="{Binding RefreshCommand}"
                 HorizontalOptions="FillAndExpand"
                 VerticalOptions="FillAndExpand">

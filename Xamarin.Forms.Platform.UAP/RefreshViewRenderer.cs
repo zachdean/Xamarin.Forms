@@ -39,7 +39,8 @@ namespace Xamarin.Forms.Platform.UWP
 				{
 					var refreshControl = new RefreshContainer
 					{
-						PullDirection = RefreshPullDirection.TopToBottom
+						PullDirection = RefreshPullDirection.TopToBottom,
+						Visualizer = new RefreshVisualizer()
 					};
 
 					refreshControl.RefreshRequested += OnRefresh;
@@ -75,9 +76,9 @@ namespace Xamarin.Forms.Platform.UWP
 				return;
 
 			if (Element.BackgroundColor != Color.Default)
-				Control.Background = Element.BackgroundColor.ToBrush();
+				Control.Visualizer.Background = Element.BackgroundColor.ToBrush();
 			else
-				Control.Background = Color.White.ToBrush();
+				Control.Visualizer.Background = Color.White.ToBrush();
 		}
 
 		void UpdateContent()
@@ -108,7 +109,7 @@ namespace Xamarin.Forms.Platform.UWP
 
 		void UpdateColors()
 		{
-			Control.Foreground = Element.RefreshColor != Color.Default
+			Control.Visualizer.Foreground = Element.RefreshColor != Color.Default
 				? Element.RefreshColor.ToBrush()
 				: (Brush)Windows.UI.Xaml.Application.Current.Resources["DefaultTextForegroundThemeBrush"];
 
