@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using UIKit;
+using Xamarin.Forms.PlatformConfiguration.iOSSpecific;
 
 namespace Xamarin.Forms.Platform.iOS
 {
@@ -8,8 +9,9 @@ namespace Xamarin.Forms.Platform.iOS
 	{
 		bool _isDisposed;
 		bool _isRefreshing;
-		bool _set;
+		bool _usingLargeTitles;
 		nfloat _origininalY;
+		nfloat _refreshControlHeight;
 		UIView _refreshControlParent;
 		UIRefreshControl _refreshControl;
 
@@ -18,17 +20,14 @@ namespace Xamarin.Forms.Platform.iOS
 			get { return _isRefreshing; }
 			set
 			{
-				bool changed = IsRefreshing != value;
-
-				if (changed)
-					TryOffsetRefresh(this, IsRefreshing);
-
 				_isRefreshing = value;
 
 				if (_isRefreshing)
 					_refreshControl.BeginRefreshing();
 				else
 					_refreshControl.EndRefreshing();
+
+				TryOffsetRefresh(this, IsRefreshing);
 			}
 		}
 
@@ -39,11 +38,21 @@ namespace Xamarin.Forms.Platform.iOS
 			if (e.OldElement != null || Element == null)
 				return;
 
-			_refreshControl = new UIRefreshControl();
+			if (e.NewElement != null)
+			{
+				if (Control == null)
+				{
+					if (Forms.IsiOS11OrNewer)
+					{
+						var parentNav = e.NewElement.FindParentOfType<NavigationPage>();
+						_usingLargeTitles = parentNav != null && parentNav.OnThisPlatform().PrefersLargeTitles();
+					}
 
-			_refreshControl.ValueChanged += OnRefresh;
-
-			_refreshControlParent = this;
+					_refreshControl = new UIRefreshControl();
+					_refreshControl.ValueChanged += OnRefresh;
+					_refreshControlParent = this;
+				}
+			}
 
 			UpdateColors();
 			UpdateIsRefreshing();
@@ -93,19 +102,14 @@ namespace Xamarin.Forms.Platform.iOS
 			{
 				var tableView = view as UITableView;
 
-				if (!_set)
-				{
-					_origininalY = tableView.ContentOffset.Y;
-					_set = true;
-				}
-
-				if (_origininalY < 0)
+				if (tableView.ContentOffset.Y < 0)
 					return true;
-
+			
 				if (refreshing)
-					tableView.SetContentOffset(new CoreGraphics.CGPoint(0, _origininalY - _refreshControl.Frame.Size.Height), true);
+					tableView.SetContentOffset(new CoreGraphics.CGPoint(0, _origininalY - _refreshControlHeight), true);
 				else
 					tableView.SetContentOffset(new CoreGraphics.CGPoint(0, _origininalY), true);
+
 				return true;
 			}
 
@@ -113,19 +117,14 @@ namespace Xamarin.Forms.Platform.iOS
 			{
 				var collectionView = view as UICollectionView;
 
-				if (!_set)
-				{
-					_origininalY = collectionView.ContentOffset.Y;
-					_set = true;
-				}
-
-				if (_origininalY < 0)
+				if (collectionView.ContentOffset.Y < 0)
 					return true;
 
 				if (refreshing)
-					collectionView.SetContentOffset(new CoreGraphics.CGPoint(0, _origininalY - _refreshControl.Frame.Size.Height), true);
+					collectionView.SetContentOffset(new CoreGraphics.CGPoint(0, _origininalY - _refreshControlHeight), true);
 				else
 					collectionView.SetContentOffset(new CoreGraphics.CGPoint(0, _origininalY), true);
+
 				return true;
 			}
 
@@ -136,21 +135,16 @@ namespace Xamarin.Forms.Platform.iOS
 
 			if (view is UIScrollView)
 			{
-				var uiScrollView = view as UIScrollView;
+				var scrollView = view as UIScrollView;
 
-				if (!_set)
-				{
-					_origininalY = uiScrollView.ContentOffset.Y;
-					_set = true;
-				}
-
-				if (_origininalY < 0)
+				if (scrollView.ContentOffset.Y < 0)
 					return true;
 
 				if (refreshing)
-					uiScrollView.SetContentOffset(new CoreGraphics.CGPoint(0, _origininalY - _refreshControl.Frame.Size.Height), true);
+					scrollView.SetContentOffset(new CoreGraphics.CGPoint(0, _origininalY - _refreshControlHeight), true);
 				else
-					uiScrollView.SetContentOffset(new CoreGraphics.CGPoint(0, _origininalY), true);
+					scrollView.SetContentOffset(new CoreGraphics.CGPoint(0, _origininalY), true);
+
 				return true;
 			}
 
@@ -171,9 +165,33 @@ namespace Xamarin.Forms.Platform.iOS
 		{
 			_refreshControlParent = view;
 
-			if (view is UITableView || view is UICollectionView)
+			if (view is UITableView)
 			{
-				view.InsertSubview(_refreshControl, index);
+				var tableView = view as UITableView;
+
+				if (CanUseRefreshControlProperty())
+					tableView.RefreshControl = _refreshControl;
+				else
+					tableView.InsertSubview(_refreshControl, index);
+
+				_origininalY = tableView.ContentOffset.Y;
+				_refreshControlHeight = _refreshControl.Frame.Size.Height;
+
+				return true;
+			}
+
+			if (view is UICollectionView)
+			{
+				var collectionView = view as UICollectionView;
+
+				if (CanUseRefreshControlProperty())
+					collectionView.RefreshControl = _refreshControl;
+				else
+					collectionView.InsertSubview(_refreshControl, index);
+
+				_origininalY = collectionView.ContentOffset.Y;
+				_refreshControlHeight = _refreshControl.Frame.Size.Height;
+
 				return true;
 			}
 
@@ -186,9 +204,18 @@ namespace Xamarin.Forms.Platform.iOS
 
 			if (view is UIScrollView)
 			{
-				var uiScrollView = view as UIScrollView;
-				view.InsertSubview(_refreshControl, index);
-				uiScrollView.AlwaysBounceVertical = true;
+				var scrollView = view as UIScrollView;
+
+				if (CanUseRefreshControlProperty())
+					scrollView.RefreshControl = _refreshControl;
+				else
+					scrollView.InsertSubview(_refreshControl, index);
+
+				scrollView.AlwaysBounceVertical = true;
+
+				_origininalY = scrollView.ContentOffset.Y;
+				_refreshControlHeight = _refreshControl.Frame.Size.Height;
+
 				return true;
 			}
 
@@ -230,6 +257,11 @@ namespace Xamarin.Forms.Platform.iOS
 				if (_refreshControl.Superview != null)
 					_refreshControl.RemoveFromSuperview();
 			}
+		}
+
+		bool CanUseRefreshControlProperty()
+		{
+			return Forms.IsiOS10OrNewer && !_usingLargeTitles;
 		}
 
 		void OnRefresh(object sender, EventArgs e)
