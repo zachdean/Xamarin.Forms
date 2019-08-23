@@ -70,6 +70,7 @@ namespace Xamarin.Forms.Controls
 		}
 	}
 
+	[Preserve(AllMembers = true)]
 	public class RefreshCoreGalleryViewModel : BindableObject
 	{
 		const int RefreshDuration = 1;

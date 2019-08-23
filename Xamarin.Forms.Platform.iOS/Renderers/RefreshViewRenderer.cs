@@ -98,10 +98,8 @@ namespace Xamarin.Forms.Platform.iOS
 
 		bool TryOffsetRefresh(UIView view, bool refreshing)
 		{
-			if (view is UITableView)
+			if (view is UITableView tableView)
 			{
-				var tableView = view as UITableView;
-
 				if (tableView.ContentOffset.Y < 0)
 					return true;
 			
@@ -113,10 +111,8 @@ namespace Xamarin.Forms.Platform.iOS
 				return true;
 			}
 
-			if (view is UICollectionView)
+			if (view is UICollectionView collectionView)
 			{
-				var collectionView = view as UICollectionView;
-
 				if (collectionView.ContentOffset.Y < 0)
 					return true;
 
@@ -133,10 +129,8 @@ namespace Xamarin.Forms.Platform.iOS
 				return true;
 			}
 
-			if (view is UIScrollView)
+			if (view is UIScrollView scrollView)
 			{
-				var scrollView = view as UIScrollView;
-
 				if (scrollView.ContentOffset.Y < 0)
 					return true;
 
@@ -165,10 +159,8 @@ namespace Xamarin.Forms.Platform.iOS
 		{
 			_refreshControlParent = view;
 
-			if (view is UITableView)
+			if (view is UITableView tableView)
 			{
-				var tableView = view as UITableView;
-
 				if (CanUseRefreshControlProperty())
 					tableView.RefreshControl = _refreshControl;
 				else
@@ -180,10 +172,8 @@ namespace Xamarin.Forms.Platform.iOS
 				return true;
 			}
 
-			if (view is UICollectionView)
+			if (view is UICollectionView collectionView)
 			{
-				var collectionView = view as UICollectionView;
-
 				if (CanUseRefreshControlProperty())
 					collectionView.RefreshControl = _refreshControl;
 				else
@@ -195,17 +185,14 @@ namespace Xamarin.Forms.Platform.iOS
 				return true;
 			}
 
-			if (view is UIWebView)
+			if (view is UIWebView webView)
 			{
-				var uiWebView = view as UIWebView;
-				uiWebView.ScrollView.InsertSubview(_refreshControl, index);
+				webView.ScrollView.InsertSubview(_refreshControl, index);
 				return true;
 			}
 
-			if (view is UIScrollView)
+			if (view is UIScrollView scrollView)
 			{
-				var scrollView = view as UIScrollView;
-
 				if (CanUseRefreshControlProperty())
 					scrollView.RefreshControl = _refreshControl;
 				else

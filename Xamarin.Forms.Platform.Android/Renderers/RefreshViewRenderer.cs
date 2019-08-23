@@ -95,9 +95,6 @@ namespace Xamarin.Forms.Platform.Android
 
 		void UpdateContent()
 		{
-			if (RefreshView.Content == null)
-				return;
-
 			if (_renderer != null)
 			{
 				_renderer.View.RemoveFromParent();
@@ -114,8 +111,8 @@ namespace Xamarin.Forms.Platform.Android
 				if (_renderer.View.Parent != null)
 					_renderer.View.RemoveFromParent();
 
-				using (var layout = new LayoutParams(LayoutParams.MatchParent, LayoutParams.MatchParent))
-					SwipeRefreshLayout.AddView(_renderer.View, layout);
+				using (var layoutParams = new LayoutParams(LayoutParams.MatchParent, LayoutParams.MatchParent))
+					SwipeRefreshLayout.AddView(_renderer.View, layoutParams);
 			}
 		}
 
@@ -139,13 +136,8 @@ namespace Xamarin.Forms.Platform.Android
 			if (!(view is ViewGroup viewGroup))
 				return base.CanChildScrollUp();
 
-			if (Forms.SdkInt < BuildVersionCodes.JellyBean)
-			{
-				if (viewGroup.IsScrollContainer)
-				{
-					return base.CanChildScrollUp();
-				}
-			}
+			if (Forms.SdkInt < BuildVersionCodes.JellyBean && viewGroup.IsScrollContainer)
+				return base.CanChildScrollUp();
 
 			if (!CanScrollUpViewByType(view))
 				return false;
@@ -168,9 +160,8 @@ namespace Xamarin.Forms.Platform.Android
 
 		bool CanScrollUpViewByType(AView view)
 		{
-			if (view is AbsListView)
+			if (view is AbsListView absListView)
 			{
-				var absListView = view as AbsListView;
 				if (absListView.FirstVisiblePosition == 0)
 				{
 					var subChild = absListView.GetChildAt(0);
@@ -180,21 +171,15 @@ namespace Xamarin.Forms.Platform.Android
 
 				return true;
 			}
-			if(view is RecyclerView)
-			{
-				var recyclerView = view as RecyclerView;
+
+			if(view is RecyclerView recyclerView)
 				return recyclerView.ScrollY < 0;
-			}
-			if (view is global::Android.Widget.ScrollView)
-			{
-				var scrollview = view as global::Android.Widget.ScrollView;
+
+			if (view is global::Android.Widget.ScrollView scrollview)
 				return scrollview.ScrollY < 0;
-			}
-			if (view is NestedScrollView)
-			{
-				var nestedScrollView = view as NestedScrollView;
+
+			if (view is NestedScrollView nestedScrollView)
 				return nestedScrollView.ScrollY < 0;
-			}
 
 			return true;
 		}
