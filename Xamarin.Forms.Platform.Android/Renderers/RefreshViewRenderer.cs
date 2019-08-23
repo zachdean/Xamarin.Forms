@@ -211,7 +211,7 @@ namespace Xamarin.Forms.Platform.Android
 		{
 			_renderer.View.Measure(widthConstraint, heightConstraint);
 
-			return new SizeRequest(new Size(_renderer.View.MeasuredWidth, _renderer.View.MeasuredHeight), new Size(40, 40));
+			return new SizeRequest(new Size(_renderer.View.MeasuredWidth, _renderer.View.MeasuredHeight), new Size(100, 100));
 		}
 
 		public void UpdateLayout() => Tracker?.UpdateLayout();
@@ -230,15 +230,16 @@ namespace Xamarin.Forms.Platform.Android
 
 				if (_renderer != null)
 					_renderer.View.RemoveFromParent();
+
+				_renderer?.Dispose();
+				_renderer = null;
+
+				Tracker?.Dispose();
+				Tracker = null;
+
+				_init = false;
 			}
 
-			_renderer?.Dispose();
-			_renderer = null;
-
-			Tracker?.Dispose();
-			Tracker = null;
-
-			_init = false;
 			_isDisposed = true;
 
 			base.Dispose(disposing);
