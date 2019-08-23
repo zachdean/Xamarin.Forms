@@ -3,13 +3,6 @@ steps:
   
   - bash: ./build.sh --target Boots
 
-  - task: xamops.azdevex.provisionator-task.provisionator@1
-    displayName: Provisionate Xamarin
-    condition: eq(variables['provisioningOSX'], 'true')
-    inputs:
-      provisioning_script: $(provisionator.osxPath)
-      provisioning_extra_args: $(provisionator.extraArguments)
-
   - bash: sudo $AGENT_HOMEDIRECTORY/scripts/select-xamarin-sdk.sh $(MONO_VERSION)
     displayName: Switch to the latest Xamarin SDK
 
