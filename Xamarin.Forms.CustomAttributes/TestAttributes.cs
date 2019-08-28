@@ -733,6 +733,13 @@ namespace Xamarin.Forms.CustomAttributes
 			ThumbColor
 		}
 
+		public enum SwipeView
+		{
+			RightItems,
+			TopItems,
+			BottomItems
+		}
+
 		public enum CheckBox
 		{
 			IsChecked,

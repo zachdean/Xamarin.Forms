@@ -12,7 +12,7 @@ namespace Xamarin.Forms
 			_internal = new List<SwipeItem>();
 		}
 
-		public static SwipeMode Mode { get; set; }
+		public SwipeMode Mode { get; set; }
 
 		public SwipeItem this[int index] { get => _internal[index]; set => _internal[index] = value; }
 

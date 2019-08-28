@@ -344,6 +344,7 @@ namespace Xamarin.Forms.Controls
 				new GalleryPageFactory(() => new SliderCoreGalleryPage(), "Slider Gallery"),
 				new GalleryPageFactory(() => new StepperCoreGalleryPage(), "Stepper Gallery"),
 				new GalleryPageFactory(() => new SwitchCoreGalleryPage(), "Switch Gallery"),
+				new GalleryPageFactory(() => new SwipeViewCoreGalleryPage(), "SwipeView Core Gallery"),
 				new GalleryPageFactory(() => new TableViewCoreGalleryPage(), "TableView Gallery"),
 				new GalleryPageFactory(() => new TimePickerCoreGalleryPage(), "TimePicker Gallery"),
 				new GalleryPageFactory(() => new VisualGallery(), "Visual Gallery"),

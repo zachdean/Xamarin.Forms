@@ -45,7 +45,10 @@ namespace Xamarin.Forms.Controls
 
 			Build(Layout);
 
-			Content = new ScrollView { AutomationId = "GalleryScrollView", Content = Layout };
+			if(SupportsScroll)
+				Content = new ScrollView { AutomationId = "GalleryScrollView", Content = Layout };
+			else
+				Content = new ContentView { AutomationId = "GalleryScrollView", Content = Layout };
 		}
 
 		protected virtual void InitializeElement(T element) { }
@@ -225,6 +228,11 @@ namespace Xamarin.Forms.Controls
 		}
 
 		protected virtual bool SupportsFocus
+		{
+			get { return true; }
+		}
+
+		protected virtual bool SupportsScroll
 		{
 			get { return true; }
 		}
