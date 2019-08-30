@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<ContentPage
+    xmlns="http://xamarin.com/schemas/2014/forms"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    x:Class="Xamarin.Forms.Controls.GalleryPages.SwipeViewGalleries.BasicSwipeGallery"
+    Title="SwipeView">
+    <ContentPage.Content>
+        <Grid>
+            <SwipeView
+                HorizontalOptions="Center"
+                VerticalOptions="Center"
+                Margin="12">
+                <SwipeView.BottomItems>
+                    <SwipeItems
+                        Mode="Execute">
+                        <SwipeItem
+                            Text="Delete"
+                            Icon="coffee.png"
+                            BackgroundColor="Red" />
+                    </SwipeItems>
+                </SwipeView.BottomItems>
+                <SwipeView.View>
+                    <Grid
+                        HeightRequest="80"
+                        WidthRequest="250"
+                        BackgroundColor="LightGray">
+                        <Label
+                            HorizontalOptions="Center"
+                            VerticalOptions="Center"
+                            Text="Swipe Up"/>
+                    </Grid>
+                </SwipeView.View>
+            </SwipeView>
+        </Grid>
+    </ContentPage.Content>
+</ContentPage>

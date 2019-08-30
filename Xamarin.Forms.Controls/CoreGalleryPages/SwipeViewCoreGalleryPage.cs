@@ -18,32 +18,65 @@ namespace Xamarin.Forms.Controls
 		{
 			element.HeightRequest = 60;
 			element.BackgroundColor = Color.LightGray;
-			element.Content = GetSwipeContent();
-			element.LeftItems = GetSwipeItems();
+			element.View = GetSwipeContent();
+			element.LeftItems = GetRevealSwipeItems();
+			element.RightItems = GetExecuteSwipeItems();
 		}
 
 		protected override void Build(StackLayout stackLayout)
 		{
 			base.Build(stackLayout);
 
-			var rightItemsContainer = new ValueViewContainer<SwipeView>(Test.SwipeView.RightItems, new SwipeView { RightItems = GetSwipeItems(), Content = GetSwipeContent(), HeightRequest = 60, BackgroundColor = Color.LightPink }, "RightItems", value => value.ToString());
-			var topItemsContainer = new ValueViewContainer<SwipeView>(Test.SwipeView.TopItems, new SwipeView { TopItems = GetSwipeItems(), Content = GetSwipeContent(), HeightRequest = 60, BackgroundColor = Color.LightSkyBlue }, "TopItems", value => value.ToString());
-			var bottomItemsContainer = new ValueViewContainer<SwipeView>(Test.SwipeView.BottomItems, new SwipeView { BottomItems = GetSwipeItems(), Content = GetSwipeContent(), HeightRequest = 60, BackgroundColor = Color.LightGray }, "BottomItems", value => value.ToString());
+			var rightItemsContainer = new ValueViewContainer<SwipeView>(Test.SwipeView.RightItems, new SwipeView { RightItems = GetRevealSwipeItems(), View = GetSwipeContent(), HeightRequest = 60, BackgroundColor = Color.LightPink }, "RightItems", value => value.ToString());
+			var topItemsContainer = new ValueViewContainer<SwipeView>(Test.SwipeView.TopItems, new SwipeView { TopItems = GetRevealSwipeItems(), View = GetSwipeContent(), HeightRequest = 60, BackgroundColor = Color.LightSkyBlue }, "TopItems", value => value.ToString());
+			var bottomItemsContainer = new ValueViewContainer<SwipeView>(Test.SwipeView.BottomItems, new SwipeView { BottomItems = GetRevealSwipeItems(), View = GetSwipeContent(), HeightRequest = 60, BackgroundColor = Color.LightGray }, "BottomItems", value => value.ToString());
 
 			Add(rightItemsContainer);
 			Add(topItemsContainer);
 			Add(bottomItemsContainer);
 		}
 
-		internal SwipeItems GetSwipeItems()
+		internal SwipeItems GetRevealSwipeItems()
 		{
+			var addSwipteItem = new SwipeItem { BackgroundColor = Color.Green, Text = "Add", Icon = "coffee.png" };
+			addSwipteItem.Invoked += (sender, e) =>
+			{
+				DisplayAlert("SwipeView", "Add Invoked", "OK");
+			};
+
+			var modifySwipteItem = new SwipeItem { BackgroundColor = Color.Orange, Text = "Modify", Icon = "calculator.png" };
+
+			addSwipteItem.Invoked += (sender, e) =>
+			{
+				DisplayAlert("SwipeView", "Modify Invoked", "OK");
+			};
+
 			var swipeItems = new SwipeItems
 			{
-				new SwipeItem { BackgroundColor = Color.Green, Text = "Modify", Icon = "coffee.png"},
-				new SwipeItem { BackgroundColor = Color.Red, Text = "Delete", Icon = "calculator.png" }
+				addSwipteItem,
+				modifySwipteItem
 			};
 
 			swipeItems.Mode = SwipeMode.Reveal;
+
+			return swipeItems;
+		}
+
+		internal SwipeItems GetExecuteSwipeItems()
+		{
+			var deleteSwipeItem = new SwipeItem { BackgroundColor = Color.Red, Text = "Delete", Icon = "coffee.png" };
+
+			deleteSwipeItem.Invoked += (sender, e) =>
+			{
+				DisplayAlert("SwipeView", "Modify Invoked", "OK");
+			};
+
+			var swipeItems = new SwipeItems
+			{
+				deleteSwipeItem
+			};
+
+			swipeItems.Mode = SwipeMode.Execute;
 
 			return swipeItems;
 		}
@@ -59,7 +92,7 @@ namespace Xamarin.Forms.Controls
 			{
 				HorizontalOptions = LayoutOptions.Center,
 				VerticalOptions = LayoutOptions.Center,
-				Text = "Swipe to Left (Reveal)"
+				Text = "Swipe to Right (Reveal)"
 			};
 
 			content.Children.Add(info);

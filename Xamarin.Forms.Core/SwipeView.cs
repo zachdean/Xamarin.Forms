@@ -1,32 +1,59 @@
 ﻿using System;
+using System.Diagnostics;
 using Xamarin.Forms.Internals;
 using Xamarin.Forms.Platform;
 
 namespace Xamarin.Forms
 {
+	[ContentProperty("View")]
 	[RenderWith(typeof(_SwipeViewRenderer))]
 	public class SwipeView : ContentView, IDisposable
 	{
+		private const double SwipeItemWidth = 80;
+		private const double SwipeThreshold = 250;
+
 		private bool _isTouchDown;
-		private bool _isInSwiping;
 		private Point _initialPoint;
 		private SwipeDirection _swipeDirection;
 		private double _swipeOffset;
-		private View _content;
-		private View _leftItems;
-		private View _rightItems;
-		private View _topItems;
-		private View _bottomItems;
+		private Grid _content;
+		private Grid _view;
+		private StackLayout _leftItems;
+		private StackLayout _rightItems;
+		private StackLayout _topItems;
+		private StackLayout _bottomItems;
 
 		public SwipeView()
 		{
 			IsClippedToBounds = true;
+
+			_content = new Grid();
+			_leftItems = new StackLayout();
+			_rightItems = new StackLayout();
+			_topItems = new StackLayout();
+			_bottomItems = new StackLayout();
+			_view = new Grid();
+
+			_content.Children.Add(_leftItems);
+			_content.Children.Add(_rightItems);
+			_content.Children.Add(_topItems);
+			_content.Children.Add(_bottomItems);
+			_content.Children.Add(_view);
+
+			Content = _content;
 		}
 
-		public static readonly BindableProperty LeftItemsProperty = BindableProperty.Create(nameof(LeftItems), typeof(SwipeItems), typeof(SwipeView), default(SwipeItems));
-		public static readonly BindableProperty RightItemsProperty = BindableProperty.Create(nameof(RightItems), typeof(SwipeItems), typeof(SwipeView), default(SwipeItems));
-		public static readonly BindableProperty TopItemsProperty = BindableProperty.Create(nameof(TopItems), typeof(SwipeItems), typeof(SwipeView), default(SwipeItems));
-		public static readonly BindableProperty BottomItemsProperty = BindableProperty.Create(nameof(BottomItems), typeof(SwipeItems), typeof(SwipeView), default(SwipeItems));
+		public static readonly BindableProperty ViewProperty = BindableProperty.Create(nameof(View), typeof(View), typeof(SwipeView), default(View), BindingMode.TwoWay, null, OnViewChanged);
+		public static readonly BindableProperty LeftItemsProperty = BindableProperty.Create(nameof(LeftItems), typeof(SwipeItems), typeof(SwipeView), null, BindingMode.TwoWay, null, OnSwipeItemsChanged);
+		public static readonly BindableProperty RightItemsProperty = BindableProperty.Create(nameof(RightItems), typeof(SwipeItems), typeof(SwipeView), null, BindingMode.TwoWay, null, OnSwipeItemsChanged);
+		public static readonly BindableProperty TopItemsProperty = BindableProperty.Create(nameof(TopItems), typeof(SwipeItems), typeof(SwipeView), null, BindingMode.TwoWay, null, OnSwipeItemsChanged);
+		public static readonly BindableProperty BottomItemsProperty = BindableProperty.Create(nameof(BottomItems), typeof(SwipeItems), typeof(SwipeView), null, BindingMode.TwoWay, null, OnSwipeItemsChanged);
+
+		public View View
+		{
+			get { return (View)GetValue(ViewProperty); }
+			set { SetValue(ViewProperty, value); }
+		}
 
 		public SwipeItems LeftItems
 		{
@@ -52,8 +79,10 @@ namespace Xamarin.Forms
 			set { SetValue(BottomItemsProperty, value); }
 		}
 
-		public static event EventHandler<SwipeStartedEventArgs> SwipeStarted;
-		public static event EventHandler<SwipeEndedEventArgs> SwipeEnded;
+		internal bool IsSwiping { get; private set; }
+
+		public event EventHandler<SwipeStartedEventArgs> SwipeStarted;
+		public event EventHandler<SwipeEndedEventArgs> SwipeEnded;
 
 		protected override bool ShouldInvalidateOnChildAdded(View child)
 		{
@@ -65,9 +94,18 @@ namespace Xamarin.Forms
 			return false;
 		}
 
+		protected override void OnParentSet()
+		{
+			base.OnParentSet();
+
+			if (Parent == null)
+				Dispose();
+		}
+
 		public void Dispose()
 		{
 			_content = null;
+			_view = null;
 			_leftItems = null;
 			_rightItems = null;
 			_topItems = null;
@@ -80,13 +118,13 @@ namespace Xamarin.Forms
 			switch (status)
 			{
 				case GestureStatus.Started:
-					System.Diagnostics.Debug.WriteLine("Started");
+					Debug.WriteLine("Started");
 					return !ProcessTouchDown(point);
 				case GestureStatus.Running:
-					System.Diagnostics.Debug.WriteLine("Running");
+					Debug.WriteLine("Running");
 					return !ProcessTouchMove(point);
 				case GestureStatus.Completed:
-					System.Diagnostics.Debug.WriteLine("Completed");
+					Debug.WriteLine("Completed");
 					return !ProcessTouchUp();
 			}
 
@@ -97,8 +135,10 @@ namespace Xamarin.Forms
 
 		private bool ProcessTouchDown(Point point)
 		{
-			if (_isInSwiping || _isTouchDown)
+			if (IsSwiping || _isTouchDown)
 				return false;
+
+			ResetSwipe(_swipeDirection);
 
 			_initialPoint = point;
 			_isTouchDown = true;
@@ -107,21 +147,26 @@ namespace Xamarin.Forms
 		}
 
 		private bool ProcessTouchMove(Point point)
-		{	
-			if (!_isInSwiping)
+		{
+			if (!IsSwiping)
 			{
 				_swipeDirection = GetSwipeDirection(_initialPoint, point);
 				RaiseSwipeStarted();
-				_isInSwiping = true;
+				IsSwiping = true;
 			}
 
+			if (!ValidateSwipeDirection(_swipeDirection))
+				return false;
+
 			_swipeOffset = GetSwipeOffset(_initialPoint, point, _swipeDirection);
-			InitializeSwipeView(_swipeDirection);
+			InitializeSwipe(_swipeDirection);
+
+			Debug.WriteLine(_swipeOffset);
 
 			if (Math.Abs(_swipeOffset) > double.Epsilon)
-				LayoutSwipeView(_swipeDirection, _swipeOffset);
+				Swipe(_swipeDirection, _swipeOffset);
 			else
-				ResetSwipe();
+				ResetSwipe(_swipeDirection);
 
 			return true;
 		}
@@ -130,13 +175,17 @@ namespace Xamarin.Forms
 		{
 			_isTouchDown = false;
 
-			if (!_isInSwiping)
+			if (!IsSwiping)
 				return false;
 
-			_isInSwiping = false;
+			IsSwiping = false;
 
-			ResetSwipe();
 			RaiseSwipeEnded();
+
+			if (!ValidateSwipeDirection(_swipeDirection))
+				return false;
+
+			ValidateSwipeThreshold(_swipeDirection);
 
 			return false;
 		}
@@ -144,7 +193,7 @@ namespace Xamarin.Forms
 		private SwipeDirection GetSwipeDirection(Point initialPoint, Point endPoint)
 		{
 			var angle = GetAngleFromPoints(initialPoint.X, initialPoint.Y, endPoint.X, endPoint.Y);
-			return  GetSwipeDirectionFromAngle(angle);
+			return GetSwipeDirectionFromAngle(angle);
 		}
 
 		private double GetSwipeOffset(Point initialPoint, Point endPoint, SwipeDirection swipeDirection)
@@ -166,29 +215,84 @@ namespace Xamarin.Forms
 			return swipeOffset;
 		}
 
-		private double ValidateOffset(double offset)
+		private double GetSwipeThreshold(SwipeDirection swipeDirection)
 		{
+			double swipeThreshold = 0;
+
+			switch (swipeDirection)
+			{
+				case SwipeDirection.Left:
+					swipeThreshold = GetSwipeThreshold(RightItems);
+					break;
+				case SwipeDirection.Right:
+					swipeThreshold = GetSwipeThreshold(LeftItems);
+					break;
+				case SwipeDirection.Up:
+					swipeThreshold = GetSwipeThreshold(BottomItems);
+					break;
+				case SwipeDirection.Down:
+					swipeThreshold = GetSwipeThreshold(TopItems);
+					break;
+			}
+
+			return swipeThreshold;
+		}
+
+		private double GetSwipeThreshold(SwipeItems swipeItems)
+		{
+			double swipeThreshold = 0;
+
+			if (swipeItems == null)
+				return 0;
+
+			if (swipeItems.Mode == SwipeMode.Reveal)
+				foreach (var swipeItem in swipeItems)
+					swipeThreshold += swipeItem.WidthRequest;
+			else
+				swipeThreshold = SwipeThreshold;
+
+			return swipeThreshold;
+		}
+
+		private bool ValidateSwipeDirection(SwipeDirection swipeDirection)
+		{
+			switch (swipeDirection)
+			{
+				case SwipeDirection.Left:
+					return _rightItems.Children.Count > 0;
+				case SwipeDirection.Right:
+					return _leftItems.Children.Count > 0;
+				case SwipeDirection.Up:
+					return _bottomItems.Children.Count > 0;
+				case SwipeDirection.Down:
+					return _topItems.Children.Count > 0;
+			}
+
+			return false;
+		}
+
+		private double ValidateSwipeOffset(double offset)
+		{
+			var swipeThreshold = GetSwipeThreshold(_swipeDirection);
+
 			switch (_swipeDirection)
 			{
 				case SwipeDirection.Left:
-				case SwipeDirection.Right:
-					if (Math.Abs(offset) > _content.Width)
-					{
-						if (offset > 0)
-							return _content.Width;
+					if (offset > 0)
+						offset = 0;
 
-						return -(_content.Width);
-					}
+					if (Math.Abs(offset) > swipeThreshold)
+						return -swipeThreshold;
+					break;
+				case SwipeDirection.Right:
+					if (offset < 0)
+						offset = 0;
+
+					if (Math.Abs(offset) > swipeThreshold)
+						return swipeThreshold;
 					break;
 				case SwipeDirection.Up:
 				case SwipeDirection.Down:
-					if (Math.Abs(offset) > _content.Height)
-					{
-						if (offset > 0)
-							return _content.Height;
-
-						return -(_content.Height);
-					}
 					break;
 			}
 
@@ -220,91 +324,196 @@ namespace Xamarin.Forms
 			return (angle >= init) && (angle < end);
 		}
 
-		private void InitializeSwipeView(SwipeDirection swipeDirection)
+		private void InitializeSwipe(SwipeDirection swipeDirection)
 		{
-			if(_content == null)
-				_content = Content;
+			switch (swipeDirection)
+			{
+				case SwipeDirection.Left:
+					if (_rightItems != null)
+						_rightItems.IsVisible = true;
+					break;
+				case SwipeDirection.Right:
+					if (_leftItems != null)
+						_leftItems.IsVisible = true;
+					break;
+				case SwipeDirection.Up:
+					if (_bottomItems != null)
+						_bottomItems.IsVisible = true;
+					break;
+				case SwipeDirection.Down:
+					if (_topItems != null)
+						_topItems.IsVisible = true;
+					break;
+			}
+		}
+
+		private void Swipe(SwipeDirection swipeDirection, double swipeOffset)
+		{
+			switch (swipeDirection)
+			{
+				case SwipeDirection.Left:
+					_view.TranslationX = ValidateSwipeOffset(swipeOffset);
+					break;
+				case SwipeDirection.Right:
+					_view.TranslationX = ValidateSwipeOffset(swipeOffset);
+					break;
+				case SwipeDirection.Up:
+					_view.TranslationY = ValidateSwipeOffset(swipeOffset);
+					break;
+				case SwipeDirection.Down:
+					_view.TranslationY = ValidateSwipeOffset(swipeOffset);
+					break;
+			}
+		}
+
+		private void ValidateSwipeThreshold(SwipeDirection swipeDirection)
+		{
+			var swipeThresholdPercent = 0.6 * GetSwipeThreshold(_swipeDirection);
+
+			if (_swipeOffset >= swipeThresholdPercent)
+			{
+				switch (swipeDirection)
+				{
+					case SwipeDirection.Left:
+						ValidateSwipeThreshold(SwipeDirection.Left, RightItems);
+						break;
+					case SwipeDirection.Right:
+						ValidateSwipeThreshold(SwipeDirection.Right, LeftItems);
+						break;
+					case SwipeDirection.Up:
+						ValidateSwipeThreshold(SwipeDirection.Up, BottomItems);
+						break;
+					case SwipeDirection.Down:
+						ValidateSwipeThreshold(SwipeDirection.Down, TopItems);
+						break;
+				}
+			}
+			else
+			{
+				ResetSwipe(swipeDirection);
+			}
+		}
+
+		private void ValidateSwipeThreshold(SwipeDirection swipeDirection, SwipeItems swipeItems)
+		{
+			if (swipeItems == null)
+				return;
+
+			if (swipeItems.Mode == SwipeMode.Execute)
+			{
+				foreach (var swipeItem in swipeItems)
+					swipeItem.Command?.Execute(swipeItem.CommandParameter);
+
+				ResetSwipe(swipeDirection);
+			}
+			else
+				CompleteSwipe(swipeDirection);
+		}
+
+		private void ResetSwipe(SwipeDirection swipeDirection)
+		{
+			switch (swipeDirection)
+			{
+				case SwipeDirection.Left:
+				case SwipeDirection.Right:
+					_view.TranslationX = 0;
+					_rightItems.IsVisible = false;
+					break;
+				case SwipeDirection.Up:
+				case SwipeDirection.Down:
+					_view.TranslationY = 0;
+					_bottomItems.IsVisible = false;
+					break;
+			}
+			IsSwiping = false;
+		}
+
+		private void CompleteSwipe(SwipeDirection swipeDirection)
+		{
+			double swipeThreshold = 0;
 
 			switch (swipeDirection)
 			{
 				case SwipeDirection.Left:
-					if(_rightItems == null)
-						_rightItems = CreateSwipeItems(RightItems);
-
-					if (Children.IndexOf(_rightItems) == -1)
-						LowerChild(_rightItems);
-
-					_rightItems.IsVisible = true;
+					swipeThreshold = GetSwipeThreshold(RightItems);
 					break;
 				case SwipeDirection.Right:
+					swipeThreshold = GetSwipeThreshold(LeftItems);
+					break;
+				case SwipeDirection.Up:
+					swipeThreshold = GetSwipeThreshold(BottomItems);
+					break;
+				case SwipeDirection.Down:
+					swipeThreshold = GetSwipeThreshold(TopItems);
+					break;
+			}
+
+			_view.TranslationX = swipeThreshold;
+			IsSwiping = false;
+		}
+
+		private void InitializeContent()
+		{
+			if (_view == null)
+				return;
+
+			_view.Children.Clear();
+			_view.Children.Add(View);
+		}
+
+		private void InitializeSwipeItems(SwipeDirection swipeDirection)
+		{
+			switch (swipeDirection)
+			{
+				case SwipeDirection.Left:
 					if (_leftItems == null)
-						_leftItems = CreateSwipeItems(LeftItems);
-
-					if (Children.IndexOf(_leftItems) == -1)
-						LowerChild(_leftItems);
-
-					_leftItems.IsVisible = true;
+						return;
+					_leftItems.HorizontalOptions = LayoutOptions.StartAndExpand;
+					InitializeSwipeItems(_leftItems, LeftItems);
 					break;
-				case SwipeDirection.Up:
-					if (_bottomItems == null)
-						_bottomItems = CreateSwipeItems(BottomItems);
-
-					if (Children.IndexOf(_bottomItems) == -1)
-						LowerChild(_bottomItems);
-
-					_bottomItems.IsVisible = true;
-					break;
-				case SwipeDirection.Down:
-					if (_topItems == null)
-						_topItems = CreateSwipeItems(TopItems);
-
-					if (Children.IndexOf(_topItems) == -1)
-						LowerChild(_topItems);
-
-					_topItems.IsVisible = true;
-					break;
-			}
-		}
-
-		private void LayoutSwipeView(SwipeDirection swipeDirection, double swipeOffset)
-		{
-			switch (swipeDirection)
-			{
-				case SwipeDirection.Left:
 				case SwipeDirection.Right:
-					_content.TranslationX = ValidateOffset(swipeOffset);
+					if (_rightItems == null)
+						return;
+					_rightItems.HorizontalOptions = LayoutOptions.EndAndExpand;
+					InitializeSwipeItems(_rightItems, RightItems);
 					break;
 				case SwipeDirection.Up:
+					if (_topItems == null)
+						return;
+					_topItems.VerticalOptions = LayoutOptions.EndAndExpand;
+					InitializeSwipeItems(_topItems, TopItems);
+					break;
 				case SwipeDirection.Down:
-					_content.TranslationY = ValidateOffset(swipeOffset);
+					if (_bottomItems == null)
+						return;
+					_bottomItems.VerticalOptions = LayoutOptions.StartAndExpand;
+					InitializeSwipeItems(_bottomItems, BottomItems);
 					break;
 			}
 		}
 
-		private void ResetSwipe()
+		private void InitializeSwipeItems(StackLayout stackLayout, SwipeItems swipeItems)
 		{
-			_content.TranslationX = 0;
-			_content.TranslationY = 0;
-			_isInSwiping = false;
-		}
+			stackLayout.Spacing = 0;
+			stackLayout.Orientation = StackOrientation.Horizontal;
+			stackLayout.IsVisible = false;
 
-		private StackLayout CreateSwipeItems(SwipeItems swipeItems)
-		{
-			var swipeItemsLayout = new StackLayout
-			{
-				Orientation = StackOrientation.Horizontal,
-				IsVisible = false
-			};
+			stackLayout.Children.Clear();
 
 			if (swipeItems != null)
 			{
+				var swipeItemWidth = (swipeItems.Mode == SwipeMode.Reveal) ? SwipeItemWidth : SwipeThreshold / swipeItems.Count;
+
+				if (_swipeDirection == SwipeDirection.Down || _swipeDirection == SwipeDirection.Up)
+					swipeItemWidth = _content.WidthRequest / swipeItems.Count;
+
 				foreach (SwipeItem swipeItem in swipeItems)
 				{
-					swipeItemsLayout.Children.Add(swipeItem);
+					swipeItem.WidthRequest = swipeItemWidth;
+
+					stackLayout.Children.Add(swipeItem);
 				}
 			}
-
-			return swipeItemsLayout;
 		}
 
 		private void RaiseSwipeStarted()
@@ -320,27 +529,58 @@ namespace Xamarin.Forms
 
 			SwipeEnded?.Invoke(this, swipeEndedEventArgs);
 		}
-	}
 
-	public class SwipeStartedEventArgs : EventArgs
-	{
-		public SwipeStartedEventArgs(SwipeDirection swipeDirection, double offset)
+		private static void OnViewChanged(BindableObject bindable, object oldValue, object newValue)
 		{
-			SwipeDirection = swipeDirection;
-			Offset = offset;
+			var swipeView = (SwipeView)bindable;
+
+			if (Equals(newValue, null) && !Equals(oldValue, null))
+				return;
+
+			if (swipeView.View != null)
+				swipeView.InitializeContent();
 		}
 
-		public SwipeDirection SwipeDirection { get; set; }
-		public double Offset { get; set; }
-	}
-
-	public class SwipeEndedEventArgs : EventArgs
-	{
-		public SwipeEndedEventArgs(SwipeDirection swipeDirection)
+		private static void OnSwipeItemsChanged(BindableObject bindable, object oldValue, object newValue)
 		{
-			SwipeDirection = swipeDirection;
+			var swipeView = (SwipeView)bindable;
+
+			if (Equals(newValue, null) && !Equals(oldValue, null))
+				return;
+				
+			if (swipeView.LeftItems != null)
+				swipeView.InitializeSwipeItems(SwipeDirection.Left);
+
+			if (swipeView.RightItems != null)
+				swipeView.InitializeSwipeItems(SwipeDirection.Right);
+
+			if (swipeView.TopItems != null)
+				swipeView.InitializeSwipeItems(SwipeDirection.Up);
+
+			if (swipeView.BottomItems != null)
+				swipeView.InitializeSwipeItems(SwipeDirection.Down);
 		}
 
-		public SwipeDirection SwipeDirection { get; set; }
+		public class SwipeStartedEventArgs : EventArgs
+		{
+			public SwipeStartedEventArgs(SwipeDirection swipeDirection, double offset)
+			{
+				SwipeDirection = swipeDirection;
+				Offset = offset;
+			}
+
+			public SwipeDirection SwipeDirection { get; set; }
+			public double Offset { get; set; }
+		}
+
+		public class SwipeEndedEventArgs : EventArgs
+		{
+			public SwipeEndedEventArgs(SwipeDirection swipeDirection)
+			{
+				SwipeDirection = swipeDirection;
+			}
+
+			public SwipeDirection SwipeDirection { get; set; }
+		}
 	}
 }
