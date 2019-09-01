@@ -254,8 +254,6 @@ namespace Xamarin.Forms.Controls
 		{
 			public GalleryPageFactory(Func<Page> create, string title)
 			{
-				Device.SetFlags(new List<string>(Device.Flags ?? new List<string>()) { "CollectionView_Experimental" });
-
 				Realize = () =>
 				{
 					var p = create();
@@ -287,7 +285,7 @@ namespace Xamarin.Forms.Controls
 				new GalleryPageFactory(() => new MemoryLeakGallery(), "Memory Leak"),
 				new GalleryPageFactory(() => new Issues.A11yTabIndex(), "Accessibility TabIndex"),
 				new GalleryPageFactory(() => new FontImageSourceGallery(), "Font ImageSource"),
-				new GalleryPageFactory(() => new CollectionViewGallery(), "_CollectionView Gallery"),
+				new GalleryPageFactory(() => new CollectionViewGallery(), "CollectionView Gallery"),
 				new GalleryPageFactory(() => new CollectionViewCoreGalleryPage(), "CollectionView Core Gallery"),
 				new GalleryPageFactory(() => new Issues.PerformanceGallery(), "Performance"),
 				new GalleryPageFactory(() => new EntryReturnTypeGalleryPage(), "Entry ReturnType "),
