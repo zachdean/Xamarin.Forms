@@ -34,7 +34,7 @@ namespace Xamarin.Forms.Controls.GalleryPages.CollectionViewGalleries.GroupingGa
 							new ObservableGrouping(), Navigation),
 						GalleryBuilder.NavButton("Grouping, Grid", () =>
 							new GridGrouping(), Navigation),
-						GalleryBuilder.NavButton("GroupItemsPath Property", () =>
+						GalleryBuilder.NavButton("GroupItemsMemberName Property", () =>
 							new GroupItemsProperty(), Navigation),
 					}
 				}

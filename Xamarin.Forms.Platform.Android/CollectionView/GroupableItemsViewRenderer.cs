@@ -19,7 +19,7 @@ namespace Xamarin.Forms.Platform.Android
 
 			if (changedProperty.IsOneOf(GroupableItemsView.IsGroupedProperty, 
 				GroupableItemsView.GroupFooterTemplateProperty, GroupableItemsView.GroupHeaderTemplateProperty, 
-				GroupableItemsView.GroupItemsPathProperty))
+				GroupableItemsView.GroupItemsMemberNameProperty))
 			{
 				UpdateItemsSource();
 			}

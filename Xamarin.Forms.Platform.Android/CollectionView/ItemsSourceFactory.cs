@@ -39,7 +39,7 @@ namespace Xamarin.Forms.Platform.Android
 		{
 			if (itemsView.IsGrouped)
 			{
-				return new ObservableGroupedSource(itemsView, new AdapterNotifier(adapter), itemsView.GroupItemsPath);
+				return new ObservableGroupedSource(itemsView, new AdapterNotifier(adapter), itemsView.GroupItemsMemberName);
 			}
 
 			return new UngroupedItemsSource(Create(itemsView.ItemsSource, adapter));

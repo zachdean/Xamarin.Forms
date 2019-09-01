@@ -3,37 +3,53 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:d="http://xamarin.com/schemas/2014/forms/design"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:local="clr-namespace:Xamarin.Forms.Controls.GalleryPages.CollectionViewGalleries.GroupingGalleries"
              mc:Ignorable="d"
              x:Class="Xamarin.Forms.Controls.GalleryPages.CollectionViewGalleries.GroupingGalleries.GroupItemsProperty">
+
+    <ContentPage.Resources>
+        <local:PropertySelection x:Key="PropertySelection"></local:PropertySelection>
+    </ContentPage.Resources>
+    
     <ContentPage.Content>
-        <CollectionView x:Name="CollectionView" IsGrouped="True" Header="Heroes by City" 
-                        GroupItemsPath="Heroes">
+        <StackLayout>
 
-            <CollectionView.ItemTemplate>
-                <DataTemplate>
-                    <StackLayout>
-                        <Label Text="{Binding Name}" Margin="5,0,0,0"/>
-                    </StackLayout>
-                </DataTemplate>
-            </CollectionView.ItemTemplate>
+            <StackLayout Orientation="Horizontal">
+                <Label Text="Heroes"/> 
+                <Switch x:Name="GroupToggle"></Switch>
+                <Label Text="Teams"/>
+            </StackLayout>
+            
+            <CollectionView x:Name="CollectionView" IsGrouped="True" 
+                            Header="{Binding Source={x:Reference GroupToggle}, Path=IsToggled, Converter={StaticResource PropertySelection}, StringFormat='{}{0} by City'}"
+                            GroupItemsMemberName="{Binding Source={x:Reference GroupToggle}, Path=IsToggled, Converter={StaticResource PropertySelection}}">
 
-            <CollectionView.GroupHeaderTemplate>
-                <DataTemplate>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <StackLayout>
+                            <Label Text="{Binding Name}" Margin="5,0,0,0"/>
+                        </StackLayout>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
 
-                    <Label Text="{Binding Name}" BackgroundColor="LightGreen" FontSize="16" FontAttributes="Bold"/>
+                <CollectionView.GroupHeaderTemplate>
+                    <DataTemplate>
 
-                </DataTemplate>
-            </CollectionView.GroupHeaderTemplate>
+                        <Label Text="{Binding Name}" BackgroundColor="LightGreen" FontSize="16" FontAttributes="Bold"/>
 
-            <CollectionView.GroupFooterTemplate>
-                <DataTemplate>
-                    <StackLayout>
-                        <Label Text="{Binding Path='Heroes.Count', StringFormat='{}Total Heroes: {0:D}'}" BackgroundColor="Orange" 
-							   Margin="0,0,0,15"/>
-                    </StackLayout>
-                </DataTemplate>
-            </CollectionView.GroupFooterTemplate>
+                    </DataTemplate>
+                </CollectionView.GroupHeaderTemplate>
 
-        </CollectionView>
+                <CollectionView.GroupFooterTemplate>
+                    <DataTemplate>
+                        <StackLayout>
+                            <Label Text="{Binding Path='Heroes.Count', StringFormat='{}Total Heroes: {0:D}'}" BackgroundColor="Orange" 
+							       Margin="0,0,0,15"/>
+                        </StackLayout>
+                    </DataTemplate>
+                </CollectionView.GroupFooterTemplate>
+
+            </CollectionView>
+        </StackLayout>
     </ContentPage.Content>
 </ContentPage>

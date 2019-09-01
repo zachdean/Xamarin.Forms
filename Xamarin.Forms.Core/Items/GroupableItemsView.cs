@@ -29,13 +29,13 @@
 			set => SetValue(GroupFooterTemplateProperty, value);
 		}
 
-		public static readonly BindableProperty GroupItemsPathProperty =
-			BindableProperty.Create(nameof(GroupItemsPath), typeof(string), typeof(GroupableItemsView), null);
+		public static readonly BindableProperty GroupItemsMemberNameProperty =
+			BindableProperty.Create(nameof(GroupItemsMemberName), typeof(string), typeof(GroupableItemsView), null);
 
-		public string GroupItemsPath
+		public string GroupItemsMemberName
 		{
-			get => (string)GetValue(GroupItemsPathProperty);
-			set => SetValue(GroupItemsPathProperty, value);
+			get => (string)GetValue(GroupItemsMemberNameProperty);
+			set => SetValue(GroupItemsMemberNameProperty, value);
 		}
 	}
 }
