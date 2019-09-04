@@ -107,6 +107,7 @@
     <Compile Include="CollectionView\ItemViewType.cs" />
     <Compile Include="CollectionView\UngroupedItemsSource.cs" />
     <Compile Include="Elevation.cs" />
+    <Compile Include="EmptyClass.cs" />
     <Compile Include="Extensions\DrawableExtensions.cs" />
     <Compile Include="Extensions\EntryRendererExtensions.cs" />
     <Compile Include="Extensions\FragmentManagerExtensions.cs" />

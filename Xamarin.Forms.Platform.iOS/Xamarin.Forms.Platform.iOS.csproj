@@ -140,6 +140,7 @@
     <Compile Include="CollectionView\VerticalTemplatedHeaderView.cs" />
     <Compile Include="DisposeHelpers.cs" />
     <Compile Include="EffectUtilities.cs" />
+    <Compile Include="EmptyClass.cs" />
     <Compile Include="ExportCellAttribute.cs" />
     <Compile Include="ExportImageSourceHandlerAttribute.cs" />
     <Compile Include="ExportRendererAttribute.cs" />

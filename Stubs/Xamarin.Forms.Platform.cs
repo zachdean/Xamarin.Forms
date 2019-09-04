@@ -52,11 +52,11 @@ namespace Xamarin.Forms.Platform
 	internal class _ButtonRenderer { }
 
 #if __ANDROID__
-	[RenderWith(typeof(ImageButtonRenderer))]
+	//[RenderWith(typeof(ImageButtonRenderer))]
 #elif !TIZEN4_0
-	[RenderWith(typeof(ImageButtonRenderer))]
+    //[RenderWith(typeof(ImageButtonRenderer))]
 #endif
-	internal class _ImageButtonRenderer { }
+    internal class _ImageButtonRenderer { }
 
 	[RenderWith (typeof (TableViewRenderer))]
 	internal class _TableViewRenderer { }
@@ -106,10 +106,11 @@ namespace Xamarin.Forms.Platform
 	internal class _FrameRenderer { }
 
 #if __ANDROID__
-	// current previewer doesn't work with appcompat so this renderer is here for the previewer only
-	// once previewer switches to appcompat then we can remove this
-	[RenderWith(typeof(CheckBoxDesignerRenderer))]
+	[RenderWith(typeof(CheckBoxRenderer))]
 	internal class _CheckBoxRenderer { }
+
+	[RenderWith(typeof(CheckBoxDesignerRenderer))]
+	internal class _CheckBoxRendererIsMyNameo { }
 #endif
 
 #if __IOS__
