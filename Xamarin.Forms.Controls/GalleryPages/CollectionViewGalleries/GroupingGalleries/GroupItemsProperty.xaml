@@ -22,7 +22,7 @@
             
             <CollectionView x:Name="CollectionView" IsGrouped="True" 
                             Header="{Binding Source={x:Reference GroupToggle}, Path=IsToggled, Converter={StaticResource PropertySelection}, StringFormat='{}{0} by City'}"
-                            GroupItemsMemberName="{Binding Source={x:Reference GroupToggle}, Path=IsToggled, Converter={StaticResource PropertySelection}}">
+                            GroupItemsPropertyName="{Binding Source={x:Reference GroupToggle}, Path=IsToggled, Converter={StaticResource PropertySelection}}">
 
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
