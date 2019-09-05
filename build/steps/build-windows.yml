@@ -33,7 +33,11 @@ jobs:
         release:
           BuildConfiguration:  ${{ parameters.releaseBuildConfiguration }}
           BuildPlatform: ${{ parameters.buildPlatform }}
+    
     steps:
+    - script: |
+        dotnet tool install --global boots
+        boots https://aka.ms/xamarin-android-commercial-d16-2-windows
 
     - task: NuGetToolInstaller@0
       displayName: 'Use NuGet ${{ parameters.nugetVersion }}'
@@ -52,7 +56,7 @@ jobs:
         solution: ${{ parameters.slnPath }}
         platform: '$(BuildPlatform)'
         configuration: '$(BuildConfiguration)'
-        msbuildArguments: ${{ parameters.msbuildExtraArguments }}
+        msbuildArguments: ${{ parameters.msbuildExtraArguments }} /p:JavaSdkDirectory="$(JAVA_HOME_8_X64)"
 
     - task: VSTest@2
       displayName: 'Unit Tests'
