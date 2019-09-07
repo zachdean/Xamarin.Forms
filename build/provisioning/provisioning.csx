@@ -1,12 +1,32 @@
 
+
 if (IsMac)
 {
   Item (XreItem.Xcode_11_0_0_beta_7).XcodeSelect ();
+  Item ("https://download.visualstudio.microsoft.com/download/pr/edd7782e-dc4f-4be5-9b55-8a51eeb7a718/ed8c238ec095b5d1051e2539cea38113/xamarin.android-10.0.0.40.pkg");
+	Item ("https://download.mono-project.com/archive/6.4.0/macos-10-universal/MonoFramework-MDK-6.4.0.189.macos10.xamarin.universal.pkg");
+	Item ("https://bosstoragemirror.blob.core.windows.net/wrench/jenkins/xcode11/0b4fc12f322c6660a9a0636776edc9dd233bc7d5/287/package/xamarin.ios-12.99.4.40.pkg");
+  Item ("https://bosstoragemirror.blob.core.windows.net/wrench/jenkins/xcode11/0b4fc12f322c6660a9a0636776edc9dd233bc7d5/287/package/xamarin.mac-5.99.4.40.pkg");
+
+  ForceJavaCleanup();
+	Item (XreItem.Java_OpenJDK_1_8_0_25);
+	var dotnetVersion = "2.1.701";
+	DotNetCoreSdk (dotnetVersion);
+	File.WriteAllText ("../../global.json", @"{ ""sdk"": { ""version"": """ + dotnetVersion + @""" } }");
+
+  // VSTS installs into a non-default location. Let's hardcode it here because why not.
+	var vstsBaseInstallPath = Path.Combine (Environment.GetEnvironmentVariable ("HOME"), ".dotnet", "sdk");
+	var vstsInstallPath = Path.Combine (vstsBaseInstallPath, dotnetVersion);
+	var defaultInstallLocation = Path.Combine ("/usr/local/share/dotnet/sdk/", dotnetVersion);
+	if (Directory.Exists (vstsBaseInstallPath) && !Directory.Exists (vstsInstallPath))
+		ln (defaultInstallLocation, vstsInstallPath);
+
+}
 
 
-  Item ("https://xamjenkinsartifact.azureedge.net/build-package-osx-mono/2019-06/156/45c7df08f4813a6c3c0ba8367bdfaae4ddf9ace6/MonoFramework-MDK-6.4.0.171.macos10.xamarin.universal.pkg");
-  Item ("https://dl.internalx.com/jenkins-internal/xamarin-android-commercial-198/origin/d16-3/2a8969c98de0afb1fcb5f8e179aa48d864b65af8/xamarin.android-9.5.0.1.pkg");
-  Item ("https://bosstoragemirror.blob.core.windows.net/wrench/jenkins/xcode11/dc5fc120e090317bbd78049f25dacd84e4f3dc48/254/package/xamarin.ios-12.99.4.5.pkg");
-  Item ("https://bosstoragemirror.blob.core.windows.net/wrench/jenkins/xcode11/dc5fc120e090317bbd78049f25dacd84e4f3dc48/254/package/xamarin.mac-5.99.4.5.pkg");
-
+void ln (string source, string destination)
+{
+	Console.WriteLine ($"ln -sf {source} {destination}");
+	if (!Config.DryRun)
+		Exec ("/bin/ln", "-sf", source, destination);
 }
