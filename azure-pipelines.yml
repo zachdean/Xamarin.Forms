@@ -14,7 +14,7 @@ variables:
 - name: MONO_VERSION
   value: 5_18_1
 - name: XCODE_VERSION
-  value: 10.2
+  value: 11.0.0-beta.7
 - name: NUGET_VERSION
   value: 5.0.2
 - name: winVmImage
