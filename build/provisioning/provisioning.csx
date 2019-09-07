@@ -1,4 +1,4 @@
-var channel = Env("CHANNEL") ?? "release-8.2-xcode11";
+var channel = "release-8.2-xcode11";
 
 Console.WriteLine(channel);
 XamarinChannel(channel);
