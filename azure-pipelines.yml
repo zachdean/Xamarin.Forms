@@ -19,7 +19,7 @@ variables:
   value: 5.0.2
 - name: winVmImage
   value: Hosted Windows 2019 with VS2019
-- name: provisioningOSX
+- name: provisioning
   value: 'true'
 
 resources:
