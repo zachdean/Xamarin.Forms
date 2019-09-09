@@ -45,10 +45,14 @@ namespace Xamarin.Forms.Controls
 
 			Build(Layout);
 
-			if(SupportsScroll)
+			if (SupportsScroll)
 				Content = new ScrollView { AutomationId = "GalleryScrollView", Content = Layout };
 			else
-				Content = new ContentView { AutomationId = "GalleryScrollView", Content = Layout };
+			{
+				var content = new Grid { AutomationId = "GalleryScrollView" };
+				content.Children.Add(Layout);
+				Content = content;
+			}
 		}
 
 		protected virtual void InitializeElement(T element) { }
