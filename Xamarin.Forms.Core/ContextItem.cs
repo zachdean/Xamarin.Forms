@@ -1,56 +1,29 @@
-﻿using System;
-using System.Windows.Input;
+﻿using System.Windows.Input;
 
 namespace Xamarin.Forms
 {
-	public class ContextItem : ContentView, IDisposable
+	public abstract class ContextItem : ContentView
 	{
-		private TapGestureRecognizer _tapGestureRecognizer;
-
-		public ContextItem()
-		{
-			_tapGestureRecognizer = new TapGestureRecognizer
-			{
-				Command = Command,
-				CommandParameter = CommandParameter
-			};
-
-			GestureRecognizers.Add(_tapGestureRecognizer);
-
-			Margin = new Thickness(0);
-
-			var content = new Grid
-			{
-				RowSpacing = 0
-			};
-			content.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });
-			content.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Auto) });
-
-			ItemIcon = new Image
-			{
-				Aspect = Aspect.AspectFit,
-				Source = Icon,
-				HorizontalOptions = LayoutOptions.Center,
-				VerticalOptions = LayoutOptions.Center,
-				Margin = new Thickness(6)
-			};
-			content.Children.Add(ItemIcon, 0, 0);
-
-			ItemText = new Label
-			{
-				Text = Text,
-				HorizontalOptions = LayoutOptions.Center
-			};
-			content.Children.Add(ItemText, 0, 1);
-
-			Content = content;
-		}
-
+		public static readonly BindableProperty FontFamilyProperty = FontElement.FontFamilyProperty;
+		public static readonly BindableProperty FontSizeProperty = FontElement.FontSizeProperty;
 		public static readonly BindableProperty TextProperty = BindableProperty.Create(nameof(Text), typeof(string), typeof(ContextItem), string.Empty, BindingMode.OneWay, null, OnTextChanged);
 		public static readonly BindableProperty TextColorProperty = BindableProperty.Create(nameof(TextColor), typeof(Color), typeof(ContextItem), Color.Default, BindingMode.OneWay, null, OnTextColorChanged);
 		public static readonly BindableProperty CommandProperty = BindableProperty.Create(nameof(Command), typeof(ICommand), typeof(ContextItem), null);
 		public static readonly BindableProperty CommandParameterProperty = BindableProperty.Create(nameof(CommandParameter), typeof(object), typeof(ContextItem), null);
 		public static readonly BindableProperty IconProperty = BindableProperty.Create(nameof(Icon), typeof(ImageSource), typeof(ContextItem), default(ImageSource), BindingMode.OneWay, null, OnIconChanged);
+  
+		public string FontFamily
+		{
+			get { return (string)GetValue(FontFamilyProperty); }
+			set { SetValue(FontFamilyProperty, value); }
+		}
+
+		[TypeConverter(typeof(FontSizeConverter))]
+		public double FontSize
+		{
+			get { return (double)GetValue(FontSizeProperty); }
+			set { SetValue(FontSizeProperty, value); }
+		}
 
 		public string Text
 		{
@@ -82,16 +55,16 @@ namespace Xamarin.Forms
 			set { SetValue(IconProperty, value); }
 		}
 
-        internal Image ItemIcon { get; private set; }
-
-        internal Label ItemText { get; private set; }
-		       
-		public void Dispose()
+		protected virtual void OnTextChanged(string text)
 		{
-			GestureRecognizers.Remove(_tapGestureRecognizer);
-			_tapGestureRecognizer = null;
-			ItemIcon = null;
-			ItemText = null;
+		}
+
+		protected virtual void OnTextColorChanged(Color color)
+		{
+		}
+
+		protected virtual void OnIconChanged(ImageSource icon)
+		{
 		}
 
 		private static void OnTextChanged(BindableObject bindable, object oldValue, object newValue)
@@ -101,7 +74,7 @@ namespace Xamarin.Forms
 			if (Equals(newValue, null) && !Equals(oldValue, null))
 				return;
 
-			contextItem.ItemText.Text = contextItem.Text;
+			contextItem.OnTextChanged(contextItem.Text);
 		}
 
 		private static void OnTextColorChanged(BindableObject bindable, object oldValue, object newValue)
@@ -111,7 +84,7 @@ namespace Xamarin.Forms
 			if (Equals(newValue, null) && !Equals(oldValue, null))
 				return;
 
-			contextItem.ItemText.TextColor = contextItem.TextColor;
+			contextItem.OnTextColorChanged(contextItem.TextColor);
 		}
 
 		private static void OnIconChanged(BindableObject bindable, object oldValue, object newValue)
@@ -121,7 +94,7 @@ namespace Xamarin.Forms
 			if (Equals(newValue, null) && !Equals(oldValue, null))
 				return;
 
-			contextItem.ItemIcon.Source = contextItem.Icon;
+			contextItem.OnIconChanged(contextItem.Icon);
 		}
 	}
 }

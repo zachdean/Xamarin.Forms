@@ -29,11 +29,14 @@
                 <ViewCell>
                     <SwipeView>
                         <SwipeView.LeftItems>
-                            <SwipeItems>
+                            <SwipeItems
+                                Mode="Reveal"
+                                SwipeBehaviorOnInvoked="Close">
                                 <SwipeItem
                                     Text="Favourite"
                                     Icon="calculator.png"
-                                    BackgroundColor="Yellow" />
+                                    BackgroundColor="Yellow"
+                                    Command="{Binding Source={x:Reference SwipeListView}, Path=BindingContext.FavouriteCommand}"/>
                             </SwipeItems>
                         </SwipeView.LeftItems>
                         <SwipeView.RightItems>
@@ -42,7 +45,8 @@
                                 <SwipeItem
                                     Text="Delete"
                                     Icon="coffee.png"
-                                    BackgroundColor="Red" />
+                                    BackgroundColor="Red"
+                                    Command="{Binding Source={x:Reference SwipeListView}, Path=BindingContext.DeleteCommand}"/>
                             </SwipeItems>
                         </SwipeView.RightItems>
                         <SwipeView.View>
@@ -92,6 +96,7 @@
     <ContentPage.Content>
         <Grid>
             <ListView
+                x:Name="SwipeListView"
                 ItemsSource="{Binding Messages}"
                 ItemTemplate="{StaticResource MessageTemplate}"
                 HasUnevenRows="True"

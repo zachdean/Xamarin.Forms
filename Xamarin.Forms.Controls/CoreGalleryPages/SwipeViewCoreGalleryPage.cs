@@ -46,7 +46,7 @@ namespace Xamarin.Forms.Controls
 
 			var modifySwipteItem = new SwipeItem { BackgroundColor = Color.Orange, Text = "Modify", Icon = "calculator.png" };
 
-			addSwipteItem.Invoked += (sender, e) =>
+			modifySwipteItem.Invoked += (sender, e) =>
 			{
 				DisplayAlert("SwipeView", "Modify Invoked", "OK");
 			};
@@ -68,7 +68,7 @@ namespace Xamarin.Forms.Controls
 
 			deleteSwipeItem.Invoked += (sender, e) =>
 			{
-				DisplayAlert("SwipeView", "Modify Invoked", "OK");
+				DisplayAlert("SwipeView", "Delete Invoked", "OK");
 			};
 
 			var swipeItems = new SwipeItems
@@ -92,7 +92,7 @@ namespace Xamarin.Forms.Controls
 			{
 				HorizontalOptions = LayoutOptions.Center,
 				VerticalOptions = LayoutOptions.Center,
-				Text = "Swipe to Right (Reveal)"
+				Text = "Swipe to Right (Reveal) or Left (Execute)"
 			};
 
 			content.Children.Add(info);

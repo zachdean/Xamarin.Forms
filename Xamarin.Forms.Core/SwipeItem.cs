@@ -2,29 +2,68 @@
 
 namespace Xamarin.Forms
 {
-	public class SwipeItem : ContextItem
+	public class SwipeItem : ContextItem, IDisposable
 	{
-		private TapGestureRecognizer _tapGestureRecognizer;
-
 		public event EventHandler<SwipeItemInvokedEventArgs> Invoked;
 
 		public SwipeItem()
 		{
-			_tapGestureRecognizer = new TapGestureRecognizer();
-			_tapGestureRecognizer.Tapped += OnSwipeItemTapped;
-			GestureRecognizers.Add(_tapGestureRecognizer);
+			var content = new Grid
+			{
+				RowSpacing = 0
+			};
+			content.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });
+			content.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Auto) });
+
+			ItemIcon = new Image
+			{
+				Aspect = Aspect.AspectFit,
+				Source = Icon,
+				HorizontalOptions = LayoutOptions.Center,
+				VerticalOptions = LayoutOptions.Center,
+				Margin = new Thickness(6)
+			};
+			content.Children.Add(ItemIcon, 0, 0);
+
+			ItemText = new Label
+			{
+				Text = Text,
+				HorizontalOptions = LayoutOptions.Center
+			};
+			content.Children.Add(ItemText, 0, 1);
+			
+			Content = content;
 		}
 
-		public new void Dispose()
+		internal Image ItemIcon { get; private set; }
+
+		internal Label ItemText { get; private set; }
+
+		public void Dispose()
 		{
-			GestureRecognizers.Remove(_tapGestureRecognizer);
-			_tapGestureRecognizer = null;
+			ItemIcon = null;
+			ItemText = null;
 		}
 
-		private void OnSwipeItemTapped(object sender, EventArgs e)
+		protected override void OnTextChanged(string text)
 		{
-			Invoked?.Invoke(this, new SwipeItemInvokedEventArgs(this));
+			base.OnTextChanged(text);
+			ItemText.Text = text;
 		}
+
+		protected override void OnTextColorChanged(Color color)
+		{
+			base.OnTextColorChanged(color);
+			ItemText.TextColor = color;
+		}
+
+		protected override void OnIconChanged(ImageSource icon)
+		{
+			base.OnIconChanged(icon);
+			ItemIcon.Source = icon;
+		}
+
+		internal void OnInvoked() => Invoked?.Invoke(this, new SwipeItemInvokedEventArgs(this));
 	}
 
 	public class SwipeItemInvokedEventArgs : EventArgs

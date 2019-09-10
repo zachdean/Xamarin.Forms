@@ -10,9 +10,14 @@ namespace Xamarin.Forms
 		public SwipeItems()
 		{
 			_internal = new List<SwipeItem>();
+
+			Mode = SwipeMode.Reveal;
+			SwipeBehaviorOnInvoked = SwipeBehaviorOnInvoked.Auto;
 		}
 
 		public SwipeMode Mode { get; set; }
+
+		public SwipeBehaviorOnInvoked SwipeBehaviorOnInvoked { get; set; }
 
 		public SwipeItem this[int index] { get => _internal[index]; set => _internal[index] = value; }
 

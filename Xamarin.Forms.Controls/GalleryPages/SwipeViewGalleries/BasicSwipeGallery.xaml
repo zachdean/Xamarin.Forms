@@ -16,7 +16,8 @@
                         <SwipeItem
                             Text="Delete"
                             Icon="coffee.png"
-                            BackgroundColor="Red" />
+                            BackgroundColor="Red"
+                            Invoked="OnInvoked"/>
                     </SwipeItems>
                 </SwipeView.BottomItems>
                 <SwipeView.View>

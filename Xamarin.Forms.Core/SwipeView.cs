@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Diagnostics;
+using System.Windows.Input;
 using Xamarin.Forms.Internals;
 using Xamarin.Forms.Platform;
 
@@ -118,13 +118,10 @@ namespace Xamarin.Forms
 			switch (status)
 			{
 				case GestureStatus.Started:
-					Debug.WriteLine("Started");
 					return !ProcessTouchDown(point);
 				case GestureStatus.Running:
-					Debug.WriteLine("Running");
 					return !ProcessTouchMove(point);
 				case GestureStatus.Completed:
-					Debug.WriteLine("Completed");
 					return !ProcessTouchUp();
 			}
 
@@ -135,17 +132,22 @@ namespace Xamarin.Forms
 
 		private bool ProcessTouchDown(Point point)
 		{
-			if (IsSwiping || _isTouchDown)
+			if (IsSwiping || _isTouchDown || _view == null)
 				return false;
 
-			ResetSwipe(_swipeDirection);
+			bool touchContent = TouchInsideContent(_view.X + _view.TranslationX, _view.Y + _view.TranslationY, _view.Width, _view.Height, point.X, point.Y);
+
+			if (touchContent)
+				ResetSwipe(_swipeDirection);
+			else
+				ProcessTouchSwipeItems(point);
 
 			_initialPoint = point;
 			_isTouchDown = true;
 
 			return true;
 		}
-
+    
 		private bool ProcessTouchMove(Point point)
 		{
 			if (!IsSwiping)
@@ -160,9 +162,7 @@ namespace Xamarin.Forms
 
 			_swipeOffset = GetSwipeOffset(_initialPoint, point, _swipeDirection);
 			InitializeSwipe(_swipeDirection);
-
-			Debug.WriteLine(_swipeOffset);
-
+   
 			if (Math.Abs(_swipeOffset) > double.Epsilon)
 				Swipe(_swipeDirection, _swipeOffset);
 			else
@@ -186,6 +186,58 @@ namespace Xamarin.Forms
 				return false;
 
 			ValidateSwipeThreshold(_swipeDirection);
+
+			return false;
+		}
+
+		private void ProcessTouchSwipeItems(Point point)
+		{
+			switch (_swipeDirection)
+			{
+				case SwipeDirection.Down:
+					ProcessTouchSwipeItems(TopItems, point);
+					break;
+				case SwipeDirection.Left:
+					ProcessTouchSwipeItems(RightItems, point);
+					break;
+				case SwipeDirection.Right:
+					ProcessTouchSwipeItems(LeftItems, point);
+					break;
+				case SwipeDirection.Up:
+					ProcessTouchSwipeItems(BottomItems, point);
+					break;
+			}
+		}
+
+		private void ProcessTouchSwipeItems(SwipeItems swipeItems, Point point)
+		{
+			if (swipeItems == null)
+				return;
+
+			foreach (var swipeItem in swipeItems)
+			{
+				if (TouchInsideContent(swipeItem.X, swipeItem.Y, swipeItem.Width, swipeItem.Height, point.X, point.Y))
+				{
+					ICommand cmd = swipeItem.Command;
+					object parameter = swipeItem.CommandParameter;
+
+					if (cmd != null && cmd.CanExecute(parameter))
+						cmd.Execute(parameter);
+
+					swipeItem.OnInvoked();
+
+					if (swipeItems.SwipeBehaviorOnInvoked != SwipeBehaviorOnInvoked.RemainOpen)
+						ResetSwipe(_swipeDirection);
+
+					break;
+				}
+			}
+		}
+
+		private bool TouchInsideContent(double x1, double y1, double x2, double y2, double x, double y)
+		{
+			if (x > x1 && x < (x1 + x2) && y > y1 && y < (y1 + y2))
+				return true;
 
 			return false;
 		}
@@ -292,7 +344,18 @@ namespace Xamarin.Forms
 						return swipeThreshold;
 					break;
 				case SwipeDirection.Up:
+					if (offset > 0)
+						offset = 0;
+
+					if (Math.Abs(offset) > swipeThreshold)
+						return -swipeThreshold;
+					break;
 				case SwipeDirection.Down:
+					if (offset < 0)
+						offset = 0;
+
+					if (Math.Abs(offset) > swipeThreshold)
+						return swipeThreshold;
 					break;
 			}
 
@@ -370,7 +433,7 @@ namespace Xamarin.Forms
 		{
 			var swipeThresholdPercent = 0.6 * GetSwipeThreshold(_swipeDirection);
 
-			if (_swipeOffset >= swipeThresholdPercent)
+			if (Math.Abs(_swipeOffset) >= swipeThresholdPercent)
 			{
 				switch (swipeDirection)
 				{
@@ -402,9 +465,18 @@ namespace Xamarin.Forms
 			if (swipeItems.Mode == SwipeMode.Execute)
 			{
 				foreach (var swipeItem in swipeItems)
-					swipeItem.Command?.Execute(swipeItem.CommandParameter);
+				{
+					ICommand cmd = swipeItem.Command;
+					object parameter = swipeItem.CommandParameter;
 
-				ResetSwipe(swipeDirection);
+					if (cmd != null && cmd.CanExecute(parameter))
+						cmd.Execute(parameter);
+
+					swipeItem.OnInvoked();
+				}
+
+				if(swipeItems.SwipeBehaviorOnInvoked != SwipeBehaviorOnInvoked.RemainOpen)
+					ResetSwipe(swipeDirection);
 			}
 			else
 				CompleteSwipe(swipeDirection);
@@ -417,38 +489,45 @@ namespace Xamarin.Forms
 				case SwipeDirection.Left:
 				case SwipeDirection.Right:
 					_view.TranslationX = 0;
+					_leftItems.IsVisible = false;
 					_rightItems.IsVisible = false;
 					break;
 				case SwipeDirection.Up:
 				case SwipeDirection.Down:
 					_view.TranslationY = 0;
+					_topItems.IsVisible = false;
 					_bottomItems.IsVisible = false;
 					break;
 			}
+   
+			_view.InputTransparent = false;
 			IsSwiping = false;
 		}
 
 		private void CompleteSwipe(SwipeDirection swipeDirection)
 		{
-			double swipeThreshold = 0;
-
+			double swipeThreshold;
 			switch (swipeDirection)
 			{
 				case SwipeDirection.Left:
 					swipeThreshold = GetSwipeThreshold(RightItems);
+					_view.TranslationX = swipeThreshold;
 					break;
 				case SwipeDirection.Right:
 					swipeThreshold = GetSwipeThreshold(LeftItems);
+					_view.TranslationX = swipeThreshold;
 					break;
 				case SwipeDirection.Up:
 					swipeThreshold = GetSwipeThreshold(BottomItems);
+					_view.TranslationY = swipeThreshold;
 					break;
 				case SwipeDirection.Down:
 					swipeThreshold = GetSwipeThreshold(TopItems);
+					_view.TranslationY = swipeThreshold;
 					break;
 			}
 
-			_view.TranslationX = swipeThreshold;
+			_view.InputTransparent = true;
 			IsSwiping = false;
 		}
 

@@ -9,5 +9,10 @@ namespace Xamarin.Forms.Controls.GalleryPages.SwipeViewGalleries
 		{
 			InitializeComponent();
 		}
+
+		private void OnInvoked(object sender, SwipeItemInvokedEventArgs e)
+		{
+			DisplayAlert("SwipeView", "Add Invoked", "OK");
+		}
 	}
 }

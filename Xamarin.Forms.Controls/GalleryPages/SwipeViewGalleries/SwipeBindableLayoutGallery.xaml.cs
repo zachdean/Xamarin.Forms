@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using System.Windows.Input;
 using Xamarin.Forms.Internals;
 
 namespace Xamarin.Forms.Controls.GalleryPages.SwipeViewGalleries
@@ -10,6 +11,9 @@ namespace Xamarin.Forms.Controls.GalleryPages.SwipeViewGalleries
 		{
 			InitializeComponent();
 			BindingContext = new SwipeViewGalleryViewModel();
+
+			MessagingCenter.Subscribe<SwipeViewGalleryViewModel>(this, "favourite", sender => { DisplayAlert("SwipeView", "Favourite", "Ok"); });
+			MessagingCenter.Subscribe<SwipeViewGalleryViewModel>(this, "delete", sender => { DisplayAlert("SwipeView", "Delete", "Ok"); });
 		}
 	}
 
@@ -43,12 +47,26 @@ namespace Xamarin.Forms.Controls.GalleryPages.SwipeViewGalleries
 			}
 		}
 
+		public ICommand FavouriteCommand => new Command(OnFavourite);
+		public ICommand DeleteCommand => new Command(OnDelete);
+
+
 		private void LoadMessages()
 		{
 			for (int i = 0; i < 100; i++)
 			{
-				Messages.Add(new Message { Title = "Lorem ipsum", SubTitle = "Lorem ipsum dolor sit amet", Date = "Yesterday", Description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua." });
+				Messages.Add(new Message { Title = $"Lorem ipsum {i + 1}", SubTitle = "Lorem ipsum dolor sit amet", Date = "Yesterday", Description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua." });
 			}
+		}
+
+		private void OnFavourite()
+		{
+			MessagingCenter.Send(this, "favourite");
+		}
+
+		private void OnDelete()
+		{
+			MessagingCenter.Send(this, "delete");
 		}
 	}
 }
