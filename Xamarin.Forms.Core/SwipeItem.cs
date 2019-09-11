@@ -57,6 +57,18 @@ namespace Xamarin.Forms
 			ItemText.TextColor = color;
 		}
 
+		protected override void OnFontFamilyChanged(string fontFamily)
+		{
+			base.OnFontFamilyChanged(fontFamily);
+			ItemText.FontFamily = fontFamily;
+		}
+
+		protected override void OnFontSizeChanged(double fontSize)
+		{
+			base.OnFontSizeChanged(fontSize);
+			ItemText.FontSize = fontSize;
+		}
+
 		protected override void OnIconChanged(ImageSource icon)
 		{
 			base.OnIconChanged(icon);

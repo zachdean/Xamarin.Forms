@@ -4,10 +4,10 @@ namespace Xamarin.Forms
 {
 	public abstract class ContextItem : ContentView
 	{
-		public static readonly BindableProperty FontFamilyProperty = FontElement.FontFamilyProperty;
-		public static readonly BindableProperty FontSizeProperty = FontElement.FontSizeProperty;
+		public static readonly BindableProperty FontFamilyProperty = BindableProperty.Create(nameof(FontFamily), typeof(string), typeof(ContextItem), string.Empty, BindingMode.OneWay, null, OnTextChanged);
+		public static readonly BindableProperty FontSizeProperty = BindableProperty.Create(nameof(FontSize), typeof(double), typeof(ContextItem), 10.0d, BindingMode.OneWay, null, OnTextChanged);
 		public static readonly BindableProperty TextProperty = BindableProperty.Create(nameof(Text), typeof(string), typeof(ContextItem), string.Empty, BindingMode.OneWay, null, OnTextChanged);
-		public static readonly BindableProperty TextColorProperty = BindableProperty.Create(nameof(TextColor), typeof(Color), typeof(ContextItem), Color.Default, BindingMode.OneWay, null, OnTextColorChanged);
+		public static readonly BindableProperty TextColorProperty = BindableProperty.Create(nameof(TextColor), typeof(Color), typeof(ContextItem), Color.Default, BindingMode.OneWay, null, OnTextChanged);
 		public static readonly BindableProperty CommandProperty = BindableProperty.Create(nameof(Command), typeof(ICommand), typeof(ContextItem), null);
 		public static readonly BindableProperty CommandParameterProperty = BindableProperty.Create(nameof(CommandParameter), typeof(object), typeof(ContextItem), null);
 		public static readonly BindableProperty IconProperty = BindableProperty.Create(nameof(Icon), typeof(ImageSource), typeof(ContextItem), default(ImageSource), BindingMode.OneWay, null, OnIconChanged);
@@ -55,6 +55,14 @@ namespace Xamarin.Forms
 			set { SetValue(IconProperty, value); }
 		}
 
+		protected virtual void OnFontFamilyChanged(string fontFamily)
+		{
+		}
+
+		protected virtual void OnFontSizeChanged(double fontSize)
+		{
+		}
+
 		protected virtual void OnTextChanged(string text)
 		{
 		}
@@ -75,18 +83,11 @@ namespace Xamarin.Forms
 				return;
 
 			contextItem.OnTextChanged(contextItem.Text);
-		}
-
-		private static void OnTextColorChanged(BindableObject bindable, object oldValue, object newValue)
-		{
-			var contextItem = (ContextItem)bindable;
-
-			if (Equals(newValue, null) && !Equals(oldValue, null))
-				return;
-
 			contextItem.OnTextColorChanged(contextItem.TextColor);
+			contextItem.OnFontFamilyChanged(contextItem.FontFamily);
+			contextItem.OnFontSizeChanged(contextItem.FontSize);
 		}
-
+  
 		private static void OnIconChanged(BindableObject bindable, object oldValue, object newValue)
 		{
 			var contextItem = (ContextItem)bindable;

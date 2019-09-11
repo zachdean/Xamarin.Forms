@@ -10,7 +10,6 @@ namespace Xamarin.Forms
 	public class SwipeView : ContentView, IDisposable
 	{
 		private const double SwipeItemWidth = 80;
-		private const double SwipeThreshold = 250;
 
 		private bool _isTouchDown;
 		private Point _initialPoint;
@@ -48,6 +47,7 @@ namespace Xamarin.Forms
 		public static readonly BindableProperty RightItemsProperty = BindableProperty.Create(nameof(RightItems), typeof(SwipeItems), typeof(SwipeView), null, BindingMode.TwoWay, null, OnSwipeItemsChanged);
 		public static readonly BindableProperty TopItemsProperty = BindableProperty.Create(nameof(TopItems), typeof(SwipeItems), typeof(SwipeView), null, BindingMode.TwoWay, null, OnSwipeItemsChanged);
 		public static readonly BindableProperty BottomItemsProperty = BindableProperty.Create(nameof(BottomItems), typeof(SwipeItems), typeof(SwipeView), null, BindingMode.TwoWay, null, OnSwipeItemsChanged);
+		public static readonly BindableProperty SwipeThresholdProperty = BindableProperty.Create(nameof(SwipeThreshold), typeof(double), typeof(SwipeView),250.0d, BindingMode.TwoWay);
 
 		public View View
 		{
@@ -77,6 +77,12 @@ namespace Xamarin.Forms
 		{
 			get { return (SwipeItems)GetValue(BottomItemsProperty); }
 			set { SetValue(BottomItemsProperty, value); }
+		}
+
+		public double SwipeThreshold
+		{
+			get { return (double)GetValue(SwipeThresholdProperty); }
+			set { SetValue(SwipeThresholdProperty, value); }
 		}
 
 		internal bool IsSwiping { get; private set; }
