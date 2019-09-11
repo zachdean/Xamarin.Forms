@@ -15,12 +15,10 @@ namespace Xamarin.Forms.Platform.UWP
 			{
 				if (Control == null)
 				{
-					ManipulationMode = ManipulationModes.All;
-
 					PointerPressed += OnPointerPressed;
+					PointerMoved += OnPointerMoved;
 					PointerReleased += OnPointerReleased;
 					PointerCanceled += OnPointerCanceled;
-					ManipulationDelta += OnManipulationDelta;
 				}
 			}
 		}
@@ -35,9 +33,9 @@ namespace Xamarin.Forms.Platform.UWP
 			if (disposing)
 			{
 				PointerPressed -= OnPointerPressed;
+				PointerMoved -= OnPointerMoved;
 				PointerReleased -= OnPointerReleased;
 				PointerCanceled -= OnPointerCanceled;
-				ManipulationDelta -= OnManipulationDelta;
 			}
 
 			_isDisposed = true;
@@ -55,10 +53,15 @@ namespace Xamarin.Forms.Platform.UWP
 			}
 		}
 
-		private void OnManipulationDelta(object sender, ManipulationDeltaRoutedEventArgs e)
+		private void OnPointerMoved(object sender, PointerRoutedEventArgs e)
 		{
-			double x = e.Position.X;
-			double y = e.Position.Y;
+			var isInContact = e.Pointer.IsInContact;
+
+			if (!isInContact)
+				return;
+
+			var x = e.GetCurrentPoint(this).Position.X;
+			var y = e.GetCurrentPoint(this).Position.Y;
 
 			if (!Element.HandleTouchInteractions(GestureStatus.Running, new Point(x, y)))
 			{
@@ -70,7 +73,9 @@ namespace Xamarin.Forms.Platform.UWP
 		{
 			var x = e.GetCurrentPoint(this).Position.X;
 			var y = e.GetCurrentPoint(this).Position.Y;
+
 			bool handled = Element.HandleTouchInteractions(GestureStatus.Completed, new Point(x, y));
+
 			e.Handled = handled;
 		}
 
