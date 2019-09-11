@@ -1,6 +1,5 @@
 ﻿using Windows.UI.Xaml;
 using Windows.UI.Xaml.Input;
-using Xamarin.Forms.Platform.UWP;
 
 namespace Xamarin.Forms.Platform.UWP
 {
@@ -18,9 +17,10 @@ namespace Xamarin.Forms.Platform.UWP
 				{
 					ManipulationMode = ManipulationModes.All;
 
-					ManipulationStarted += OnManipulationStarted;
+					PointerPressed += OnPointerPressed;
+					PointerReleased += OnPointerReleased;
+					PointerCanceled += OnPointerCanceled;
 					ManipulationDelta += OnManipulationDelta;
-					ManipulationCompleted += OnManipulationCompleted;
 				}
 			}
 		}
@@ -34,21 +34,23 @@ namespace Xamarin.Forms.Platform.UWP
 
 			if (disposing)
 			{
-				ManipulationStarted -= OnManipulationStarted;
+				PointerPressed -= OnPointerPressed;
+				PointerReleased -= OnPointerReleased;
+				PointerCanceled -= OnPointerCanceled;
 				ManipulationDelta -= OnManipulationDelta;
-				ManipulationCompleted -= OnManipulationCompleted;
 			}
 
 			_isDisposed = true;
 
 			base.Dispose(disposing);
 		}
-
-		private void OnManipulationStarted(object sender, ManipulationStartedRoutedEventArgs e)
+		private void OnPointerPressed(object sender, PointerRoutedEventArgs e)
 		{
-			if (Element.HandleTouchInteractions(GestureStatus.Started, new Point(e.Position.X, e.Position.Y)))
+			var x = e.GetCurrentPoint(this).Position.X;
+			var y = e.GetCurrentPoint(this).Position.Y;
+
+			if (Element.HandleTouchInteractions(GestureStatus.Started, new Point(x, y)))
 			{
-				e.Complete();
 				e.Handled = false;
 			}
 		}
@@ -64,11 +66,19 @@ namespace Xamarin.Forms.Platform.UWP
 			}
 		}
 
-		private void OnManipulationCompleted(object sender, ManipulationCompletedRoutedEventArgs e)
+		private void OnPointerReleased(object sender, PointerRoutedEventArgs e)
 		{
-			double x = e.Position.X;
-			double y = e.Position.Y;
+			var x = e.GetCurrentPoint(this).Position.X;
+			var y = e.GetCurrentPoint(this).Position.Y;
 			bool handled = Element.HandleTouchInteractions(GestureStatus.Completed, new Point(x, y));
+			e.Handled = handled;
+		}
+
+		private void OnPointerCanceled(object sender, PointerRoutedEventArgs e)
+		{
+			var x = e.GetCurrentPoint(this).Position.X;
+			var y = e.GetCurrentPoint(this).Position.Y;
+			bool handled = Element.HandleTouchInteractions(GestureStatus.Canceled, new Point(x, y));
 			e.Handled = handled;
 		}
 	}
