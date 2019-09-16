@@ -5,8 +5,10 @@
     x:Class="Xamarin.Forms.Controls.GalleryPages.SwipeViewGalleries.BasicSwipeGallery"
     Title="SwipeView">
     <ContentPage.Content>
-        <Grid>
+        <StackLayout>
             <SwipeView
+                HeightRequest="60"
+                WidthRequest="300"
                 HorizontalOptions="Center"
                 VerticalOptions="Center"
                 Margin="12">
@@ -22,16 +24,111 @@
                 </SwipeView.BottomItems>
                 <SwipeView.View>
                     <Grid
-                        HeightRequest="80"
-                        WidthRequest="250"
                         BackgroundColor="LightGray">
                         <Label
                             HorizontalOptions="Center"
                             VerticalOptions="Center"
-                            Text="Swipe Up"/>
+                            Text="Swipe Up (Execute)"/>
                     </Grid>
                 </SwipeView.View>
             </SwipeView>
-        </Grid>
+            <SwipeView
+                HorizontalOptions="Center"
+                VerticalOptions="Center"
+                Margin="12">
+                <SwipeView.TopItems>
+                    <SwipeItems
+                        Mode="Reveal">
+                        <SwipeItem
+                            Text="View"
+                            Icon="books.png"
+                            BackgroundColor="Green"/>
+                        <SwipeItem
+                            Text="Edit"
+                            Icon="calculator.png"
+                            BackgroundColor="Orange"/>
+                        <SwipeItem
+                            Text="Delete"
+                            Icon="coffee.png"
+                            BackgroundColor="Red"
+                            WidthRequest="200"
+                            Invoked="OnInvoked"/>
+                    </SwipeItems>
+                </SwipeView.TopItems>
+                <SwipeView.View>
+                    <Grid
+                        HeightRequest="60"
+                        WidthRequest="300"
+                        BackgroundColor="LightGray">
+                        <Label
+                            HorizontalOptions="Center"
+                            VerticalOptions="Center"
+                            Text="Swipe Down (Reveal)"/>
+                    </Grid>
+                </SwipeView.View>
+            </SwipeView>
+             <SwipeView
+                HorizontalOptions="Center"
+                VerticalOptions="Center"
+                Margin="12">
+                <SwipeView.LeftItems>
+                    <SwipeItems
+                        Mode="Reveal">
+                        <SwipeItem
+                            Text="View"
+                            Icon="books.png"
+                            BackgroundColor="Green"/>
+                        <SwipeItem
+                            Text="Edit"
+                            Icon="calculator.png"
+                            BackgroundColor="Orange"/>
+                        <SwipeItem
+                            Text="Delete"
+                            Icon="coffee.png"
+                            BackgroundColor="Red"
+                            WidthRequest="120"
+                            Invoked="OnInvoked"/>
+                    </SwipeItems>
+                </SwipeView.LeftItems>
+                <SwipeView.View>
+                    <Grid
+                        HeightRequest="60"
+                        WidthRequest="300"
+                        BackgroundColor="LightGray">
+                        <Label
+                            HorizontalOptions="Center"
+                            VerticalOptions="Center"
+                            Text="Swipe Right (Reveal)"/>
+                    </Grid>
+                </SwipeView.View>
+            </SwipeView>
+            <SwipeView
+                SwipeThreshold="200"
+                HorizontalOptions="Center"
+                VerticalOptions="Center"
+                Margin="12">
+                <SwipeView.RightItems>
+                    <SwipeItems
+                        Mode="Execute">
+                        <SwipeItem
+                            Text="Delete"
+                            Icon="coffee.png"
+                            BackgroundColor="Red"
+                            Invoked="OnInvoked"/>
+                    </SwipeItems>
+                </SwipeView.RightItems>
+                <SwipeView.View>
+                    <Grid
+                        HeightRequest="60"
+                        WidthRequest="300"
+                        BackgroundColor="LightGray">
+                        <Label
+                            HorizontalOptions="Center"
+                            VerticalOptions="Center"
+                            Text="Swipe Left (Execute)"/>
+                    </Grid>
+                </SwipeView.View>
+            </SwipeView>
+        </StackLayout>
     </ContentPage.Content>
 </ContentPage>

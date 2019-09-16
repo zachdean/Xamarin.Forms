@@ -28,27 +28,6 @@
             <DataTemplate x:Key="MessageTemplate">
                 <ViewCell>
                     <SwipeView>
-                        <SwipeView.LeftItems>
-                            <SwipeItems
-                                Mode="Reveal"
-                                SwipeBehaviorOnInvoked="Close">
-                                <SwipeItem
-                                    Text="Favourite"
-                                    Icon="calculator.png"
-                                    BackgroundColor="Yellow"
-                                    Command="{Binding Source={x:Reference SwipeListView}, Path=BindingContext.FavouriteCommand}"/>
-                            </SwipeItems>
-                        </SwipeView.LeftItems>
-                        <SwipeView.RightItems>
-                            <SwipeItems
-                                Mode="Execute">
-                                <SwipeItem
-                                    Text="Delete"
-                                    Icon="coffee.png"
-                                    BackgroundColor="Red"
-                                    Command="{Binding Source={x:Reference SwipeListView}, Path=BindingContext.DeleteCommand}"/>
-                            </SwipeItems>
-                        </SwipeView.RightItems>
                         <SwipeView.View>
                             <Grid
                                 BackgroundColor="White"
@@ -87,6 +66,27 @@
                                     Style="{StaticResource SubTitleStyle}"/>
                             </Grid>
                         </SwipeView.View>
+                        <SwipeView.LeftItems>
+                            <SwipeItems
+                                Mode="Reveal"
+                                SwipeBehaviorOnInvoked="Close">
+                                <SwipeItem
+                                    Text="Favourite"
+                                    Icon="calculator.png"
+                                    BackgroundColor="Yellow"
+                                    Command="{Binding Source={x:Reference SwipeListView}, Path=BindingContext.FavouriteCommand}"/>
+                            </SwipeItems>
+                        </SwipeView.LeftItems>
+                        <SwipeView.RightItems>
+                            <SwipeItems
+                                Mode="Execute">
+                                <SwipeItem
+                                    Text="Delete"
+                                    Icon="coffee.png"
+                                    BackgroundColor="Red"
+                                    Command="{Binding Source={x:Reference SwipeListView}, Path=BindingContext.DeleteCommand}"/>
+                            </SwipeItems>
+                        </SwipeView.RightItems>
                     </SwipeView>
                 </ViewCell>
             </DataTemplate>

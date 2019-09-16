@@ -18,7 +18,7 @@ namespace Xamarin.Forms.Controls
 		{
 			element.HeightRequest = 60;
 			element.BackgroundColor = Color.LightGray;
-			element.View = GetSwipeContent();
+			element.View = GetSwipeContent(SwipeDirection.Left);
 			element.LeftItems = GetRevealSwipeItems();
 			element.RightItems = GetExecuteSwipeItems();
 		}
@@ -27,9 +27,9 @@ namespace Xamarin.Forms.Controls
 		{
 			base.Build(stackLayout);
 
-			var rightItemsContainer = new ValueViewContainer<SwipeView>(Test.SwipeView.RightItems, new SwipeView { RightItems = GetRevealSwipeItems(), View = GetSwipeContent(), HeightRequest = 60, BackgroundColor = Color.LightPink }, "RightItems", value => value.ToString());
-			var topItemsContainer = new ValueViewContainer<SwipeView>(Test.SwipeView.TopItems, new SwipeView { TopItems = GetRevealSwipeItems(), View = GetSwipeContent(), HeightRequest = 60, BackgroundColor = Color.LightSkyBlue }, "TopItems", value => value.ToString());
-			var bottomItemsContainer = new ValueViewContainer<SwipeView>(Test.SwipeView.BottomItems, new SwipeView { BottomItems = GetRevealSwipeItems(), View = GetSwipeContent(), HeightRequest = 60, BackgroundColor = Color.LightGray }, "BottomItems", value => value.ToString());
+			var rightItemsContainer = new ValueViewContainer<SwipeView>(Test.SwipeView.RightItems, new SwipeView { RightItems = GetRevealSwipeItems(), View = GetSwipeContent(SwipeDirection.Right), HeightRequest = 60, BackgroundColor = Color.LightPink }, "RightItems", value => value.ToString());
+			var topItemsContainer = new ValueViewContainer<SwipeView>(Test.SwipeView.TopItems, new SwipeView { TopItems = GetRevealSwipeItems(), View = GetSwipeContent(SwipeDirection.Up), HeightRequest = 60, BackgroundColor = Color.LightSkyBlue }, "TopItems", value => value.ToString());
+			var bottomItemsContainer = new ValueViewContainer<SwipeView>(Test.SwipeView.BottomItems, new SwipeView { BottomItems = GetRevealSwipeItems(), View = GetSwipeContent(SwipeDirection.Down), HeightRequest = 60, BackgroundColor = Color.LightGray }, "BottomItems", value => value.ToString());
 
 			Add(rightItemsContainer);
 			Add(topItemsContainer);
@@ -81,7 +81,7 @@ namespace Xamarin.Forms.Controls
 			return swipeItems;
 		}
 
-		internal Grid GetSwipeContent()
+		internal Grid GetSwipeContent(SwipeDirection swipeDirection)
 		{
 			var content = new Grid
 			{
@@ -91,9 +91,24 @@ namespace Xamarin.Forms.Controls
 			var info = new Label
 			{
 				HorizontalOptions = LayoutOptions.Center,
-				VerticalOptions = LayoutOptions.Center,
-				Text = "Swipe to Right (Reveal) or Left (Execute)"
+				VerticalOptions = LayoutOptions.Center
 			};
+
+			switch (swipeDirection)
+			{
+				case SwipeDirection.Down:
+					info.Text = "Swipe to the Top";
+					break;
+				case SwipeDirection.Left:
+					info.Text = "Swipe to the Right";
+					break;
+				case SwipeDirection.Right:
+					info.Text = "Swipe to the Left";
+					break;
+				case SwipeDirection.Up:
+					info.Text = "Swipe to the Bottom";
+					break;
+			}
 
 			content.Children.Add(info);
 
