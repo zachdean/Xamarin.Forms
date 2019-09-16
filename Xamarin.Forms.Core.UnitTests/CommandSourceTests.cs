@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using NUnit.Framework;
 
 namespace Xamarin.Forms.Core.UnitTests
@@ -110,7 +111,7 @@ namespace Xamarin.Forms.Core.UnitTests
 		}
 
 		[Test]
-		public void CommandCanExecuteInvokedOnChange()
+		public async Task CommandCanExecuteInvokedOnChange()
 		{
 			bool fired;
 			Func<bool> canExecute = () => {
@@ -125,6 +126,9 @@ namespace Xamarin.Forms.Core.UnitTests
 			fired = false;
 			
 			cmd.ChangeCanExecute();
+
+			// let the queue'd bindable properties settle
+			await Task.Delay(1000);
 
 			Assert.That (fired, Is.True, "CanExecute was not called when the event was raised");
 		}
