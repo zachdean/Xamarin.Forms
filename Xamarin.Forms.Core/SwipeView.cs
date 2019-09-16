@@ -9,7 +9,7 @@ namespace Xamarin.Forms
 {
 	[ContentProperty("View")]
 	[RenderWith(typeof(_SwipeViewRenderer))]
-	public class SwipeView : ContentView, IDisposable
+	public class SwipeView : ContentView
 	{
 		private const uint SwipeAnimationDuration = 100;
 		private const double SwipeItemWidth = 80;
@@ -18,7 +18,7 @@ namespace Xamarin.Forms
 		private Point _initialPoint;
 		private SwipeDirection _swipeDirection;
 		private double _swipeOffset;
-		private Grid _content;
+		private readonly Grid _content;
 		private View _view;
 
 		public SwipeView()
@@ -88,14 +88,6 @@ namespace Xamarin.Forms
 			return false;
 		}
 
-		protected override void OnParentSet()
-		{
-			base.OnParentSet();
-
-			if (Parent == null)
-				Dispose();
-		}
-
 		protected override void OnSizeAllocated(double width, double height)
 		{
 			if (_view != null)
@@ -113,12 +105,6 @@ namespace Xamarin.Forms
 			}
 
 			base.OnSizeAllocated(width, height);
-		}
-
-		public void Dispose()
-		{
-			_content = null;
-			_view = null;
 		}
 
 		[Preserve(Conditional = true)]
@@ -603,7 +589,7 @@ namespace Xamarin.Forms
 
 		void InitializeSwipeItems(SwipeDirection swipeDirection, SwipeItems swipeItems)
 		{
-			if (_content.Children.Count > 1)
+			if (_content == null || _content.Children.Count > 1)
 				return;
 
 			var swipeItemsLayout = new StackLayout
