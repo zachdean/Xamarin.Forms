@@ -55,7 +55,22 @@ namespace Xamarin.Forms.Platform.Android
 
 		internal static bool IsDefault(this IFontElement self)
 		{
-			return self.FontFamily == null && self.FontSize == Device.GetNamedSize(NamedSize.Default, typeof(Label), true) && self.FontAttributes == FontAttributes.None;
+			return IsDefaultFontFamily(self) && IsDefaultFontSize(self) && IsDefaultFontAttributes(self);
+		}
+
+		internal static bool IsDefaultFontFamily(this IFontElement self)
+		{
+			return self.FontFamily == null;
+		}
+
+		internal static bool IsDefaultFontSize(this IFontElement self)
+		{
+			return self.FontSize == Device.GetNamedSize(NamedSize.Default, typeof(Label), true);
+		}
+
+		internal static bool IsDefaultFontAttributes(this IFontElement self)
+		{
+			return self.FontAttributes == FontAttributes.None;
 		}
 
 		static bool IsAssetFontFamily(string name)
@@ -65,12 +80,11 @@ namespace Xamarin.Forms.Platform.Android
 
 		internal static Typeface ToTypeface(this IFontElement self)
 		{
-			if (self.IsDefault())
+			if (self.IsDefaultFontFamily() && self.IsDefaultFontAttributes())
 				return s_defaultTypeface ?? (s_defaultTypeface = Typeface.Default);
 
 			return ToTypeface(self.FontFamily, self.FontAttributes);
 		}
-
 
 		static Typeface ToTypeface(string fontFamily, FontAttributes fontAttributes)
 		{
