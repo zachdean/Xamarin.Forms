@@ -27,6 +27,8 @@ namespace Xamarin.Forms
 
 			_content = new Grid();
 
+   			CompressedLayout.SetIsHeadless(_content, true);
+
 			Content = _content;
 		}
 

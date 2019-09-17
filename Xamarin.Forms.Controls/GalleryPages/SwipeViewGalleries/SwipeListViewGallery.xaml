@@ -99,6 +99,7 @@
                 x:Name="SwipeListView"
                 ItemsSource="{Binding Messages}"
                 ItemTemplate="{StaticResource MessageTemplate}"
+                CachingStrategy="RecycleElement"
                 HasUnevenRows="True"
                 SeparatorVisibility="None" />
         </Grid>
