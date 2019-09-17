@@ -49,7 +49,7 @@
                     <SwipeView.View>
                         <Grid
                             BackgroundColor="White"
-                            HeightRequest="90"
+                            HeightRequest="80"
                             RowSpacing="0">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />

@@ -53,7 +53,7 @@ namespace Xamarin.Forms.Controls.GalleryPages.SwipeViewGalleries
 
 		private void LoadMessages()
 		{
-			for (int i = 0; i < 1000; i++)
+			for (int i = 0; i < 100; i++)
 			{
 				Messages.Add(new Message { Title = $"Lorem ipsum {i + 1}", SubTitle = "Lorem ipsum dolor sit amet", Date = "Yesterday", Description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua." });
 			}
