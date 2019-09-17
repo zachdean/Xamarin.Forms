@@ -1050,6 +1050,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Issue3901.xaml.cs">
       <DependentUpon>Issue3901.xaml</DependentUpon>
     </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Controls\ApiLabel.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="$(MSBuildThisFileDirectory)Bugzilla22229.xaml">
