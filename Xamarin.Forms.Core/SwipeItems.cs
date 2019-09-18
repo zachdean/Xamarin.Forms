@@ -3,21 +3,29 @@ using System.Collections.Generic;
 
 namespace Xamarin.Forms
 {
-	public class SwipeItems : IList<SwipeItem>
+	public class SwipeItems : BindableObject, IList<SwipeItem>
 	{
 		readonly List<SwipeItem> _internal;
 
 		public SwipeItems()
 		{
 			_internal = new List<SwipeItem>();
-
-			Mode = SwipeMode.Reveal;
-			SwipeBehaviorOnInvoked = SwipeBehaviorOnInvoked.Auto;
 		}
 
-		public SwipeMode Mode { get; set; }
+		public static readonly BindableProperty ModeProperty = BindableProperty.Create(nameof(Mode), typeof(SwipeMode), typeof(SwipeItems), SwipeMode.Reveal);
+		public static readonly BindableProperty SwipeBehaviorOnInvokedProperty = BindableProperty.Create(nameof(SwipeBehaviorOnInvoked), typeof(SwipeBehaviorOnInvoked), typeof(SwipeItems), SwipeBehaviorOnInvoked.Auto);
 
-		public SwipeBehaviorOnInvoked SwipeBehaviorOnInvoked { get; set; }
+		public SwipeMode Mode
+		{
+			get { return (SwipeMode)GetValue(ModeProperty); }
+			set { SetValue(ModeProperty, value); }
+		}
+
+		public SwipeBehaviorOnInvoked SwipeBehaviorOnInvoked
+		{
+			get { return (SwipeBehaviorOnInvoked)GetValue(SwipeBehaviorOnInvokedProperty); }
+			set { SetValue(SwipeBehaviorOnInvokedProperty, value); }
+		}
 
 		public SwipeItem this[int index] { get => _internal[index]; set => _internal[index] = value; }
 

@@ -11,7 +11,6 @@ namespace Xamarin.Forms
 	[RenderWith(typeof(_SwipeViewRenderer))]
 	public class SwipeView : ContentView
 	{
-		private const uint SwipeAnimationDuration = 100;
 		private const double SwipeItemWidth = 80;
 
 		private bool _isTouchDown;
@@ -505,17 +504,11 @@ namespace Xamarin.Forms
 			{
 				case SwipeDirection.Left:
 				case SwipeDirection.Right:
-					if (Device.RuntimePlatform == Device.UWP)
-						_view.TranslateTo(0, _view.TranslationY, SwipeAnimationDuration);
-					else
-						_view.TranslationX = 0;
+					_view.TranslationX = 0;
 					break;
 				case SwipeDirection.Up:
 				case SwipeDirection.Down:
-					if (Device.RuntimePlatform == Device.UWP)
-						_view.TranslateTo(_view.TranslationX, 0, SwipeAnimationDuration);
-					else
-						_view.TranslationY = 0;
+					_view.TranslationY = 0;
 					break;
 			}
 			DisposeSwipeItems();
@@ -530,31 +523,19 @@ namespace Xamarin.Forms
 			{
 				case SwipeDirection.Left:
 					swipeThreshold = GetSwipeThreshold(swipeDirection, RightItems);
-					if (Device.RuntimePlatform == Device.UWP)
-						_view.TranslateTo(-swipeThreshold, _view.TranslationY, SwipeAnimationDuration);
-					else
-						_view.TranslationX = -swipeThreshold;
+					_view.TranslationX = -swipeThreshold;
 					break;
 				case SwipeDirection.Right:
 					swipeThreshold = GetSwipeThreshold(swipeDirection, LeftItems);
-					if (Device.RuntimePlatform == Device.UWP)
-						_view.TranslateTo(swipeThreshold, _view.TranslationY, SwipeAnimationDuration);
-					else
-						_view.TranslationX = swipeThreshold;
+					_view.TranslationX = swipeThreshold;
 					break;
 				case SwipeDirection.Up:
 					swipeThreshold = GetSwipeThreshold(swipeDirection, BottomItems);
-					if (Device.RuntimePlatform == Device.UWP)
-						_view.TranslateTo(_view.TranslationX, -swipeThreshold, SwipeAnimationDuration);
-					else
-						_view.TranslationY = -swipeThreshold;
+					_view.TranslationY = -swipeThreshold;
 					break;
 				case SwipeDirection.Down:
 					swipeThreshold = GetSwipeThreshold(swipeDirection, TopItems);
-					if (Device.RuntimePlatform == Device.UWP)
-						_view.TranslateTo(_view.TranslationX, swipeThreshold, SwipeAnimationDuration);
-					else
-						_view.TranslationY = swipeThreshold;
+					_view.TranslationY = swipeThreshold;
 					break;
 			}
 

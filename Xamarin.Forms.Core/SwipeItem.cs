@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 
 namespace Xamarin.Forms
 {
@@ -75,7 +76,8 @@ namespace Xamarin.Forms
 			ItemIcon.Source = icon;
 		}
 
-		internal void OnInvoked() => Invoked?.Invoke(this, new SwipeItemInvokedEventArgs(this));
+		[EditorBrowsable(EditorBrowsableState.Never)]
+		public void OnInvoked() => Invoked?.Invoke(this, new SwipeItemInvokedEventArgs(this));
 	}
 
 	public class SwipeItemInvokedEventArgs : EventArgs
