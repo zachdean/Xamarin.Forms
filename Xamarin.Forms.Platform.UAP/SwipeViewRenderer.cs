@@ -1,21 +1,29 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.Linq;
+using System.ComponentModel;
 using System.Collections.Generic;
-using Microsoft.UI.Xaml.Controls;
+using Windows.Foundation;
+using Windows.UI.Xaml;
 using WSwipeBehaviorOnInvoked = Microsoft.UI.Xaml.Controls.SwipeBehaviorOnInvoked;
+using WSwipeControl = Microsoft.UI.Xaml.Controls.SwipeControl;
 using WSwipeItems = Microsoft.UI.Xaml.Controls.SwipeItems;
 using WSwipeItem = Microsoft.UI.Xaml.Controls.SwipeItem;
 using WSwipeMode = Microsoft.UI.Xaml.Controls.SwipeMode;
-using System.Linq;
 
 namespace Xamarin.Forms.Platform.UWP
 {
-	public class SwipeViewRenderer : ViewRenderer<SwipeView, SwipeControl>
+	public class SwipeViewRenderer : ViewRenderer<SwipeView, WSwipeControl>
 	{
 		private bool _isDisposed;
 		private Dictionary<WSwipeItem, SwipeItem> _leftItems;
 		private Dictionary<WSwipeItem, SwipeItem> _rightItems;
 		private Dictionary<WSwipeItem, SwipeItem> _topItems;
 		private Dictionary<WSwipeItem, SwipeItem> _bottomItems;
+
+		public SwipeViewRenderer()
+		{
+			AutoPackage = false;
+		}
 
 		protected override void OnElementChanged(ElementChangedEventArgs<SwipeView> e)
 		{
@@ -25,9 +33,10 @@ namespace Xamarin.Forms.Platform.UWP
 			{
 				if (Control == null)
 				{
-					SetNativeControl(new SwipeControl());
+					SetNativeControl(new WSwipeControl());
 				}
 
+				UpdateContent();
 				UpdateSwipeItems();
 				UpdateBackgroundColor();
 			}
@@ -36,8 +45,10 @@ namespace Xamarin.Forms.Platform.UWP
 		protected override void OnElementPropertyChanged(object sender, PropertyChangedEventArgs changedProperty)
 		{
 			base.OnElementPropertyChanged(sender, changedProperty);
-
-			if (changedProperty.IsOneOf(SwipeView.LeftItemsProperty, SwipeView.RightItemsProperty, SwipeView.TopItemsProperty, SwipeView.BottomItemsProperty))
+				
+			if (changedProperty.PropertyName == SwipeView.ContentProperty.PropertyName)
+				UpdateContent();
+			else if (changedProperty.IsOneOf(SwipeView.LeftItemsProperty, SwipeView.RightItemsProperty, SwipeView.TopItemsProperty, SwipeView.BottomItemsProperty))
 				UpdateSwipeItems();
 			else if (changedProperty.PropertyName == VisualElement.BackgroundColorProperty.PropertyName)
 				UpdateBackgroundColor();
@@ -93,6 +104,44 @@ namespace Xamarin.Forms.Platform.UWP
 
 			base.UpdateBackgroundColor();
 		}
+		
+		public override SizeRequest GetDesiredSize(double widthConstraint, double heightConstraint)
+		{
+			SizeRequest result = base.GetDesiredSize(widthConstraint, heightConstraint);
+			result.Minimum = new Size(40, 40);
+			return result;
+		}
+		protected override Windows.Foundation.Size ArrangeOverride(Windows.Foundation.Size finalSize)
+		{
+			if (Element == null)
+				return finalSize;
+
+			Element.IsInNativeLayout = true;
+
+			Control?.Arrange(new Rect(0, 0, finalSize.Width, finalSize.Height));
+
+			Element.IsInNativeLayout = false;
+
+			return finalSize;
+		}
+
+		protected override Windows.Foundation.Size MeasureOverride(Windows.Foundation.Size availableSize)
+		{
+			if (Element == null)
+				return new Windows.Foundation.Size(0, 0);
+
+			double width = Math.Max(0, Element.Width);
+			double height = Math.Max(0, Element.Height);
+			var result = new Windows.Foundation.Size(width, height);
+
+			if (Control.Content is FrameworkElement content)
+				content.Measure(result);
+
+			Control.Height = result.Height;
+			Control.Width = result.Width;
+
+			return result;
+		}
 
 		void OnSwipeItemsPropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
@@ -100,6 +149,8 @@ namespace Xamarin.Forms.Platform.UWP
 
 			if (e.PropertyName == SwipeItems.ModeProperty.PropertyName)
 				UpdateSwipeMode(formsSwipeItems);
+			else if (e.PropertyName == SwipeItems.SwipeBehaviorOnInvokedProperty.PropertyName)
+				UpdateSwipeBehaviorOnInvoked(formsSwipeItems);
 		}
 
 		void OnSwipeItemPropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -107,13 +158,22 @@ namespace Xamarin.Forms.Platform.UWP
 			var formsSwipeItem = sender as SwipeItem;
 
 			if (e.IsOneOf(
-				ContextItem.TextColorProperty, 
+				ContextItem.TextProperty, 
 				ContextItem.TextColorProperty, 
 				ContextItem.IconProperty, 
 				ContextItem.CommandProperty, 
 				ContextItem.CommandParameterProperty,
 				VisualElement.BackgroundColorProperty))
 				UpdateSwipeItem(formsSwipeItem);
+		}
+
+		void UpdateContent()
+		{
+			if (Element.Content == null)
+				return;
+
+			var renderer = Element.Content.GetOrCreateRenderer();
+			Control.Content = renderer?.ContainerElement;
 		}
 
 		void UpdateSwipeItems()
@@ -136,7 +196,16 @@ namespace Xamarin.Forms.Platform.UWP
 			var windowsSwipeItems = GetWindowsSwipeItems(swipeItems);
 
 			if (windowsSwipeItems != null)
-				windowsSwipeItems.Mode = GetSwipeMode(swipeItems.Mode);
+				windowsSwipeItems.Mode = GetSwipeMode(swipeItems.Mode); 
+		}
+
+		void UpdateSwipeBehaviorOnInvoked(SwipeItems swipeItems)
+		{
+			var windowsSwipeItems = GetWindowsSwipeItems(swipeItems);
+
+			if (windowsSwipeItems != null)
+				foreach (var windowSwipeItem in windowsSwipeItems.ToList())
+					windowSwipeItem.BehaviorOnInvoked = GetSwipeBehaviorOnInvoked(swipeItems.SwipeBehaviorOnInvoked);
 		}
 
 		void UpdateSwipeItem(SwipeItem formsSwipeItem)
@@ -210,7 +279,7 @@ namespace Xamarin.Forms.Platform.UWP
 			foreach (var formsSwipeItem in items)
 			{
 				var windowsSwipeItem = new WSwipeItem
-				{
+				{          
 					Background = formsSwipeItem.BackgroundColor.IsDefault ? null : formsSwipeItem.BackgroundColor.ToBrush(),
 					Foreground = formsSwipeItem.TextColor.IsDefault ? null : formsSwipeItem.TextColor.ToBrush(),
 					IconSource = formsSwipeItem.Icon.ToWindowsIconSource(),

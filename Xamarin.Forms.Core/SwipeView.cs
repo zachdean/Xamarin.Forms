@@ -26,7 +26,7 @@ namespace Xamarin.Forms
 
 			_content = new Grid();
 
-   			CompressedLayout.SetIsHeadless(_content, true);
+			CompressedLayout.SetIsHeadless(_content, true);
 
 			Content = _content;
 		}
@@ -210,8 +210,8 @@ namespace Xamarin.Forms
 		{
 			if (swipeItems == null)
 				return;
-	
-   			foreach (var swipeItem in swipeItems)
+
+			foreach (var swipeItem in swipeItems)
 			{
 				var swipeItemX = swipeItem.X;
 				var swipeItemY = swipeItem.Y;
@@ -220,7 +220,7 @@ namespace Xamarin.Forms
 				{
 					double totalSwipeItemsWidth = swipeItems.Sum(s => s.Width);
 					swipeItemX += totalSwipeItemsWidth;
-				}			
+				}
 
 				if (TouchInsideContent(swipeItemX, swipeItemY, swipeItem.Width, swipeItem.Height, point.X, point.Y))
 				{
@@ -305,7 +305,7 @@ namespace Xamarin.Forms
 
 			bool isHorizontal = swipeDirection == SwipeDirection.Left || swipeDirection == SwipeDirection.Right;
 
-				if (swipeItems.Mode == SwipeMode.Reveal)
+			if (swipeItems.Mode == SwipeMode.Reveal)
 			{
 				if (isHorizontal)
 				{
@@ -551,7 +551,7 @@ namespace Xamarin.Forms
 				_content.Children.Add(_view);
 		}
 
-  		void InitializeSwipeItems(SwipeDirection swipeDirection)
+		void InitializeSwipeItems(SwipeDirection swipeDirection)
 		{
 			switch (swipeDirection)
 			{
@@ -603,12 +603,12 @@ namespace Xamarin.Forms
 
 				if (swipeDirection == SwipeDirection.Up || swipeDirection == SwipeDirection.Down)
 					swipeItemWidth = _view.WidthRequest / swipeItems.Count;
-				
+
 				foreach (SwipeItem item in swipeItems)
 				{
 					item.HeightRequest = _view.HeightRequest;
 
-					if(item.WidthRequest <= 0)
+					if (item.WidthRequest <= 0)
 						item.WidthRequest = swipeItemWidth;
 
 					swipeItemsLayout.Children.Add(item);
@@ -623,13 +623,13 @@ namespace Xamarin.Forms
 		{
 			var disposeChildren = _content.Children.Where(v => v != _view).ToList();
 
-   			foreach (var child in disposeChildren)
+			foreach (var child in disposeChildren)
 				RemoveChild(child);
-			
+
 			disposeChildren = null;
 		}
 
-  		void RemoveChild(View view)
+		void RemoveChild(View view)
 		{
 			if (_content == null)
 				return;
