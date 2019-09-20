@@ -83,7 +83,16 @@ namespace Xamarin.Forms
 		public event EventHandler<SwipeStartedEventArgs> SwipeStarted;
 		public event EventHandler<SwipeEndedEventArgs> SwipeEnded;
 
-		internal override ReadOnlyCollection<Element> LogicalChildrenInternal => _logicalChildren;
+		internal override ReadOnlyCollection<Element> LogicalChildrenInternal
+		{
+			get
+			{
+				if (Device.RuntimePlatform == Device.UWP)
+					return base.LogicalChildrenInternal;
+
+				return _logicalChildren;
+			}
+		}
 
 		protected override bool ShouldInvalidateOnChildAdded(View child)
 		{
@@ -146,7 +155,7 @@ namespace Xamarin.Forms
 		public void Dispose()
 		{
 			if (InternalChildren != null)
-				InternalChildren.CollectionChanged += ItemsCollectionChanged;
+				InternalChildren.CollectionChanged -= ItemsCollectionChanged;
 
 			_content = null;
 			_view = null;
