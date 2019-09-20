@@ -275,8 +275,11 @@ namespace Xamarin.Forms.Platform.Android
 
 			if (disposing)
 			{
-				SetOnClickListener(null);
-				SetOnTouchListener(null);
+				if(!this.IsDisposed())
+					SetOnClickListener(null);
+
+				if (!this.IsDisposed())
+					SetOnTouchListener(null);
 
 				EffectUtilities.UnregisterEffectControlProvider(this, Element);
 
@@ -303,7 +306,7 @@ namespace Xamarin.Forms.Platform.Android
 					_gestureManager = null;
 				}
 
-				if (ManageNativeControlLifetime)
+				if (ManageNativeControlLifetime && !this.IsDisposed())
 				{
 					int count = ChildCount;
 					for (var i = 0; i < count; i++)

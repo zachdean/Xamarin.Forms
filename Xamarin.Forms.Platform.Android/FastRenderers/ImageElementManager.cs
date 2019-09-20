@@ -89,7 +89,7 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 			finally
 			{
 				if (newImage is IImageController imageController)
-					imageController.SetIsLoading(false);
+					imageController?.SetIsLoading(false);
 			}
 		}
 
