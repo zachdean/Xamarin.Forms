@@ -22,7 +22,7 @@
                             Invoked="OnInvoked"/>
                     </SwipeItems>
                 </SwipeView.BottomItems>
-                <SwipeView.View>
+                <SwipeView.Content>
                     <Grid
                         BackgroundColor="LightGray">
                         <Label
@@ -30,7 +30,7 @@
                             VerticalOptions="Center"
                             Text="Swipe Up (Execute)"/>
                     </Grid>
-                </SwipeView.View>
+                </SwipeView.Content>
             </SwipeView>
             <SwipeView
                 HorizontalOptions="Center"
@@ -55,7 +55,7 @@
                             Invoked="OnInvoked"/>
                     </SwipeItems>
                 </SwipeView.TopItems>
-                <SwipeView.View>
+                <SwipeView.Content>
                     <Grid
                         HeightRequest="60"
                         WidthRequest="300"
@@ -65,7 +65,7 @@
                             VerticalOptions="Center"
                             Text="Swipe Down (Reveal)"/>
                     </Grid>
-                </SwipeView.View>
+                </SwipeView.Content>
             </SwipeView>
              <SwipeView
                 HorizontalOptions="Center"
@@ -90,7 +90,7 @@
                             Invoked="OnInvoked"/>
                     </SwipeItems>
                 </SwipeView.LeftItems>
-                <SwipeView.View>
+                <SwipeView.Content>
                     <Grid
                         HeightRequest="60"
                         WidthRequest="300"
@@ -100,7 +100,7 @@
                             VerticalOptions="Center"
                             Text="Swipe Right (Reveal)"/>
                     </Grid>
-                </SwipeView.View>
+                </SwipeView.Content>
             </SwipeView>
             <SwipeView
                 SwipeThreshold="200"
@@ -117,7 +117,7 @@
                             Invoked="OnInvoked"/>
                     </SwipeItems>
                 </SwipeView.RightItems>
-                <SwipeView.View>
+                <SwipeView.Content>
                     <Grid
                         HeightRequest="60"
                         WidthRequest="300"
@@ -127,7 +127,7 @@
                             VerticalOptions="Center"
                             Text="Swipe Left (Execute)"/>
                     </Grid>
-                </SwipeView.View>
+                </SwipeView.Content>
             </SwipeView>
         </StackLayout>
     </ContentPage.Content>

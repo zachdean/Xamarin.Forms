@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows.Input;
@@ -7,42 +10,43 @@ using Xamarin.Forms.Platform;
 
 namespace Xamarin.Forms
 {
-	[ContentProperty("View")]
+	[ContentProperty("Content")]
 	[RenderWith(typeof(_SwipeViewRenderer))]
-	public class SwipeView : ContentView
+	public class SwipeView : ContentView, IDisposable
 	{
 		private const double SwipeItemWidth = 80;
 
-		private bool _isTouchDown;
-		private Point _initialPoint;
-		private SwipeDirection _swipeDirection;
-		private double _swipeOffset;
-		private readonly Grid _content;
-		private View _view;
+		bool _isTouchDown;
+		Point _initialPoint;
+		SwipeDirection _swipeDirection;
+		double _swipeOffset;
+		Grid _content;
+		View _view;
+		readonly IList<Element> _gridChild;
+		readonly ReadOnlyCollection<Element> _logicalChildren;
 
 		public SwipeView()
 		{
 			IsClippedToBounds = true;
 
 			_content = new Grid();
+			_view = new View();
+
+			_gridChild = new List<Element>();
 
 			CompressedLayout.SetIsHeadless(_content, true);
 
+			_gridChild.Add(_content);
+			_logicalChildren = new ReadOnlyCollection<Element>(_gridChild);
+
 			Content = _content;
 		}
-
-		public static readonly BindableProperty ViewProperty = BindableProperty.Create(nameof(View), typeof(View), typeof(SwipeView), default(View), BindingMode.TwoWay, null, OnViewChanged);
+  
 		public static readonly BindableProperty LeftItemsProperty = BindableProperty.Create(nameof(LeftItems), typeof(SwipeItems), typeof(SwipeView), null, BindingMode.TwoWay, null);
 		public static readonly BindableProperty RightItemsProperty = BindableProperty.Create(nameof(RightItems), typeof(SwipeItems), typeof(SwipeView), null, BindingMode.TwoWay, null);
 		public static readonly BindableProperty TopItemsProperty = BindableProperty.Create(nameof(TopItems), typeof(SwipeItems), typeof(SwipeView), null, BindingMode.TwoWay, null);
 		public static readonly BindableProperty BottomItemsProperty = BindableProperty.Create(nameof(BottomItems), typeof(SwipeItems), typeof(SwipeView), null, BindingMode.TwoWay, null);
 		public static readonly BindableProperty SwipeThresholdProperty = BindableProperty.Create(nameof(SwipeThreshold), typeof(double), typeof(SwipeView), 250.0d, BindingMode.TwoWay);
-
-		public View View
-		{
-			get { return (View)GetValue(ViewProperty); }
-			set { SetValue(ViewProperty, value); }
-		}
 
 		public SwipeItems LeftItems
 		{
@@ -79,6 +83,8 @@ namespace Xamarin.Forms
 		public event EventHandler<SwipeStartedEventArgs> SwipeStarted;
 		public event EventHandler<SwipeEndedEventArgs> SwipeEnded;
 
+		internal override ReadOnlyCollection<Element> LogicalChildrenInternal => _logicalChildren;
+
 		protected override bool ShouldInvalidateOnChildAdded(View child)
 		{
 			return false;
@@ -87,6 +93,35 @@ namespace Xamarin.Forms
 		protected override bool ShouldInvalidateOnChildRemoved(View child)
 		{
 			return false;
+		}
+
+		protected override void OnParentSet()
+		{
+			base.OnParentSet();
+			InternalChildren.CollectionChanged += ItemsCollectionChanged;	
+  		}
+  
+		protected override void OnChildAdded(Element child)
+		{
+			if (child is View view)
+			{
+				if (view != _content)
+				{
+					if(view is SwipeViewLayout)
+						_content.Children.Add(view);
+					else
+					{
+						_view = view;
+						_content.Children.Add(_view);
+					}
+				}
+			}
+		}
+
+		protected override void OnChildRemoved(Element child)
+		{
+			if (child is View view)
+				_content.Children.Remove(view);
 		}
 
 		protected override void OnSizeAllocated(double width, double height)
@@ -108,6 +143,15 @@ namespace Xamarin.Forms
 			base.OnSizeAllocated(width, height);
 		}
 
+		public void Dispose()
+		{
+			if (InternalChildren != null)
+				InternalChildren.CollectionChanged += ItemsCollectionChanged;
+
+			_content = null;
+			_view = null;
+		}
+  
 		[Preserve(Conditional = true)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		public bool HandleTouchInteractions(GestureStatus status, Point point)
@@ -204,6 +248,17 @@ namespace Xamarin.Forms
 					ProcessTouchSwipeItems(_swipeDirection, BottomItems, point);
 					break;
 			}
+		}
+
+		void ItemsCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+		{
+			if (e.NewItems != null)
+				foreach (Element el in e.NewItems)
+					OnChildAdded(el);
+
+			if (e.OldItems != null)
+				foreach (Element el in e.OldItems)
+					OnChildRemoved(el);
 		}
 
 		void ProcessTouchSwipeItems(SwipeDirection swipeDirection, SwipeItems swipeItems, Point point)
@@ -542,15 +597,7 @@ namespace Xamarin.Forms
 			_view.InputTransparent = true;
 			IsSwiping = false;
 		}
-
-		void InitializeContent()
-		{
-			_view = View;
-
-			if (_content != null)
-				_content.Children.Add(_view);
-		}
-
+  
 		void InitializeSwipeItems(SwipeDirection swipeDirection)
 		{
 			switch (swipeDirection)
@@ -575,7 +622,7 @@ namespace Xamarin.Forms
 			if (_content == null || _content.Children.Count > 1)
 				return;
 
-			var swipeItemsLayout = new StackLayout
+			var swipeItemsLayout = new SwipeViewLayout
 			{
 				Spacing = 0,
 				Orientation = StackOrientation.Horizontal
@@ -651,17 +698,6 @@ namespace Xamarin.Forms
 			SwipeEnded?.Invoke(this, swipeEndedEventArgs);
 		}
 
-		static void OnViewChanged(BindableObject bindable, object oldValue, object newValue)
-		{
-			var swipeView = (SwipeView)bindable;
-
-			if (Equals(newValue, null) && !Equals(oldValue, null))
-				return;
-
-			if (swipeView.View != null)
-				swipeView.InitializeContent();
-		}
-
 		public class SwipeStartedEventArgs : EventArgs
 		{
 			public SwipeStartedEventArgs(SwipeDirection swipeDirection, double offset)
@@ -683,5 +719,10 @@ namespace Xamarin.Forms
 
 			public SwipeDirection SwipeDirection { get; set; }
 		}
+	}
+
+	internal class SwipeViewLayout : StackLayout
+	{
+
 	}
 }

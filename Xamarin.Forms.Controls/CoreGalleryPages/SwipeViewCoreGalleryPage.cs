@@ -18,7 +18,7 @@ namespace Xamarin.Forms.Controls
 		{
 			element.HeightRequest = 60;
 			element.BackgroundColor = Color.LightGray;
-			element.View = GetSwipeContent(SwipeDirection.Left);
+			element.Content = GetSwipeContent(SwipeDirection.Left);
 			element.LeftItems = GetRevealSwipeItems();
 			element.RightItems = GetExecuteSwipeItems();
 		}
@@ -27,9 +27,9 @@ namespace Xamarin.Forms.Controls
 		{
 			base.Build(stackLayout);
 
-			var rightItemsContainer = new ValueViewContainer<SwipeView>(Test.SwipeView.RightItems, new SwipeView { RightItems = GetRevealSwipeItems(), View = GetSwipeContent(SwipeDirection.Right), HeightRequest = 60, BackgroundColor = Color.LightPink }, "RightItems", value => value.ToString());
-			var topItemsContainer = new ValueViewContainer<SwipeView>(Test.SwipeView.TopItems, new SwipeView { TopItems = GetRevealSwipeItems(), View = GetSwipeContent(SwipeDirection.Up), HeightRequest = 60, BackgroundColor = Color.LightSkyBlue }, "TopItems", value => value.ToString());
-			var bottomItemsContainer = new ValueViewContainer<SwipeView>(Test.SwipeView.BottomItems, new SwipeView { BottomItems = GetRevealSwipeItems(), View = GetSwipeContent(SwipeDirection.Down), HeightRequest = 60, BackgroundColor = Color.LightGray }, "BottomItems", value => value.ToString());
+			var rightItemsContainer = new ValueViewContainer<SwipeView>(Test.SwipeView.RightItems, new SwipeView { RightItems = GetRevealSwipeItems(), Content = GetSwipeContent(SwipeDirection.Right), HeightRequest = 60, BackgroundColor = Color.LightPink }, "RightItems", value => value.ToString());
+			var topItemsContainer = new ValueViewContainer<SwipeView>(Test.SwipeView.TopItems, new SwipeView { TopItems = GetRevealSwipeItems(), Content = GetSwipeContent(SwipeDirection.Up), HeightRequest = 60, BackgroundColor = Color.LightSkyBlue }, "TopItems", value => value.ToString());
+			var bottomItemsContainer = new ValueViewContainer<SwipeView>(Test.SwipeView.BottomItems, new SwipeView { BottomItems = GetRevealSwipeItems(), Content = GetSwipeContent(SwipeDirection.Down), HeightRequest = 60, BackgroundColor = Color.LightGray }, "BottomItems", value => value.ToString());
 
 			Add(rightItemsContainer);
 			Add(topItemsContainer);

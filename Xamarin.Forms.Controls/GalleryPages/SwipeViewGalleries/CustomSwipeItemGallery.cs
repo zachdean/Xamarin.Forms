@@ -99,7 +99,7 @@ namespace Xamarin.Forms.Controls.GalleryPages.SwipeViewGalleries
 				HeightRequest = 60,
 				WidthRequest = 300,
 				LeftItems = leftSwipeItems,
-				View = swipeContent
+				Content = swipeContent
 			};
 
 			swipeLayout.Children.Add(swipeView);

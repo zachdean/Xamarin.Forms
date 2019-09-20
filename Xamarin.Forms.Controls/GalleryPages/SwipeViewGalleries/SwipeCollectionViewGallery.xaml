@@ -46,7 +46,7 @@
                                     Command="{Binding Source={x:Reference SwipeCollectionView}, Path=BindingContext.DeleteCommand}"/>
                             </SwipeItems>
                         </SwipeView.RightItems>
-                    <SwipeView.View>
+                    <SwipeView.Content>
                         <Grid
                             BackgroundColor="White"
                             HeightRequest="80"
@@ -83,7 +83,7 @@
                                 Text="{Binding Description}"
                                 Style="{StaticResource SubTitleStyle}"/>
                         </Grid>
-                    </SwipeView.View>
+                    </SwipeView.Content>
                 </SwipeView>
             </DataTemplate>
 
