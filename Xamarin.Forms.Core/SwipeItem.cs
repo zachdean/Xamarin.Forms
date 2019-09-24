@@ -3,7 +3,7 @@ using System.ComponentModel;
 
 namespace Xamarin.Forms
 {
-	public class SwipeItem : ContextItem, IDisposable
+	public class SwipeItem : ContextItem
 	{
 		public event EventHandler<SwipeItemInvokedEventArgs> Invoked;
 
@@ -39,13 +39,7 @@ namespace Xamarin.Forms
 		internal Image ItemIcon { get; private set; }
 
 		internal Label ItemText { get; private set; }
-
-		public void Dispose()
-		{
-			ItemIcon = null;
-			ItemText = null;
-		}
-
+  
 		protected override void OnTextChanged(string text)
 		{
 			base.OnTextChanged(text);
