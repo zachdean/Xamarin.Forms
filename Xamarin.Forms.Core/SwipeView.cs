@@ -12,7 +12,7 @@ namespace Xamarin.Forms
 {
 	[ContentProperty("Content")]
 	[RenderWith(typeof(_SwipeViewRenderer))]
-	public class SwipeView : ContentView
+	public class SwipeView : ContentView, ISwipeViewController
 	{
 		private const double SwipeItemWidth = 80;
 
@@ -151,8 +151,7 @@ namespace Xamarin.Forms
 
 			base.OnSizeAllocated(width, height);
 		}
-
-		[Preserve(Conditional = true)]
+  
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		public bool HandleTouchInteractions(GestureStatus status, Point point)
 		{

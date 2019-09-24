@@ -104,8 +104,9 @@ namespace Xamarin.Forms.Platform.Android
 
 		private bool ProcessSwipingInteractions(MotionEvent e)
 		{
-			bool handled = true;
+			bool? handled = true;
 			var point = new Point(e.GetX() / _density, e.GetY() / _density);
+			var swipeViewController = Element as ISwipeViewController;
 
 			switch (e.Action)
 			{
@@ -113,10 +114,10 @@ namespace Xamarin.Forms.Platform.Android
 					_downX = e.RawX;
 					_downY = e.RawY;
 
-					handled = Element.HandleTouchInteractions(GestureStatus.Started, point);
+					handled = swipeViewController?.HandleTouchInteractions(GestureStatus.Started, point);
 					break;
 				case MotionEventActions.Up:
-					handled = Element.HandleTouchInteractions(GestureStatus.Completed, point);
+					handled = swipeViewController?.HandleTouchInteractions(GestureStatus.Completed, point);
 
 					if (Parent == null)
 						break;
@@ -124,15 +125,15 @@ namespace Xamarin.Forms.Platform.Android
 					Parent.RequestDisallowInterceptTouchEvent(false);
 					break;
 				case MotionEventActions.Move:
-					handled = Element.HandleTouchInteractions(GestureStatus.Running, point);
+					handled = swipeViewController?.HandleTouchInteractions(GestureStatus.Running, point);
 
-					if (handled || Parent == null)
+					if (handled == true || Parent == null)
 						break;
 
 					Parent.RequestDisallowInterceptTouchEvent(true);
 					break;
 				case MotionEventActions.Cancel:
-					handled = Element.HandleTouchInteractions(GestureStatus.Canceled, point);
+					handled = swipeViewController?.HandleTouchInteractions(GestureStatus.Canceled, point);
 
 					if (Parent == null)
 						break;
@@ -140,7 +141,11 @@ namespace Xamarin.Forms.Platform.Android
 					Parent.RequestDisallowInterceptTouchEvent(false);
 					break;
 			}
-			return !handled;
+
+			if(handled.HasValue)
+				return !handled.Value;
+
+			return false;
 		}
 	}
 }

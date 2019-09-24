@@ -36,8 +36,8 @@ namespace Xamarin.Forms.Platform.iOS
 			nfloat x = anyObject.LocationInView(this).X;
 			nfloat y = anyObject.LocationInView(this).Y;
 
-			if (Element is SwipeView swipeView)
-				swipeView.HandleTouchInteractions(gestureStatus, new Point(x, y));
+			if (Element is ISwipeViewController swipeViewController)
+				swipeViewController.HandleTouchInteractions(gestureStatus, new Point(x, y));
 		}
 	}
 }
