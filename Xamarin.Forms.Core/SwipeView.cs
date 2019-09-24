@@ -12,7 +12,7 @@ namespace Xamarin.Forms
 {
 	[ContentProperty("Content")]
 	[RenderWith(typeof(_SwipeViewRenderer))]
-	public class SwipeView : ContentView, IDisposable
+	public class SwipeView : ContentView
 	{
 		private const double SwipeItemWidth = 80;
 
@@ -20,7 +20,7 @@ namespace Xamarin.Forms
 		Point _initialPoint;
 		SwipeDirection _swipeDirection;
 		double _swipeOffset;
-		Grid _content;
+		readonly Grid _content;
 		View _view;
 		readonly IList<Element> _gridChild;
 		readonly ReadOnlyCollection<Element> _logicalChildren;
@@ -150,15 +150,6 @@ namespace Xamarin.Forms
 			}
 
 			base.OnSizeAllocated(width, height);
-		}
-
-		public void Dispose()
-		{
-			if (InternalChildren != null)
-				InternalChildren.CollectionChanged -= ItemsCollectionChanged;
-
-			_content = null;
-			_view = null;
 		}
 
 		[Preserve(Conditional = true)]
