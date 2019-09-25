@@ -283,7 +283,10 @@ namespace Xamarin.Forms.Platform.iOS
 				}
 			}
 			if (!e.ShouldAnimate)
+			{
 				ScrollView.SendScrollFinished();
+				MessagingCenter.Send(SwipeViewRenderer.SwipeView, SwipeViewRenderer.CloseSwipeView);
+			}
 		}
 
 		void UpdateDelaysContentTouches()

@@ -5,16 +5,17 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows.Input;
-using Xamarin.Forms.Internals;
 using Xamarin.Forms.Platform;
 
 namespace Xamarin.Forms
 {
 	[ContentProperty("Content")]
 	[RenderWith(typeof(_SwipeViewRenderer))]
-	public class SwipeView : ContentView, ISwipeViewController
+	public class SwipeView : ContentView, ISwipeViewController, IElementConfiguration<SwipeView>
 	{
-		private const double SwipeItemWidth = 80;
+		const double SwipeThreshold = 250; 
+  		const double SwipeItemWidth = 80;
+		const uint SwipeAnimationDuration = 100;
 
 		bool _isTouchDown;
 		Point _initialPoint;
@@ -24,6 +25,7 @@ namespace Xamarin.Forms
 		View _view;
 		readonly IList<Element> _gridChild;
 		readonly ReadOnlyCollection<Element> _logicalChildren;
+		readonly Lazy<PlatformConfigurationRegistry<SwipeView>> _platformConfigurationRegistry;
 
 		public SwipeView()
 		{
@@ -40,13 +42,14 @@ namespace Xamarin.Forms
 			_logicalChildren = new ReadOnlyCollection<Element>(_gridChild);
 
 			Content = _content;
+
+			_platformConfigurationRegistry = new Lazy<PlatformConfigurationRegistry<SwipeView>>(() => new PlatformConfigurationRegistry<SwipeView>(this));
 		}
 
 		public static readonly BindableProperty LeftItemsProperty = BindableProperty.Create(nameof(LeftItems), typeof(SwipeItems), typeof(SwipeView), null, BindingMode.TwoWay, null);
 		public static readonly BindableProperty RightItemsProperty = BindableProperty.Create(nameof(RightItems), typeof(SwipeItems), typeof(SwipeView), null, BindingMode.TwoWay, null);
 		public static readonly BindableProperty TopItemsProperty = BindableProperty.Create(nameof(TopItems), typeof(SwipeItems), typeof(SwipeView), null, BindingMode.TwoWay, null);
 		public static readonly BindableProperty BottomItemsProperty = BindableProperty.Create(nameof(BottomItems), typeof(SwipeItems), typeof(SwipeView), null, BindingMode.TwoWay, null);
-		public static readonly BindableProperty SwipeThresholdProperty = BindableProperty.Create(nameof(SwipeThreshold), typeof(double), typeof(SwipeView), 250.0d, BindingMode.TwoWay);
 
 		public SwipeItems LeftItems
 		{
@@ -71,14 +74,10 @@ namespace Xamarin.Forms
 			get { return (SwipeItems)GetValue(BottomItemsProperty); }
 			set { SetValue(BottomItemsProperty, value); }
 		}
-
-		public double SwipeThreshold
-		{
-			get { return (double)GetValue(SwipeThresholdProperty); }
-			set { SetValue(SwipeThresholdProperty, value); }
-		}
-
+  
 		internal bool IsSwiping { get; private set; }
+
+  		internal bool IsOpen { get; private set; }
 
 		public event EventHandler<SwipeStartedEventArgs> SwipeStarted;
 		public event EventHandler<SwipeEndedEventArgs> SwipeEnded;
@@ -168,6 +167,15 @@ namespace Xamarin.Forms
 			_isTouchDown = false;
 
 			return true;
+		}
+
+		[EditorBrowsable(EditorBrowsableState.Never)]
+		public void CloseSwipe()
+		{
+			if (!IsOpen)
+				return;
+
+			ResetSwipe(_swipeDirection, SwipeAnimationDuration);
 		}
 
 		bool ProcessTouchDown(Point point)
@@ -552,22 +560,23 @@ namespace Xamarin.Forms
 				CompleteSwipe(swipeDirection);
 		}
 
-		private void ResetSwipe(SwipeDirection swipeDirection)
+		private void ResetSwipe(SwipeDirection swipeDirection, uint animationDuration = 0)
 		{
 			switch (swipeDirection)
 			{
 				case SwipeDirection.Left:
 				case SwipeDirection.Right:
-					_view.TranslationX = 0;
+					_view.TranslateTo(0, _view.TranslationY, animationDuration, Easing.BounceOut);
 					break;
 				case SwipeDirection.Up:
 				case SwipeDirection.Down:
-					_view.TranslationY = 0;
+					_view.TranslateTo(_view.TranslationX, 0, animationDuration, Easing.BounceOut);
 					break;
 			}
 			DisposeSwipeItems();
 			_view.InputTransparent = false;
 			IsSwiping = false;
+			IsOpen = false;
 		}
 
 		private void CompleteSwipe(SwipeDirection swipeDirection)
@@ -595,6 +604,7 @@ namespace Xamarin.Forms
 
 			_view.InputTransparent = true;
 			IsSwiping = false;
+			IsOpen = true;
 		}
 
 		void InitializeSwipeItems(SwipeDirection swipeDirection)
@@ -695,6 +705,11 @@ namespace Xamarin.Forms
 			var swipeEndedEventArgs = new SwipeEndedEventArgs(_swipeDirection);
 
 			SwipeEnded?.Invoke(this, swipeEndedEventArgs);
+		}
+
+		public IPlatformElementConfiguration<T, SwipeView> On<T>() where T : IConfigPlatform
+		{
+			return _platformConfigurationRegistry.Value.On<T>();
 		}
 
 		public class SwipeStartedEventArgs : EventArgs

@@ -103,7 +103,6 @@
                 </SwipeView.Content>
             </SwipeView>
             <SwipeView
-                SwipeThreshold="200"
                 HorizontalOptions="Center"
                 VerticalOptions="Center"
                 Margin="12">

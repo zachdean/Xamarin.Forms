@@ -391,8 +391,12 @@ namespace Xamarin.Forms.Platform.iOS
 				return;
 			}
 
-			UITouchEventArgs shouldReceive = (g, t) => !(t.View is UISlider);
-			var center = new PointF();
+			bool shouldReceive(UIGestureRecognizer g, UITouch t)
+			{
+				return !(t.View is UISlider) && !(IsSwipeView(t.View));
+			}
+   
+   			var center = new PointF();
 			_panGesture = new UIPanGestureRecognizer(g =>
 			{
 				var isRTL = (Element as IVisualElementController)?.EffectiveFlowDirection.IsRightToLeft() == true;
@@ -441,9 +445,21 @@ namespace Xamarin.Forms.Platform.iOS
 						break;
 				}
 			});
+			_panGesture.CancelsTouchesInView = false;
 			_panGesture.ShouldReceiveTouch = shouldReceive;
 			_panGesture.MaximumNumberOfTouches = 2;
 			View.AddGestureRecognizer(_panGesture);
+		}
+  
+		bool IsSwipeView(UIView view)
+		{
+			if (view == null)
+				return false;
+
+			if (view.Superview is SwipeViewRenderer)
+				return true;
+
+			return IsSwipeView(view.Superview);
 		}
 
 		class ChildViewController : UIViewController

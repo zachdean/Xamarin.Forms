@@ -3,5 +3,6 @@
 	public interface ISwipeViewController : IViewController
 	{
 		bool HandleTouchInteractions(GestureStatus status, Point point);
+		void CloseSwipe();
 	}
 }

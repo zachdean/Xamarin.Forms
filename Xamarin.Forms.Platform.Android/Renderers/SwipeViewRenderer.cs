@@ -7,6 +7,9 @@ namespace Xamarin.Forms.Platform.Android
 {
 	public class SwipeViewRenderer : ViewRenderer<SwipeView, AView>, GestureDetector.IOnGestureListener
 	{
+		internal const string SwipeView = "Xamarin.SwipeView";
+		internal const string CloseSwipeView = "Xamarin.CloseSwipeView";
+
 		private bool _isDisposed;
 		private float _downX;
 		private float _downY;
@@ -29,6 +32,8 @@ namespace Xamarin.Forms.Platform.Android
 					_density = Resources.DisplayMetrics.Density;
 
 					_detector = new GestureDetector(Context, this);
+
+					MessagingCenter.Subscribe<string>(SwipeView, CloseSwipeView, OnClose);
 				}
 			}
 		}
@@ -60,6 +65,8 @@ namespace Xamarin.Forms.Platform.Android
 
 			if (disposing)
 			{
+				MessagingCenter.Unsubscribe<string>(SwipeView, CloseSwipeView);
+
 				if (_detector != null)
 				{
 					_detector.Dispose();
@@ -102,7 +109,7 @@ namespace Xamarin.Forms.Platform.Android
 			return true;
 		}
 
-		private bool ProcessSwipingInteractions(MotionEvent e)
+		bool ProcessSwipingInteractions(MotionEvent e)
 		{
 			bool? handled = true;
 			var point = new Point(e.GetX() / _density, e.GetY() / _density);
@@ -146,6 +153,15 @@ namespace Xamarin.Forms.Platform.Android
 				return !handled.Value;
 
 			return false;
+		}
+
+		void OnClose(string sender)
+		{
+			if (sender == null)
+				return;
+
+			var swipeViewController = Element as ISwipeViewController;
+			swipeViewController?.CloseSwipe();
 		}
 	}
 }
