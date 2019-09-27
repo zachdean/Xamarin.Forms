@@ -91,7 +91,7 @@
                                          Factor=1}"
                             IsRunning="{Binding IsBusy}" 
                             IsVisible="{Binding IsBusy}"/>
-                        <ListView 
+                        <CollectionView 
                             RelativeLayout.YConstraint =
                                         "{ConstraintExpression Type=RelativeToView,
                                         ElementName=toggleButtons,
@@ -101,8 +101,8 @@
                             "{ConstraintExpression Type=RelativeToParent,
                                 Property=Width,
                             Factor=1}"
-                            ItemsSource="{Binding Entries}" x:Name="EntriesListView" ItemTapped="OnItemTapped" ItemSelected="OnItemSelected">
-                            <ListView.ItemTemplate>
+                            ItemsSource="{Binding Entries}" x:Name="EntriesListView" >
+                            <CollectionView.ItemTemplate>
                                 <DataTemplate>
                                     <TextCell Text="{Binding Title}" TextColor="#FFFFFF">
                                         <TextCell.ContextActions>
@@ -112,8 +112,8 @@
                                         </TextCell.ContextActions>
                                     </TextCell>
                                 </DataTemplate>
-                            </ListView.ItemTemplate>
-                        </ListView>
+                            </CollectionView.ItemTemplate>
+                        </CollectionView>
                         <Button 
                             RelativeLayout.XConstraint =
                                         "{ConstraintExpression Type=RelativeToParent,

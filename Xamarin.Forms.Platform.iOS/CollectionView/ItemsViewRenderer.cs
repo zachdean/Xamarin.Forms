@@ -210,6 +210,8 @@ namespace Xamarin.Forms.Platform.iOS
 
 				ItemsViewController?.Dispose();
 				ItemsViewController = null;
+
+				_layout = null;
 			}
 
 			base.Dispose(disposing);
