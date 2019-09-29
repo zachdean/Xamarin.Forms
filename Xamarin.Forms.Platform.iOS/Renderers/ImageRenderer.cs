@@ -108,7 +108,12 @@ namespace Xamarin.Forms.Platform.iOS
 			await ImageElementManager.SetImage(this, Element, oldElement).ConfigureAwait(false);
 		}
 
-		void IImageVisualElementRenderer.SetImage(UIImage image) => Control.Image = image;
+		void IImageVisualElementRenderer.SetImage(UIImage image)
+		{
+			Control.Image = image;
+			Control.SetNeedsLayout();
+			Control.SetNeedsDisplay();
+		}
 
 		bool IImageVisualElementRenderer.IsDisposed => _isDisposed;
 
@@ -194,8 +199,8 @@ namespace Xamarin.Forms.Platform.iOS
 		readonly Color _defaultColor = Color.White;
 
 		public Task<UIImage> LoadImageAsync(
-			ImageSource imagesource, 
-			CancellationToken cancelationToken = default(CancellationToken), 
+			ImageSource imagesource,
+			CancellationToken cancelationToken = default(CancellationToken),
 			float scale = 1f)
 		{
 			UIImage image = null;
