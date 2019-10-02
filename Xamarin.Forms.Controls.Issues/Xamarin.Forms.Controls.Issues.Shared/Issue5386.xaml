@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<controls:TestContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:controls="clr-namespace:Xamarin.Forms.Controls"
+             mc:Ignorable="d"
+             x:Class="Xamarin.Forms.Controls.Issues.Issue5386">
+ <ContentPage.ToolbarItems>
+        <ToolbarItem 
+            Icon="enabled" 
+            IsEnabled="{Binding Enabled}"
+            Command="{Binding ToolbarTappedCommand}" />
+    </ContentPage.ToolbarItems>
+    <StackLayout>
+        <Label
+            Text="{Binding EnabledText}" />
+        <Button 
+            Text="Toggle Enabled (UI thread)" 
+            Command="{Binding ChangeToggleCommand}" />
+        <Button 
+            Text="Toggle Enabled (BG thread)" 
+            Command="{Binding ChangeToggleBackgroundThreadCommand}" />        
+    </StackLayout>
+</controls:TestContentPage>
