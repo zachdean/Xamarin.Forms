@@ -20,6 +20,8 @@ namespace Xamarin.Forms.Controls.Issues
 		public Issue5386()
 		{
 			InitializeComponent();
+			Title = "Issue 5386";
+			BindingContext = new Issue5386ViewModel();
 		}
 
 		protected override void Init()
@@ -62,6 +64,7 @@ namespace Xamarin.Forms.Controls.Issues
 		{
 			Enabled = !Enabled;
 			OnPropertyChanged("Enabled");
+
 			EnabledText = Enabled ? "Enabled" : "Disabled";
 			OnPropertyChanged("EnabledText");
 		}

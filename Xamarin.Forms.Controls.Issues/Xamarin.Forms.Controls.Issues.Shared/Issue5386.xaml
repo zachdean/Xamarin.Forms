@@ -8,8 +8,9 @@
              x:Class="Xamarin.Forms.Controls.Issues.Issue5386">
  <ContentPage.ToolbarItems>
         <ToolbarItem 
-            Icon="enabled" 
-            IsEnabled="{Binding Enabled}"
+            Icon="calculator.png"
+            Text="{Binding EnabledText}"
+            IsEnabled="{Binding Enabled, Mode=TwoWay}"
             Command="{Binding ToolbarTappedCommand}" />
     </ContentPage.ToolbarItems>
     <StackLayout>
