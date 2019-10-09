@@ -46,8 +46,8 @@ var nugetversion = Argument<string>("packageVersion", gitVersion.NuGetVersion);
 var ANDROID_HOME = EnvironmentVariable ("ANDROID_HOME") ?? 
     (IsRunningOnWindows () ? "C:\\Program Files (x86)\\Android\\android-sdk\\" : "");
 
-string monoMajorVersion = "5.18.1";
-string monoPatchVersion = "28";
+string monoMajorVersion = "6.6.0";
+string monoPatchVersion = "104";
 string monoVersion = $"{monoMajorVersion}.{monoPatchVersion}";
 
 string monoSDK_windows = $"https://download.mono-project.com/archive/{monoMajorVersion}/windows-installer/mono-{monoVersion}-x64-0.msi";
@@ -55,14 +55,11 @@ string androidSDK_windows = "https://aka.ms/xamarin-android-commercial-d15-9-win
 string iOSSDK_windows = "https://download.visualstudio.microsoft.com/download/pr/71f33151-5db4-49cc-ac70-ba835a9f81e2/d256c6c50cd80ec0207783c5c7a4bc2f/xamarin.visualstudio.apple.sdk.4.12.3.83.vsix";
 string macSDK_windows = "";
 
-monoMajorVersion = "6.4.0";
-monoPatchVersion = "198";
-monoVersion = $"{monoMajorVersion}.{monoPatchVersion}";
 
-string androidSDK_macos = "https://aka.ms/xamarin-android-commercial-d16-3-macos";
+string androidSDK_macos = "https://aka.ms/xamarin-android-commercial-d16-4-windows";
 string monoSDK_macos = $"https://download.mono-project.com/archive/{monoMajorVersion}/macos-10-universal/MonoFramework-MDK-{monoVersion}.macos10.xamarin.universal.pkg";
-string iOSSDK_macos = $"https://bosstoragemirror.blob.core.windows.net/wrench/jenkins/d16-3/5e8a208b5f44c4885060d95e3c3ad68d6a5e95e8/40/package/xamarin.ios-13.2.0.42.pkg";
-string macSDK_macos = $"https://bosstoragemirror.blob.core.windows.net/wrench/jenkins/d16-3/5e8a208b5f44c4885060d95e3c3ad68d6a5e95e8/40/package/xamarin.mac-6.2.0.42.pkg";
+string iOSSDK_macos = $"https://bosstoragemirror.blob.core.windows.net/wrench/jenkins/d16-4/2e360ee4e2265e8f7f00c03560d1a5a756b1eccb/11/package/notarized/xamarin.ios-13.8.1.1.pkg";
+string macSDK_macos = $"https://bosstoragemirror.blob.core.windows.net/wrench/jenkins/d16-4/2e360ee4e2265e8f7f00c03560d1a5a756b1eccb/11/package/notarized/xamarin.mac-6.8.1.1.pkg";
 
 string androidSDK = IsRunningOnWindows() ? androidSDK_windows : androidSDK_macos;
 string monoSDK = IsRunningOnWindows() ? monoSDK_windows : monoSDK_macos;
