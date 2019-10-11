@@ -184,6 +184,8 @@ namespace Xamarin.Forms.Platform.iOS
 				UpdateFont();
 			else if (e.PropertyName == VisualElement.IsEnabledProperty.PropertyName)
 			{
+				Control.Enabled = Element.IsEnabled;
+
 				UpdateColor();
 				UpdatePlaceholder();
 			}
