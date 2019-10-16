@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows.Input;
 using Xamarin.Forms.Platform;
+using System.Linq;
 
 namespace Xamarin.Forms
 {
@@ -164,6 +165,9 @@ namespace Xamarin.Forms
 			set => SetValue(ItemsLayoutProperty, value);
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Never)]
+		public bool IsScrolling { get; set; }
+
 		public event EventHandler<CurrentItemChangedEventArgs> CurrentItemChanged;
 		public event EventHandler<PositionChangedEventArgs> PositionChanged;
 
@@ -186,6 +190,13 @@ namespace Xamarin.Forms
 		{
 		}
 
+		protected override void OnScrolled(ItemsViewScrolledEventArgs e)
+		{
+			CurrentItem = GetItemForPosition(this, e.CenterItemIndex);
+
+			base.OnScrolled(e);
+		}
+
 		static void PositionPropertyChanged(BindableObject bindable, object oldValue, object newValue)
 		{
 			var carousel = (CarouselView)bindable;
@@ -206,11 +217,24 @@ namespace Xamarin.Forms
 
 			carousel.PositionChanged?.Invoke(carousel, args);
 
-			//user is interacting with the carousel we don't need to scroll to item 
-			if (!carousel.IsDragging)
+			// If the user is interacting with the Carousel or the Carousel is doing ScrollTo, we don't need to scroll to item.
+			if (!carousel.IsDragging && !carousel.IsScrolling)
 				carousel.ScrollTo(args.CurrentPosition, position: ScrollToPosition.Center, animate: carousel.IsScrollAnimated);
 
 			carousel.OnPositionChanged(args);
+		}
+
+		static object GetItemForPosition(CarouselView carouselView, int index)
+		{
+			if (!(carouselView?.ItemsSource is IList itemSource))
+				return null;
+
+			if (index < 0 || index >= itemSource.Count)
+			{
+				return null;
+			}
+
+			return itemSource[index];
 		}
 
 		static int GetPositionForItem(CarouselView carouselView, object item)
