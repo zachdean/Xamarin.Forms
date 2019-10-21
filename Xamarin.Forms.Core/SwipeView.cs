@@ -60,6 +60,25 @@ namespace Xamarin.Forms
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		public void SendSwipeEnded(SwipeEndedEventArgs args) => SwipeEnded?.Invoke(this, args);
 
+		protected override void OnSizeAllocated(double width, double height)
+		{
+			if (HeightRequest <= 0 && WidthRequest <= 0)
+			{
+				HeightRequest = Content.HeightRequest;
+				WidthRequest = Content.WidthRequest;
+			}
+			else
+			{
+				HeightRequest = height;
+				WidthRequest = width;
+
+				Content.HeightRequest = height;
+				Content.WidthRequest = width;
+			}		
+
+			base.OnSizeAllocated(width, height);
+		}
+
 		public class SwipeStartedEventArgs : EventArgs
 		{
 			public SwipeStartedEventArgs(SwipeDirection swipeDirection, double offset)
