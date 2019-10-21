@@ -130,7 +130,7 @@ namespace Xamarin.Forms.Platform.UWP
             if (Element == null)
                 return new Windows.Foundation.Size(0, 0);
 
-            double width = Math.Max(0, Element.Width);
+			double width = Math.Max(0, Element.Width);
             double height = Math.Max(0, Element.Height);
             var result = new Windows.Foundation.Size(width, height);
 
@@ -158,11 +158,10 @@ namespace Xamarin.Forms.Platform.UWP
             var formsSwipeItem = sender as SwipeItem;
 
             if (e.IsOneOf(
-                ContextItem.TextProperty,
-                ContextItem.TextColorProperty,
-                ContextItem.IconProperty,
-                ContextItem.CommandProperty,
-                ContextItem.CommandParameterProperty,
+				MenuItem.TextProperty,
+				MenuItem.IconImageSourceProperty,
+				MenuItem.CommandProperty,
+				MenuItem.CommandParameterProperty,
                 VisualElement.BackgroundColorProperty))
                 UpdateSwipeItem(formsSwipeItem);
         }
@@ -218,9 +217,12 @@ namespace Xamarin.Forms.Platform.UWP
             if (windowsSwipeItem != null)
             {
                 windowsSwipeItem.Text = formsSwipeItem.Text;
-                windowsSwipeItem.IconSource = formsSwipeItem.Icon.ToWindowsIconSource();
+                windowsSwipeItem.IconSource = formsSwipeItem.IconImageSource.ToWindowsIconSource();
                 windowsSwipeItem.Background = formsSwipeItem.BackgroundColor.ToBrush();
-                windowsSwipeItem.Foreground = formsSwipeItem.TextColor.ToBrush();
+
+				var textColor = GetSwipeItemColor(formsSwipeItem.BackgroundColor);
+				windowsSwipeItem.Foreground = textColor.ToBrush();
+
                 windowsSwipeItem.Command = formsSwipeItem.Command;
                 windowsSwipeItem.CommandParameter = formsSwipeItem.CommandParameter;
             }
@@ -276,13 +278,15 @@ namespace Xamarin.Forms.Platform.UWP
             items.PropertyChanged += OnSwipeItemsPropertyChanged;
             swipeItems.Mode = GetSwipeMode(items.Mode);
 
-            foreach (var formsSwipeItem in items)
-            {
-                var windowsSwipeItem = new WSwipeItem
+			foreach (var formsSwipeItem in items)
+			{
+				var textColor = GetSwipeItemColor(formsSwipeItem.BackgroundColor);
+
+				var windowsSwipeItem = new WSwipeItem
                 {
                     Background = formsSwipeItem.BackgroundColor.IsDefault ? null : formsSwipeItem.BackgroundColor.ToBrush(),
-                    Foreground = formsSwipeItem.TextColor.IsDefault ? null : formsSwipeItem.TextColor.ToBrush(),
-                    IconSource = formsSwipeItem.Icon.ToWindowsIconSource(),
+					Foreground = textColor.ToBrush(),
+					IconSource = formsSwipeItem.IconImageSource.ToWindowsIconSource(),
                     Text = formsSwipeItem.Text,
                     Command = formsSwipeItem.Command,
                     CommandParameter = formsSwipeItem.CommandParameter,
@@ -424,5 +428,12 @@ namespace Xamarin.Forms.Platform.UWP
 
             return WSwipeBehaviorOnInvoked.Auto;
         }
-    }
+
+		Color GetSwipeItemColor(Color backgroundColor)
+		{
+			var luminosity = 0.2126 * backgroundColor.R + 0.7152 * backgroundColor.G + 0.0722 * backgroundColor.B;
+
+			return luminosity < 0.75 ? Color.White : Color.Black;
+		}
+	}
 }
