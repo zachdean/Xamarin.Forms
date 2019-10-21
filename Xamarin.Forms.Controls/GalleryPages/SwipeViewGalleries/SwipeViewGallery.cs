@@ -12,12 +12,14 @@ namespace Xamarin.Forms.Controls.GalleryPages.SwipeViewGalleries
 				Children =
 				{
 					new Button { Text ="Enable CollectionView", AutomationId = "EnableCollectionView", Command = new Command(() => Device.SetFlags(new[] { ExperimentalFlags.CollectionViewExperimental })) },
-					GalleryBuilder.NavButton("Basic SwipeView Galleries", () => new BasicSwipeGallery(), Navigation),
-					GalleryBuilder.NavButton("BindableLayout Galleries", () => new SwipeBindableLayoutGallery(), Navigation),
-					GalleryBuilder.NavButton("ListView (RecycleElement) Galleries", () => new SwipeListViewGallery(), Navigation),
-					GalleryBuilder.NavButton("CollectionView Galleries", () => new SwipeCollectionViewGallery(), Navigation),
-					GalleryBuilder.NavButton("SwipeBehaviorOnInvoked Galleries", () => new SwipeBehaviorOnInvokedGallery(), Navigation),
-					GalleryBuilder.NavButton("Custom SwipeItem Galleries", () => new CustomSwipeItemGallery(), Navigation)
+					GalleryBuilder.NavButton("Basic SwipeView Gallery", () => new BasicSwipeGallery(), Navigation),
+					GalleryBuilder.NavButton("BindableLayout Gallery", () => new SwipeBindableLayoutGallery(), Navigation),
+					GalleryBuilder.NavButton("ListView (RecycleElement) Gallery", () => new SwipeListViewGallery(), Navigation),
+					GalleryBuilder.NavButton("CollectionView Gallery", () => new SwipeCollectionViewGallery(), Navigation),
+					GalleryBuilder.NavButton("SwipeBehaviorOnInvoked Gallery", () => new SwipeBehaviorOnInvokedGallery(), Navigation),
+					GalleryBuilder.NavButton("Custom SwipeItem Gallery", () => new CustomSwipeItemGallery(), Navigation),
+					GalleryBuilder.NavButton("SwipeItem Icon Gallery", () => new SwipeItemIconGallery(), Navigation),       
+					GalleryBuilder.NavButton("SwipeTransitionMode Gallery", () => new SwipeTransitionModeGallery(), Navigation)
 				}
 			};
 		}

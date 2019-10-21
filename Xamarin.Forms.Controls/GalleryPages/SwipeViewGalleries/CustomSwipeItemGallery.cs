@@ -31,44 +31,26 @@ namespace Xamarin.Forms.Controls.GalleryPages.SwipeViewGalleries
 
 			swipeLayout.Children.Add(swipeItemTextEntry);
 
-			var swipeItemTextColorLabel = new Label
+			var swipeItemBackgroundColorLabel = new Label
 			{
 				FontSize = 10,
-				Text = "Choose SwipeItem TextColor:"
+				Text = "Choose SwipeItem BackgroundColor:"
 			};
 
-			swipeLayout.Children.Add(swipeItemTextColorLabel);
+			swipeLayout.Children.Add(swipeItemBackgroundColorLabel);
 
-			var swipeItemTextColorPicker = new Picker();
+			var swipeItemBackgroundColorPicker = new Picker();
 			var colors = new List<string> { "#FFFFFF", "#FF0000", "#00FF00", "#0000FF", "#000000" };
-			swipeItemTextColorPicker.ItemsSource = colors;
-			swipeItemTextColorPicker.SelectedItem = colors[0];
+			swipeItemBackgroundColorPicker.ItemsSource = colors;
+			swipeItemBackgroundColorPicker.SelectedItem = colors[1];
 
-			swipeLayout.Children.Add(swipeItemTextColorPicker);
-
-
-			var swipeItemFontSizeLabel = new Label
-			{
-				FontSize = 10,
-				Text = "Choose SwipeItem FontSize:"
-			};
-
-			swipeLayout.Children.Add(swipeItemFontSizeLabel);
-
-			var swipeItemFontSizePicker = new Picker();
-			var fonts = new List<int> { 10, 12, 14, 16, 18 };
-			swipeItemFontSizePicker.ItemsSource = fonts;
-			swipeItemFontSizePicker.SelectedItem = fonts[0];
-
-			swipeLayout.Children.Add(swipeItemFontSizePicker);
+			swipeLayout.Children.Add(swipeItemBackgroundColorPicker);
 
 			var deleteSwipeItem = new SwipeItem
 			{
-				BackgroundColor = Color.Red,
-				Text = swipeItemTextEntry.Text,
-				TextColor = Color.FromHex(colors[swipeItemTextColorPicker.SelectedIndex]),
-				FontSize = fonts[swipeItemFontSizePicker.SelectedIndex],
-				Icon = "calculator.png"
+				BackgroundColor = Color.FromHex(colors[swipeItemBackgroundColorPicker.SelectedIndex]),
+				IconImageSource = "calculator.png",
+				Text = swipeItemTextEntry.Text
 			};
 
 			deleteSwipeItem.Invoked += (sender, e) => { DisplayAlert("SwipeView", "Delete Invoked", "Ok"); };
@@ -109,16 +91,11 @@ namespace Xamarin.Forms.Controls.GalleryPages.SwipeViewGalleries
 				deleteSwipeItem.Text = swipeItemTextEntry.Text;
 			};
 
-			swipeItemTextColorPicker.SelectedIndexChanged += (sender, e) =>
+			swipeItemBackgroundColorPicker.SelectedIndexChanged += (sender, e) =>
 			{
-				deleteSwipeItem.TextColor = Color.FromHex(colors[swipeItemTextColorPicker.SelectedIndex]);
+				deleteSwipeItem.BackgroundColor = Color.FromHex(colors[swipeItemBackgroundColorPicker.SelectedIndex]);
 			};
-
-			swipeItemFontSizePicker.SelectedIndexChanged += (sender, e) =>
-			{
-				deleteSwipeItem.FontSize = fonts[swipeItemFontSizePicker.SelectedIndex];
-			};
-
+   
 			Content = swipeLayout;
 		}
 	}

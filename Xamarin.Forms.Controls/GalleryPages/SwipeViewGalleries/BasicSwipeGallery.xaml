@@ -33,6 +33,8 @@
                 </SwipeView.Content>
             </SwipeView>
             <SwipeView
+                HeightRequest="60"
+                WidthRequest="300"
                 HorizontalOptions="Center"
                 VerticalOptions="Center"
                 Margin="12">
@@ -51,14 +53,11 @@
                             Text="Delete"
                             Icon="coffee.png"
                             BackgroundColor="Red"
-                            WidthRequest="200"
                             Invoked="OnInvoked"/>
                     </SwipeItems>
                 </SwipeView.TopItems>
                 <SwipeView.Content>
                     <Grid
-                        HeightRequest="60"
-                        WidthRequest="300"
                         BackgroundColor="LightGray">
                         <Label
                             HorizontalOptions="Center"
@@ -68,6 +67,8 @@
                 </SwipeView.Content>
             </SwipeView>
              <SwipeView
+                HeightRequest="60"
+                WidthRequest="300"
                 HorizontalOptions="Center"
                 VerticalOptions="Center"
                 Margin="12">
@@ -86,14 +87,11 @@
                             Text="Delete"
                             Icon="coffee.png"
                             BackgroundColor="Red"
-                            WidthRequest="120"
                             Invoked="OnInvoked"/>
                     </SwipeItems>
                 </SwipeView.LeftItems>
                 <SwipeView.Content>
                     <Grid
-                        HeightRequest="60"
-                        WidthRequest="300"
                         BackgroundColor="LightGray">
                         <Label
                             HorizontalOptions="Center"
@@ -103,6 +101,8 @@
                 </SwipeView.Content>
             </SwipeView>
             <SwipeView
+                HeightRequest="60"
+                WidthRequest="300"
                 HorizontalOptions="Center"
                 VerticalOptions="Center"
                 Margin="12">
@@ -118,8 +118,6 @@
                 </SwipeView.RightItems>
                 <SwipeView.Content>
                     <Grid
-                        HeightRequest="60"
-                        WidthRequest="300"
                         BackgroundColor="LightGray">
                         <Label
                             HorizontalOptions="Center"

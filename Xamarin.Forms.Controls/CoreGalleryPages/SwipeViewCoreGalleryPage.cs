@@ -38,13 +38,13 @@ namespace Xamarin.Forms.Controls
 
 		internal SwipeItems GetRevealSwipeItems()
 		{
-			var addSwipteItem = new SwipeItem { BackgroundColor = Color.Green, Text = "Add", Icon = "coffee.png" };
+			var addSwipteItem = new SwipeItem { BackgroundColor = Color.Green, Text = "Add", IconImageSource = "coffee.png" };
 			addSwipteItem.Invoked += (sender, e) =>
 			{
 				DisplayAlert("SwipeView", "Add Invoked", "OK");
 			};
 
-			var modifySwipteItem = new SwipeItem { BackgroundColor = Color.Orange, Text = "Modify", Icon = "calculator.png" };
+			var modifySwipteItem = new SwipeItem { BackgroundColor = Color.Orange, Text = "Modify", IconImageSource = "calculator.png" };
 
 			modifySwipteItem.Invoked += (sender, e) =>
 			{
@@ -64,7 +64,7 @@ namespace Xamarin.Forms.Controls
 
 		internal SwipeItems GetExecuteSwipeItems()
 		{
-			var deleteSwipeItem = new SwipeItem { BackgroundColor = Color.Red, Text = "Delete", Icon = "coffee.png" };
+			var deleteSwipeItem = new SwipeItem { BackgroundColor = Color.Red, Text = "Delete", IconImageSource = "coffee.png" };
 
 			deleteSwipeItem.Invoked += (sender, e) =>
 			{

@@ -27,10 +27,10 @@
 
             <DataTemplate x:Key="MessageTemplate">
                 <ViewCell>
-                    <SwipeView>
+                    <SwipeView
+                        HeightRequest="80">
                         <Grid
                             BackgroundColor="White"
-                            HeightRequest="80"
                             RowSpacing="0">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />

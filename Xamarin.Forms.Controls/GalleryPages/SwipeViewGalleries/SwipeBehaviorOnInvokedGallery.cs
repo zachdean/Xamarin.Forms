@@ -34,7 +34,7 @@ namespace Xamarin.Forms.Controls.GalleryPages.SwipeViewGalleries
 
 			swipeLayout.Children.Add(swipeBehaviorOnInvokedPicker);
 
-			var deleteSwipeItem = new SwipeItem { BackgroundColor = Color.Red, Text = "Delete", Icon = "calculator.png" };
+			var deleteSwipeItem = new SwipeItem { BackgroundColor = Color.Red, Text = "Delete", IconImageSource = "calculator.png" };
 			deleteSwipeItem.Invoked += (sender, e) => { DisplayAlert("SwipeView", "Delete Invoked", "Ok"); };
 
 			var leftSwipeItems = new SwipeItems

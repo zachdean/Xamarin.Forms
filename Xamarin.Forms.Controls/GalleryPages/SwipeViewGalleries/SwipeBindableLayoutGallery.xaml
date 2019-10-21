@@ -26,7 +26,8 @@
             </Style>
 
             <DataTemplate x:Key="MessageTemplate">
-                <SwipeView>
+                <SwipeView
+                    HeightRequest="80">
                     <SwipeView.LeftItems>
                         <SwipeItems>
                             <SwipeItem
@@ -49,7 +50,6 @@
                     <SwipeView.Content>
                         <Grid
                             BackgroundColor="White"
-                            HeightRequest="80"
                             RowSpacing="0">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
