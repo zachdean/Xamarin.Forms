@@ -6,6 +6,7 @@ using System.Windows.Input;
 using CoreGraphics;
 using Foundation;
 using UIKit;
+using Xamarin.Forms.Internals;
 using Xamarin.Forms.PlatformConfiguration.iOSSpecific;
 using static Xamarin.Forms.SwipeView;
 using Specifics = Xamarin.Forms.PlatformConfiguration.iOSSpecific.SwipeView;
@@ -22,9 +23,9 @@ namespace Xamarin.Forms.Platform.iOS
 		const double SwipeAnimationDuration = 0.2;
 
 		UIView _contentView;
-		UIStackView _actionView; 
-  		SwipeTransitionMode _swipeTransitionMode;
-		UIPanGestureRecognizer _panGestureRecognizer;
+		UIStackView _actionView;
+		UITapGestureRecognizer _tapGestureRecognizer;
+		SwipeTransitionMode _swipeTransitionMode;
 		SwipeDirection _swipeDirection;
 		CGPoint _initialPoint;
 		bool _isTouchDown;
@@ -37,12 +38,11 @@ namespace Xamarin.Forms.Platform.iOS
 
 		public SwipeViewRenderer()
 		{
-			_panGestureRecognizer = new UIPanGestureRecognizer(OnGesture)
+			_tapGestureRecognizer = new UITapGestureRecognizer(OnTap)
 			{
 				CancelsTouchesInView = true
 			};
-
-			AddGestureRecognizer(_panGestureRecognizer);
+			AddGestureRecognizer(_tapGestureRecognizer);
 		}
 
 		protected override void OnElementChanged(ElementChangedEventArgs<SwipeView> e)
@@ -67,7 +67,7 @@ namespace Xamarin.Forms.Platform.iOS
 		{
 			return new UIView();
 		}
-  
+
 		public override void LayoutSubviews()
 		{
 			base.LayoutSubviews();
@@ -113,10 +113,11 @@ namespace Xamarin.Forms.Platform.iOS
 			{
 				MessagingCenter.Unsubscribe<string>(SwipeView, CloseSwipeView);
 
-				if (_panGestureRecognizer != null)
+				if (_tapGestureRecognizer != null)
 				{
-					Control.RemoveGestureRecognizer(_panGestureRecognizer);
-					_panGestureRecognizer = null;
+					Control.RemoveGestureRecognizer(_tapGestureRecognizer);
+					_tapGestureRecognizer.Dispose();
+					_tapGestureRecognizer = null;
 				}
 
 				if (_contentView != null)
@@ -150,21 +151,15 @@ namespace Xamarin.Forms.Platform.iOS
 			if (navigationController != null)
 				navigationController.InteractivePopGestureRecognizer.Enabled = false;
 
-			if (_contentView == null)
-				return;
-
-			var anyObject = touches.AnyObject as UITouch;
-			nfloat x = anyObject.LocationInView(this).X;
-			nfloat y = anyObject.LocationInView(this).Y;
-
-			bool touchContent = TouchInsideContent(_contentView.Frame.X, _contentView.Frame.Y, _contentView.Frame.Width, _contentView.Frame.Height, x, y);
-
-			if (touchContent)
-				ResetSwipe();
-			else
-				ProcessTouchSwipeItems(new CGPoint(x, y));
+			HandleTouchInteractions(touches, GestureStatus.Started);
 
 			base.TouchesBegan(touches, evt);
+		}
+
+		public override void TouchesMoved(NSSet touches, UIEvent evt)
+		{
+			HandleTouchInteractions(touches, GestureStatus.Running);
+			base.TouchesMoved(touches, evt);
 		}
 
 		public override void TouchesEnded(NSSet touches, UIEvent evt)
@@ -174,7 +169,21 @@ namespace Xamarin.Forms.Platform.iOS
 			if (navigationController != null)
 				navigationController.InteractivePopGestureRecognizer.Enabled = true;
 
+			HandleTouchInteractions(touches, GestureStatus.Completed);
+
 			base.TouchesEnded(touches, evt);
+		}
+
+		public override void TouchesCancelled(NSSet touches, UIEvent evt)
+		{
+			var navigationController = GetUINavigationController(GetViewController());
+
+			if (navigationController != null)
+				navigationController.InteractivePopGestureRecognizer.Enabled = true;
+
+			HandleTouchInteractions(touches, GestureStatus.Canceled);
+
+			base.TouchesCancelled(touches, evt);
 		}
 
 		void UpdateContent()
@@ -204,7 +213,7 @@ namespace Xamarin.Forms.Platform.iOS
 			var formsElement = Element.Content;
 			var renderer = Platform.CreateRenderer(formsElement);
 			Platform.SetRenderer(formsElement, renderer);
-   
+
 			return renderer?.NativeView;
 		}
 
@@ -227,7 +236,7 @@ namespace Xamarin.Forms.Platform.iOS
 				swipeItemsWidth = (items != null ? items.Count : 0) * SwipeItemWidth;
 			else
 				swipeItemsWidth = _contentView.Frame.Width;
-	
+
 			if (items == null)
 				return;
 
@@ -296,7 +305,7 @@ namespace Xamarin.Forms.Platform.iOS
 		{
 			if (button.ImageView?.Image == null)
 				return;
-	
+
 			var imageSize = button.ImageView.Image.Size;
 
 			var titleEdgeInsets = new UIEdgeInsets(spacing, -imageSize.Width, -imageSize.Height, 0.0f);
@@ -334,35 +343,63 @@ namespace Xamarin.Forms.Platform.iOS
 					var tintColor = GetSwipeItemColor(swipeItem.BackgroundColor);
 					swipeButton.TintColor = tintColor.ToUIColor();
 				}
-				catch
+				catch (Exception)
 				{
 					// UIImage ctor throws on file not found if MonoTouch.ObjCRuntime.Class.ThrowOnInitFailure is true;
+					Log.Warning("SwipeView", "Can not load SwipeItem Icon.");
 				}
 			}
 		}
-  
-		void OnGesture()
-		{
-			var state = _panGestureRecognizer.State;
 
-			switch (state)
+		void OnTap()
+		{
+			var state = _tapGestureRecognizer.State;
+
+			if (state != UIGestureRecognizerState.Cancelled)
 			{
-				case UIGestureRecognizerState.Began:
-					var position = _panGestureRecognizer.LocationInView(this);
-					ProcessGestureBegan(position);
-					break;
-				case UIGestureRecognizerState.Changed:
-					var newPosition = _panGestureRecognizer.LocationInView(this);
-					ProcessGestureChanged(newPosition);
-					break;
-				case UIGestureRecognizerState.Ended:
-				case UIGestureRecognizerState.Cancelled:
-					ProcessGestureEnded();
-					break;
+				if (_contentView == null)
+					return;
+
+				var point = _tapGestureRecognizer.LocationInView(this);
+
+				bool touchContent = TouchInsideContent(_contentView.Frame.X, _contentView.Frame.Y, _contentView.Frame.Width, _contentView.Frame.Height, point.X, point.Y);
+
+				if (!touchContent)
+					ProcessTouchSwipeItems(point);
+				else
+					ResetSwipe();
 			}
 		}
 
-		void ProcessGestureBegan(CGPoint point)
+		void HandleTouchInteractions(NSSet touches, GestureStatus gestureStatus)
+		{
+			var anyObject = touches.AnyObject as UITouch;
+			nfloat x = anyObject.LocationInView(this).X;
+			nfloat y = anyObject.LocationInView(this).Y;
+
+			HandleTouchInteractions(gestureStatus, new CGPoint(x, y));
+		}
+
+		void HandleTouchInteractions(GestureStatus status, CGPoint point)
+		{
+			switch (status)
+			{
+				case GestureStatus.Started:
+					ProcessTouchDown(point);
+					break;
+				case GestureStatus.Running:
+					ProcessTouchMove(point);
+					break;
+				case GestureStatus.Canceled:
+				case GestureStatus.Completed:
+					ProcessTouchUp();
+					break;
+			}
+
+			_isTouchDown = false;
+		}
+
+		void ProcessTouchDown(CGPoint point)
 		{
 			if (_isSwiping || _isTouchDown || _contentView == null)
 				return;
@@ -384,7 +421,7 @@ namespace Xamarin.Forms.Platform.iOS
 			return false;
 		}
 
-		void ProcessGestureChanged(CGPoint point)
+		void ProcessTouchMove(CGPoint point)
 		{
 			if (!_isSwiping)
 			{
@@ -406,7 +443,7 @@ namespace Xamarin.Forms.Platform.iOS
 				ResetSwipe();
 		}
 
-		void ProcessGestureEnded()
+		void ProcessTouchUp()
 		{
 			_isTouchDown = false;
 			_isSwiping = false;
@@ -422,7 +459,7 @@ namespace Xamarin.Forms.Platform.iOS
 		{
 			SwipeItems swipeItems = null;
 
-   			switch (_swipeDirection)
+			switch (_swipeDirection)
 			{
 				case SwipeDirection.Left:
 					swipeItems = Element.RightItems;
@@ -681,7 +718,7 @@ namespace Xamarin.Forms.Platform.iOS
 				return _swipeThreshold;
 
 			_swipeThreshold = GetSwipeThreshold(GetSwipeItemsByDirection());
-		
+
 			return _swipeThreshold;
 		}
 
@@ -744,7 +781,7 @@ namespace Xamarin.Forms.Platform.iOS
 		{
 			var swipeItems = GetSwipeItemsByDirection();
 
-			if (swipeItems == null)
+			if (swipeItems == null || _swipeItemsRect == null)
 				return;
 
 			int i = 0;

@@ -46,10 +46,26 @@ namespace Xamarin.Forms.Controls.GalleryPages.SwipeViewGalleries
 
 			swipeLayout.Children.Add(swipeItemBackgroundColorPicker);
 
+
+			var swipeItemIconLabel = new Label
+			{
+				FontSize = 10,
+				Text = "Choose SwipeItem Icon:"
+			};
+
+			swipeLayout.Children.Add(swipeItemIconLabel);
+
+			var swipeItemIconPicker = new Picker();
+			var icons = new List<string> { "bank.png", "calculator.png", "coffee.png" };
+			swipeItemIconPicker.ItemsSource = icons;
+			swipeItemIconPicker.SelectedItem = icons[1];
+
+			swipeLayout.Children.Add(swipeItemIconPicker);
+
 			var deleteSwipeItem = new SwipeItem
 			{
 				BackgroundColor = Color.FromHex(colors[swipeItemBackgroundColorPicker.SelectedIndex]),
-				IconImageSource = "calculator.png",
+				IconImageSource = swipeItemIconPicker.SelectedItem.ToString(),
 				Text = swipeItemTextEntry.Text
 			};
 
@@ -95,7 +111,12 @@ namespace Xamarin.Forms.Controls.GalleryPages.SwipeViewGalleries
 			{
 				deleteSwipeItem.BackgroundColor = Color.FromHex(colors[swipeItemBackgroundColorPicker.SelectedIndex]);
 			};
-   
+
+			swipeItemIconPicker.SelectedIndexChanged += (sender, e) =>
+			{
+				deleteSwipeItem.IconImageSource = swipeItemIconPicker.SelectedItem.ToString();
+			};
+
 			Content = swipeLayout;
 		}
 	}
