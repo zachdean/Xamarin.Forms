@@ -37,8 +37,6 @@ namespace Xamarin.Forms.Platform.iOS
 
 		public SwipeViewRenderer()
 		{
-			ClipsToBounds = true;
-
 			_panGestureRecognizer = new UIPanGestureRecognizer(OnGesture)
 			{
 				CancelsTouchesInView = true
@@ -69,7 +67,7 @@ namespace Xamarin.Forms.Platform.iOS
 		{
 			return new UIView();
 		}
-
+  
 		public override void LayoutSubviews()
 		{
 			base.LayoutSubviews();
@@ -85,7 +83,7 @@ namespace Xamarin.Forms.Platform.iOS
 		{
 			base.OnElementPropertyChanged(sender, e);
 
-			if (e.PropertyName == ContentProperty.PropertyName)
+			if (e.PropertyName == ContentView.ContentProperty.PropertyName)
 				UpdateContent();
 			else if (e.PropertyName == VisualElement.BackgroundColorProperty.PropertyName)
 				SetBackgroundColor(Element.BackgroundColor);
@@ -181,6 +179,8 @@ namespace Xamarin.Forms.Platform.iOS
 
 		void UpdateContent()
 		{
+			ClipsToBounds = true;
+
 			if (Element.Content == null)
 				_contentView = CreateEmptyContent();
 			else

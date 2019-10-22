@@ -6,7 +6,7 @@ namespace Xamarin.Forms
 {
 	[ContentProperty("Content")]
 	[RenderWith(typeof(_SwipeViewRenderer))]
-	public class SwipeView : View, IElementConfiguration<SwipeView>
+	public class SwipeView : ContentView, IElementConfiguration<SwipeView>
 	{
 		readonly Lazy<PlatformConfigurationRegistry<SwipeView>> _platformConfigurationRegistry;
 
@@ -14,19 +14,12 @@ namespace Xamarin.Forms
 		{
 			_platformConfigurationRegistry = new Lazy<PlatformConfigurationRegistry<SwipeView>>(() => new PlatformConfigurationRegistry<SwipeView>(this));
 		}
-
-		public static readonly BindableProperty ContentProperty = BindableProperty.Create(nameof(Content), typeof(View), typeof(SwipeView), null, BindingMode.TwoWay, null);
+  
 		public static readonly BindableProperty LeftItemsProperty = BindableProperty.Create(nameof(LeftItems), typeof(SwipeItems), typeof(SwipeView), null, BindingMode.TwoWay, null);
 		public static readonly BindableProperty RightItemsProperty = BindableProperty.Create(nameof(RightItems), typeof(SwipeItems), typeof(SwipeView), null, BindingMode.TwoWay, null);
 		public static readonly BindableProperty TopItemsProperty = BindableProperty.Create(nameof(TopItems), typeof(SwipeItems), typeof(SwipeView), null, BindingMode.TwoWay, null);
 		public static readonly BindableProperty BottomItemsProperty = BindableProperty.Create(nameof(BottomItems), typeof(SwipeItems), typeof(SwipeView), null, BindingMode.TwoWay, null);
-
-		public View Content
-		{
-			get { return (View)GetValue(ContentProperty); }
-			set { SetValue(ContentProperty, value); }
-		}
-
+  
 		public SwipeItems LeftItems
 		{
 			get { return (SwipeItems)GetValue(LeftItemsProperty); }
@@ -59,26 +52,7 @@ namespace Xamarin.Forms
 
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		public void SendSwipeEnded(SwipeEndedEventArgs args) => SwipeEnded?.Invoke(this, args);
-
-		protected override void OnSizeAllocated(double width, double height)
-		{
-			if (HeightRequest <= 0 && WidthRequest <= 0)
-			{
-				HeightRequest = Content.HeightRequest;
-				WidthRequest = Content.WidthRequest;
-			}
-			else
-			{
-				HeightRequest = height;
-				WidthRequest = width;
-
-				Content.HeightRequest = height;
-				Content.WidthRequest = width;
-			}		
-
-			base.OnSizeAllocated(width, height);
-		}
-
+  
 		public class SwipeStartedEventArgs : EventArgs
 		{
 			public SwipeStartedEventArgs(SwipeDirection swipeDirection, double offset)

@@ -79,7 +79,7 @@ namespace Xamarin.Forms.Platform.Android
 		{
 			base.OnElementPropertyChanged(sender, e);
 
-			if (e.PropertyName == ContentProperty.PropertyName)
+			if (e.PropertyName == ContentView.ContentProperty.PropertyName)
 				UpdateContent();
 			else if (e.PropertyName == VisualElement.BackgroundColorProperty.PropertyName)
 				UpdateBackgroundColor();
