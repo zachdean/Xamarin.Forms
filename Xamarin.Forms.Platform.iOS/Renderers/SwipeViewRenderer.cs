@@ -26,7 +26,7 @@ namespace Xamarin.Forms.Platform.iOS
 		UIStackView _actionView;
 		UITapGestureRecognizer _tapGestureRecognizer;
 		SwipeTransitionMode _swipeTransitionMode;
-		SwipeDirection _swipeDirection;
+		SwipeDirection? _swipeDirection;
 		CGPoint _initialPoint;
 		bool _isTouchDown;
 		bool _isSwiping;
@@ -404,11 +404,6 @@ namespace Xamarin.Forms.Platform.iOS
 			if (_isSwiping || _isTouchDown || _contentView == null)
 				return;
 
-			bool touchContent = TouchInsideContent(_contentView.Frame.X, _contentView.Frame.Y, _contentView.Frame.Width, _contentView.Frame.Height, point.X, point.Y);
-
-			if (touchContent)
-				ResetSwipe();
-
 			_initialPoint = point;
 			_isTouchDown = true;
 		}
@@ -433,7 +428,7 @@ namespace Xamarin.Forms.Platform.iOS
 			if (!ValidateSwipeDirection())
 				return;
 
-			_swipeOffset = GetSwipeOffset(_initialPoint, point, _swipeDirection);
+			_swipeOffset = GetSwipeOffset(_initialPoint, point);
 
 			UpdateSwipeItems();
 
@@ -597,14 +592,16 @@ namespace Xamarin.Forms.Platform.iOS
 
 			if (_contentView != null)
 			{
+				_isSwiping = false;
+				_swipeThreshold = 0;
+				_swipeDirection = null;
+
 				Animate(SwipeAnimationDuration, 0.0, UIViewAnimationOptions.CurveEaseOut, () =>
 				{
 					_contentView.Frame = new CGRect(_originalBounds.X, _originalBounds.Y, _originalBounds.Width, _originalBounds.Height);
 				},
 				() =>
 				{
-					_isSwiping = false;
-					_swipeThreshold = 0;
 					DisposeSwipeItems();
 				});
 			}
@@ -612,6 +609,9 @@ namespace Xamarin.Forms.Platform.iOS
 
 		void ValidateSwipeThreshold()
 		{
+			if (_swipeDirection == null)
+				return;
+
 			var swipeThresholdPercent = 0.6 * GetSwipeThreshold();
 
 			if (Math.Abs(_swipeOffset) >= swipeThresholdPercent)
@@ -758,11 +758,11 @@ namespace Xamarin.Forms.Platform.iOS
 			return swipeItems != null;
 		}
 
-		double GetSwipeOffset(CGPoint initialPoint, CGPoint endPoint, SwipeDirection swipeDirection)
+		double GetSwipeOffset(CGPoint initialPoint, CGPoint endPoint)
 		{
 			double swipeOffset = 0;
 
-			switch (swipeDirection)
+			switch (_swipeDirection)
 			{
 				case SwipeDirection.Left:
 				case SwipeDirection.Right:
@@ -870,13 +870,19 @@ namespace Xamarin.Forms.Platform.iOS
 
 		void RaiseSwipeStarted()
 		{
-			var swipeStartedEventArgs = new SwipeStartedEventArgs(_swipeDirection, _swipeOffset);
+			if (_swipeDirection == null)
+				return;
+
+			var swipeStartedEventArgs = new SwipeStartedEventArgs(_swipeDirection.Value, _swipeOffset);
 			Element.SendSwipeStarted(swipeStartedEventArgs);
 		}
 
 		void RaiseSwipeEnded()
 		{
-			var swipeEndedEventArgs = new SwipeEndedEventArgs(_swipeDirection);
+			if (_swipeDirection == null)
+				return;
+
+			var swipeEndedEventArgs = new SwipeEndedEventArgs(_swipeDirection.Value);
 			Element.SendSwipeEnded(swipeEndedEventArgs);
 		}
 	}
