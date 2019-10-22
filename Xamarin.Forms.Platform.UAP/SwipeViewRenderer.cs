@@ -2,8 +2,6 @@
 using System.Linq;
 using System.ComponentModel;
 using System.Collections.Generic;
-using Windows.Foundation;
-using Windows.UI.Xaml;
 using WSwipeBehaviorOnInvoked = Microsoft.UI.Xaml.Controls.SwipeBehaviorOnInvoked;
 using WSwipeControl = Microsoft.UI.Xaml.Controls.SwipeControl;
 using WSwipeItems = Microsoft.UI.Xaml.Controls.SwipeItems;
@@ -105,45 +103,41 @@ namespace Xamarin.Forms.Platform.UWP
             base.UpdateBackgroundColor();
         }
 
-        public override SizeRequest GetDesiredSize(double widthConstraint, double heightConstraint)
-        {
-            SizeRequest result = base.GetDesiredSize(widthConstraint, heightConstraint);
-            result.Minimum = new Size(40, 40);
-            return result;
-        }
-        protected override Windows.Foundation.Size ArrangeOverride(Windows.Foundation.Size finalSize)
-        {
-            if (Element == null)
-                return finalSize;
+ 		protected override Windows.Foundation.Size MeasureOverride(Windows.Foundation.Size availableSize)
+		{
+			if (Element == null || availableSize.Width * availableSize.Height == 0)
+				return new Windows.Foundation.Size(0, 0);
 
-            Element.IsInNativeLayout = true;
-
-            Control?.Arrange(new Rect(0, 0, finalSize.Width, finalSize.Height));
-
-            Element.IsInNativeLayout = false;
-
-            return finalSize;
-        }
-
-        protected override Windows.Foundation.Size MeasureOverride(Windows.Foundation.Size availableSize)
-        {
-            if (Element == null)
-                return new Windows.Foundation.Size(0, 0);
-
+			Element.IsInNativeLayout = true;
+				
 			double width = Math.Max(0, Element.Width);
-            double height = Math.Max(0, Element.Height);
-            var result = new Windows.Foundation.Size(width, height);
+			double height = Math.Max(0, Element.Height);
+			var result = new Windows.Foundation.Size(width, height);
 
-            if (Control.Content is FrameworkElement content)
-                content.Measure(result);
+			if (Control != null)
+			{
+				double w = Element.Width;
+				double h = Element.Height;
 
-            Control.Height = result.Height;
-            Control.Width = result.Width;
+				if (w == -1)
+					w = availableSize.Width;
 
-            return result;
-        }
+				if (h == -1)
+					h = availableSize.Height;
 
-        void OnSwipeItemsPropertyChanged(object sender, PropertyChangedEventArgs e)
+				w = Math.Max(0, w);
+				h = Math.Max(0, h);
+
+				// SwipeLayout sometimes crashes when Measure if not previously fully loaded into the VisualTree.
+				Control.Loaded += (sender, args) => { Control.Measure(new Windows.Foundation.Size(w, h)); };
+			}
+
+			Element.IsInNativeLayout = false;
+
+			return result;
+		}
+
+		void OnSwipeItemsPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             var formsSwipeItems = sender as SwipeItems;
 
