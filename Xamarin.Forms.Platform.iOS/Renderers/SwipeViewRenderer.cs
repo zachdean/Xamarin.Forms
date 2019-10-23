@@ -247,50 +247,81 @@ namespace Xamarin.Forms.Platform.iOS
 			};
 
 			int i = 0;
-			foreach (var swipeItem in items)
+			foreach (var item in items)
 			{
-				var swipeButton = new UIButton(UIButtonType.Custom)
+				var swipeItemWidth = GetSwipeItemWidthByDirection();
+				var swipeItem = new UIView();
+
+				if (item is SwipeItem formsSwipeItem)
 				{
-					BackgroundColor = swipeItem.BackgroundColor.ToUIColor()
-				};
+					swipeItem = new UIButton(UIButtonType.Custom)
+					{
+						BackgroundColor = formsSwipeItem.BackgroundColor.ToUIColor()
+					};
 
-				swipeButton.SetTitle(swipeItem.Text, UIControlState.Normal);
+					((UIButton)swipeItem).SetTitle(formsSwipeItem.Text, UIControlState.Normal);
 
-				UpdateSwipeItemIconImage(swipeButton, swipeItem);
+					UpdateSwipeItemIconImage(((UIButton)swipeItem), formsSwipeItem);
 
-				var textColor = GetSwipeItemColor(swipeItem.BackgroundColor);
-				swipeButton.SetTitleColor(textColor.ToUIColor(), UIControlState.Normal);
+					var textColor = GetSwipeItemColor(formsSwipeItem.BackgroundColor);
+					((UIButton)swipeItem).SetTitleColor(textColor.ToUIColor(), UIControlState.Normal);
+					swipeItem.UserInteractionEnabled = false;
+					UpdateSwipeItemInsets(((UIButton)swipeItem));
+				}
 
-				var swipeItemWidth = SwipeItemWidth;
-
+				if (item is CustomSwipeItem formsCustomSwipeItem)
+				{
+					var formsElement = formsCustomSwipeItem;
+					var renderer = Platform.CreateRenderer(formsCustomSwipeItem);
+					Platform.SetRenderer(formsCustomSwipeItem, renderer);
+					formsCustomSwipeItem.Layout(new Rectangle(0, 0, swipeItemWidth, _contentView.Frame.Height));
+					swipeItem = renderer?.NativeView;
+				}
+	
 				switch (_swipeDirection)
 				{
 					case SwipeDirection.Left:
-						swipeItemWidth = items.Mode == SwipeMode.Execute ? _contentView.Frame.Width / items.Count : SwipeItemWidth;
-						swipeButton.Frame = new CGRect(_contentView.Frame.Width - (i + 1 * swipeItemWidth), 0, i + 1 * swipeItemWidth, _contentView.Frame.Height);
+						swipeItem.Frame = new CGRect(_contentView.Frame.Width - (i + 1 * swipeItemWidth), 0, i + 1 * swipeItemWidth, _contentView.Frame.Height);
 						break;
 					case SwipeDirection.Right:
-						swipeItemWidth = items.Mode == SwipeMode.Execute ? _contentView.Frame.Width / items.Count : SwipeItemWidth;
-						swipeButton.Frame = new CGRect(i * swipeItemWidth, 0, i + 1 * swipeItemWidth, _contentView.Frame.Height);
+						swipeItem.Frame = new CGRect(i * swipeItemWidth, 0, i + 1 * swipeItemWidth, _contentView.Frame.Height);
 						break;
 					case SwipeDirection.Up:
 					case SwipeDirection.Down:
-						swipeItemWidth = _contentView.Frame.Width / items.Count;
-						swipeButton.Frame = new CGRect(i * swipeItemWidth, 0, i + 1 * swipeItemWidth, _contentView.Frame.Height);
+						swipeItem.Frame = new CGRect(i * swipeItemWidth, 0, i + 1 * swipeItemWidth, _contentView.Frame.Height);
 						break;
 				}
 
-				swipeButton.UserInteractionEnabled = false;
-
-				_actionView.AddSubview(swipeButton);
-				_swipeItemsRect.Add(swipeButton.Frame);
-				UpdateSwipeItemInsets(swipeButton);
+				_actionView.AddSubview(swipeItem);
+				_swipeItemsRect.Add(swipeItem.Frame);
 
 				i++;
 			}
 
 			AddSubview(_actionView);
 			BringSubviewToFront(_contentView);
+		}
+
+		double GetSwipeItemWidthByDirection()
+		{
+			var swipeItemWidth = SwipeItemWidth;
+			var items = GetSwipeItemsByDirection();
+
+			switch (_swipeDirection)
+			{
+				case SwipeDirection.Left:
+					swipeItemWidth = items.Mode == SwipeMode.Execute ? _contentView.Frame.Width / items.Count : SwipeItemWidth;
+					break;
+				case SwipeDirection.Right:
+					swipeItemWidth = items.Mode == SwipeMode.Execute ? _contentView.Frame.Width / items.Count : SwipeItemWidth;
+					break;
+				case SwipeDirection.Up:
+				case SwipeDirection.Down:
+					swipeItemWidth = _contentView.Frame.Width / items.Count;
+					break;
+			}
+
+			return swipeItemWidth;
 		}
 
 		void UpdateSwipeTransitionMode()
@@ -846,18 +877,22 @@ namespace Xamarin.Forms.Platform.iOS
 			return null;
 		}
 
-		void ExecuteSwipeItem(SwipeItem swipeItem)
+		void ExecuteSwipeItem(ISwipeItem iSwipeItem)
 		{
-			if (swipeItem == null)
+			if (iSwipeItem == null)
 				return;
 
-			ICommand cmd = swipeItem.Command;
-			object parameter = swipeItem.CommandParameter;
+			ICommand cmd = iSwipeItem.Command;
+			object parameter = iSwipeItem.CommandParameter;
 
 			if (cmd != null && cmd.CanExecute(parameter))
 				cmd.Execute(parameter);
 
-			swipeItem.OnInvoked();
+			if (iSwipeItem is SwipeItem swipeItem)
+				swipeItem.OnInvoked();
+
+			if (iSwipeItem is CustomSwipeItem customSwipeItem)
+				customSwipeItem.OnInvoked();
 		}
 
 		void OnClose(object sender)

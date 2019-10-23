@@ -38,7 +38,23 @@ namespace Xamarin.Forms.Controls
 
 		internal SwipeItems GetRevealSwipeItems()
 		{
-			var addSwipteItem = new SwipeItem { BackgroundColor = Color.Green, Text = "Add", IconImageSource = "coffee.png" };
+			var addSwipteItem = new CustomSwipeItem();
+
+			var addSwipteItemLayout = new StackLayout
+			{
+				BackgroundColor = Color.Red,
+				Orientation = StackOrientation.Vertical,
+				Padding = new Thickness(12)
+			};
+
+			var addSwipteItemIcon = new Image { HeightRequest = 24, HorizontalOptions = LayoutOptions.Center, VerticalOptions = LayoutOptions.Center, Aspect = Aspect.AspectFit, Source = "coffee.png" };
+			addSwipteItemLayout.Children.Add(addSwipteItemIcon);
+
+			var addSwipteItemText = new Label { FontSize = 14, HorizontalOptions = LayoutOptions.Center, Text = "Add", TextColor = Color.Yellow };
+			addSwipteItemLayout.Children.Add(addSwipteItemText);
+
+			addSwipteItem.Content = addSwipteItemLayout;
+   
 			addSwipteItem.Invoked += (sender, e) =>
 			{
 				DisplayAlert("SwipeView", "Add Invoked", "OK");
