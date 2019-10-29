@@ -1,0 +1,58 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<controls:TestContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:controls="clr-namespace:Xamarin.Forms.Controls"
+             mc:Ignorable="d"
+             x:Class="Xamarin.Forms.Controls.Issues.Issue8282">
+    <StackLayout Margin="20">
+        <Label Text="Pull the items down to refresh the CollectionView. The RefreshView must appear above the list." />
+        <Label Text="{Binding Animals.Count, StringFormat='Number of items: {0}'}" />
+        <RefreshView
+            BackgroundColor="Green"
+            Command="{Binding RefreshCommand}"
+            IsRefreshing="{Binding IsRefreshing}">
+            <CollectionView ItemsSource="{Binding Animals}">
+                <CollectionView.Header>
+                    <StackLayout BackgroundColor="Red" HeightRequest="120">
+                        <Label
+                            HorizontalOptions="CenterAndExpand"
+                            Text="I am in the header!"
+                            VerticalOptions="CenterAndExpand" />
+                    </StackLayout>
+                </CollectionView.Header>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Grid Padding="10">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <Image
+                                Grid.RowSpan="2"
+                                Aspect="AspectFill"
+                                HeightRequest="60"
+                                Source="{Binding ImageUrl}"
+                                WidthRequest="60" />
+                            <Label
+                                Grid.Column="1"
+                                FontAttributes="Bold"
+                                Text="{Binding Name}" />
+                            <Label
+                                Grid.Row="1"
+                                Grid.Column="1"
+                                FontAttributes="Italic"
+                                Text="{Binding Location}"
+                                VerticalOptions="End" />
+                        </Grid>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </RefreshView>
+    </StackLayout>
+</controls:TestContentPage>
