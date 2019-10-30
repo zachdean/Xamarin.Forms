@@ -118,7 +118,7 @@ namespace Xamarin.Forms.Platform.iOS
 				nfloat footerWidth = _footerUIView?.Frame.Width ?? 0f;
 
 				nfloat headerSpacing = (_headerUIView?.Superview != null) ? headerWidth : 0f;
-				UpdateCollectionViewHeaderLayout(headerSpacing);
+				UpdateCollectionViewHeaderSpacing(headerSpacing);
 
 				if (_headerUIView != null && _headerUIView.Frame.X != headerWidth)
 					_headerUIView.Frame = new CoreGraphics.CGRect(0, 0, headerWidth, CollectionView.Frame.Height);
@@ -148,7 +148,7 @@ namespace Xamarin.Forms.Platform.iOS
 				nfloat footerHeight = _footerUIView?.Frame.Height ?? 0f;
 
 				nfloat headerSpacing = (_headerUIView?.Superview != null) ? headerHeight : 0f;
-				UpdateCollectionViewHeaderLayout(headerSpacing);
+				UpdateCollectionViewHeaderSpacing(headerSpacing);
 
 				if (CollectionView.ContentInset.Top != headerHeight || CollectionView.ContentInset.Bottom != footerHeight)
 				{
@@ -178,14 +178,14 @@ namespace Xamarin.Forms.Platform.iOS
 			}
 		}
 
-		void UpdateCollectionViewHeaderLayout(nfloat headerSpacing)
+  		void UpdateCollectionViewHeaderSpacing(nfloat headerSpacing)
 		{
 			if (CollectionView.CollectionViewLayout is ItemsViewLayout itemsViewLayout)
 			{
 				nfloat footerHeight = _footerUIView?.Frame.Height ?? 0f;
 				CollectionView.ContentInset = new UIEdgeInsets(1, 0, footerHeight, 0);
 
-				itemsViewLayout?.UpdateCollectionViewHeaderLayout(headerSpacing);
+				itemsViewLayout?.UpdateCollectionViewHeaderSpacing(headerSpacing);
 			}
 		}
 

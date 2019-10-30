@@ -155,7 +155,7 @@ namespace Xamarin.Forms.Platform.iOS
 			}
 		}
 
-		public void UpdateCollectionViewHeaderLayout(nfloat headerSpacing)
+		public void UpdateCollectionViewHeaderSpacing(nfloat headerSpacing)
 		{
 			_headerSpacing = headerSpacing;
 		}
