@@ -117,8 +117,11 @@ namespace Xamarin.Forms.Platform.iOS
 				nfloat headerWidth = _headerUIView?.Frame.Width ?? 0f;
 				nfloat footerWidth = _footerUIView?.Frame.Width ?? 0f;
 
+				nfloat headerSpacing = (_headerUIView?.Superview != null) ? headerWidth : 0f;
+				UpdateCollectionViewHeaderLayout(headerSpacing);
+
 				if (_headerUIView != null && _headerUIView.Frame.X != headerWidth)
-					_headerUIView.Frame = new CoreGraphics.CGRect(-headerWidth, 0, headerWidth, CollectionView.Frame.Height);
+					_headerUIView.Frame = new CoreGraphics.CGRect(0, 0, headerWidth, CollectionView.Frame.Height);
 
 				if (_footerUIView != null && (_footerUIView.Frame.X != ItemsViewLayout.CollectionViewContentSize.Width))
 					_footerUIView.Frame = new CoreGraphics.CGRect(ItemsViewLayout.CollectionViewContentSize.Width, 0, footerWidth, CollectionView.Frame.Height);
@@ -126,7 +129,7 @@ namespace Xamarin.Forms.Platform.iOS
 				if (CollectionView.ContentInset.Left != headerWidth || CollectionView.ContentInset.Right != footerWidth)
 				{
 					var currentOffset = CollectionView.ContentOffset;
-					CollectionView.ContentInset = new UIEdgeInsets(0, headerWidth, 0, footerWidth);
+					CollectionView.ContentInset = new UIEdgeInsets(0, 0, 0, footerWidth);
 
 					var xOffset = currentOffset.X + (currentInset.Left - CollectionView.ContentInset.Left);
 
@@ -144,14 +147,17 @@ namespace Xamarin.Forms.Platform.iOS
 				nfloat headerHeight = _headerUIView?.Frame.Height ?? 0f;
 				nfloat footerHeight = _footerUIView?.Frame.Height ?? 0f;
 
+				nfloat headerSpacing = (_headerUIView?.Superview != null) ? headerHeight : 0f;
+				UpdateCollectionViewHeaderLayout(headerSpacing);
+
 				if (CollectionView.ContentInset.Top != headerHeight || CollectionView.ContentInset.Bottom != footerHeight)
 				{
 					var currentOffset = CollectionView.ContentOffset;
-					CollectionView.ContentInset = new UIEdgeInsets(headerHeight, 0, footerHeight, 0);
+	 
+					CollectionView.ContentInset = new UIEdgeInsets(0, 0, footerHeight, 0);
 
 					// if the header grows it will scroll off the screen because if you change the content inset iOS adjusts the content offset so the list doesn't move
 					// this changes the offset of the list by however much the header size has changed
-
 					var yOffset = currentOffset.Y + (currentInset.Top - CollectionView.ContentInset.Top);
 
 					if (CollectionView.ContentSize.Height + headerHeight <= CollectionView.Bounds.Height)
@@ -162,13 +168,24 @@ namespace Xamarin.Forms.Platform.iOS
 
 				if (_headerUIView != null && _headerUIView.Frame.Y != headerHeight)
 				{
-					_headerUIView.Frame = new CoreGraphics.CGRect(0, -headerHeight, CollectionView.Frame.Width, headerHeight);
+					_headerUIView.Frame = new CoreGraphics.CGRect(0, 0, CollectionView.Frame.Width, headerHeight);
 				}
 
 				if (_footerUIView != null && (_footerUIView.Frame.Y != ItemsViewLayout.CollectionViewContentSize.Height))
 				{
 					_footerUIView.Frame = new CoreGraphics.CGRect(0, ItemsViewLayout.CollectionViewContentSize.Height, CollectionView.Frame.Width, footerHeight);
 				}
+			}
+		}
+
+		void UpdateCollectionViewHeaderLayout(nfloat headerSpacing)
+		{
+			if (CollectionView.CollectionViewLayout is ItemsViewLayout itemsViewLayout)
+			{
+				nfloat footerHeight = _footerUIView?.Frame.Height ?? 0f;
+				CollectionView.ContentInset = new UIEdgeInsets(1, 0, footerHeight, 0);
+
+				itemsViewLayout?.UpdateCollectionViewHeaderLayout(headerSpacing);
 			}
 		}
 

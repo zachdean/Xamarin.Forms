@@ -15,6 +15,7 @@ namespace Xamarin.Forms.Platform.iOS
 		bool _adjustContentOffset;
 		CGSize _adjustmentSize0;
 		CGSize _adjustmentSize1;
+		nfloat _headerSpacing;
 
 		public ItemsUpdatingScrollMode ItemsUpdatingScrollMode { get; set; }
 
@@ -89,14 +90,15 @@ namespace Xamarin.Forms.Platform.iOS
 			if (_itemsLayout is GridItemsLayout gridItemsLayout)
 			{
 				if (ScrollDirection == UICollectionViewScrollDirection.Horizontal)
-				{
-					return new UIEdgeInsets(0, 0, 0, (nfloat)gridItemsLayout.HorizontalItemSpacing * collectionView.NumberOfItemsInSection(section));
-				}
+					return new UIEdgeInsets(0, (section == 0 && _headerSpacing > 0) ? _headerSpacing : 0, 0, (nfloat)gridItemsLayout.HorizontalItemSpacing * collectionView.NumberOfItemsInSection(section));
 
-				return new UIEdgeInsets(0,0, (nfloat)gridItemsLayout.VerticalItemSpacing * collectionView.NumberOfItemsInSection(section), 0);
+				return new UIEdgeInsets((section == 0 && _headerSpacing > 0) ? _headerSpacing : 0, 0, (nfloat)gridItemsLayout.VerticalItemSpacing * collectionView.NumberOfItemsInSection(section), 0);
 			}
 
-			return UIEdgeInsets.Zero;
+			if(_itemsLayout.Orientation == ItemsLayoutOrientation.Horizontal)
+				return new UIEdgeInsets(0, (section == 0 && _headerSpacing > 0) ? _headerSpacing : 0, 0, 0);
+
+			return new UIEdgeInsets((section == 0 && _headerSpacing > 0) ? _headerSpacing : 0, 0, 0, 0);
 		}
 
 		public virtual nfloat GetMinimumInteritemSpacingForSection(UICollectionView collectionView,
@@ -151,6 +153,11 @@ namespace Xamarin.Forms.Platform.iOS
 			{
 				cell.ConstrainTo(ConstrainedDimension);
 			}
+		}
+
+		public void UpdateCollectionViewHeaderLayout(nfloat headerSpacing)
+		{
+			_headerSpacing = headerSpacing;
 		}
 
 		public override bool ShouldInvalidateLayoutForBoundsChange(CGRect newBounds)
