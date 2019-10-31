@@ -136,7 +136,7 @@ namespace Xamarin.Forms
 		}
 
 		public static readonly BindableProperty ItemSizingStrategyProperty =
-			BindableProperty.Create(nameof(ItemSizingStrategy), typeof(ItemSizingStrategy), typeof(ItemsView));
+			BindableProperty.Create(nameof(ItemSizingStrategy), typeof(ItemSizingStrategy), typeof(ItemsView), ItemSizingStrategy.MeasureFirstItem);
 
 		public ItemSizingStrategy ItemSizingStrategy
 		{
