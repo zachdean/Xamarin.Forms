@@ -1,6 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Collections;
 using System.Windows.Input;
+using List = System.Collections.Generic.List<object>;
 
 namespace Xamarin.Forms
 {
@@ -16,7 +17,7 @@ namespace Xamarin.Forms
 				propertyChanged: SelectedItemPropertyChanged);
 
 		public static readonly BindableProperty SelectedItemsProperty =
-			BindableProperty.Create(nameof(SelectedItems), typeof(IList<object>), typeof(SelectableItemsView), null,
+			BindableProperty.Create(nameof(SelectedItems), typeof(IList), typeof(SelectableItemsView), null,
 				defaultBindingMode: BindingMode.OneWay,
 				propertyChanged: SelectedItemsPropertyChanged,
 				coerceValue: CoerceSelectedItems,
@@ -29,7 +30,7 @@ namespace Xamarin.Forms
 			BindableProperty.Create(nameof(SelectionChangedCommandParameter), typeof(object),
 				typeof(SelectableItemsView));
 
-		static readonly IList<object> s_empty = new List<object>(0);
+		static readonly IList s_empty = new List(0);
 
 		public SelectableItemsView()
 		{
@@ -41,9 +42,9 @@ namespace Xamarin.Forms
 			set => SetValue(SelectedItemProperty, value);
 		}
 
-		public IList<object> SelectedItems
+		public IList SelectedItems
 		{
-			get => (IList<object>)GetValue(SelectedItemsProperty);
+			get => (IList)GetValue(SelectedItemsProperty);
 			set => SetValue(SelectedItemsProperty, new SelectionList(this, value));
 		}
 
@@ -75,15 +76,18 @@ namespace Xamarin.Forms
 		{
 			if (value == null)
 			{
+				System.Diagnostics.Debug.WriteLine($"CoerceSelectedItems: {value.ToString()}");
 				return new SelectionList((SelectableItemsView)bindable);
 			}
 
 			if(value is SelectionList)
 			{
+				System.Diagnostics.Debug.WriteLine($"CoerceSelectedItems: {((SelectionList)value).Count}");
 				return value;
 			}
 
-			return new SelectionList((SelectableItemsView)bindable, value as IList<object>);
+			System.Diagnostics.Debug.WriteLine($"CoerceSelectedItems 3");
+			return new SelectionList((SelectableItemsView)bindable, value as IList);
 		}
 
 		static object DefaultValueCreator(BindableObject bindable)
@@ -94,13 +98,14 @@ namespace Xamarin.Forms
 		static void SelectedItemsPropertyChanged(BindableObject bindable, object oldValue, object newValue)
 		{
 			var selectableItemsView = (SelectableItemsView)bindable;
-			var oldSelection = (IList<object>)oldValue ?? s_empty;
-			var newSelection = (IList<object>)newValue ?? s_empty;
+			var oldSelection = (IList)oldValue ?? s_empty;
+			var newSelection = (IList)newValue ?? s_empty;
 
+			System.Diagnostics.Debug.WriteLine($"SelectedItemsPropertyChanged: {newSelection.Count}");
 			selectableItemsView.SelectedItemsPropertyChanged(oldSelection, newSelection);
 		}
 
-		internal void SelectedItemsPropertyChanged(IList<object> oldSelection, IList<object> newSelection)
+		internal void SelectedItemsPropertyChanged(IList oldSelection, IList newSelection)
 		{
 			SelectionPropertyChanged(this, new SelectionChangedEventArgs(oldSelection, newSelection));
 			
@@ -142,8 +147,8 @@ namespace Xamarin.Forms
 			var oldMode = (SelectionMode)oldValue;
 			var newMode = (SelectionMode)newValue;
 
-			IList<object> previousSelection = new List<object>();
-			IList<object> newSelection = new List<object>();
+			IList previousSelection = new List();
+			IList newSelection = new List();
 
 			switch (oldMode)
 			{
