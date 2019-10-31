@@ -76,17 +76,14 @@ namespace Xamarin.Forms
 		{
 			if (value == null)
 			{
-				System.Diagnostics.Debug.WriteLine($"CoerceSelectedItems: {value.ToString()}");
 				return new SelectionList((SelectableItemsView)bindable);
 			}
 
 			if(value is SelectionList)
 			{
-				System.Diagnostics.Debug.WriteLine($"CoerceSelectedItems: {((SelectionList)value).Count}");
 				return value;
 			}
 
-			System.Diagnostics.Debug.WriteLine($"CoerceSelectedItems 3");
 			return new SelectionList((SelectableItemsView)bindable, value as IList);
 		}
 
@@ -101,7 +98,6 @@ namespace Xamarin.Forms
 			var oldSelection = (IList)oldValue ?? s_empty;
 			var newSelection = (IList)newValue ?? s_empty;
 
-			System.Diagnostics.Debug.WriteLine($"SelectedItemsPropertyChanged: {newSelection.Count}");
 			selectableItemsView.SelectedItemsPropertyChanged(oldSelection, newSelection);
 		}
 
