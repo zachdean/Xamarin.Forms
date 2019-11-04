@@ -1,10 +1,9 @@
 ﻿using System;
 using System.ComponentModel;
-using Windows.UI.Text;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Media;
 using Xamarin.Forms.Internals;
+using WBrush = Windows.UI.Xaml.Media.Brush;
 using Xamarin.Forms.PlatformConfiguration.WindowsSpecific;
 using Specifics = Xamarin.Forms.PlatformConfiguration.WindowsSpecific.InputView;
 
@@ -15,11 +14,11 @@ namespace Xamarin.Forms.Platform.UWP
 		private static FormsTextBox _copyOfTextBox;
 		static Windows.Foundation.Size _zeroSize = new Windows.Foundation.Size(0, 0);
 		bool _fontApplied;
-		Brush _backgroundColorFocusedDefaultBrush;
-		Brush _textDefaultBrush;
-		Brush _defaultTextColorFocusBrush;
-		Brush _defaultPlaceholderColorFocusBrush;
-		Brush _placeholderDefaultBrush;
+		WBrush _backgroundColorFocusedDefaultBrush;
+		WBrush _textDefaultBrush;
+		WBrush _defaultTextColorFocusBrush;
+		WBrush _defaultPlaceholderColorFocusBrush;
+		WBrush _placeholderDefaultBrush;
 
 		IEditorController ElementController => Element;
 
@@ -170,6 +169,19 @@ namespace Xamarin.Forms.Platform.UWP
 
 			// By default some platforms have alternate default background colors when focused
 			BrushHelpers.UpdateColor(Element.BackgroundColor, ref _backgroundColorFocusedDefaultBrush,
+				() => Control.BackgroundFocusBrush, brush => Control.BackgroundFocusBrush = brush);
+		}
+
+		protected override void UpdateBackground()
+		{
+			base.UpdateBackground();
+
+			if (Control == null)
+			{
+				return;
+			}
+
+			BrushHelpers.UpdateBrush(Element.Background, ref _backgroundColorFocusedDefaultBrush,
 				() => Control.BackgroundFocusBrush, brush => Control.BackgroundFocusBrush = brush);
 		}
 

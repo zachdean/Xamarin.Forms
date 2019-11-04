@@ -4,6 +4,7 @@ using System.Linq;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
+using WBrush = Windows.UI.Xaml.Media.Brush;
 using WVisualStateManager = Windows.UI.Xaml.VisualStateManager;
 using WVisualStateGroup = Windows.UI.Xaml.VisualStateGroup;
 using WVisualState = Windows.UI.Xaml.VisualState;
@@ -209,7 +210,7 @@ namespace Xamarin.Forms.Platform.UWP
 
 		void UpdateButtonBackgroundColor(Color value)
 		{
-			Brush brush = value.ToBrush();
+			WBrush brush = value.ToBrush();
 			_minus = GetTemplateChild("Minus") as Windows.UI.Xaml.Controls.Button;
 			_plus = GetTemplateChild("Plus") as Windows.UI.Xaml.Controls.Button;
 			if (_minus != null)

@@ -1,12 +1,10 @@
-﻿using System;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using Microsoft.UI.Xaml.Controls;
 using Windows.Foundation;
 using Windows.UI.Core;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Media;
 using Xamarin.Forms.PlatformConfiguration.WindowsSpecific;
 using Specifics = Xamarin.Forms.PlatformConfiguration.WindowsSpecific.RefreshView;
+using WBrush = Windows.UI.Xaml.Media.Brush;
 
 namespace Xamarin.Forms.Platform.UWP
 {
@@ -94,8 +92,6 @@ namespace Xamarin.Forms.Platform.UWP
 			base.OnElementChanged(e);
 		}
 
-
-
 		protected override void OnElementPropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
 			base.OnElementPropertyChanged(sender, e);
@@ -121,6 +117,15 @@ namespace Xamarin.Forms.Platform.UWP
 				Control.Visualizer.Background = Element.BackgroundColor.ToBrush();
 			else
 				Control.Visualizer.Background = Color.White.ToBrush();
+		}
+
+		protected override void UpdateBackground()
+		{
+			if (Element == null || Control?.Visualizer == null)
+				return;
+
+			if (!Element.Background.IsEmpty)
+				Control.Visualizer.Background = Element.Background.ToBrush();
 		}
 
 		void UpdateContent()
@@ -159,9 +164,10 @@ namespace Xamarin.Forms.Platform.UWP
 
 			Control.Visualizer.Foreground = Element.RefreshColor != Color.Default
 				? Element.RefreshColor.ToBrush()
-				: (Brush)Windows.UI.Xaml.Application.Current.Resources["DefaultTextForegroundThemeBrush"];
+				: (WBrush)Windows.UI.Xaml.Application.Current.Resources["DefaultTextForegroundThemeBrush"];
 
 			UpdateBackgroundColor();
+			UpdateBackground();
 		}
 
 		void UpdateRefreshPullDirection()

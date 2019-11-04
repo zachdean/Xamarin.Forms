@@ -10,6 +10,7 @@ namespace Xamarin.Forms.Platform.Android
 	{
 		bool _disposed;
 		GradientDrawable _backgroundDrawable;
+		Drawable _gradientDrawable;
 
 		readonly MotionEventHelper _motionEventHelper = new MotionEventHelper();
 
@@ -40,6 +41,7 @@ namespace Xamarin.Forms.Platform.Android
 			_motionEventHelper.UpdateElement(e.NewElement);
 
 			UpdateBackgroundColor();
+			UpdateBackground();
 			UpdateCornerRadius();
 		}
 
@@ -49,6 +51,8 @@ namespace Xamarin.Forms.Platform.Android
 
 			if (e.PropertyName == BoxView.ColorProperty.PropertyName || e.PropertyName == VisualElement.BackgroundColorProperty.PropertyName)
 				UpdateBackgroundColor();
+			if (e.PropertyName == VisualElement.BackgroundProperty.PropertyName)
+				UpdateBackground();
 			else if (e.PropertyName == BoxView.CornerRadiusProperty.PropertyName)
 				UpdateCornerRadius();
 		}
@@ -76,6 +80,23 @@ namespace Xamarin.Forms.Platform.Android
 			}
 		}
 
+		protected override void UpdateBackground()
+		{
+			Color colorToSet = Element.Color;
+
+			if (!Element.Background.IsEmpty)
+			{
+				_gradientDrawable = new BackgroundDrawable(Element);
+				this.SetBackground(_gradientDrawable);
+			}
+			else
+			{
+				if (colorToSet == Color.Default)
+					colorToSet = Element.BackgroundColor;
+				SetBackgroundColor(colorToSet.ToAndroid(Color.Transparent));
+			}
+		}
+
 		protected override void Dispose(bool disposing)
 		{
 			if (_disposed)
@@ -89,6 +110,12 @@ namespace Xamarin.Forms.Platform.Android
 				{
 					_backgroundDrawable.Dispose();
 					_backgroundDrawable = null;
+				}
+
+				if (_gradientDrawable != null)
+				{
+					_gradientDrawable.Dispose();
+					_gradientDrawable = null;
 				}
 
 				if (Element != null)
@@ -118,17 +145,17 @@ namespace Xamarin.Forms.Platform.Android
 				if (Background is GradientDrawable backgroundGradient)
 				{
 					var cornerRadii = new[] {
-						(float)(Context.ToPixels(cornerRadius.TopLeft)),
-						(float)(Context.ToPixels(cornerRadius.TopLeft)),
+						Context.ToPixels(cornerRadius.TopLeft),
+						Context.ToPixels(cornerRadius.TopLeft),
 
-						(float)(Context.ToPixels(cornerRadius.TopRight)),
-						(float)(Context.ToPixels(cornerRadius.TopRight)),
+						Context.ToPixels(cornerRadius.TopRight),
+						Context.ToPixels(cornerRadius.TopRight),
 
-						(float)(Context.ToPixels(cornerRadius.BottomRight)),
-						(float)(Context.ToPixels(cornerRadius.BottomRight)),
+						Context.ToPixels(cornerRadius.BottomRight),
+						Context.ToPixels(cornerRadius.BottomRight),
 
-						(float)(Context.ToPixels(cornerRadius.BottomLeft)),
-						(float)(Context.ToPixels(cornerRadius.BottomLeft))
+						Context.ToPixels(cornerRadius.BottomLeft),
+						Context.ToPixels(cornerRadius.BottomLeft)
 					};
 
 					backgroundGradient.SetCornerRadii(cornerRadii);

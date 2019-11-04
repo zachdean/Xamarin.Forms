@@ -1,8 +1,8 @@
 ﻿﻿using System.Threading.Tasks;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Media;
 using Xamarin.Forms.PlatformConfiguration.WindowsSpecific;
+using WBrush = Windows.UI.Xaml.Media.Brush;
 using WImageSource = Windows.UI.Xaml.Media.ImageSource;
 
 namespace Xamarin.Forms.Platform.UWP
@@ -85,9 +85,9 @@ namespace Xamarin.Forms.Platform.UWP
 			get { return _presenter != null ? _presenter.ActualWidth : 0; }
 		}
 
-		public Brush ToolbarBackground
+		public WBrush ToolbarBackground
 		{
-			get { return (Brush)GetValue(ToolbarBackgroundProperty); }
+			get { return (WBrush)GetValue(ToolbarBackgroundProperty); }
 			set { SetValue(ToolbarBackgroundProperty, value); }
 		}
 
@@ -123,9 +123,9 @@ namespace Xamarin.Forms.Platform.UWP
 			set { SetValue(TitleViewVisibilityProperty, value); }
 		}
 
-		public Brush TitleBrush
+		public WBrush TitleBrush
 		{
-			get { return (Brush)GetValue(TitleBrushProperty); }
+			get { return (WBrush)GetValue(TitleBrushProperty); }
 			set { SetValue(TitleBrushProperty, value); }
 		}
 

@@ -2,8 +2,8 @@
 using System.Threading.Tasks;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Media;
 using Xamarin.Forms.PlatformConfiguration.WindowsSpecific;
+using WBrush = Windows.UI.Xaml.Media.Brush;
 using WImageSource = Windows.UI.Xaml.Media.ImageSource;
 
 namespace Xamarin.Forms.Platform.UWP
@@ -243,15 +243,15 @@ namespace Xamarin.Forms.Platform.UWP
 			set { SetValue(CollapsedPaneWidthProperty, value); }
 		}
 
-		public Brush ToolbarBackground
+		public WBrush ToolbarBackground
 		{
-			get { return (Brush)GetValue(ToolbarBackgroundProperty); }
+			get { return (WBrush)GetValue(ToolbarBackgroundProperty); }
 			set { SetValue(ToolbarBackgroundProperty, value); }
 		}
 
-		public Brush ToolbarForeground
+		public WBrush ToolbarForeground
 		{
-			get { return (Brush)GetValue(ToolbarForegroundProperty); }
+			get { return (WBrush)GetValue(ToolbarForegroundProperty); }
 			set { SetValue(ToolbarForegroundProperty, value); }
 		}
 

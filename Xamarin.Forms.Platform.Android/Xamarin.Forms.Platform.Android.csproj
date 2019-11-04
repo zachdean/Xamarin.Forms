@@ -157,6 +157,7 @@
     <Compile Include="ColorExtensions.cs" />
     <Compile Include="ContextExtensions.cs" />
     <Compile Include="GetDesiredSizeDelegate.cs" />
+    <Compile Include="BackgroundDrawable.cs" />
     <Compile Include="IBorderVisualElementRenderer.cs" />
     <Compile Include="IDeviceInfoProvider.cs" />
     <Compile Include="IDisposedState.cs" />

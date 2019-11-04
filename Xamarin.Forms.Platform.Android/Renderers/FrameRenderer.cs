@@ -62,11 +62,11 @@ namespace Xamarin.Forms.Platform.Android
 			base.OnElementPropertyChanged(sender, e);
 			if (e.PropertyName == VisualElement.BackgroundColorProperty.PropertyName || e.PropertyName == Frame.CornerRadiusProperty.PropertyName)
 			{
-				UpdateBackground();
+				UpdateFrameBackground();
 			}
 		}
 
-		void UpdateBackground()
+		void UpdateFrameBackground()
 		{
 			_drawable?.Dispose();
 			this.SetBackground(_drawable = new FrameDrawable(Element, Context.ToPixels));

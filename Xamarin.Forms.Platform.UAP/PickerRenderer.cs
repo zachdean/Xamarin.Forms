@@ -1,16 +1,15 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Windows.UI.Core;
-using Windows.UI.Text;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 using Xamarin.Forms.Internals;
+using WBrush = Windows.UI.Xaml.Media.Brush;
 using WSelectionChangedEventArgs = Windows.UI.Xaml.Controls.SelectionChangedEventArgs;
 
 namespace Xamarin.Forms.Platform.UWP
@@ -19,7 +18,7 @@ namespace Xamarin.Forms.Platform.UWP
 	{
 		bool _fontApplied;
 		bool _isAnimating;
-		Brush _defaultBrush;
+		WBrush _defaultBrush;
 		FontFamily _defaultFontFamily;
 
 		protected override void Dispose(bool disposing)

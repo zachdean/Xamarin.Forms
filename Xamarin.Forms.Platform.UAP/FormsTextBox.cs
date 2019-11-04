@@ -8,6 +8,7 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
+using WBrush = Windows.UI.Xaml.Media.Brush;
 using WVisualStateManager = Windows.UI.Xaml.VisualStateManager;
 
 namespace Xamarin.Forms.Platform.UWP
@@ -64,15 +65,15 @@ namespace Xamarin.Forms.Platform.UWP
 			UpdateEnabled();
 		}
 
-		public Brush BackgroundFocusBrush
+		public WBrush BackgroundFocusBrush
 		{
-			get { return (Brush)GetValue(BackgroundFocusBrushProperty); }
+			get { return (WBrush)GetValue(BackgroundFocusBrushProperty); }
 			set { SetValue(BackgroundFocusBrushProperty, value); }
 		}
 
-		public Brush ForegroundFocusBrush
+		public WBrush ForegroundFocusBrush
 		{
-			get { return (Brush)GetValue(ForegroundFocusBrushProperty); }
+			get { return (WBrush)GetValue(ForegroundFocusBrushProperty); }
 			set { SetValue(ForegroundFocusBrushProperty, value); }
 		}
 
@@ -84,15 +85,15 @@ namespace Xamarin.Forms.Platform.UWP
 
 		internal bool UseFormsVsm { get; set; }
 
-		public Brush PlaceholderForegroundBrush
+		public WBrush PlaceholderForegroundBrush
 		{
-			get { return (Brush)GetValue(PlaceholderForegroundBrushProperty); }
+			get { return (WBrush)GetValue(PlaceholderForegroundBrushProperty); }
 			set { SetValue(PlaceholderForegroundBrushProperty, value); }
 		}
 
-		public Brush PlaceholderForegroundFocusBrush
+		public WBrush PlaceholderForegroundFocusBrush
 		{
-			get { return (Brush)GetValue(PlaceholderForegroundFocusBrushProperty); }
+			get { return (WBrush)GetValue(PlaceholderForegroundFocusBrushProperty); }
 			set { SetValue(PlaceholderForegroundFocusBrushProperty, value); }
 		}
 

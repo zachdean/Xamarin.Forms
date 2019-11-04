@@ -1,8 +1,6 @@
-﻿using System.Linq;
-using Windows.UI.Xaml;
+﻿using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Media;
-
+using WBrush = Windows.UI.Xaml.Media.Brush;
 using WContentPresenter = Windows.UI.Xaml.Controls.ContentPresenter;
 
 namespace Xamarin.Forms.Platform.UWP
@@ -18,11 +16,11 @@ namespace Xamarin.Forms.Platform.UWP
 		WContentPresenter _contentPresenter;
 		Windows.UI.Xaml.Controls.Grid _rootGrid;
 
-		public Brush BackgroundColor
+		public WBrush BackgroundColor
 		{
 			get
 			{
-				return (Brush)GetValue(BackgroundColorProperty);
+				return (WBrush)GetValue(BackgroundColorProperty);
 			}
 			set
 			{

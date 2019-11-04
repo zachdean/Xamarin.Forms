@@ -9,6 +9,7 @@ using Windows.UI.Xaml.Media;
 using Xamarin.Forms.Internals;
 using Xamarin.Forms.PlatformConfiguration.WindowsSpecific;
 using WGrid = Windows.UI.Xaml.Controls.Grid;
+using WBrush= Windows.UI.Xaml.Media.Brush;
 using WTextAlignment = Windows.UI.Xaml.TextAlignment;
 using WHorizontalAlignment = Windows.UI.Xaml.HorizontalAlignment;
 using WVisibility = Windows.UI.Xaml.Visibility;
@@ -21,6 +22,7 @@ using PageSpecifics = Xamarin.Forms.PlatformConfiguration.WindowsSpecific.Page;
 using Windows.UI.Xaml.Input;
 using System.Linq;
 using WSelectionChangedEventArgs = Windows.UI.Xaml.Controls.SelectionChangedEventArgs;
+using WSolidColorBrush = Windows.UI.Xaml.Media.SolidColorBrush;
 
 namespace Xamarin.Forms.Platform.UWP
 {
@@ -36,8 +38,8 @@ namespace Xamarin.Forms.Platform.UWP
 		Color _barTextColor;
 		bool _disposed;
 		bool _showTitle;
-		Brush _defaultSelectedColor;
-		Brush _defaultUnselectedColor;
+		WBrush _defaultSelectedColor;
+		WBrush _defaultUnselectedColor;
 
 		WTextAlignment _oldBarTextBlockTextAlignment = WTextAlignment.Center;
 		WHorizontalAlignment _oldBarTextBlockHorinzontalAlignment = WHorizontalAlignment.Center;
@@ -70,12 +72,12 @@ namespace Xamarin.Forms.Platform.UWP
 			Dispose(true);
 		}
 
-		Brush ITitleProvider.BarBackgroundBrush
+		WBrush ITitleProvider.BarBackgroundBrush
 		{
 			set { Control.ToolbarBackground = value; }
 		}
 
-		Brush ITitleProvider.BarForegroundBrush
+		WBrush ITitleProvider.BarForegroundBrush
 		{
 			set { Control.ToolbarForeground = value; }
 		}
@@ -328,20 +330,20 @@ namespace Xamarin.Forms.Platform.UWP
 			Element?.SendDisappearing();
 		}
 
-		Brush GetBarBackgroundBrush()
+		WBrush GetBarBackgroundBrush()
 		{
-			object defaultColor = new SolidColorBrush(Windows.UI.Colors.Transparent);
+			object defaultColor = new WSolidColorBrush(Windows.UI.Colors.Transparent);
 
 			if (Element.BarBackgroundColor.IsDefault && defaultColor != null)
-				return (Brush)defaultColor;
+				return (WBrush)defaultColor;
 			return Element.BarBackgroundColor.ToBrush();
 		}
 
-		Brush GetBarForegroundBrush()
+		WBrush GetBarForegroundBrush()
 		{
 			object defaultColor = Windows.UI.Xaml.Application.Current.Resources["ApplicationForegroundThemeBrush"];
 			if (Element.BarTextColor.IsDefault && defaultColor != null)
-				return (Brush)defaultColor;
+				return (WBrush)defaultColor;
 			return Element.BarTextColor.ToBrush();
 		}
 

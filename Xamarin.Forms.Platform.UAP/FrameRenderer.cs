@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel;
-using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation.Peers;
 using Windows.UI.Xaml.Controls;
 
@@ -66,6 +65,12 @@ namespace Xamarin.Forms.Platform.UWP
 			{
 				Control.Background = backgroundColor.IsDefault ? null : backgroundColor.ToBrush();
 			}
+		}
+
+		protected override void UpdateBackground()
+		{
+			if (!Element.Background.IsEmpty)
+				Control.Background = Element.Background.ToBrush();
 		}
 
 		void PackChild()

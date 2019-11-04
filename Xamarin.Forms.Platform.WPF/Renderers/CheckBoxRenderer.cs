@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Controls;
+using WBrush = System.Windows.Media.Brush;
 using WPFCheckBox = System.Windows.Controls.CheckBox;
 using WControl = System.Windows.Controls.Control;
 using System.Windows.Media;
@@ -14,7 +15,7 @@ namespace Xamarin.Forms.Platform.WPF
 	public class CheckBoxRenderer : ViewRenderer<CheckBox, FormsCheckBox>
 	{
 		bool _isDisposed;
-		static Brush _tintDefaultBrush = Color.Transparent.ToBrush();
+		static WBrush _tintDefaultBrush = Color.Transparent.ToBrush();
 
 		public CheckBoxRenderer()
 		{

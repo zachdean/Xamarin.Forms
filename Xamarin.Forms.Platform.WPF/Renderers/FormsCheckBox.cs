@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using WBrush = System.Windows.Media.Brush;
 using WPFCheckBox = System.Windows.Controls.CheckBox;
-using WControl = System.Windows.Controls.Control;
+using WSolidColorBrush = System.Windows.Media.SolidColorBrush;
 using System.Windows;
-using System.Windows.Media;
 
 namespace Xamarin.Forms.Platform.WPF
 {
@@ -25,7 +20,7 @@ namespace Xamarin.Forms.Platform.WPF
 			{
 				checkBox.BorderBrush = Color.Black.ToBrush();
 			}
-			else if (e.NewValue is SolidColorBrush b)
+			else if (e.NewValue is WSolidColorBrush b)
 			{
 				checkBox.BorderBrush = b;
 			}
@@ -36,9 +31,9 @@ namespace Xamarin.Forms.Platform.WPF
 			BorderBrush = Color.Black.ToBrush();
 		}
 
-		public Brush TintBrush
+		public WBrush TintBrush
 		{
-			get { return (Brush)GetValue(TintBrushProperty); }
+			get { return (WBrush)GetValue(TintBrushProperty); }
 			set { SetValue(TintBrushProperty, value); }
 		}
 	}

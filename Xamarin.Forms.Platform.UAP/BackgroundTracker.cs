@@ -2,7 +2,6 @@
 using System.ComponentModel;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Media.Imaging;
 
 namespace Xamarin.Forms.Platform.UWP
 {
@@ -13,15 +12,14 @@ namespace Xamarin.Forms.Platform.UWP
 
 		public BackgroundTracker(DependencyProperty backgroundProperty)
 		{
-			if (backgroundProperty == null)
-				throw new ArgumentNullException("backgroundProperty");
-
-			_backgroundProperty = backgroundProperty;
+			_backgroundProperty = backgroundProperty ?? throw new ArgumentNullException("backgroundProperty");
 		}
 
 		protected override void OnPropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
-			if (e.PropertyName == VisualElement.BackgroundColorProperty.PropertyName || e.PropertyName == Page.BackgroundImageSourceProperty.PropertyName)
+			if (e.PropertyName == VisualElement.BackgroundColorProperty.PropertyName ||
+				e.PropertyName == VisualElement.BackgroundProperty.PropertyName ||
+				e.PropertyName == Page.BackgroundImageSourceProperty.PropertyName)
 			{
 				UpdateBackground();
 			}
@@ -53,16 +51,23 @@ namespace Xamarin.Forms.Platform.UWP
 			}
 			else
 			{
-				Color backgroundColor = Element.BackgroundColor;
-				if (!backgroundColor.IsDefault)
+				if (!Element.Background.IsEmpty)
 				{
-					element.SetValue(_backgroundProperty, backgroundColor.ToBrush());
+					element.SetValue(_backgroundProperty, Element.Background.ToBrush());
 				}
 				else
 				{
-					object localBackground = element.ReadLocalValue(_backgroundProperty);
-					if (localBackground != null && localBackground != DependencyProperty.UnsetValue)
-						element.ClearValue(_backgroundProperty);
+					Color backgroundColor = Element.BackgroundColor;
+					if (!backgroundColor.IsDefault)
+					{
+						element.SetValue(_backgroundProperty, backgroundColor.ToBrush());
+					}
+					else
+					{
+						object localBackground = element.ReadLocalValue(_backgroundProperty);
+						if (localBackground != null && localBackground != DependencyProperty.UnsetValue)
+							element.ClearValue(_backgroundProperty);
+					}
 				}
 			}
 

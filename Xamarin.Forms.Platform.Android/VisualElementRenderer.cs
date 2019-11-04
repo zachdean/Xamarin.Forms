@@ -29,6 +29,8 @@ namespace Xamarin.Forms.Platform.Android
 
 		GestureManager _gestureManager;
 
+		BackgroundDrawable _backgroundDrawable;
+
 		protected VisualElementRenderer(Context context) : base(context)
 		{
 			_gestureManager = new GestureManager(this);
@@ -218,6 +220,9 @@ namespace Xamarin.Forms.Platform.Android
 			if (element.BackgroundColor != currentColor)
 				UpdateBackgroundColor();
 
+			if (element.Background != null)
+				UpdateBackground();
+
 			if (_propertyChangeHandler == null)
 				_propertyChangeHandler = OnElementPropertyChanged;
 
@@ -303,6 +308,12 @@ namespace Xamarin.Forms.Platform.Android
 					_gestureManager = null;
 				}
 
+				if (_backgroundDrawable != null)
+				{
+					_backgroundDrawable.Dispose();
+					_backgroundDrawable = null;
+				}
+
 				if (ManageNativeControlLifetime)
 				{
 					int count = ChildCount;
@@ -349,6 +360,8 @@ namespace Xamarin.Forms.Platform.Android
 		{
 			if (e.PropertyName == VisualElement.BackgroundColorProperty.PropertyName)
 				UpdateBackgroundColor();
+			else if (e.PropertyName == VisualElement.BackgroundProperty.PropertyName)
+				UpdateBackground();
 			else if (e.PropertyName == AutomationProperties.HelpTextProperty.PropertyName)
 				SetContentDescription();
 			else if (e.PropertyName == AutomationProperties.NameProperty.PropertyName)
@@ -448,6 +461,17 @@ namespace Xamarin.Forms.Platform.Android
 		protected virtual void UpdateBackgroundColor()
 		{
 			SetBackgroundColor(Element.BackgroundColor.ToAndroid());
+		}
+
+		protected virtual void UpdateBackground()
+		{
+			if (Element.Background.IsEmpty)
+				return;
+
+			_backgroundDrawable = new BackgroundDrawable(Element);
+
+			Background?.Dispose();
+			Background = _backgroundDrawable;
 		}
 
 		internal virtual void SendVisualElementInitialized(VisualElement element, AView nativeView)
