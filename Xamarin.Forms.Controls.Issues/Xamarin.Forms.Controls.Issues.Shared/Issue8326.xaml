@@ -24,5 +24,10 @@
                 </Grid>
          </DataTemplate>
      </CollectionView.ItemTemplate>
+     <CollectionView.Footer>
+         <StackLayout BackgroundColor="Blue" Padding="65,100" Spacing="0">
+             <Label HorizontalOptions="Center" Text="Footer" FontSize="Large" FontAttributes="Bold" TextColor="White" />
+         </StackLayout>
+     </CollectionView.Footer>
  </CollectionView>
 </controls:TestContentPage>
