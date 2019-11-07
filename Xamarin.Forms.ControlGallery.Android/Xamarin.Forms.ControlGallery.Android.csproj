@@ -364,6 +364,11 @@
     <PackageReference Include="Xamarin.Android.Support.v7.Palette" Version="28.0.0.3" />
     <PackageReference Include="Xamarin.Android.Support.v7.RecyclerView" Version="28.0.0.3" />
     <PackageReference Include="Xamarin.Android.Support.Vector.Drawable" Version="28.0.0.3" />
+    <PackageReference Include="Xamarin.AndroidX.Migration" Version="1.0.0-preview05" />
+    <PackageReference Include="Xamarin.AndroidX.Browser" Version="1.0.0-preview02" />
+    <PackageReference Include="Xamarin.Google.Android.Material" Version="1.0.0-preview02" />
+    <PackageReference Include="Xamarin.AndroidX.Legacy.Support.V4" Version="1.0.0-preview02" />
+    <PackageReference Include="Xamarin.AndroidX.Palette" Version="1.0.0-preview02" />
   </ItemGroup>
   <ItemGroup>
     <AndroidAsset Include="Assets\fonts\ionicons.ttf">
