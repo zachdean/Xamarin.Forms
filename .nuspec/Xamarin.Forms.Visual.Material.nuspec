@@ -51,9 +51,9 @@
     <file src="..\Xamarin.Forms.Material.Android\bin\$Configuration$\monoandroid90\90\Xamarin.Forms.Material.*mdb" target="lib\MonoAndroid90" />
     
     <!--Android 10.0-->
-    <file src="..\Xamarin.Forms.Material.Android\bin\$Configuration$\monoandroid10.0\10.0\Xamarin.Forms.Material.dll" target="lib\MonoAndroid10.0" />
-    <file src="..\Xamarin.Forms.Material.Android\bin\$Configuration$\monoandroid10.0\10.0\Xamarin.Forms.Material.*pdb" target="lib\MonoAndroid10.0" />
-    <file src="..\Xamarin.Forms.Material.Android\bin\$Configuration$\monoandroid10.0\10.0\Xamarin.Forms.Material.*mdb" target="lib\MonoAndroid10.0" />
+    <file src="..\Xamarin.Forms.Material.Android\bin\$Configuration$\monoandroid10.0\100\Xamarin.Forms.Material.dll" target="lib\MonoAndroid10.0" />
+    <file src="..\Xamarin.Forms.Material.Android\bin\$Configuration$\monoandroid10.0\100\Xamarin.Forms.Material.*pdb" target="lib\MonoAndroid10.0" />
+    <file src="..\Xamarin.Forms.Material.Android\bin\$Configuration$\monoandroid10.0\100\Xamarin.Forms.Material.*mdb" target="lib\MonoAndroid10.0" />
 
     <!--iOS-->
     <file src="..\Xamarin.Forms.Material.iOS\bin\$Configuration$\Xamarin.Forms.Material.dll" target="lib\Xamarin.iOS10" />
