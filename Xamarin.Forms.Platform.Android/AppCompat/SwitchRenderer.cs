@@ -126,7 +126,7 @@ namespace Xamarin.Forms.Platform.Android.AppCompat
 				}
 				else
 				{
-					Control.TrackDrawable?.SetColorFilter(Element.OnColor.ToAndroid(), PorterDuff.Mode.Multiply);
+					Control.TrackDrawable?.SetColorFilter(Element.OnColor, FilterMode.Multiply);
 				}
 			}
 			else
@@ -140,7 +140,7 @@ namespace Xamarin.Forms.Platform.Android.AppCompat
 			if (Element == null)
 				return;
 
-			Control.ThumbDrawable.SetColorFilter(Element.ThumbColor, _defaultThumbColorFilter, PorterDuff.Mode.Multiply);
+			Control.ThumbDrawable.SetColorFilter(Element.ThumbColor, _defaultThumbColorFilter, FilterMode.Multiply);
 		}
 
 		void HandleToggled(object sender, EventArgs e)
