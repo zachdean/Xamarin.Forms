@@ -1,4 +1,6 @@
-﻿namespace Xamarin.Forms.Platform.Android
+﻿using System;
+
+namespace Xamarin.Forms.Platform.Android
 {
 	internal class UngroupedItemsSource : IGroupableItemsViewSource
 	{
@@ -11,8 +13,11 @@
 
 		public int Count => _source.Count;
 
+		public int ItemsCount => _source.ItemsCount;
+
 		public bool HasHeader { get => _source.HasHeader; set => _source.HasHeader = value; }
 		public bool HasFooter { get => _source.HasFooter; set => _source.HasFooter = value; }
+		public bool HasEmpty { get => _source.HasEmpty; set => _source.HasEmpty = value; }
 
 		public void Dispose()
 		{
@@ -47,6 +52,11 @@
 		public bool IsHeader(int position)
 		{
 			return _source.IsHeader(position);
+		}
+
+		public bool IsEmpty(int position)
+		{
+			return _source.IsEmpty(position);
 		}
 	}
 }

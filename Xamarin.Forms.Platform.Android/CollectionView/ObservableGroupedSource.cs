@@ -12,8 +12,8 @@ namespace Xamarin.Forms.Platform.Android
 		List<IItemsViewSource> _groups = new List<IItemsViewSource>();
 		bool _disposed;
 
-		bool _hasGroupHeaders;
-		bool _hasGroupFooters;
+		readonly bool _hasGroupHeaders;
+		readonly bool _hasGroupFooters;
 
 		public int Count
 		{
@@ -32,8 +32,24 @@ namespace Xamarin.Forms.Platform.Android
 			}
 		}
 
+		public int ItemsCount
+		{
+			get
+			{
+				var groupContents = 0;
+
+				for (int n = 0; n < _groups.Count; n++)
+				{
+					groupContents += _groups[n].Count;
+				}
+
+				return groupContents;
+			}
+		}
+
 		public bool HasHeader { get; set; }
 		public bool HasFooter { get; set; }
+		public bool HasEmpty { get; set; }
 
 		public ObservableGroupedSource(GroupableItemsView groupableItemsView, ICollectionChangedNotifier notifier)
 		{
@@ -71,6 +87,16 @@ namespace Xamarin.Forms.Platform.Android
 		public bool IsHeader(int position)
 		{
 			return HasHeader && position == 0;
+		}
+
+		public bool IsEmpty(int position)
+		{
+			if (!HasEmpty)
+			{
+				return false;
+			}
+
+			return HasHeader ? position == 1 : position == 0;
 		}
 
 		public bool IsGroupHeader(int position)

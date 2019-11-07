@@ -282,9 +282,9 @@ namespace Xamarin.Forms.Platform.Android
 			{
 				_emptyCollectionObserver.Stop(oldItemViewAdapter);
 				_itemsUpdateScrollObserver.Stop(oldItemViewAdapter);
-	
+
 				SetAdapter(null);
-	
+
 				SwapAdapter(ItemsViewAdapter, true);
 			}
 
@@ -482,22 +482,23 @@ namespace Xamarin.Forms.Platform.Android
 				return;
 			}
 
-			var emptyView = ItemsView?.EmptyView;
+   			var emptyView = ItemsView?.EmptyView;
 			var emptyViewTemplate = ItemsView?.EmptyViewTemplate;
+			bool hasEmptyView = emptyView != null || emptyViewTemplate != null;
 
-			if (emptyView != null || emptyViewTemplate != null)
+			if (ItemsView?.ItemsSource == null && hasEmptyView)
 			{
 				if (_emptyViewAdapter == null)
-				{
 					_emptyViewAdapter = new EmptyViewAdapter(ItemsView);
-				}
 
 				_emptyViewAdapter.EmptyView = emptyView;
 				_emptyViewAdapter.EmptyViewTemplate = emptyViewTemplate;
-
-				_emptyCollectionObserver.Start(ItemsViewAdapter);
-
 				_emptyViewAdapter.NotifyDataSetChanged();
+			}
+
+			if (hasEmptyView)
+			{
+				_emptyCollectionObserver.Start(ItemsViewAdapter);
 			}
 			else
 			{
@@ -604,31 +605,32 @@ namespace Xamarin.Forms.Platform.Android
 			{
 				return;
 			}
-
-			int itemCount = 0;
-			if(ItemsView is StructuredItemsView itemsView)
-			{
-				if (itemsView.Header != null || itemsView.HeaderTemplate != null)
-					itemCount++;
-				if (itemsView.Footer != null || itemsView.FooterTemplate != null)
-					itemCount++;
-			}
    
-			var showEmptyView = ItemsView?.EmptyView != null && ItemsViewAdapter.ItemCount == itemCount;
-
-			var currentAdapter = GetAdapter();
-			if (showEmptyView && currentAdapter != _emptyViewAdapter)
+			if(ItemsView?.ItemsSource == null)
 			{
-				SwapAdapter(_emptyViewAdapter, true);
+				var showEmptyView = ItemsView?.EmptyView != null && ItemsViewAdapter.ItemCount == 0;
 
-				// TODO hartez 2018/10/24 17:34:36 If this works, cache this layout manager as _emptyLayoutManager	
-				SetLayoutManager(new LinearLayoutManager(Context));
+				var currentAdapter = GetAdapter();
+				if (showEmptyView && currentAdapter != _emptyViewAdapter)
+				{
+					SwapAdapter(_emptyViewAdapter, true);
+
+					// TODO hartez 2018/10/24 17:34:36 If this works, cache this layout manager as _emptyLayoutManager	
+					SetLayoutManager(new LinearLayoutManager(Context));
+				}
+				else if (!showEmptyView && currentAdapter != ItemsViewAdapter)
+				{
+					SwapAdapter(ItemsViewAdapter, true);
+					UpdateLayoutManager();
+				}
+
+				return;
 			}
-			else if (!showEmptyView && currentAdapter != ItemsViewAdapter)
-			{
-				SwapAdapter(ItemsViewAdapter, true);
-				UpdateLayoutManager();
-			}
+
+			SetAdapter(null);
+			SwapAdapter(ItemsViewAdapter, true);
+			UpdateLayoutManager();
+			ItemsViewAdapter.UpdateHasEmpty();
 		}
 
 		internal void AdjustScrollForItemUpdate()

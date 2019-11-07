@@ -6,8 +6,11 @@ namespace Xamarin.Forms.Platform.Android
 	{
 		public int Count => 0;
 
+		public int ItemsCount => 0;
+
 		public bool HasHeader { get; set; }
 		public bool HasFooter { get; set; }
+		public bool HasEmpty { get; set; }
 
 		public void Dispose()
 		{
@@ -22,6 +25,23 @@ namespace Xamarin.Forms.Platform.Android
 		public bool IsFooter(int index)
 		{
 			if (!HasFooter)
+			{
+				return false;
+			}
+
+			if (HasHeader)
+			{
+				if (!HasEmpty)
+					return index == 1;
+				return index == 2;
+			}
+
+			return index == 0;
+		}
+
+		public bool IsEmpty(int index)
+		{
+			if (!HasEmpty)
 			{
 				return false;
 			}

@@ -6,7 +6,7 @@ namespace Xamarin.Forms.Platform.Android
 {
 	sealed class ListSource : IItemsViewSource, IList
 	{
-		IList _itemsSource;
+		readonly IList _itemsSource;
 
 		public ListSource()
 		{
@@ -26,10 +26,13 @@ namespace Xamarin.Forms.Platform.Android
 			}
 		}
 
-		public int Count => _itemsSource.Count + (HasHeader ? 1 : 0) + (HasFooter ? 1 : 0);
+		public int Count => _itemsSource.Count + (HasHeader ? 1 : 0) + (HasFooter ? 1 : 0) + (HasEmpty ? 1 : 0);
+
+		public int ItemsCount => _itemsSource.Count;
 
 		public bool HasHeader { get; set; }
 		public bool HasFooter { get; set; }
+		public bool HasEmpty { get; set; }
 
 		public bool IsReadOnly => _itemsSource.IsReadOnly;
 
@@ -54,6 +57,11 @@ namespace Xamarin.Forms.Platform.Android
 		public bool IsHeader(int index)
 		{
 			return HasHeader && index == 0;
+		}
+
+		public bool IsEmpty(int index)
+		{
+			return HasEmpty && (HasHeader ? index == 1 : index == 0);
 		}
 
 		public int GetPosition(object item)

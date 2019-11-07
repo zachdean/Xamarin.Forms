@@ -3,6 +3,7 @@ using Android.Content;
 using Android.Support.V7.Widget;
 using Android.Views;
 using Android.Widget;
+using ATextAlignment = Android.Views.TextAlignment;
 
 namespace Xamarin.Forms.Platform.Android
 {
@@ -20,16 +21,32 @@ namespace Xamarin.Forms.Platform.Android
 			itemsView.RemoveLogicalChild(View);
 		}
 
+		public static SimpleViewHolder FromText(string text, Context context, Func<int> width, Func<int> height)
+		{
+			var textView = new TextView(context) { TextAlignment = ATextAlignment.Center, Text = text };
+
+			var targetWidth = width();
+			var targetHeight = height();
+      
+   			var layoutParams = new ViewGroup.LayoutParams(targetWidth, targetHeight);
+   			textView.LayoutParameters = layoutParams;
+
+			textView.Gravity = GravityFlags.Center;
+
+			return new SimpleViewHolder(textView, null);
+		}
+
 		public static SimpleViewHolder FromText(string text, Context context, bool fill = true)
 		{
-			var textView = new TextView(context) { Text = text };
+			var textView = new TextView(context) { TextAlignment = ATextAlignment.Center, Text = text };
+
 			if (fill)
 			{
 				var layoutParams = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MatchParent,
 					ViewGroup.LayoutParams.MatchParent);
 				textView.LayoutParameters = layoutParams;
 			}
-			
+
 			textView.Gravity = GravityFlags.Center;
 
 			return new SimpleViewHolder(textView, null);

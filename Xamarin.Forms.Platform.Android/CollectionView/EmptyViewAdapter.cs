@@ -92,7 +92,7 @@ namespace Xamarin.Forms.Platform.Android
 				if (!(EmptyView is View formsView))
 				{
 					// No template, EmptyView is not a Forms View, so just display EmptyView.ToString
-					return SimpleViewHolder.FromText(EmptyView?.ToString(), context);
+					return SimpleViewHolder.FromText(EmptyView?.ToString(), context, () => parent.Width, () => parent.Height);
 				}
 
 				// EmptyView is a Forms View; display that

@@ -17,10 +17,13 @@ namespace Xamarin.Forms.Platform.Android
 			((INotifyCollectionChanged)itemSource).CollectionChanged += CollectionChanged;
 		}
 
-		public int Count => _itemsSource.Count + (HasHeader ? 1 : 0) + (HasFooter ? 1 : 0);
+		public int Count => _itemsSource.Count + (HasHeader ? 1 : 0) + (HasFooter ? 1 : 0) + (HasEmpty ? 1 : 0);
+
+		public int ItemsCount => _itemsSource.Count;
 
 		public bool HasHeader { get; set; }
 		public bool HasFooter { get; set; }
+		public bool HasEmpty { get; set; }
 
 		public void Dispose()
 		{
@@ -37,6 +40,11 @@ namespace Xamarin.Forms.Platform.Android
 			return HasHeader && index == 0;
 		}
 
+		public bool IsEmpty(int index)
+		{
+			return HasEmpty && (HasHeader ? index == 1 : index == 0);
+		}
+  
 		public int GetPosition(object item)
 		{
 			for (int n = 0; n < _itemsSource.Count; n++)
@@ -52,6 +60,9 @@ namespace Xamarin.Forms.Platform.Android
 
 		public object GetItem(int position)
 		{
+			if (_itemsSource.Count == 0)
+				return null;
+
 			return _itemsSource[AdjustIndexForHeader(position)];
 		}
 

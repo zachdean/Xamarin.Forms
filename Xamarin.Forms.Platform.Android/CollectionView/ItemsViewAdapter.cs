@@ -100,7 +100,7 @@ namespace Xamarin.Forms.Platform.Android
 			{
 				return ItemViewType.TemplatedItem;
 			}
-		
+
 			// No template, just use the Text view
 			return ItemViewType.TextItem;
 		}
@@ -136,6 +136,11 @@ namespace Xamarin.Forms.Platform.Android
 			{
 				templatedItemViewHolder.Bind(context, ItemsView);
 			}
+		}
+
+		public virtual void UpdateHasEmpty()
+		{
+		
 		}
 
 		void UpdateItemsSource()
