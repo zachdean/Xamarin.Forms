@@ -50,7 +50,6 @@ namespace Xamarin.Forms
 
 	public static class Forms
 	{
-
 		const int TabletCrossover = 600;
 
 		static bool? s_isLollipopOrNewer;
@@ -72,6 +71,7 @@ namespace Xamarin.Forms
 		public static Color ColorButtonNormalOverride { get; set; }
 
 		internal static BuildVersionCodes SdkInt => Anticipator.SdkInt;
+	
 		internal static bool IsLollipopOrNewer
 		{
 			get
@@ -237,10 +237,13 @@ namespace Xamarin.Forms
 				ResourceManager.Init(resourceAssembly);
 			}
 
-			Profile.FramePartition("Color.SetAccent()");
+			Profile.FramePartition("GetAccentColor");
+			var accentColor = GetAccentColor(activity);
+
+			Profile.FramePartition("GetAccentColor");
 			// We want this to be updated when we have a new activity (e.g. on a configuration change)
 			// This could change if the UI mode changes (e.g., if night mode is enabled)
-			Color.SetAccent(GetAccentColor(activity));
+			Color.SetAccent(accentColor);
 			_ColorButtonNormalSet = false;
 
 			if (!IsInitialized)
@@ -273,8 +276,6 @@ namespace Xamarin.Forms
 			Profile.FramePartition("AndroidTicker");
 			Ticker.SetDefault(null);
 
-			Profile.FramePartition("RegisterAll");
-
 			if (!IsInitialized)
 			{
 				if (maybeOptions.HasValue)
@@ -285,11 +286,13 @@ namespace Xamarin.Forms
 					var effectScopes = options.EffectScopes;
 
 					// renderers
+					Profile.FramePartition("RegisterRenderers");
 					Registrar.RegisterRenderers(handlers);
 
 					// effects
 					if (effectScopes != null)
 					{
+						Profile.FramePartition("RegisterEffects");
 						for (var i = 0; i < effectScopes.Length; i++)
 						{
 							var effectScope = effectScopes[0];
@@ -300,7 +303,10 @@ namespace Xamarin.Forms
 					// css
 					var noCss = (flags & InitializationFlags.DisableCss) != 0;
 					if (!noCss)
+					{
+						Profile.FramePartition("RegisterStylesheets");
 						Registrar.RegisterStylesheets();
+					}
 				}
 				else
 				{
@@ -354,11 +360,11 @@ namespace Xamarin.Forms
 			Color rc;
 			using (var value = new TypedValue())
 			{
-				if (context.Theme.ResolveAttribute(global::Android.Resource.Attribute.ColorAccent, value, true) && Forms.IsLollipopOrNewer) // Android 5.0+
+				if (IsLollipopOrNewer && Anticipator.HasResource(context, Resource.Attribute.ColorAccent)) // Android 5.0+
 				{
 					rc = Color.FromUint((uint)value.Data);
 				}
-				else if (context.Theme.ResolveAttribute(context.Resources.GetIdentifier("colorAccent", "attr", context.PackageName), value, true))  // < Android 5.0
+				else if (Anticipator.HasResource(context, "colorAccent", "attr"))  // < Android 5.0
 				{
 					rc = Color.FromUint((uint)value.Data);
 				}
