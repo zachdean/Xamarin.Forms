@@ -6,6 +6,7 @@ using WBrush = Windows.UI.Xaml.Media.Brush;
 using WSolidColorBrush = Windows.UI.Xaml.Media.SolidColorBrush;
 using WGradientStop = Windows.UI.Xaml.Media.GradientStop;
 using WLinearGradientBrush = Windows.UI.Xaml.Media.LinearGradientBrush;
+using WPoint = Windows.Foundation.Point;
 
 namespace Xamarin.Forms.Platform.UWP
 {
@@ -58,13 +59,26 @@ namespace Xamarin.Forms.Platform.UWP
 				var x2 = p2.X;
 				var y2 = p2.Y;
 
-				var deltaX = Math.Pow(x2 - x1, 2);
-				var deltaY = Math.Pow(y2 - y1, 2);
-
 				var radians = Math.Atan2(y2 - y1, x2 - x1);
 				var angle = radians * (180 / Math.PI);
 
 				return new WLinearGradientBrush(gradientStopCollection, angle);
+			}
+
+			if (brush is Xamarin.Forms.RadialGradientBrush radialGradientBrush)
+			{
+				var orderedStops = radialGradientBrush.GradientStops.OrderBy(x => x.Offset).ToList();
+				var gradientStopCollection = new GradientStopCollection();
+
+				foreach (var item in orderedStops)
+					gradientStopCollection.Add(new WGradientStop { Offset = item.Offset, Color = item.Color.ToWindowsColor() });
+
+				return new RadialGradientBrush(gradientStopCollection)
+				{
+					Center = new WPoint(radialGradientBrush.Center.X, radialGradientBrush.Center.Y),
+					RadiusX = radialGradientBrush.RadiusX,
+					RadiusY = radialGradientBrush.RadiusY
+				};
 			}
 
 			return null;

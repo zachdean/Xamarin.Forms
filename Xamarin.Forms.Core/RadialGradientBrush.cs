@@ -21,7 +21,7 @@
 		}
 
 		public static readonly BindableProperty RadiusXProperty = BindableProperty.Create(
-			nameof(RadiusX), typeof(double), typeof(RadialGradientBrush), default(Point));
+			nameof(RadiusX), typeof(double), typeof(RadialGradientBrush), default(double));
 
 		public double RadiusX
 		{
@@ -30,7 +30,7 @@
 		}
 
 		public static readonly BindableProperty RadiusYProperty = BindableProperty.Create(
-			nameof(RadiusY), typeof(double), typeof(RadialGradientBrush), default(Point));
+			nameof(RadiusY), typeof(double), typeof(RadialGradientBrush), default(double));
 
 		public double RadiusY
 		{

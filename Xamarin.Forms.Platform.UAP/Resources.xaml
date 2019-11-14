@@ -27,8 +27,9 @@
 	<uwp:PageToRenderedElementConverter x:Key="PageToRenderer" />
 	<uwp:ImageConverter x:Key="ImageConverter" />
 	<uwp:ViewToRendererConverter x:Key="ViewToRenderer" />
-	<uwp:ColorConverter x:Key="ColorConverter" />
-	<uwp:HorizontalTextAlignmentConverter x:Key="HorizontalTextAlignmentConverter" />
+    <uwp:ColorConverter x:Key="ColorConverter" />
+    <uwp:BrushConverter x:Key="BrushConverter" />
+    <uwp:HorizontalTextAlignmentConverter x:Key="HorizontalTextAlignmentConverter" />
 	<uwp:TextAlignmentToHorizontalAlignmentConverter x:Key="AlignmentConverter" />
 	<uwp:KeyboardConverter x:Key="KeyboardConverter" />
 	<uwp:MasterBackgroundConverter x:Key="MasterBackgroundConverter" />

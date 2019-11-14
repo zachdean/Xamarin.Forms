@@ -48,7 +48,7 @@ namespace Xamarin.Forms.Platform.UWP
 		{
 			base.UpdateBackgroundColor();
 
-			if (Children.Count == 0 && !Element.Background.IsEmpty)
+			if (!Element.Background.IsEmpty)
 				Background = Element.Background.ToBrush();
 		}
 

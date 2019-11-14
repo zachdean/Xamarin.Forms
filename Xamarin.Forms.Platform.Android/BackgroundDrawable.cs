@@ -14,15 +14,20 @@ namespace Xamarin.Forms.Platform.Android
 		Bitmap _normalBitmap;
 		bool _isDisposed;
 
-		public override int Opacity
-		{
-			get { return 0; }
-		}
-
 		public BackgroundDrawable(VisualElement element)
 		{
 			_element = element;
-			_element.PropertyChanged += PancakeViewOnPropertyChanged;
+			_element.PropertyChanged += OnViewOnPropertyChanged;
+		}
+
+		public override bool IsStateful
+		{
+			get { return false; }
+		}
+
+		public override int Opacity
+		{
+			get { return 0; }
 		}
 
 		public override void Draw(ACanvas canvas)
@@ -55,7 +60,7 @@ namespace Xamarin.Forms.Platform.Android
 			}
 		}
 
-		private void DisposeBitmap()
+		void DisposeBitmap()
 		{
 			if (_normalBitmap != null)
 			{
@@ -116,17 +121,22 @@ namespace Xamarin.Forms.Platform.Android
 					if (_element.Background is LinearGradientBrush linearGradientBrush)
 					{
 						var p1 = linearGradientBrush.StartPoint;
+						var x1 = p1.X;
+						var y1 = p1.Y;
+
 						var p2 = linearGradientBrush.EndPoint;
-						var xDiff = p2.X - p1.X;
-						var yDiff = p2.Y - p1.Y;
-						var angle = Math.Atan2(yDiff, xDiff) * 180.0 / Math.PI;
+						var x2 = p2.X;
+						var y2 = p2.Y;
 
-						var a = width * Math.Pow(Math.Sin(2 * Math.PI * ((angle + 0.75) / 2)), 2);
-						var b = height * Math.Pow(Math.Sin(2 * Math.PI * ((angle + 0.0) / 2)), 2);
-						var c = width * Math.Pow(Math.Sin(2 * Math.PI * ((angle + 0.25) / 2)), 2);
-						var d = height * Math.Pow(Math.Sin(2 * Math.PI * ((angle + 0.5) / 2)), 2);
+						var radians = Math.Atan2(y2 - y1, x2 - x1);
+						var angle = radians * (180 / Math.PI);
 
-						var orderedStops = linearGradientBrush.GradientStops.OrderBy(x => x.Offset).ToList();
+						var a = width * Math.Pow(Math.Sin(2 * Math.PI * ((angle + 0.00) / 2)), 2);
+						var b = height * Math.Pow(Math.Sin(2 * Math.PI * ((angle + 0.75) / 2)), 2);
+						var c = width * Math.Pow(Math.Sin(2 * Math.PI * ((angle + 0.5) / 2)), 2);
+						var d = height * Math.Pow(Math.Sin(2 * Math.PI * ((angle + 0.25) / 2)), 2);
+
+						var orderedStops = linearGradientBrush.GradientStops.Distinct().OrderBy(x => x.Offset).ToList();
 						var colors = orderedStops.Select(x => x.Color.ToAndroid().ToArgb()).ToArray();
 						var locations = orderedStops.Select(x => x.Offset).ToArray();
 
@@ -137,15 +147,16 @@ namespace Xamarin.Forms.Platform.Android
 					if(_element.Background is RadialGradientBrush radialGradientBrush)
 					{
 						var center = radialGradientBrush.GradientOrigin;
-						float x = (float)center.X;
-						float y = (float)center.Y;
-						float radius = (float)radialGradientBrush.RadiusX;
+						float centerX = width * (float)center.X;
+						float centerY = height * (float)center.Y;
+						float radius = (width * (float)radialGradientBrush.RadiusX +
+							height * (float)radialGradientBrush.RadiusY) / 2;
 
-						var orderedStops = radialGradientBrush.GradientStops.OrderBy(b => b.Offset).ToList();
+						var orderedStops = radialGradientBrush.GradientStops.Distinct().OrderBy(b => b.Offset).ToList();
 						var colors = orderedStops.Select(s => s.Color.ToAndroid().ToArgb()).ToArray();
 						var locations = orderedStops.Select(c => c.Offset).ToArray();
 
-						var shader = new RadialGradient(x, y, radius, colors, locations, Shader.TileMode.Clamp);
+						var shader = new RadialGradient(centerX, centerY, radius, colors, locations, Shader.TileMode.Clamp);
 						paint.SetShader(shader);
 					}
 				}
@@ -160,7 +171,7 @@ namespace Xamarin.Forms.Platform.Android
 			}
 		}
 
-		void PancakeViewOnPropertyChanged(object sender, PropertyChangedEventArgs e)
+		void OnViewOnPropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
 			if (e.PropertyName == VisualElement.BackgroundProperty.PropertyName)
 			{
@@ -192,7 +203,7 @@ namespace Xamarin.Forms.Platform.Android
 
 				if (_element != null)
 				{
-					_element.PropertyChanged -= PancakeViewOnPropertyChanged;
+					_element.PropertyChanged -= OnViewOnPropertyChanged;
 				}
 
 				_isDisposed = true;

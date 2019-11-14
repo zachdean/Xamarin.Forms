@@ -468,10 +468,10 @@ namespace Xamarin.Forms.Platform.Android
 			if (Element.Background.IsEmpty)
 				return;
 
-			_backgroundDrawable = new BackgroundDrawable(Element);
+			if (_backgroundDrawable == null)
+				_backgroundDrawable = new BackgroundDrawable(Element);
 
-			Background?.Dispose();
-			Background = _backgroundDrawable;
+			this.SetBackground(_backgroundDrawable);
 		}
 
 		internal virtual void SendVisualElementInitialized(VisualElement element, AView nativeView)

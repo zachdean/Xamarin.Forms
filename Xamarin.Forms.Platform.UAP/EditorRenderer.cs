@@ -88,6 +88,10 @@ namespace Xamarin.Forms.Platform.UWP
 			{
 				UpdateTextColor();
 			}
+			else if (e.PropertyName == VisualElement.BackgroundProperty.PropertyName)
+			{
+				UpdateBackground();
+			}
 			else if (e.PropertyName == InputView.KeyboardProperty.PropertyName)
 			{
 				UpdateInputScope();

@@ -54,9 +54,12 @@ namespace Xamarin.Forms.Platform.Android
 				return;
 
 			var background = Element.Background;
+
 			if (background != null)
 			{
-				_backgroundDrawable = new BackgroundDrawable(Element);
+				if (_backgroundDrawable == null)
+					_backgroundDrawable = new BackgroundDrawable(Element);
+
 				Control.SetBackground(_backgroundDrawable);
 			}
 		}

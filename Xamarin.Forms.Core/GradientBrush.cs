@@ -6,7 +6,7 @@ namespace Xamarin.Forms
 	public class GradientBrush : Brush
 	{
 		public static readonly BindableProperty GradientStopsProperty = BindableProperty.Create(
-			nameof(GradientStops), typeof(IList<GradientStop>), typeof(GradientBrush), null);
+			nameof(GradientStops), typeof(IList<GradientStop>), typeof(GradientBrush), new List<GradientStop>());
 
 		public IList<GradientStop> GradientStops
 		{

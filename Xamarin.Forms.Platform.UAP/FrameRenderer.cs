@@ -69,8 +69,13 @@ namespace Xamarin.Forms.Platform.UWP
 
 		protected override void UpdateBackground()
 		{
-			if (!Element.Background.IsEmpty)
+			if (Element.Background.IsEmpty)
+				return;
+
+			if (Control != null)
+			{
 				Control.Background = Element.Background.ToBrush();
+			}
 		}
 
 		void PackChild()

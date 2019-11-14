@@ -39,6 +39,7 @@ namespace Xamarin.Forms.Platform.Android
 		ScrollBarVisibility _defaultVerticalScrollVisibility = ScrollBarVisibility.Default;
 
 		RecyclerView.ItemDecoration _itemDecoration;
+		BackgroundDrawable _backgroundDrawable;
 
 		public ItemsViewRenderer(Context context) : base(new ContextThemeWrapper(context, Resource.Style.collectionViewStyle))
 		{
@@ -143,6 +144,12 @@ namespace Xamarin.Forms.Platform.Android
 				_automationPropertiesProvider?.Dispose();
 				Tracker?.Dispose();
 
+				if (_backgroundDrawable != null)
+				{
+					_backgroundDrawable.Dispose();
+					_backgroundDrawable = null;
+				}
+
 				if (Element != null)
 				{
 					TearDownOldElement(Element as ItemsView);
@@ -218,6 +225,10 @@ namespace Xamarin.Forms.Platform.Android
 			else if (changedProperty.Is(VisualElement.BackgroundColorProperty))
 			{
 				UpdateBackgroundColor();
+			}
+			else if (changedProperty.Is(VisualElement.BackgroundProperty))
+			{
+				UpdateBackground(Element.Background);
 			}
 			else if (changedProperty.Is(VisualElement.FlowDirectionProperty))
 			{
@@ -318,6 +329,7 @@ namespace Xamarin.Forms.Platform.Android
 
 			UpdateSnapBehavior();
 			UpdateBackgroundColor();
+			UpdateBackground(Element.Background);
 			UpdateFlowDirection();
 			UpdateItemSpacing();
 
@@ -461,6 +473,20 @@ namespace Xamarin.Forms.Platform.Android
 			}
 
 			SetBackgroundColor((color ?? Element.BackgroundColor).ToAndroid());
+		}
+
+		protected virtual void UpdateBackground(Brush brush)
+		{
+			if (Element == null)
+				return;
+
+			if (brush.IsEmpty)
+				return;
+
+			if (_backgroundDrawable == null)
+				_backgroundDrawable = new BackgroundDrawable(Element);
+
+			this.SetBackground(_backgroundDrawable);
 		}
 
 		protected virtual void UpdateFlowDirection()

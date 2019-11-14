@@ -61,6 +61,7 @@ namespace Xamarin.Forms.Platform.UWP
 			_defaultBrush = Control.Foreground;
 			_defaultFontFamily = Control.FontFamily;
 			UpdateFont();
+			UpdateBackground();
 			UpdateTextColor();
 		}
 
@@ -88,6 +89,8 @@ namespace Xamarin.Forms.Platform.UWP
 				UpdateMaximumDate();
 			else if (e.PropertyName == DatePicker.MinimumDateProperty.PropertyName)
 				UpdateMinimumDate();
+			else if (e.PropertyName == DatePicker.BackgroundProperty.PropertyName)
+				UpdateBackground();
 			else if (e.PropertyName == DatePicker.TextColorProperty.PropertyName)
 				UpdateTextColor();
 			else if (e.PropertyName == DatePicker.CharacterSpacingProperty.PropertyName)
@@ -96,6 +99,12 @@ namespace Xamarin.Forms.Platform.UWP
 				UpdateFlowDirection();
 			else if (e.PropertyName == DatePicker.FontAttributesProperty.PropertyName || e.PropertyName == DatePicker.FontFamilyProperty.PropertyName || e.PropertyName == DatePicker.FontSizeProperty.PropertyName)
 				UpdateFont();
+		}
+
+		protected override void UpdateBackground()
+		{
+			if (!Element.Background.IsEmpty)
+				Control.Background = Element.Background.ToBrush();
 		}
 
 		protected override bool PreventGestureBubbling { get; set; } = true;

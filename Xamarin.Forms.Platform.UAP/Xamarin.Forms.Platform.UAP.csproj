@@ -41,6 +41,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="AccessibilityExtensions.cs" />
+    <Compile Include="BrushConverter.cs" />
     <Compile Include="CollectionView\CarouselViewRenderer.cs" />
     <Compile Include="CollectionView\FormsListView.cs" />
     <Compile Include="CollectionView\IEmptyView.cs" />
@@ -100,6 +101,8 @@
     <Compile Include="PlatformConfigurationExtensions.cs" />
     <Compile Include="PlatformEffect.cs" />
     <Compile Include="PropertyChangedEventArgsExtensions.cs" />
+    <Compile Include="RadialGradientBrush.cs" />
+    <Compile Include="RadialGradientBrushInterop.cs" />
     <Compile Include="RefreshViewRenderer.cs" />
     <Compile Include="Shell\ShellHeaderRenderer.cs" />
     <Compile Include="Shell\ShellItemRenderer.cs" />

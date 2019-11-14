@@ -19,33 +19,33 @@
 							</VisualStateGroup>
 						</VisualStateManager.VisualStateGroups>
 						<uwp:FormsTextBox x:Name="TextBox"
-                      Style="{TemplateBinding TextBoxStyle}"
-                      FontFamily="{TemplateBinding FontFamily}"
-                      FontSize="{TemplateBinding FontSize}"
-                      FontStyle="{TemplateBinding FontStyle}"
-                      PlaceholderText="{TemplateBinding PlaceholderText}"
-                      Header="{TemplateBinding Header}"
-                      Width="{TemplateBinding Width}"
-                      ScrollViewer.BringIntoViewOnFocusChange="False"
-                      Canvas.ZIndex="0"
-                      Margin="0"
-                      DesiredCandidateWindowAlignment="BottomEdge"/>
+                            Style="{TemplateBinding TextBoxStyle}"
+                            FontFamily="{TemplateBinding FontFamily}"
+                            FontSize="{TemplateBinding FontSize}"
+                            FontStyle="{TemplateBinding FontStyle}"
+                            PlaceholderText="{TemplateBinding PlaceholderText}"
+                            Header="{TemplateBinding Header}"
+                            Width="{TemplateBinding Width}"
+                            ScrollViewer.BringIntoViewOnFocusChange="False"
+                            Canvas.ZIndex="0"
+                            Margin="0"
+                            DesiredCandidateWindowAlignment="BottomEdge"/>
 						<Popup x:Name="SuggestionsPopup">
 							<Border x:Name="SuggestionsContainer">
 								<Border.RenderTransform>
 									<TranslateTransform x:Name="UpwardTransform"/>
 								</Border.RenderTransform>
 								<ListView x:Name="SuggestionsList"
-                          Background="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}"
-                          BorderThickness="{ThemeResource AutoSuggestListBorderThemeThickness}"
-                          BorderBrush="{ThemeResource SystemControlForegroundBaseMediumLowBrush}"
-                          DisplayMemberPath="{TemplateBinding DisplayMemberPath}"
-                          IsItemClickEnabled="True"
-                          ItemTemplate="{TemplateBinding ItemTemplate}"
-                          ItemTemplateSelector="{TemplateBinding ItemTemplateSelector}"
-                          ItemContainerStyle="{TemplateBinding ItemContainerStyle}"
-                          MaxHeight="{ThemeResource AutoSuggestListMaxHeight}"
-                          Margin="{ThemeResource AutoSuggestListMargin}">
+                                    Background="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}"
+                                    BorderThickness="{ThemeResource AutoSuggestListBorderThemeThickness}"
+                                    BorderBrush="{ThemeResource SystemControlForegroundBaseMediumLowBrush}"
+                                    DisplayMemberPath="{TemplateBinding DisplayMemberPath}"
+                                    IsItemClickEnabled="True"
+                                    ItemTemplate="{TemplateBinding ItemTemplate}"
+                                    ItemTemplateSelector="{TemplateBinding ItemTemplateSelector}"
+                                    ItemContainerStyle="{TemplateBinding ItemContainerStyle}"
+                                    MaxHeight="{ThemeResource AutoSuggestListMaxHeight}"
+                                    Margin="{ThemeResource AutoSuggestListMargin}">
 									<ListView.ItemContainerTransitions>
 										<TransitionCollection />
 									</ListView.ItemContainerTransitions>

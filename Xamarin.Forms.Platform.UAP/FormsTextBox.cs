@@ -7,7 +7,6 @@ using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
 using WBrush = Windows.UI.Xaml.Media.Brush;
 using WVisualStateManager = Windows.UI.Xaml.VisualStateManager;
 

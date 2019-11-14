@@ -24,6 +24,8 @@ namespace Xamarin.Forms.Platform.UWP
 
 		public static readonly DependencyProperty ButtonBackgroundColorProperty = DependencyProperty.Register(nameof(ButtonBackgroundColor), typeof(Color), typeof(StepperControl), new PropertyMetadata(default(Color), OnButtonBackgroundColorChanged));
 
+		public static readonly DependencyProperty ButtonBackgroundProperty = DependencyProperty.Register(nameof(ButtonBackground), typeof(Brush), typeof(StepperControl), new PropertyMetadata(default(Brush), OnButtonBackgroundChanged));
+
 		Windows.UI.Xaml.Controls.Button _plus;
 		Windows.UI.Xaml.Controls.Button _minus;
 		VisualStateCache _plusStateCache;
@@ -64,6 +66,12 @@ namespace Xamarin.Forms.Platform.UWP
 			set { SetValue(ButtonBackgroundColorProperty, value); }
 		}
 
+		public Brush ButtonBackground
+		{
+			get { return (Brush)GetValue(ButtonBackgroundProperty); }
+			set { SetValue(ButtonBackgroundProperty, value); }
+		}
+
 		public event EventHandler ValueChanged;
 
 		protected override void OnApplyTemplate()
@@ -86,6 +94,12 @@ namespace Xamarin.Forms.Platform.UWP
 		{
 			var stepper = (StepperControl)d;
 			stepper.UpdateButtonBackgroundColor(stepper.ButtonBackgroundColor);
+		}
+
+		static void OnButtonBackgroundChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+		{
+			var stepper = (StepperControl)d;
+			stepper.UpdateButtonBackground(stepper.ButtonBackground);
 		}
 
 		static void OnIncrementChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -211,6 +225,17 @@ namespace Xamarin.Forms.Platform.UWP
 		void UpdateButtonBackgroundColor(Color value)
 		{
 			WBrush brush = value.ToBrush();
+			_minus = GetTemplateChild("Minus") as Windows.UI.Xaml.Controls.Button;
+			_plus = GetTemplateChild("Plus") as Windows.UI.Xaml.Controls.Button;
+			if (_minus != null)
+				_minus.Background = brush;
+			if (_plus != null)
+				_plus.Background = brush;
+		}
+
+		void UpdateButtonBackground(Brush value)
+		{
+			var brush = value.ToBrush();
 			_minus = GetTemplateChild("Minus") as Windows.UI.Xaml.Controls.Button;
 			_plus = GetTemplateChild("Plus") as Windows.UI.Xaml.Controls.Button;
 			if (_minus != null)
