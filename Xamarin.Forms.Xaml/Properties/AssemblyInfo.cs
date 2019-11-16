@@ -9,7 +9,7 @@ using Xamarin.Forms.Internals;
 [assembly: InternalsVisibleTo("Xamarin.Forms.Loader")]// Xamarin.Forms.Loader.dll Xamarin.Forms.Xaml.XamlLoader.Load(object, string), kzu@microsoft.com
 [assembly: InternalsVisibleTo("Xamarin.HotReload.Forms")]
 [assembly: InternalsVisibleTo("Xamarin.HotReload.UnitTests")]
-[assembly: Preserve]
+
 
 [assembly: XmlnsDefinition("http://xamarin.com/schemas/2014/forms", "Xamarin.Forms.Xaml")]
 [assembly: XmlnsDefinition("http://xamarin.com/schemas/2014/forms/design", "Xamarin.Forms.Xaml")]

@@ -7,4 +7,3 @@ using Xamarin.Forms.Maps.MacOS;
 [assembly: AssemblyTitle("Xamarin.Forms.Maps.macOS")]
 
 [assembly: ExportRenderer(typeof(Map), typeof(MapRenderer))]
-[assembly: Preserve]
