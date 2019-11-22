@@ -18,7 +18,7 @@
 						</Grid.RowDefinitions>
 
 						<Border x:Name="TopCommandBarArea" HorizontalAlignment="Stretch" Background="{TemplateBinding ToolbarBackground}">
-							<uwp:FormsCommandBar x:Name="CommandBar" Background="{TemplateBinding ToolbarBackground}" MinHeight="{ThemeResource TitleBarHeight}" HorizontalAlignment="Stretch">
+							<uwp:FormsCommandBar x:Name="CommandBar" Background="{TemplateBinding ToolbarBackground}" HorizontalAlignment="Stretch">
 								<uwp:FormsCommandBar.Content>
 									<Border x:Name="TitleArea" Height="{ThemeResource TitleBarHeight}" Visibility="{TemplateBinding TitleVisibility}" HorizontalAlignment="Stretch">
 										<Grid x:Name="TitleViewPresenter" VerticalAlignment="Center" Background="{TemplateBinding ToolbarBackground}" HorizontalAlignment="Stretch">
