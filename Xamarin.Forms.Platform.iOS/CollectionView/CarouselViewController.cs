@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using CoreGraphics;
 using Foundation;
 using UIKit;
 
@@ -9,7 +7,7 @@ namespace Xamarin.Forms.Platform.iOS
 {
 	public class CarouselViewController : ItemsViewController<CarouselView>
 	{
-		CarouselView _carouselView;
+		readonly CarouselView _carouselView;
 		bool _viewInitialized;
 
 		public CarouselViewController(CarouselView itemsView, ItemsViewLayout layout) : base(itemsView, layout)
@@ -82,6 +80,34 @@ namespace Xamarin.Forms.Platform.iOS
 		internal void UpdateIsScrolling(bool isScrolling)
 		{
 			_carouselView.IsScrolling = isScrolling;
+		}
+
+		internal void UpdateVisibleItems()
+		{
+			int firstVisibleItemIndex = -1;
+			int lastVisibleItemIndex = -1;
+
+			var indexPathsForVisibleItems = CollectionView.IndexPathsForVisibleItems.OrderBy(x => x.Row).ToList();
+
+			if (indexPathsForVisibleItems.Count == 0)
+				return;
+
+			firstVisibleItemIndex = (int)indexPathsForVisibleItems.First().Item;
+			lastVisibleItemIndex = (int)indexPathsForVisibleItems.Last().Item;
+
+			var visibleItems = new List<object>();
+
+			if (firstVisibleItemIndex != -1 && lastVisibleItemIndex != -1)
+			{
+				for (int i = firstVisibleItemIndex; i <= lastVisibleItemIndex; i++)
+				{
+					var indexPath = NSIndexPath.Create(0, i);
+					var item = GetItemAtIndex(indexPath);
+					visibleItems.Add(item);
+				}
+			}
+
+			_carouselView.SetVisibleItems(visibleItems);
 		}
 
 		void UpdateInitialPosition()

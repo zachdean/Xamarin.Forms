@@ -24,6 +24,7 @@ namespace Xamarin.Forms.Platform.iOS
 			{
 				(Controller.Layout as CarouselViewLayout).UpdateConstraints(Frame.Size);
 				Controller.Layout.InvalidateLayout();
+				Controller.UpdateVisibleItems();
 			}
 			else if (changedProperty.Is(CarouselView.IsSwipeEnabledProperty))
 				UpdateIsSwipeEnabled();

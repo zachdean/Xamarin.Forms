@@ -208,7 +208,7 @@ namespace Xamarin.Forms.Platform.iOS
 			return ItemsSource.GetIndexForItem(item);
 		}
 
-		protected object GetItemAtIndex(NSIndexPath index)
+		public object GetItemAtIndex(NSIndexPath index)
 		{
 			return ItemsSource[index];
 		}

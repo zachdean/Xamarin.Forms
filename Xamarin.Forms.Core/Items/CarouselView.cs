@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows.Input;
 using Xamarin.Forms.Platform;
-using System.Linq;
 using System.Runtime.CompilerServices;
 
 namespace Xamarin.Forms
@@ -26,11 +25,11 @@ namespace Xamarin.Forms
 			set { SetValue(PeekAreaInsetsProperty, value); }
 		}
 
-		static readonly BindablePropertyKey VisibleViewsPropertyKey = BindableProperty.CreateReadOnly(nameof(VisibleViews), typeof(List<View>), typeof(CarouselView), null);
+		static readonly BindablePropertyKey VisibleItemsPropertyKey = BindableProperty.CreateReadOnly(nameof(VisibleItems), typeof(IEnumerable), typeof(CarouselView), null);
 
-		public static readonly BindableProperty VisibleViewsProperty = VisibleViewsPropertyKey.BindableProperty;
+		public static readonly BindableProperty VisibleItemsProperty = VisibleItemsPropertyKey.BindableProperty;
 
-		public List<View> VisibleViews => (List<View>)GetValue(VisibleViewsProperty);
+		public IEnumerable VisibleItems => (IEnumerable)GetValue(VisibleItemsProperty);
 
 		static readonly BindablePropertyKey IsDraggingPropertyKey = BindableProperty.CreateReadOnly(nameof(IsDragging), typeof(bool), typeof(CarouselView), false);
 
@@ -275,6 +274,12 @@ namespace Xamarin.Forms
 		public void SetIsDragging(bool value)
 		{
 			SetValue(IsDraggingPropertyKey, value);
+		}
+
+		[EditorBrowsable(EditorBrowsableState.Never)]
+		public void SetVisibleItems(IEnumerable value)
+		{
+			SetValue(VisibleItemsPropertyKey, value);
 		}
 	}
 }

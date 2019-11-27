@@ -1,6 +1,7 @@
-using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using Android.Content;
+using Android.Support.V7.Widget;
 using Android.Views;
 using FormsCarouselView = Xamarin.Forms.CarouselView;
 
@@ -47,6 +48,13 @@ namespace Xamarin.Forms.Platform.Android
 			UpdateItemSpacing();
 		}
 
+		protected override void OnLayout(bool changed, int l, int t, int r, int b)
+		{
+			base.OnLayout(changed, l, t, r, b);
+
+			UpdateVisibleItems();
+		}
+
 		protected override void UpdateItemsSource()
 		{
 			UpdateAdapter();
@@ -73,6 +81,13 @@ namespace Xamarin.Forms.Platform.Android
 				return false;
 
 			return base.OnInterceptTouchEvent(ev);
+		}
+
+		public override void OnScrolled(int dx, int dy)
+		{
+			base.OnScrolled(dx, dy);
+
+			UpdateVisibleItems();
 		}
 
 		public override void OnScrollStateChanged(int state)
@@ -167,6 +182,31 @@ namespace Xamarin.Forms.Platform.Android
 			UpdateAdapter();
 		}
 
+		void UpdateVisibleItems()
+		{	
+			int firstVisibleItemIndex = -1;
+			int lastVisibleItemIndex = -1;
+
+			if (GetLayoutManager() is LinearLayoutManager linearLayoutManager)
+			{
+				firstVisibleItemIndex = linearLayoutManager.FindFirstVisibleItemPosition();
+				lastVisibleItemIndex = linearLayoutManager.FindLastVisibleItemPosition();
+			}
+
+			var visibleItems = new List<object>();
+
+			if (firstVisibleItemIndex != -1 && lastVisibleItemIndex != -1)
+			{
+				for (int i = firstVisibleItemIndex; i <= lastVisibleItemIndex; i++)
+				{
+					var item = ItemsViewAdapter.GetItemForIndex(i);
+					visibleItems.Add(item);
+				}
+			}
+
+			Carousel.SetVisibleItems(visibleItems);
+		}
+		
 		protected override void UpdateAdapter()
 		{
 			// By default the CollectionViewAdapter creates the items at whatever size the template calls for

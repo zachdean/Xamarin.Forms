@@ -14,6 +14,7 @@ namespace Xamarin.Forms.Platform.iOS
 			base.Scrolled(scrollView);
 
 			(ViewController as CarouselViewController)?.UpdateIsScrolling(true);
+			(ViewController as CarouselViewController)?.UpdateVisibleItems();
 		}
 
 		public override void ScrollAnimationEnded(UIScrollView scrollView)

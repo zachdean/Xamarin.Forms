@@ -124,6 +124,11 @@ namespace Xamarin.Forms.Platform.Android
 			return ItemsSource.GetPosition(item);
 		}
 
+		public virtual object GetItemForIndex(int index)
+		{
+			return ItemsSource.GetItem(index);
+		}
+
 		protected virtual void BindTemplatedItemViewHolder(TemplatedItemViewHolder templatedItemViewHolder, object context)
 		{
 			templatedItemViewHolder.Bind(context, ItemsView);
