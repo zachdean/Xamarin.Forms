@@ -119,16 +119,16 @@ namespace Xamarin.Forms
 
 		protected void OnLoadingCompleted(bool cancelled)
 		{
-			if (!IsLoading || _completionSource == null)
-				return;
-
 			TaskCompletionSource<bool> tcs = Interlocked.Exchange(ref _completionSource, null);
 			if (tcs != null)
 				tcs.SetResult(cancelled);
 
 			lock (_synchandle)
 			{
-				CancellationTokenSource = null;
+				if (cancelled)
+					CancellationTokenSource = null;
+				else
+					_cancellationTokenSource = null;
 			}
 		}
 
