@@ -10,7 +10,7 @@ using Xamarin.Forms.Xaml.UnitTests;
 
 namespace Xamarin.Forms.XamlcUnitTests
 {
-	//[TestFixture]
+	[TestFixture]
 	public class FieldReferenceExtensionsTests
 	{
 		public class NonGenericClass {
@@ -39,7 +39,7 @@ namespace Xamarin.Forms.XamlcUnitTests
 			});
 		}
 
-		//[Test]
+		[Test]
 		public void ResolveGenericsOnNonGenericDoesNotThrow ()
 		{
 			var type = module.ImportReference (typeof (NonGenericClass));
@@ -48,7 +48,7 @@ namespace Xamarin.Forms.XamlcUnitTests
 			Assert.DoesNotThrow (() => field.ResolveGenericParameters (declaringTypeReference));
 		}
 
-		//[Test]
+		[Test]
 		public void NonGenericFieldOnGenericType ()
 		{
 			var type = module.ImportReference (typeof (Inheritor));
@@ -63,7 +63,7 @@ namespace Xamarin.Forms.XamlcUnitTests
 			Assert.True (genericField.DeclaringType.IsGenericInstance);
 		}
 
-		//[Test]
+		[Test]
 		public void GenericFieldOnGenericType ()
 		{
 			var type = module.ImportReference (typeof (Inheritor));
