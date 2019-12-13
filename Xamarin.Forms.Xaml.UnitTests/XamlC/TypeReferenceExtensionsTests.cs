@@ -12,7 +12,7 @@ namespace Xamarin.Forms
 }
 namespace Xamarin.Forms.XamlcUnitTests
 {
-	//[TestFixture]
+	[TestFixture]
 	public class TypeReferenceExtensionsTests
 	{
 		class Foo
@@ -142,7 +142,7 @@ namespace Xamarin.Forms.XamlcUnitTests
 			return TypeReferenceExtensions.InheritsFromOrImplements(module.ImportReference(typeRef), module.ImportReference(baseClass));
 		}
 
-		//[Test]
+		[Test]
 		public void TestSameTypeNamesFromDifferentAssemblies()
 		{
 			var core = typeof(BindableObject).Assembly;
@@ -151,7 +151,7 @@ namespace Xamarin.Forms.XamlcUnitTests
 			Assert.False(TestInheritsFromOrImplements(test.GetType("Xamarin.Forms.Effect"), core.GetType("Xamarin.Forms.Effect")));
 		}
 
-		//[Test]
+		[Test]
 		public void TestResolveSelectedGenericParameter()
 		{
 			var imported = module.ImportReference(typeof(Bar<byte>));
@@ -162,9 +162,9 @@ namespace Xamarin.Forms.XamlcUnitTests
 			Assert.AreEqual("Byte", resolvedType.Name);
 		}
 
-		//[TestCase(typeof(Bar<byte>), 1)]
-		//[TestCase(typeof(Quux<byte>), 2)]
-		//[TestCase(typeof(Corge<byte>), 3)]
+		[TestCase(typeof(Bar<byte>), 1)]
+		[TestCase(typeof(Quux<byte>), 2)]
+		[TestCase(typeof(Corge<byte>), 3)]
 		public void TestResolveGenericParameters(Type typeRef, int depth)
 		{
 			var imported = module.ImportReference(typeRef);
@@ -188,8 +188,8 @@ namespace Xamarin.Forms.XamlcUnitTests
 			Assert.That(TypeRefComparer.Default.Equals(module.TypeSystem.Byte, resolved));
 		}
 
-		//[TestCase(typeof(Garply<byte>), typeof(byte))]
-		//[TestCase(typeof(Waldo<byte>), typeof(Foo<byte>))]
+		[TestCase(typeof(Garply<byte>), typeof(byte))]
+		[TestCase(typeof(Waldo<byte>), typeof(Foo<byte>))]
 		public void TestResolveGenericParametersOfMethodOfGeneric(Type typeRef, Type returnType)
 		{
 			var type = module.ImportReference(typeRef);
@@ -199,7 +199,7 @@ namespace Xamarin.Forms.XamlcUnitTests
 			Assert.That(TypeRefComparer.Default.Equals(module.ImportReference(returnType), resolved));
 		}
 		
-		//[Test]
+		[Test]
 		public void TestImplementsGenericInterface()
 		{
 			GenericInstanceType igrault;
