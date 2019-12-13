@@ -84,8 +84,18 @@ jobs:
         codeCoverageEnabled: true
         testRunTitle: '$(BuildConfiguration)_UnitTests'
         configuration: '$(BuildConfiguration)'
-        vsTestVersion: '15.0'
-        diagnosticsEnabled: true
+    
+    - task: VSTest@2
+      displayName: 'Unit Tests'
+      inputs:
+        testAssemblyVer2: |
+          **/bin/$(BuildConfiguration)/Xamarin.Forms.Core.UnitTests.dll
+          **/bin/$(BuildConfiguration)/Xamarin.Forms.Pages.UnitTests.dll
+          **/bin/$(BuildConfiguration)/**/Xamarin.Forms.Xaml.UnitTests.dll
+        searchFolder: ${{ parameters.nunitTestFolder }}
+        codeCoverageEnabled: true
+        testRunTitle: '$(BuildConfiguration)_UnitTests'
+        configuration: '$(BuildConfiguration)'
 
     - task: CopyFiles@2
       displayName: 'Copy Files dlls'
