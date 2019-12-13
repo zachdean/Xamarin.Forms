@@ -11,7 +11,7 @@ using Xamarin.Forms.Xaml.UnitTests;
 
 namespace Xamarin.Forms.XamlcUnitTests
 {
-	[TestFixture]
+	//[TestFixture]
 	public class MethodDefinitionExtensionsTests
 	{
 		public class NonGenericClass
@@ -41,7 +41,7 @@ namespace Xamarin.Forms.XamlcUnitTests
 			});
 		}
 
-		[Test]
+		//[Test]
 		public void ResolveGenericReturnType()
 		{
 			var type = module.ImportReference(typeof(GenericClass<bool, string, int>));
