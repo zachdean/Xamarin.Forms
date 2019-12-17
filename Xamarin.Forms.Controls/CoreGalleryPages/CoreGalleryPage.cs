@@ -122,7 +122,7 @@ namespace Xamarin.Forms.Controls
 				{
 					StartPoint = new Point(0, 0),
 					EndPoint = new Point(1, 0),
-					GradientStops = new  List<GradientStop>
+					GradientStops = new GradientStopCollection
 					{
 						new GradientStop(Color.Yellow, 0.0f),
 						new GradientStop(Color.Orange, 0.5f),

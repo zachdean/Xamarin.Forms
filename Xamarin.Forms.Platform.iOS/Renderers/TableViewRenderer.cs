@@ -102,7 +102,7 @@ namespace Xamarin.Forms.Platform.iOS
 				UpdateRowHeight();
 			else if (e.PropertyName == TableView.HasUnevenRowsProperty.PropertyName)
 				SetSource();
-			else if (e.PropertyName == TableView.BackgroundColorProperty.PropertyName)
+			else if (e.PropertyName == VisualElement.BackgroundColorProperty.PropertyName)
 				UpdateBackgroundView();
 		}
 

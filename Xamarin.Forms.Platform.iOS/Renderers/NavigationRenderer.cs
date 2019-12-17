@@ -228,6 +228,7 @@ namespace Xamarin.Forms.Platform.iOS
 
 			UpdateTint();
 			UpdateBarBackgroundColor();
+			UpdateBarBackground();
 			UpdateBarTextColor();
 			UpdateUseLargeTitles();
 			UpdateHideNavigationBarSeparator();
@@ -424,6 +425,10 @@ namespace Xamarin.Forms.Platform.iOS
 			else if (e.PropertyName == NavigationPage.BarBackgroundColorProperty.PropertyName)
 			{
 				UpdateBarBackgroundColor();
+			}
+			else if (e.PropertyName == NavigationPage.BarBackgroundProperty.PropertyName)
+			{
+				UpdateBarBackground();
 			}
 			else if (e.PropertyName == NavigationPage.BarTextColorProperty.PropertyName
 				  || e.PropertyName == StatusBarTextColorModeProperty.PropertyName)
@@ -626,6 +631,13 @@ namespace Xamarin.Forms.Platform.iOS
 			NavigationBar.BarTintColor = barBackgroundColor == Color.Default
 				? UINavigationBar.Appearance.BarTintColor
 				: barBackgroundColor.ToUIColor();
+		}
+
+		void UpdateBarBackground()
+		{
+			var barBackgroundBrush = NavPage.BarBackground;
+			var gradientImage = NavigationBar.GetGradientImage(barBackgroundBrush);
+			NavigationBar.SetBackgroundImage(gradientImage, UIBarMetrics.Default);
 		}
 
 		void UpdateBarTextColor()

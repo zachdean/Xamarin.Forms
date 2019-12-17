@@ -4,5 +4,6 @@
 	{
 		Color BarBackgroundColor { get; }
 		Color BarTextColor { get; }
+		Brush BarBackground { get; }
 	}
 }

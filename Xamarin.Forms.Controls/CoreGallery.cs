@@ -13,6 +13,7 @@ using Xamarin.Forms.Controls.GalleryPages.VisualStateManagerGalleries;
 using Xamarin.Forms.Controls.Issues;
 using Xamarin.Forms.Controls.GalleryPages.CollectionViewGalleries.CarouselViewGalleries;
 using Xamarin.Forms.Controls.GalleryPages.RefreshViewGalleries;
+using Xamarin.Forms.Controls.GalleryPages.GradientGalleries;
 
 namespace Xamarin.Forms.Controls
 {

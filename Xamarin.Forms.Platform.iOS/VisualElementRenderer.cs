@@ -250,6 +250,9 @@ namespace Xamarin.Forms.Platform.MacOS
 				if (element.BackgroundColor != Color.Default || (oldElement != null && element.BackgroundColor != oldElement.BackgroundColor))
 					SetBackgroundColor(element.BackgroundColor);
 
+				if (!element.Background.IsEmpty || (oldElement != null && element.Background != oldElement.Background))
+					SetBackground(element.Background);
+
 				UpdateClipToBounds();
 
 				if (_tracker == null)
@@ -379,6 +382,8 @@ namespace Xamarin.Forms.Platform.MacOS
 		{
 			if (e.PropertyName == VisualElement.BackgroundColorProperty.PropertyName)
 				SetBackgroundColor(Element.BackgroundColor);
+			else if (e.PropertyName == VisualElement.BackgroundProperty.PropertyName)
+				SetBackground(Element.Background);
 			else if (e.PropertyName == Xamarin.Forms.Layout.IsClippedToBoundsProperty.PropertyName)
 				UpdateClipToBounds();
 			else if (e.PropertyName == VisualElement.IsTabStopProperty.PropertyName)
@@ -438,6 +443,11 @@ namespace Xamarin.Forms.Platform.MacOS
 			else
 				Layer.BackgroundColor = color.ToCGColor();
 #endif
+		}
+
+		protected virtual void SetBackground(Brush brush)
+		{
+			NativeView.UpdateBackground(brush);
 		}
 
 #if __MOBILE__

@@ -552,6 +552,9 @@ namespace Xamarin.Forms
 		public static readonly BindableProperty FlyoutBackgroundColorProperty =
 			BindableProperty.Create(nameof(FlyoutBackgroundColor), typeof(Color), typeof(Shell), Color.Default, BindingMode.OneTime);
 
+		public static readonly BindableProperty FlyoutBackgroundProperty =
+			BindableProperty.Create(nameof(FlyoutBackgroundColor), typeof(Brush), typeof(Shell), Brush.Default, BindingMode.OneTime);
+
 		public static readonly BindableProperty FlyoutHeaderBehaviorProperty =
 			BindableProperty.Create(nameof(FlyoutHeaderBehavior), typeof(FlyoutHeaderBehavior), typeof(Shell), FlyoutHeaderBehavior.Default, BindingMode.OneTime);
 
@@ -626,6 +629,12 @@ namespace Xamarin.Forms
 		{
 			get => (Color)GetValue(FlyoutBackgroundColorProperty);
 			set => SetValue(FlyoutBackgroundColorProperty, value);
+		}
+
+		public Brush FlyoutBackground
+		{
+			get => (Brush)GetValue(FlyoutBackgroundProperty);
+			set => SetValue(FlyoutBackgroundProperty, value);
 		}
 
 		public FlyoutBehavior FlyoutBehavior

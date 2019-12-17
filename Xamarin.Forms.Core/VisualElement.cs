@@ -150,6 +150,7 @@ namespace Xamarin.Forms
 
 		public static readonly BindableProperty OpacityProperty = BindableProperty.Create("Opacity", typeof(double), typeof(VisualElement), 1d, coerceValue: (bindable, value) => ((double)value).Clamp(0, 1));
 
+		//[Obsolete("BackgroundColor is obsolete as of version 4.5.0. Please use Background instead.")]
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		public static readonly BindableProperty BackgroundColorProperty = BindableProperty.Create("BackgroundColor", typeof(Color), typeof(VisualElement), Color.Default);
 
@@ -286,6 +287,7 @@ namespace Xamarin.Forms
 			set { SetValue(AnchorYProperty, value); }
 		}
 
+		//[Obsolete("BackgroundColor is obsolete as of version 4.5.0. Please use Background instead.")]
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		public Color BackgroundColor
 		{

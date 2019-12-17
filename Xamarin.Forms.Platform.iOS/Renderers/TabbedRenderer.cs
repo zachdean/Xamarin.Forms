@@ -72,6 +72,7 @@ namespace Xamarin.Forms.Platform.iOS
 			CustomizableViewControllers = null;
 
 			UpdateBarBackgroundColor();
+			UpdateBarBackground();
 			UpdateBarTextColor();
 			UpdateSelectedTabColors();
 
@@ -210,6 +211,7 @@ namespace Xamarin.Forms.Platform.iOS
 				base.SelectedViewController = controller;
 
 			UpdateBarBackgroundColor();
+			UpdateBarBackground();
 			UpdateBarTextColor();
 			UpdateSelectedTabColors();
 		}
@@ -230,6 +232,8 @@ namespace Xamarin.Forms.Platform.iOS
 			}
 			else if (e.PropertyName == TabbedPage.BarBackgroundColorProperty.PropertyName)
 				UpdateBarBackgroundColor();
+			else if (e.PropertyName == TabbedPage.BarBackgroundProperty.PropertyName)
+				UpdateBarBackground();
 			else if (e.PropertyName == TabbedPage.BarTextColorProperty.PropertyName)
 				UpdateBarTextColor();
 			else if (e.PropertyName == PrefersStatusBarHiddenProperty.PropertyName)
@@ -352,6 +356,20 @@ namespace Xamarin.Forms.Platform.iOS
 				_barBackgroundColorWasSet = true;
 			
 			TabBar.BarTintColor = isDefaultColor ? _defaultBarColor : barBackgroundColor.ToUIColor();
+		}
+
+		void UpdateBarBackground()
+		{
+			if (Tabbed == null || TabBar == null)
+				return;
+
+			var barBackground = Tabbed.BarBackground;
+			var isEmpty = barBackground == null || barBackground.IsEmpty;
+
+			if (isEmpty)
+				return;
+
+			TabBar.UpdateBackground(barBackground);
 		}
 
 		void UpdateBarTextColor()

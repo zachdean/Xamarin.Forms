@@ -23,7 +23,8 @@ namespace Xamarin.Forms.Platform.iOS
 			base.OnElementPropertyChanged(sender, e);
 
 			if (e.PropertyName == VisualElement.BackgroundColorProperty.PropertyName ||
-			    e.PropertyName == Xamarin.Forms.Frame.BorderColorProperty.PropertyName ||
+				e.PropertyName == VisualElement.BackgroundProperty.PropertyName ||
+				e.PropertyName == Xamarin.Forms.Frame.BorderColorProperty.PropertyName ||
 				e.PropertyName == Xamarin.Forms.Frame.HasShadowProperty.PropertyName ||
 				e.PropertyName == Xamarin.Forms.Frame.CornerRadiusProperty.PropertyName)
 				SetupLayer();
@@ -42,6 +43,8 @@ namespace Xamarin.Forms.Platform.iOS
 				Layer.BackgroundColor = UIColor.White.CGColor;
 			else
 				Layer.BackgroundColor = Element.BackgroundColor.ToCGColor();
+
+			UpdateBackground(Element.Background);
 
 			if (Element.BorderColor == Color.Default)
 				Layer.BorderColor = UIColor.Clear.CGColor;
@@ -74,6 +77,37 @@ namespace Xamarin.Forms.Platform.iOS
 
 			Layer.RasterizationScale = UIScreen.MainScreen.Scale;
 			Layer.ShouldRasterize = true;
+		}
+
+		void UpdateBackground(Brush brush)
+		{
+			Layer.RemoveGradientLayer();
+
+			if (brush != null && !brush.IsEmpty)
+			{
+				if (brush is SolidColorBrush solidColorBrush)
+				{
+					var backgroundColor = solidColorBrush.Color;
+
+					if (backgroundColor == Color.Default)
+						Layer.BackgroundColor = UIColor.White.CGColor;
+					else
+						Layer.BackgroundColor = backgroundColor.ToCGColor();
+				}
+				else
+				{
+					var gradientLayer = _shadowView.GetGradientLayer(brush);
+
+					if (gradientLayer != null)
+					{
+						gradientLayer.CornerRadius = Layer.CornerRadius;
+						gradientLayer.BorderColor = Layer.BorderColor;
+
+						Layer.BackgroundColor = UIColor.White.CGColor;
+						Layer.InsertGradientLayer(gradientLayer, 0);
+					}
+				}
+			}
 		}
 
 		public override void LayoutSubviews()

@@ -1,16 +1,19 @@
-﻿using System.Collections.Generic;
-
-namespace Xamarin.Forms
+﻿namespace Xamarin.Forms
 {
 	[ContentProperty(nameof(GradientStops))]
 	public class GradientBrush : Brush
 	{
-		public static readonly BindableProperty GradientStopsProperty = BindableProperty.Create(
-			nameof(GradientStops), typeof(IList<GradientStop>), typeof(GradientBrush), new List<GradientStop>());
-
-		public IList<GradientStop> GradientStops
+		public GradientBrush()
 		{
-			get => (IList<GradientStop>)GetValue(GradientStopsProperty);
+			GradientStops = new GradientStopCollection();
+		}
+
+		public static readonly BindableProperty GradientStopsProperty = BindableProperty.Create(
+			nameof(GradientStops), typeof(GradientStopCollection), typeof(GradientBrush), null);
+
+		public GradientStopCollection GradientStops
+		{
+			get => (GradientStopCollection)GetValue(GradientStopsProperty);
 			set => SetValue(GradientStopsProperty, value);
 		}
 	}

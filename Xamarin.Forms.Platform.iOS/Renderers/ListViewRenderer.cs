@@ -18,6 +18,8 @@ namespace Xamarin.Forms.Platform.iOS
 	public class ListViewRenderer : ViewRenderer<ListView, UITableView>
 	{
 		const int DefaultRowHeight = 44;
+
+		UIView _backgroundUIView;
 		ListViewDataSource _dataSource;
 		IVisualElementRenderer _headerRenderer;
 		IVisualElementRenderer _footerRenderer;
@@ -49,7 +51,44 @@ namespace Xamarin.Forms.Platform.iOS
 		{
 			return Control.GetSizeRequest(widthConstraint, heightConstraint, DefaultRowHeight, DefaultRowHeight);
 		}
+			
+		protected override void SetBackground(Brush brush)
+		{
+			if (Control == null)
+				return;
 
+			_backgroundUIView.RemoveGradientLayer();
+
+			if (brush != null && !brush.IsEmpty)
+			{
+				if (_backgroundUIView == null)
+				{
+					_backgroundUIView = new UIView();
+					Control.BackgroundView = _backgroundUIView;
+				}
+
+				if (brush is SolidColorBrush solidColorBrush)
+				{
+					var backgroundColor = solidColorBrush.Color;
+
+					if (backgroundColor == Color.Default)
+						_backgroundUIView.BackgroundColor = UIColor.White;
+					else
+						_backgroundUIView.BackgroundColor = backgroundColor.ToUIColor();
+				}
+				else
+				{
+					var gradientLayer = _backgroundUIView.GetGradientLayer(Element.Background);
+
+					if (gradientLayer != null)
+					{
+						_backgroundUIView.BackgroundColor = UIColor.White;
+						_backgroundUIView.InsertGradientLayer(gradientLayer, 0);
+					}
+				}
+			}
+		}
+	
 		public override void LayoutSubviews()
 		{
 			_insetTracker?.OnLayoutSubviews();
@@ -99,9 +138,9 @@ namespace Xamarin.Forms.Platform.iOS
 				OnScrollToRequested(this, request);
 			}
 
-			if (_previousFrame != Frame)
+			if (_previousFrame != base.Frame)
 			{
-				_previousFrame = Frame;
+				_previousFrame = base.Frame;
 				_insetTracker?.UpdateInsets();
 			}
 		}
@@ -179,6 +218,9 @@ namespace Xamarin.Forms.Platform.iOS
 				if (footerView != null)
 					footerView.MeasureInvalidated -= OnFooterMeasureInvalidated;
 				Control?.TableFooterView?.Dispose();
+
+				_backgroundUIView?.Dispose();
+				_backgroundUIView = null;
 			}
 
 			_disposed = true;
@@ -219,6 +261,8 @@ namespace Xamarin.Forms.Platform.iOS
 					}
 					_tableViewController = new FormsUITableViewController(e.NewElement, _usingLargeTitles);
 					SetNativeControl(_tableViewController.TableView);
+
+					_backgroundUIView = _tableViewController.TableView.BackgroundView;
 
 					_insetTracker = new KeyboardInsetTracker(_tableViewController.TableView, () => Control.Window, insets => Control.ContentInset = Control.ScrollIndicatorInsets = insets, point =>
 					{
@@ -1467,7 +1511,7 @@ namespace Xamarin.Forms.Platform.iOS
 			  : UITableViewStyle.Grouped)
 		{
 			if (Forms.IsiOS9OrNewer)
-				TableView.CellLayoutMarginsFollowReadableWidth = false;
+				base.TableView.CellLayoutMarginsFollowReadableWidth = false;
 
 			_usingLargeTitles = usingLargeTitles;
 
@@ -1492,7 +1536,7 @@ namespace Xamarin.Forms.Platform.iOS
 					//hack: On iOS11 with large titles we need to adjust the scroll offset manually
 					//since our UITableView is not the first child of the UINavigationController
 					//This also forces the spinner color to be correct if we started refreshing immediately after changing it.
-					UpdateContentOffset(TableView.ContentOffset.Y - _refresh.Frame.Height, () =>
+					UpdateContentOffset(base.TableView.ContentOffset.Y - _refresh.Frame.Height, () =>
 					{
 						if (_refresh == null || _disposed)
 							return;
@@ -1503,7 +1547,7 @@ namespace Xamarin.Forms.Platform.iOS
 
 						//hack: when we don't have cells in our UITableView the spinner fails to appear
 						CheckContentSize();
-						TableView.ScrollRectToVisible(new RectangleF(0, 0, _refresh.Bounds.Width, _refresh.Bounds.Height), true);
+						base.TableView.ScrollRectToVisible(new RectangleF(0, 0, _refresh.Bounds.Width, _refresh.Bounds.Height), true);
 					});
 				}
 			}
@@ -1569,7 +1613,7 @@ namespace Xamarin.Forms.Platform.iOS
 			if (!_refresh.Refreshing && !_isRefreshing)
 			{
 				_isRefreshing = true;
-				UpdateContentOffset(TableView.ContentOffset.Y - _refresh.Frame.Height, StartRefreshing);
+				UpdateContentOffset(base.TableView.ContentOffset.Y - _refresh.Frame.Height, StartRefreshing);
 				_list.SendRefreshing();
 			}
 		}
@@ -1587,7 +1631,7 @@ namespace Xamarin.Forms.Platform.iOS
 
 		public override void ViewWillAppear(bool animated)
 		{
-			(TableView?.Source as ListViewRenderer.ListViewDataSource)?.Cleanup();
+			(base.TableView?.Source as ListViewRenderer.ListViewDataSource)?.Cleanup();
 			if (!_list.IsRefreshing || !_refresh.Refreshing)
 				return;
 
@@ -1598,7 +1642,7 @@ namespace Xamarin.Forms.Platform.iOS
 
 		public override void ViewWillLayoutSubviews()
 		{
-			(TableView?.Source as ListViewRenderer.ListViewDataSource)?.DetermineEstimatedRowHeight();
+			(base.TableView?.Source as ListViewRenderer.ListViewDataSource)?.DetermineEstimatedRowHeight();
 		}
 
 		public void UpdateRefreshControlColor(UIColor color)
@@ -1633,9 +1677,9 @@ namespace Xamarin.Forms.Platform.iOS
 		void CheckContentSize()
 		{
 			//adding a default height of at least 1 pixel tricks iOS to show the spinner
-			var contentSize = TableView.ContentSize;
+			var contentSize = base.TableView.ContentSize;
 			if (contentSize.Height == 0)
-				TableView.ContentSize = new SizeF(contentSize.Width, 1);
+				base.TableView.ContentSize = new SizeF(contentSize.Width, 1);
 		}
 
 		void OnRefreshingChanged(object sender, EventArgs eventArgs)
@@ -1661,7 +1705,7 @@ namespace Xamarin.Forms.Platform.iOS
 
 		void UpdateContentOffset(nfloat offset, Action completed = null)
 		{
-			UIView.Animate(0.2, () => TableView.ContentOffset = new CoreGraphics.CGPoint(TableView.ContentOffset.X, offset), completed);
+			UIView.Animate(0.2, () => base.TableView.ContentOffset = new CoreGraphics.CGPoint(base.TableView.ContentOffset.X, offset), completed);
 		}
 	}
 

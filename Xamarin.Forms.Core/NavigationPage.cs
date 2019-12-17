@@ -26,6 +26,8 @@ namespace Xamarin.Forms
 
 		public static readonly BindableProperty BarTextColorProperty = BarElement.BarTextColorProperty;
 
+		public static readonly BindableProperty BarBackgroundProperty = BarElement.BarBackgroundProperty;
+
 		public static readonly BindableProperty TitleIconImageSourceProperty = BindableProperty.CreateAttached("TitleIconImageSource", typeof(ImageSource), typeof(NavigationPage), default(ImageSource));
 
 		[Obsolete("TitleIconProperty is obsolete as of 4.0.0. Please use TitleIconImageSourceProperty instead.")]
@@ -60,6 +62,12 @@ namespace Xamarin.Forms
 		public Color BarTextColor {
 			get => (Color)GetValue(BarElement.BarTextColorProperty);
 			set => SetValue(BarElement.BarTextColorProperty, value);
+		}
+
+		public Brush BarBackground
+		{
+			get => (Brush)GetValue(BarElement.BarBackgroundProperty);
+			set => SetValue(BarElement.BarBackgroundProperty, value);
 		}
 
 		[Obsolete("Tint is obsolete as of version 1.2.0. Please use BarBackgroundColor and BarTextColor to change NavigationPage bar color properties.")]
