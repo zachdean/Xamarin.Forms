@@ -447,7 +447,9 @@ namespace Xamarin.Forms.Platform.MacOS
 
 		protected virtual void SetBackground(Brush brush)
 		{
+#if __MOBILE__
 			NativeView.UpdateBackground(brush);
+#endif
 		}
 
 #if __MOBILE__

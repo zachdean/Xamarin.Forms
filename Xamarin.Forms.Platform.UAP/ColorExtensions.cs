@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Linq;
 using Windows.UI;
-using Windows.UI.Xaml.Media;
 using WBrush = Windows.UI.Xaml.Media.Brush;
-using WSolidColorBrush = Windows.UI.Xaml.Media.SolidColorBrush;
+using WGradientStopCollection = Windows.UI.Xaml.Media.GradientStopCollection;
 using WGradientStop = Windows.UI.Xaml.Media.GradientStop;
 using WLinearGradientBrush = Windows.UI.Xaml.Media.LinearGradientBrush;
 using WPoint = Windows.Foundation.Point;
+using WSolidColorBrush = Windows.UI.Xaml.Media.SolidColorBrush;
 
 namespace Xamarin.Forms.Platform.UWP
 {
@@ -46,7 +46,7 @@ namespace Xamarin.Forms.Platform.UWP
 			if (brush is LinearGradientBrush linearGradientBrush)
 			{
 				var orderedStops = linearGradientBrush.GradientStops.OrderBy(x => x.Offset).ToList();
-				var gradientStopCollection = new GradientStopCollection();
+				var gradientStopCollection = new WGradientStopCollection();
 
 				foreach (var item in orderedStops)
 					gradientStopCollection.Add(new WGradientStop { Offset = item.Offset, Color = item.Color.ToWindowsColor() });
@@ -68,7 +68,7 @@ namespace Xamarin.Forms.Platform.UWP
 			if (brush is Xamarin.Forms.RadialGradientBrush radialGradientBrush)
 			{
 				var orderedStops = radialGradientBrush.GradientStops.OrderBy(x => x.Offset).ToList();
-				var gradientStopCollection = new GradientStopCollection();
+				var gradientStopCollection = new WGradientStopCollection();
 
 				foreach (var item in orderedStops)
 					gradientStopCollection.Add(new WGradientStop { Offset = item.Offset, Color = item.Color.ToWindowsColor() });

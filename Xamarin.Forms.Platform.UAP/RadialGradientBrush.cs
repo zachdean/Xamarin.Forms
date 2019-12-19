@@ -13,6 +13,7 @@ using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media;
 using WColor = Windows.UI.Color;
+using WGradientStopCollection = Windows.UI.Xaml.Media.GradientStopCollection;
 using WGradientStop = Windows.UI.Xaml.Media.GradientStop;
 using WPoint = Windows.Foundation.Point;
 
@@ -187,7 +188,7 @@ namespace Xamarin.Forms.Platform.UWP
 			SurfaceWidth = 512;
 			SurfaceHeight = 512;
 
-			GradientStops = new GradientStopCollection();
+			GradientStops = new WGradientStopCollection();
 		}
 
 		/// <summary>
@@ -208,7 +209,7 @@ namespace Xamarin.Forms.Platform.UWP
 		/// Initializes a new instance of the <see cref="RadialGradientBrush"/> class with GradientStops set to the passed-in collection.
 		/// </summary>
 		/// <param name="gradientStopCollection"> GradientStopCollection to set on this brush. </param>
-		public RadialGradientBrush(GradientStopCollection gradientStopCollection)
+		public RadialGradientBrush(WGradientStopCollection gradientStopCollection)
 			: this()
 		{
 			GradientStops = gradientStopCollection;
@@ -247,9 +248,9 @@ namespace Xamarin.Forms.Platform.UWP
 		/// <summary>
 		/// Gets or sets the brush's gradient stops.
 		/// </summary>
-		public GradientStopCollection GradientStops
+		public WGradientStopCollection GradientStops
 		{
-			get { return (GradientStopCollection)GetValue(GradientStopsProperty); }
+			get { return (WGradientStopCollection)GetValue(GradientStopsProperty); }
 			set { SetValue(GradientStopsProperty, value); }
 		}
 
@@ -257,7 +258,7 @@ namespace Xamarin.Forms.Platform.UWP
 		/// Identifies the <see cref="GradientStops"/> dependency property.
 		/// </summary>
 		public static readonly DependencyProperty GradientStopsProperty =
-			DependencyProperty.Register(nameof(GradientStops), typeof(GradientStopCollection), typeof(RadialGradientBrush), new PropertyMetadata(null, new PropertyChangedCallback(OnPropertyChanged)));
+			DependencyProperty.Register(nameof(GradientStops), typeof(WGradientStopCollection), typeof(RadialGradientBrush), new PropertyMetadata(null, new PropertyChangedCallback(OnPropertyChanged)));
 
 		/// <summary>
 		/// Gets or sets the center of the outermost circle of the radial gradient.  The default is 0.5,0.5.

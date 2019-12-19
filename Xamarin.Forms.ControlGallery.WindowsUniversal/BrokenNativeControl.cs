@@ -1,11 +1,10 @@
 using Windows.Foundation;
 using Windows.Graphics.Display;
-using Windows.UI;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Media;
 using WColors = Windows.UI.Colors;
+using WGradientStopCollection = Windows.UI.Xaml.Media.GradientStopCollection;
 using WGradientStop = Windows.UI.Xaml.Media.GradientStop;
 using WLinearGradientBrush = Windows.UI.Xaml.Media.LinearGradientBrush;
 
@@ -28,7 +27,7 @@ namespace Xamarin.Forms.ControlGallery.WindowsUniversal
 
 			Background =
 				new WLinearGradientBrush(
-					new GradientStopCollection { new WGradientStop { Color = WColors.Green, Offset = 0.5f}, new WGradientStop { Color = WColors.Blue, Offset = 1} }, 0);
+					new WGradientStopCollection { new WGradientStop { Color = WColors.Green, Offset = 0.5f}, new WGradientStop { Color = WColors.Blue, Offset = 1} }, 0);
 		}
 
 		public static readonly DependencyProperty TextProperty = DependencyProperty.Register (

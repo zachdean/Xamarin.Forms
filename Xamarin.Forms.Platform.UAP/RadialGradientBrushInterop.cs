@@ -3,6 +3,7 @@ using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Brushes;
 using Windows.Foundation;
 using Windows.UI.Xaml.Media;
+using WGradientStopCollection = Windows.UI.Xaml.Media.GradientStopCollection;
 
 namespace Xamarin.Forms.Platform.UWP
 {
@@ -78,7 +79,7 @@ namespace Xamarin.Forms.Platform.UWP
 		/// </summary>
 		/// <param name="stops"><see cref="GradientStopCollection"/> collection of gradient stops.</param>
 		/// <returns>New array of <see cref="CanvasGradientStop"/> stops.</returns>
-		public static CanvasGradientStop[] ToWin2DGradientStops(this GradientStopCollection stops)
+		public static CanvasGradientStop[] ToWin2DGradientStops(this WGradientStopCollection stops)
 		{
 			var canvasStops = new CanvasGradientStop[stops.Count];
 
