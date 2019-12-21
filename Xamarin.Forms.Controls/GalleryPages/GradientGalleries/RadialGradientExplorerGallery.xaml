@@ -101,7 +101,7 @@
                         Keyboard="Numeric"
                         Placeholder="Center"
                         TextChanged="OnCenterChanged"
-                        Text="0, 0" />
+                        Text="0.5, 0.5" />
                 </StackLayout>
             </ScrollView>
         </Grid>

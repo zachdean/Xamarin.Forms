@@ -40,7 +40,7 @@ namespace Xamarin.Forms.Platform.UWP
 
 				//TODO: We may want to revisit this strategy later. If a user wants to reset any of these to the default, the UI won't update.
 				if (Element.IsSet(VisualElement.BackgroundColorProperty) && Element.BackgroundColor != (Color)VisualElement.BackgroundColorProperty.DefaultValue)
-					UpdateBackgroundBrush();
+					UpdateBackgroundColorBrush();
 
 				if (Element.IsSet(VisualElement.BackgroundProperty) && !Element.Background.IsEmpty)
 					UpdateBackgroundBrush();
@@ -95,7 +95,7 @@ namespace Xamarin.Forms.Platform.UWP
 			}
 			else if (e.PropertyName == VisualElement.BackgroundColorProperty.PropertyName)
 			{
-				UpdateBackgroundBrush();
+				UpdateBackgroundColorBrush();
 			}
 			else if (e.PropertyName == VisualElement.BackgroundProperty.PropertyName)
 			{
@@ -153,12 +153,15 @@ namespace Xamarin.Forms.Platform.UWP
 			((IButtonController)Element)?.SendPressed();
 		}
 
+		void UpdateBackgroundColorBrush()
+		{
+			Control.BackgroundColor = Element.BackgroundColor != Color.Default ? Element.BackgroundColor.ToBrush() : (WBrush)Windows.UI.Xaml.Application.Current.Resources["ButtonBackgroundThemeBrush"];
+		}
+
 		void UpdateBackgroundBrush()
 		{
-			if (Element.Background.IsEmpty)
-				Control.BackgroundColor = Element.BackgroundColor != Color.Default ? Element.BackgroundColor.ToBrush() : (WBrush)Windows.UI.Xaml.Application.Current.Resources["ButtonBackgroundThemeBrush"];
-			else
-				Control.Background = Element.Background.ToBrush();
+			if (!Element.Background.IsEmpty)
+				Control.BackgroundColor = Element.Background.ToBrush();
 		}
 
 		void UpdateBorderColor()

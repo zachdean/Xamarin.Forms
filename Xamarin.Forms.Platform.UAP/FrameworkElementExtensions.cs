@@ -7,6 +7,7 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 using Xamarin.Forms.Internals;
+using WBrush = Windows.UI.Xaml.Media.Brush;
 using WBinding = Windows.UI.Xaml.Data.Binding;
 using WBindingExpression = Windows.UI.Xaml.Data.BindingExpression;
 
@@ -17,12 +18,12 @@ namespace Xamarin.Forms.Platform.UWP
 		static readonly Lazy<ConcurrentDictionary<Type, DependencyProperty>> ForegroundProperties =
 			new Lazy<ConcurrentDictionary<Type, DependencyProperty>>(() => new ConcurrentDictionary<Type, DependencyProperty>());
 
-		public static Brush GetForeground(this FrameworkElement element)
+		public static WBrush GetForeground(this FrameworkElement element)
 		{
 			if (element == null)
 				throw new ArgumentNullException("element");
 
-			return (Brush)element.GetValue(GetForegroundProperty(element));
+			return (WBrush)element.GetValue(GetForegroundProperty(element));
 		}
 
 		public static WBinding GetForegroundBinding(this FrameworkElement element)
@@ -49,10 +50,10 @@ namespace Xamarin.Forms.Platform.UWP
 			if (binding != null)
 				SetForeground(element, binding);
 			else
-				SetForeground(element, (Brush)cache);
+				SetForeground(element, (WBrush)cache);
 		}
 
-		public static void SetForeground(this FrameworkElement element, Brush foregroundBrush)
+		public static void SetForeground(this FrameworkElement element, WBrush foregroundBrush)
 		{
 			if (element == null)
 				throw new ArgumentNullException("element");

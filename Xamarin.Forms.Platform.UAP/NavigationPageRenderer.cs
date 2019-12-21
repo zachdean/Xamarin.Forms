@@ -20,7 +20,7 @@ using Windows.UI.Xaml.Data;
 
 namespace Xamarin.Forms.Platform.UWP
 {
-	public class NavigationPageRenderer : IVisualElementRenderer, ITitleProvider, ITitleIconProvider, 
+	public class NavigationPageRenderer : IVisualElementRenderer, ITitleProvider, ITitleIconProvider,
 		ITitleViewProvider, IToolbarProvider, IToolBarForegroundBinder
 	{
 		PageControl _container;
@@ -204,6 +204,7 @@ namespace Xamarin.Forms.Platform.UWP
 				UpdatePadding();
 				LookupRelevantParents();
 				UpdateTitleColor();
+				UpdateNavigationBarBackgroundColor();
 				UpdateNavigationBarBackground();
 				UpdateToolbarPlacement();
 				UpdateToolbarDynamicOverflowEnabled();
@@ -271,13 +272,27 @@ namespace Xamarin.Forms.Platform.UWP
 				changed(this, e);
 		}
 
-		WBrush GetBarBackgroundBrush()
+		WBrush GetBarBackgroundColorBrush()
 		{
 			object defaultColor = GetDefaultColor();
 
 			if (Element.BarBackgroundColor.IsDefault && defaultColor != null)
 				return (WBrush)defaultColor;
 			return Element.BarBackgroundColor.ToBrush();
+		}
+
+		WBrush GetBarBackgroundBrush()
+		{
+			var barBackground = Element.BarBackground;
+			object defaultColor = GetDefaultColor();
+
+			if (barBackground != null && !barBackground.IsEmpty)
+				return barBackground.ToBrush();
+
+			if (defaultColor != null)
+				return (WBrush)defaultColor;
+
+			return null;
 		}
 
 		WBrush GetBarForegroundBrush()
@@ -365,6 +380,8 @@ namespace Xamarin.Forms.Platform.UWP
 			if (e.PropertyName == NavigationPage.BarTextColorProperty.PropertyName)
 				UpdateTitleColor();
 			else if (e.PropertyName == NavigationPage.BarBackgroundColorProperty.PropertyName)
+				UpdateNavigationBarBackgroundColor();
+			else if (e.PropertyName == NavigationPage.BarBackgroundProperty.PropertyName)
 				UpdateNavigationBarBackground();
 			else if (e.PropertyName == Page.PaddingProperty.PropertyName)
 				UpdatePadding();
@@ -507,6 +524,11 @@ namespace Xamarin.Forms.Platform.UWP
 			Element.ContainerArea = new Rectangle(0, 0, _container.ContentWidth, _container.ContentHeight);
 		}
 
+		void UpdateNavigationBarBackgroundColor()
+		{
+			(this as ITitleProvider).BarBackgroundBrush = GetBarBackgroundColorBrush();
+		}
+
 		void UpdateNavigationBarBackground()
 		{
 			(this as ITitleProvider).BarBackgroundBrush = GetBarBackgroundBrush();
@@ -612,7 +634,7 @@ namespace Xamarin.Forms.Platform.UWP
 
 			_container.ToolbarDynamicOverflowEnabled = Element.OnThisPlatform().GetToolbarDynamicOverflowEnabled();
 		}
-		
+
 
 		void UpdateShowTitle()
 		{
@@ -659,7 +681,12 @@ namespace Xamarin.Forms.Platform.UWP
 			if (render != null && render.ShowTitle)
 			{
 				render.Title = _currentPage.Title;
-				render.BarBackgroundBrush = GetBarBackgroundBrush();
+
+				if (Element.BarBackground != null && !Element.BarBackground.IsEmpty)
+					render.BarBackgroundBrush = GetBarBackgroundBrush();
+				else
+					render.BarBackgroundBrush = GetBarBackgroundColorBrush();
+
 				render.BarForegroundBrush = GetBarForegroundBrush();
 			}
 

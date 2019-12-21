@@ -1,11 +1,12 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Threading.Tasks;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Input;
 using Xamarin.Forms.Internals;
 using Xamarin.Forms.PlatformConfiguration.WindowsSpecific;
 using WGrid = Windows.UI.Xaml.Controls.Grid;
@@ -19,8 +20,6 @@ using WTextBlock = Windows.UI.Xaml.Controls.TextBlock;
 using Specifics = Xamarin.Forms.PlatformConfiguration.WindowsSpecific.TabbedPage;
 using VisualElementSpecifics = Xamarin.Forms.PlatformConfiguration.WindowsSpecific.VisualElement;
 using PageSpecifics = Xamarin.Forms.PlatformConfiguration.WindowsSpecific.Page;
-using Windows.UI.Xaml.Input;
-using System.Linq;
 using WSelectionChangedEventArgs = Windows.UI.Xaml.Controls.SelectionChangedEventArgs;
 using WSolidColorBrush = Windows.UI.Xaml.Media.SolidColorBrush;
 
@@ -35,6 +34,7 @@ namespace Xamarin.Forms.Platform.UWP
 		const string TabBarHeaderGridName = "TabbedPageHeaderGrid";
 
 		Color _barBackgroundColor;
+		Brush _barBackground;
 		Color _barTextColor;
 		bool _disposed;
 		bool _showTitle;
@@ -224,11 +224,14 @@ namespace Xamarin.Forms.Platform.UWP
 				UpdateCurrentPage();
 				UpdateBarTextColor();
 				UpdateBarBackgroundColor();
+				UpdateBarBackground();
 			}
 			else if (e.PropertyName == TabbedPage.BarTextColorProperty.PropertyName)
 				UpdateBarTextColor();
 			else if (e.PropertyName == TabbedPage.BarBackgroundColorProperty.PropertyName)
 				UpdateBarBackgroundColor();
+			else if (e.PropertyName == TabbedPage.BarBackgroundProperty.PropertyName)
+				UpdateBarBackground();
 			else if (e.PropertyName == PlatformConfiguration.WindowsSpecific.Page.ToolbarPlacementProperty.PropertyName)
 				UpdateToolbarPlacement();
 			else if (e.PropertyName == PlatformConfiguration.WindowsSpecific.Page.ToolbarDynamicOverflowEnabledProperty.PropertyName)
@@ -249,6 +252,7 @@ namespace Xamarin.Forms.Platform.UWP
 
 			UpdateBarTextColor();
 			UpdateBarBackgroundColor();
+			UpdateBarBackground();
 			UpdateBarIcons();
 			UpdateAccessKeys();
 			UpdateSelectedTabColors();
@@ -288,6 +292,7 @@ namespace Xamarin.Forms.Platform.UWP
 				case NotifyCollectionChangedAction.Reset:
 					// Need to make sure any new items have the correct fore/background colors
 					ApplyBarBackgroundColor(true);
+					ApplyBarBackground();
 					ApplyBarTextColor(true);
 					UpdateSelectedTabColors();
 					break;
@@ -358,6 +363,21 @@ namespace Xamarin.Forms.Platform.UWP
 			ApplyBarBackgroundColor();
 		}
 
+		void UpdateBarBackground()
+		{
+			if (Element == null)
+				return;
+
+			var barBackground = Element.BarBackground;
+
+			if (barBackground == _barBackground)
+				return;
+
+			_barBackground = barBackground;
+
+			ApplyBarBackground();
+		}
+
 		void ApplyBarBackgroundColor(bool force = false)
 		{
 			var controlToolbarBackground = Control.ToolbarBackground;
@@ -365,6 +385,27 @@ namespace Xamarin.Forms.Platform.UWP
 
 			var brush = GetBarBackgroundBrush();
 			if (brush == controlToolbarBackground && !force) 
+				return;
+
+			TitleProvider.BarBackgroundBrush = brush;
+
+			foreach (WGrid tabBarGrid in Control.GetDescendantsByName<WGrid>(TabBarHeaderGridName))
+			{
+				tabBarGrid.Background = brush;
+			}
+		}
+
+		void ApplyBarBackground()
+		{
+			var controlToolbarBackground = Control.ToolbarBackground;
+			var barBackground = Element.BarBackground;
+
+			if (barBackground == null || barBackground.IsEmpty)
+				return;
+
+			var brush = barBackground.ToBrush();
+
+			if (brush == controlToolbarBackground)
 				return;
 
 			TitleProvider.BarBackgroundBrush = brush;

@@ -36,7 +36,7 @@
         <NavigationPage
             BarBackground="{StaticResource HorizontalLinearGradient}"
             Title="Gradient NavigationPage">
-        <x:Arguments>
+            <x:Arguments>
                 <gradients:GradientsGallery />
             </x:Arguments>
         </NavigationPage>
