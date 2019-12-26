@@ -90,7 +90,7 @@ namespace Xamarin.Forms.Platform.Android
 				_normalBitmap = _normalBitmap ?? CreateBitmap(false, width, height);
 				bitmap = _normalBitmap;
 			}
-
+			
 			canvas.DrawBitmap(bitmap, 0, 0, new Paint());
 		}
 
@@ -198,6 +198,12 @@ namespace Xamarin.Forms.Platform.Android
 			paint.Color = pressed ? PressedBackgroundColor.ToAndroid() : BackgroundColor.ToAndroid();
 			paint.SetStyle(Paint.Style.Fill);
 			paint.SetShadowLayer(_shadowRadius, _shadowDx, _shadowDy, _shadowColor);
+
+			if (BorderElement.IsBackgroundSet())
+			{
+				Brush background = BorderElement.Background;
+				paint.SetGradient(background, height, width);
+			}
 
 			canvas.DrawPath(path, paint);
 		}

@@ -2,18 +2,16 @@
 using System.ComponentModel;
 using Android.Content;
 using Android.Util;
+using Android.Runtime;
 using Android.Views;
 using Xamarin.Forms.Internals;
 using AView = Android.Views.View;
 using AApp = Android.App.Application;
-using Android.Runtime;
 
 namespace Xamarin.Forms.Platform.Android
 {
 	internal static class BackgroundManager
 	{
-		static BackgroundDrawable _backgroundDrawable;
-
 		public static void Init(IVisualElementRenderer renderer)
 		{
 			_ = renderer ?? throw new ArgumentNullException($"{nameof(BackgroundManager)}.{nameof(Init)} {nameof(renderer)} cannot be null");
@@ -25,12 +23,6 @@ namespace Xamarin.Forms.Platform.Android
 		public static void Dispose(IVisualElementRenderer renderer)
 		{
 			_ = renderer ?? throw new ArgumentNullException($"{nameof(BackgroundManager)}.{nameof(Init)} {nameof(renderer)} cannot be null");
-
-			if (_backgroundDrawable != null)
-			{
-				_backgroundDrawable.Dispose();
-				_backgroundDrawable = null;
-			}
 
 			renderer.ElementPropertyChanged -= OnElementPropertyChanged;
 			renderer.ElementChanged -= OnElementChanged;
@@ -55,13 +47,8 @@ namespace Xamarin.Forms.Platform.Android
 
 			var background = Element.Background;
 
-			if (background != null)
-			{
-				if (_backgroundDrawable == null)
-					_backgroundDrawable = new BackgroundDrawable(Element);
-
-				Control.SetBackground(_backgroundDrawable);
-			}
+			if (background != null && !background.IsEmpty)
+				Control.SetGradient(background);
 		}
 
 		static double GetDensity()

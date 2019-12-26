@@ -74,8 +74,7 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 
 		void IVisualElementRenderer.SetElement(VisualElement element)
 		{
-			var frame = element as Frame;
-			if (frame == null)
+			if (!(element is Frame frame))
 				throw new ArgumentException("Element must be of type Frame");
 			Element = frame;
 			_motionEventHelper.UpdateElement(frame);
@@ -186,6 +185,7 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 				e.NewElement.PropertyChanged += OnElementPropertyChanged;
 				UpdateShadow();
 				UpdateBackgroundColor();
+				UpdateBackground();
 				UpdateCornerRadius();
 				UpdateBorderColor();
 				UpdateClippedToBounds();
@@ -228,6 +228,8 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 				UpdateShadow();
 			else if (e.PropertyName == VisualElement.BackgroundColorProperty.PropertyName)
 				UpdateBackgroundColor();
+			else if (e.PropertyName == VisualElement.BackgroundProperty.PropertyName)
+				UpdateBackground();
 			else if (e.PropertyName == Frame.CornerRadiusProperty.PropertyName)
 				UpdateCornerRadius();
 			else if (e.PropertyName == Frame.BorderColorProperty.PropertyName)
@@ -242,9 +244,28 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 		{
 			if (_disposed)
 				return;
-				
+
+			_backgroundDrawable?.Dispose();
+			this.SetBackground(_backgroundDrawable = new GradientDrawable());
+
 			Color bgColor = Element.BackgroundColor;
 			_backgroundDrawable.SetColor(bgColor.IsDefault ? AColor.White : bgColor.ToAndroid());
+		}
+
+		void UpdateBackground()
+		{
+			if (_disposed)
+				return;
+
+			Brush bgBrush = Element.Background;
+
+			if (bgBrush == null || bgBrush.IsEmpty)
+				return;
+
+			_backgroundDrawable?.Dispose();
+			this.SetBackground(_backgroundDrawable = new GradientDrawable());
+
+			_backgroundDrawable.SetGradient(bgBrush, Control.Height, Control.Width);
 		}
 
 		void UpdateBorderColor()

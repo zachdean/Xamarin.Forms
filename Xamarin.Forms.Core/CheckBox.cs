@@ -78,6 +78,7 @@ namespace Xamarin.Forms
 
 		bool IBorderElement.IsCornerRadiusSet() => false;
 		bool IBorderElement.IsBackgroundColorSet() => IsSet(BackgroundColorProperty);
+		bool IBorderElement.IsBackgroundSet() => IsSet(BackgroundProperty);
 		bool IBorderElement.IsBorderColorSet() => false;
 		bool IBorderElement.IsBorderWidthSet() => false;
 	}

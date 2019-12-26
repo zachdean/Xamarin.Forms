@@ -96,6 +96,7 @@ namespace Xamarin.Forms.Platform.Android
 
 				LoadContent();
 				UpdateBackgroundColor();
+				UpdateBackground();
 				UpdateOrientation();
 				UpdateIsEnabled();
 				UpdateHorizontalScrollBarVisibility();
@@ -337,6 +338,8 @@ namespace Xamarin.Forms.Platform.Android
 				LoadContent();
 			else if (e.PropertyName == VisualElement.BackgroundColorProperty.PropertyName)
 				UpdateBackgroundColor();
+			else if (e.PropertyName == VisualElement.BackgroundProperty.PropertyName)
+				UpdateBackground();
 			else if (e.PropertyName == ScrollView.OrientationProperty.PropertyName)
 				UpdateOrientation();
 			else if (e.PropertyName == VisualElement.IsEnabledProperty.PropertyName)
@@ -470,6 +473,16 @@ namespace Xamarin.Forms.Platform.Android
 		void UpdateBackgroundColor()
 		{
 			SetBackgroundColor(Element.BackgroundColor.ToAndroid(Color.Transparent));
+		}
+
+		void UpdateBackground()
+		{
+			var bgBrush = Element.Background;
+
+			if (bgBrush == null || bgBrush.IsEmpty)
+				return;
+
+			this.SetGradient(bgBrush);
 		}
 
 		void UpdateOrientation()

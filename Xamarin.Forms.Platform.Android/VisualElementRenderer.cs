@@ -29,8 +29,6 @@ namespace Xamarin.Forms.Platform.Android
 
 		GestureManager _gestureManager;
 
-		BackgroundDrawable _backgroundDrawable;
-
 		protected VisualElementRenderer(Context context) : base(context)
 		{
 			_gestureManager = new GestureManager(this);
@@ -308,12 +306,6 @@ namespace Xamarin.Forms.Platform.Android
 					_gestureManager = null;
 				}
 
-				if (_backgroundDrawable != null)
-				{
-					_backgroundDrawable.Dispose();
-					_backgroundDrawable = null;
-				}
-
 				if (ManageNativeControlLifetime)
 				{
 					int count = ChildCount;
@@ -465,13 +457,12 @@ namespace Xamarin.Forms.Platform.Android
 
 		protected virtual void UpdateBackground()
 		{
-			if (Element.Background.IsEmpty)
+			var background = Element.Background;
+
+			if (background == null || background.IsEmpty)
 				return;
 
-			if (_backgroundDrawable == null)
-				_backgroundDrawable = new BackgroundDrawable(Element);
-
-			this.SetBackground(_backgroundDrawable);
+			this.SetGradient(background);
 		}
 
 		internal virtual void SendVisualElementInitialized(VisualElement element, AView nativeView)

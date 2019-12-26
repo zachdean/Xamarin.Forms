@@ -324,6 +324,7 @@ namespace Xamarin.Forms.Platform.Android.AppCompat
 
 				((IPageController)tabbedPage).InternalChildren.CollectionChanged += OnChildrenCollectionChanged;
 				UpdateBarBackgroundColor();
+				UpdateBarBackground();
 				UpdateBarTextColor();
 				UpdateItemIconColor();
 				if (!isDesigner)
@@ -345,6 +346,8 @@ namespace Xamarin.Forms.Platform.Android.AppCompat
 			}
 			else if (e.PropertyName == NavigationPage.BarBackgroundColorProperty.PropertyName)
 				UpdateBarBackgroundColor();
+			else if (e.PropertyName == NavigationPage.BarBackgroundProperty.PropertyName)
+				UpdateBarBackground();
 			else if (e.PropertyName == NavigationPage.BarTextColorProperty.PropertyName ||
 				e.PropertyName == TabbedPage.UnselectedTabColorProperty.PropertyName ||
 				e.PropertyName == TabbedPage.SelectedTabColorProperty.PropertyName)
@@ -766,6 +769,22 @@ namespace Xamarin.Forms.Platform.Android.AppCompat
 			}
 		}
 
+		void UpdateBarBackground()
+		{
+			if (IsDisposed)
+				return;
+
+			var barBackground = Element.BarBackground;
+
+			if (barBackground == null || barBackground.IsEmpty)
+				return;
+
+			if (IsBottomTabPlacement)
+				_bottomNavigationView.SetGradient(barBackground);
+			else
+				_tabLayout.SetGradient(barBackground);
+		}
+
 		protected virtual ColorStateList GetItemTextColorStates()
 		{
 			if (IsDisposed)
@@ -879,7 +898,7 @@ namespace Xamarin.Forms.Platform.Android.AppCompat
 					menuItem.SetChecked(true);
 			}
 
-			if(sender is BottomSheetDialog bsd)
+			if (sender is BottomSheetDialog bsd)
 				bsd.DismissEvent -= OnMoreSheetDismissed;
 		}
 

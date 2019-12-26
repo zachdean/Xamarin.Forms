@@ -4,16 +4,14 @@ using Android.Content;
 using Android.Graphics;
 using Android.Graphics.Drawables;
 using Android.Views;
-using AButton = Android.Widget.Button;
 using ACanvas = Android.Graphics.Canvas;
-using GlobalResource = Android.Resource;
 
 namespace Xamarin.Forms.Platform.Android
 {
 	public class FrameRenderer : VisualElementRenderer<Frame>
 	{
 		bool _disposed;
-		FrameDrawable _drawable;
+		FrameDrawable _backgroundDrawable;
 		readonly MotionEventHelper _motionEventHelper = new MotionEventHelper();
 
 		public FrameRenderer(Context context) : base(context)
@@ -33,7 +31,7 @@ namespace Xamarin.Forms.Platform.Android
 
 			if (disposing && !_disposed)
 			{
-				_drawable?.Dispose();
+				_backgroundDrawable?.Dispose();
 				_disposed = true;
 			}
 		}
@@ -60,7 +58,10 @@ namespace Xamarin.Forms.Platform.Android
 		protected override void OnElementPropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
 			base.OnElementPropertyChanged(sender, e);
-			if (e.PropertyName == VisualElement.BackgroundColorProperty.PropertyName || e.PropertyName == Frame.CornerRadiusProperty.PropertyName)
+
+			if (e.PropertyName == VisualElement.BackgroundColorProperty.PropertyName 
+				|| e.PropertyName == VisualElement.BackgroundProperty.PropertyName 
+				|| e.PropertyName == Frame.CornerRadiusProperty.PropertyName)
 			{
 				UpdateFrameBackground();
 			}
@@ -68,8 +69,8 @@ namespace Xamarin.Forms.Platform.Android
 
 		void UpdateFrameBackground()
 		{
-			_drawable?.Dispose();
-			this.SetBackground(_drawable = new FrameDrawable(Element, Context.ToPixels));
+			_backgroundDrawable?.Dispose();
+			this.SetBackground(_backgroundDrawable = new FrameDrawable(Element, Context.ToPixels));
 		}
 
 		class FrameDrawable : Drawable
@@ -122,7 +123,7 @@ namespace Xamarin.Forms.Platform.Android
 						_normalBitmap = null;
 					}
 
-					_normalBitmap = CreateBitmap(false, width, height);
+					_normalBitmap = CreateBitmap(width, height);
 				}
 				Bitmap bitmap = _normalBitmap;
 				using (var paint = new Paint())
@@ -158,7 +159,7 @@ namespace Xamarin.Forms.Platform.Android
 				return false;
 			}
 
-			Bitmap CreateBitmap(bool pressed, int width, int height)
+			Bitmap CreateBitmap(int width, int height)
 			{
 				Bitmap bitmap;
 				using (Bitmap.Config config = Bitmap.Config.Argb8888)
@@ -166,13 +167,13 @@ namespace Xamarin.Forms.Platform.Android
 
 				using (var canvas = new ACanvas(bitmap))
 				{
-					DrawCanvas(canvas, width, height, pressed);
+					DrawCanvas(canvas, width, height);
 				}
 
 				return bitmap;
 			}
 
-			void DrawBackground(ACanvas canvas, int width, int height, float cornerRadius, bool pressed)
+			void DrawBackground(ACanvas canvas, int width, int height, float cornerRadius)
 			{
 				using (var paint = new Paint { AntiAlias = true })
 				using (var path = new Path())
@@ -184,16 +185,24 @@ namespace Xamarin.Forms.Platform.Android
 					float ry = _convertToPixels(cornerRadius);
 					path.AddRoundRect(rect, rx, ry, direction);
 
-					global::Android.Graphics.Color color = _frame.BackgroundColor.ToAndroid();
-
 					paint.SetStyle(style);
-					paint.Color = color;
+
+					if (_frame.Background != null && !_frame.Background.IsEmpty)
+					{
+						Brush background = _frame.Background;
+						paint.SetGradient(background, height, width);
+					}
+					else
+					{
+						global::Android.Graphics.Color color = _frame.BackgroundColor.ToAndroid();
+						paint.Color = color;
+					}
 
 					canvas.DrawPath(path, paint);
 				}
 			}
 
-			void DrawOutline(ACanvas canvas, int width, int height, float cornerRadius)
+			void DrawBorder(ACanvas canvas, int width, int height, float cornerRadius)
 			{
 				using (var paint = new Paint { AntiAlias = true })
 				using (var path = new Path())
@@ -215,7 +224,8 @@ namespace Xamarin.Forms.Platform.Android
 
 			void FrameOnPropertyChanged(object sender, PropertyChangedEventArgs e)
 			{
-				if (   e.PropertyName == VisualElement.BackgroundColorProperty.PropertyName
+				if (e.PropertyName == VisualElement.BackgroundColorProperty.PropertyName
+					|| e.PropertyName == VisualElement.BackgroundProperty.PropertyName
 					|| e.PropertyName == Frame.BorderColorProperty.PropertyName
 					|| e.PropertyName == Frame.CornerRadiusProperty.PropertyName)
 				{
@@ -227,21 +237,21 @@ namespace Xamarin.Forms.Platform.Android
 						int width = Bounds.Width();
 						int height = Bounds.Height();
 						canvas.DrawColor(global::Android.Graphics.Color.Black, PorterDuff.Mode.Clear);
-						DrawCanvas(canvas, width, height, false);
+						DrawCanvas(canvas, width, height);
 					}
 					InvalidateSelf();
 				}
 			}
 
-			void DrawCanvas(ACanvas canvas, int width, int height, bool pressed)
+			void DrawCanvas(ACanvas canvas, int width, int height)
 			{
 				float cornerRadius = _frame.CornerRadius;
 
 				if (cornerRadius == -1f)
 					cornerRadius = 5f; // default corner radius
 
-				DrawBackground(canvas, width, height, cornerRadius, pressed);
-				DrawOutline(canvas, width, height, cornerRadius);
+				DrawBackground(canvas, width, height, cornerRadius);
+				DrawBorder(canvas, width, height, cornerRadius);
 			}
 		}
 	}
