@@ -83,7 +83,7 @@ jobs:
         displayName: 'Copy ${{ parameters.name }}'
         inputs:
           SourceFolder: ${{ parameters.androidPath }}/bin/${{ parameters.buildConfiguration }}/
-         Contents: '**/*.apk'
+          Contents: '**/*.apk'
           TargetFolder: ${{ parameters.targetFolder }}
           CleanTargetFolder: true
           OverWrite: true
