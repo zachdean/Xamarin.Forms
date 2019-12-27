@@ -28,5 +28,9 @@
   <PropertyGroup Condition="'$(AndroidTargetFrameworks)' == ''">
     <AndroidTargetFrameworks>MonoAndroid90;</AndroidTargetFrameworks>
   </PropertyGroup>
-  
+  <PropertyGroup>
+    <Use2017 Condition="'$(Use2017)' == '' AND '$(MSBuildRuntimeType)' == 'Mono'">$(FrameworkSDKRoot.Contains('/Versions/5'))</Use2017>
+    <Use2017 Condition="'$(Use2017)' == '' AND '$(MSBuildAssemblyVersion)' &lt; '16.0'">true</Use2017>
+    <Use2017 Condition="'$(Use2017)' == ''">false</Use2017>
+  </PropertyGroup>
  </Project>

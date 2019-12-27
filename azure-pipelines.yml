@@ -1,6 +1,4 @@
 variables:
-- name: DefaultBuildConfiguration
-  value: Debug
 - name: DefaultBuildPlatform
   value: 'any cpu'
 - name: ApkName
@@ -67,7 +65,6 @@ jobs:
     vmImage: $(winVmImage)
     targetFolder: Xamarin.Forms.ControlGallery.Android/legacyRenderers/
     msbuildExtraArguments: '/nowarn:VSX1000'
-    buildConfiguration: $(DefaultBuildConfiguration)
     buildPlatform: $(DefaultBuildPlatform)
     provisionatorPath : 'build/provisioning/provisioning.csx'
     includeUwp: 'false'
@@ -79,7 +76,6 @@ jobs:
     vmImage: $(win2019VmImage)
     targetFolder: Xamarin.Forms.ControlGallery.Android/legacyRenderers/
     msbuildExtraArguments: '/nowarn:VSX1000 /p:CreateAllAndroidTargets=true'
-    buildConfiguration: $(DefaultBuildConfiguration)
     buildPlatform: $(DefaultBuildPlatform)
     provisionatorPath : 'build/provisioning/provisioning.csx'
     slnPath: '.Xamarin.Forms.UAP.nuget.sln'
@@ -161,6 +157,3 @@ jobs:
     steps:
       - template: build/steps/build-sign.yml
     condition: and(succeeded(), or(eq(variables['Sign'], 'true'), or(eq(variables['Build.SourceBranch'], 'refs/heads/master'), startsWith(variables['Build.SourceBranch'],'refs/tags/'))))
-
-
-
