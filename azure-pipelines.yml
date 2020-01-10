@@ -18,11 +18,11 @@ variables:
 - name: BuildVersion44
   value: $[counter('xf-nuget-counter', 992000)]
 - name: NUGET_VERSION
-  value: 5.0.2
+  value: 5.4.0
 - name: DOTNET_SKIP_FIRST_TIME_EXPERIENCE
   value: true
 - name: DOTNET_VERSION
-  value: 3.0.100
+  value: 3.1.100
 
 resources:
   repositories:
