@@ -227,21 +227,21 @@ namespace Xamarin.Forms.Platform.Android
 			if (ToolbarResource != 0)
 			{
 				Profile.FramePartition("Inflate ToolbarResource");
-				bar = Anticipator.InflateResource(this, ToolbarResource).JavaCast<AToolbar>();
+				bar = AndroidAnticipator.InflateResource(this, ToolbarResource).JavaCast<AToolbar>();
 				if (bar == null)
 					throw new InvalidOperationException("ToolbarResource must be set to a Android.Support.V7.Widget.Toolbar");
 			}
 			else 
 			{
 				Profile.FramePartition("Activate Toolbar");
-				bar = Anticipator.Activate(this, typeof(AToolbar)).JavaCast<AToolbar>();
+				bar = AndroidAnticipator.ActivateView(this, typeof(AToolbar)).JavaCast<AToolbar>();
 			}
 
 			Profile.FramePartition("Set ActionBar");
 			SetSupportActionBar(bar);
 
 			Profile.FramePartition("Activate ARelativeLayout");
-			_layout = (ARelativeLayout)Anticipator.Activate(BaseContext, typeof(ARelativeLayout));
+			_layout = (ARelativeLayout)AndroidAnticipator.ActivateView(BaseContext, typeof(ARelativeLayout));
 
 			Profile.FramePartition("SetContentView");
 			_layout = new ARelativeLayout(BaseContext);

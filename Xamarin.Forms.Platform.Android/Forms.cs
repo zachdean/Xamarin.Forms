@@ -71,8 +71,6 @@ namespace Xamarin.Forms
 		static Color _ColorButtonNormal = Color.Default;
 		public static Color ColorButtonNormalOverride { get; set; }
 
-		internal static BuildVersionCodes SdkInt => Anticipator.SdkInt;
-
 		internal static bool Is29OrNewer
 		{
 			get
@@ -83,6 +81,8 @@ namespace Xamarin.Forms
 			}
 		}
 
+		internal static BuildVersionCodes SdkInt => AndroidAnticipator.SdkVersion;
+	
 		internal static bool IsLollipopOrNewer
 		{
 			get
@@ -147,14 +147,15 @@ namespace Xamarin.Forms
 		// Why is bundle a param if never used?
 		public static void Init(Context activity, Bundle bundle)
 		{
-			Assembly resourceAssembly;
-
-			Profile.FrameBegin("Assembly.GetCallingAssembly");
-			resourceAssembly = Assembly.GetCallingAssembly();
-			Profile.FrameEnd("Assembly.GetCallingAssembly");
-
 			Profile.FrameBegin();
+
+			Profile.FramePartition("Assembly.GetCallingAssembly");
+			Assembly resourceAssembly;
+			resourceAssembly = Assembly.GetCallingAssembly();
+
+			Profile.FramePartition("SetupInit");
 			SetupInit(activity, resourceAssembly, null);
+
 			Profile.FrameEnd();
 		}
 
@@ -411,11 +412,11 @@ namespace Xamarin.Forms
 			Color rc;
 			using (var value = new TypedValue())
 			{
-				if (IsLollipopOrNewer && Anticipator.HasResource(context, Resource.Attribute.ColorAccent)) // Android 5.0+
+				if (IsLollipopOrNewer && AndroidAnticipator.IdedResourceExists(context, Resource.Attribute.ColorAccent)) // Android 5.0+
 				{
 					rc = Color.FromUint((uint)value.Data);
 				}
-				else if (Anticipator.HasResource(context, "colorAccent", "attr"))  // < Android 5.0
+				else if (AndroidAnticipator.NamedResourceExists(context, "colorAccent", "attr"))  // < Android 5.0
 				{
 					rc = Color.FromUint((uint)value.Data);
 				}
