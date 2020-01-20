@@ -10,6 +10,8 @@ namespace Xamarin.Forms.Platform.iOS
 		UIColor _defaultTint;
 		UIColor _defaultUnselectedTint;
 
+		bool _operatingSystemSupportsUnselectedTint = Forms.IsiOS10OrNewer;
+
 		public virtual void ResetAppearance(UITabBarController controller)
 		{
 			if (_defaultTint == null)
@@ -18,7 +20,10 @@ namespace Xamarin.Forms.Platform.iOS
 			var tabBar = controller.TabBar;
 			tabBar.BarTintColor = _defaultBarTint;
 			tabBar.TintColor = _defaultTint;
-			tabBar.UnselectedItemTintColor = _defaultUnselectedTint;
+
+			if (_operatingSystemSupportsUnselectedTint)
+				tabBar.UnselectedItemTintColor = _defaultUnselectedTint;
+
 		}
 
 		public virtual void SetAppearance(UITabBarController controller, ShellAppearance appearance)
@@ -31,14 +36,13 @@ namespace Xamarin.Forms.Platform.iOS
 			var titleColor = appearanceElement.EffectiveTabBarTitleColor;
 
 			var tabBar = controller.TabBar;
-			bool operatingSystemSupportsUnselectedTint = Forms.IsiOS10OrNewer;
 
 			if (_defaultTint == null)
 			{
 				_defaultBarTint = tabBar.BarTintColor;
 				_defaultTint = tabBar.TintColor;
 
-				if (operatingSystemSupportsUnselectedTint)
+				if (_operatingSystemSupportsUnselectedTint)
 				{
 					_defaultUnselectedTint = tabBar.UnselectedItemTintColor;
 				}
@@ -49,7 +53,7 @@ namespace Xamarin.Forms.Platform.iOS
 			if (!titleColor.IsDefault)
 				tabBar.TintColor = titleColor.ToUIColor();
 
-			if (operatingSystemSupportsUnselectedTint)
+			if (_operatingSystemSupportsUnselectedTint)
 			{
 				if (!unselectedColor.IsDefault)
 					tabBar.UnselectedItemTintColor = unselectedColor.ToUIColor();

@@ -211,13 +211,19 @@ namespace Xamarin.Forms.Platform.iOS
 			get
 			{
 				UIEdgeInsets safeAreaInsets;
+				UIWindow currentKeyWindow = null;
+
+				if (Forms.IsiOS13OrNewer)
+					currentKeyWindow = GetCurrentKeyWindow();
 
 				if (!Forms.IsiOS11OrNewer)
 					safeAreaInsets = new UIEdgeInsets(UIApplication.SharedApplication.StatusBarFrame.Size.Height, 0, 0, 0);
-				else if (UIApplication.SharedApplication.KeyWindow != null)
+				else if (!Forms.IsiOS13OrNewer && UIApplication.SharedApplication.KeyWindow != null)
 					safeAreaInsets = UIApplication.SharedApplication.KeyWindow.SafeAreaInsets;
-				else if (UIApplication.SharedApplication.Windows.Length > 0)
+				else if (!Forms.IsiOS13OrNewer && UIApplication.SharedApplication.Windows.Length > 0)
 					safeAreaInsets = UIApplication.SharedApplication.Windows[0].SafeAreaInsets;
+				else if (currentKeyWindow != null)
+					safeAreaInsets = currentKeyWindow.SafeAreaInsets;
 				else
 					safeAreaInsets = UIEdgeInsets.Zero;
 
@@ -491,6 +497,11 @@ namespace Xamarin.Forms.Platform.iOS
 			_renderer.View?.Window?.EndEditing(true);
 		}
 
+		static UIWindow GetCurrentKeyWindow()
+		{
+			return UIApplication.SharedApplication.Windows.FirstOrDefault(w => w.IsKeyWindow);
+		}
+
 		internal class DefaultRenderer : VisualElementRenderer<VisualElement>
 		{
 			public override UIView HitTest(CGPoint point, UIEvent uievent)
@@ -552,7 +563,9 @@ namespace Xamarin.Forms.Platform.iOS
 				if (!PageIsChildOfPlatform(sender))
 					return;
 				busyCount = Math.Max(0, enabled ? busyCount + 1 : busyCount - 1);
-				UIApplication.SharedApplication.NetworkActivityIndicatorVisible = busyCount > 0;
+
+				if (!Forms.IsiOS13OrNewer)
+					UIApplication.SharedApplication.NetworkActivityIndicatorVisible = busyCount > 0;
 			});
 
 			MessagingCenter.Subscribe(this, Page.AlertSignalName, (Page sender, AlertArguments arguments) =>

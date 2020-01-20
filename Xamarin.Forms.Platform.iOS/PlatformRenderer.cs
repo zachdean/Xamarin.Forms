@@ -57,15 +57,6 @@ namespace Xamarin.Forms.Platform.iOS
 			return base.ShouldAutorotate();
 		}
 
-		public override bool ShouldAutorotateToInterfaceOrientation(UIInterfaceOrientation toInterfaceOrientation)
-		{
-			if ((ChildViewControllers != null) && (ChildViewControllers.Length > 0))
-			{
-				return ChildViewControllers[0].ShouldAutorotateToInterfaceOrientation(toInterfaceOrientation);
-			}
-			return base.ShouldAutorotateToInterfaceOrientation(toInterfaceOrientation);
-		}
-
 		public override bool ShouldAutomaticallyForwardRotationMethods => true;
 
 		public override void ViewDidAppear(bool animated)

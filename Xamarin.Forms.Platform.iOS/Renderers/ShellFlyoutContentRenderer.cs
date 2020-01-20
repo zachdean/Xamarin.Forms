@@ -129,7 +129,12 @@ namespace Xamarin.Forms.Platform.iOS
 			_tableViewController.TableView.BackgroundView = null;
 			_tableViewController.TableView.BackgroundColor = UIColor.Clear;
 
-			var effect = UIBlurEffect.FromStyle(UIBlurEffectStyle.Regular);
+			var effectStyle = UIBlurEffectStyle.Light;
+
+			if (Forms.IsiOS10OrNewer)
+				effectStyle = UIBlurEffectStyle.Regular;
+
+			var effect = UIBlurEffect.FromStyle(effectStyle);
 			_blurView = new UIVisualEffectView(effect);
 			_blurView.Frame = View.Bounds;
 			_bgImage = new UIImageView

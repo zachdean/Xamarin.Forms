@@ -93,7 +93,7 @@ namespace Xamarin.Forms.Platform.iOS
 			void UpdateTextAndStyle()
 			{
 				Title = _item.Text;
-				Style = UIBarButtonItemStyle.Bordered;
+				Style = UIBarButtonItemStyle.Plain;
 				Image = null;
 			}
 		}
