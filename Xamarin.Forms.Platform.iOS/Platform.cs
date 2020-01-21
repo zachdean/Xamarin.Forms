@@ -214,7 +214,7 @@ namespace Xamarin.Forms.Platform.iOS
 				UIWindow currentKeyWindow = null;
 
 				if (Forms.IsiOS13OrNewer)
-					currentKeyWindow = GetCurrentKeyWindow();
+					currentKeyWindow = UIApplication.SharedApplication.GetCurrentKeyWindow();
 
 				if (!Forms.IsiOS11OrNewer)
 					safeAreaInsets = new UIEdgeInsets(UIApplication.SharedApplication.StatusBarFrame.Size.Height, 0, 0, 0);
@@ -495,11 +495,6 @@ namespace Xamarin.Forms.Platform.iOS
 
 			// If there aren't any modals, then the platform renderer will have the Window
 			_renderer.View?.Window?.EndEditing(true);
-		}
-
-		static UIWindow GetCurrentKeyWindow()
-		{
-			return UIApplication.SharedApplication.Windows.FirstOrDefault(w => w.IsKeyWindow);
 		}
 
 		internal class DefaultRenderer : VisualElementRenderer<VisualElement>

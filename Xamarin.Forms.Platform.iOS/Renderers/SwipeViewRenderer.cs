@@ -390,7 +390,7 @@ namespace Xamarin.Forms.Platform.iOS
 			button.TitleEdgeInsets = titleEdgeInsets;
 
 			var labelString = button.TitleLabel.Text;
-			var titleSize = labelString.StringSize(button.TitleLabel.Font);
+			var titleSize = ((NSString)labelString).GetSizeUsingAttributes(new UIStringAttributes { Font = button.TitleLabel.Font });
 			var imageEdgeInsets = new UIEdgeInsets(-(titleSize.Height + spacing), 0.0f, 0.0f, -titleSize.Width);
 			button.ImageEdgeInsets = imageEdgeInsets;
 		}
@@ -963,7 +963,7 @@ namespace Xamarin.Forms.Platform.iOS
 
 		UIViewController GetViewController()
 		{
-			var window = UIApplication.SharedApplication.KeyWindow;
+			var window = UIApplication.SharedApplication.GetCurrentKeyWindow();
 			var viewController = window.RootViewController;
 
 			while (viewController.PresentedViewController != null)

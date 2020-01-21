@@ -95,13 +95,6 @@ namespace Xamarin.Forms.Platform.iOS
 			get { return this; }
 		}
 
-		public override void DidRotate(UIInterfaceOrientation fromInterfaceOrientation)
-		{
-			base.DidRotate(fromInterfaceOrientation);
-
-			View.SetNeedsLayout();
-		}
-
 		public override void ViewDidAppear(bool animated)
 		{
 			Page.SendAppearing();
@@ -466,10 +459,12 @@ namespace Xamarin.Forms.Platform.iOS
 			if (Tabbed == null || TabBar == null || TabBar.Items == null)
 				return;
 
+			var selectedTintColor = UITabBar.Appearance.SelectedImageTintColor;
+
 			if (Tabbed.IsSet(TabbedPage.SelectedTabColorProperty) && Tabbed.SelectedTabColor != Color.Default)
-				TabBar.SelectedImageTintColor = Tabbed.SelectedTabColor.ToUIColor();
-			else
-				TabBar.SelectedImageTintColor = UITabBar.Appearance.SelectedImageTintColor;
+				selectedTintColor = Tabbed.SelectedTabColor.ToUIColor();
+
+			TabBar.TintColor = selectedTintColor;
 
 			if (!Forms.IsiOS10OrNewer)
 				return;

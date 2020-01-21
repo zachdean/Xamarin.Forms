@@ -316,12 +316,23 @@ namespace Xamarin.Forms
 				if (uri.Scheme == "tel" || uri.Scheme == "mailto")
 					url = new NSUrl(uri.AbsoluteUri);
 				else
-					url = NSUrl.FromString(uri.OriginalString) ?? new NSUrl(uri.Scheme, uri.Host, uri.PathAndQuery);
+					url = NSUrl.FromString(uri.OriginalString) ?? BuildUrl(uri);
 #if __MOBILE__
-				UIApplication.SharedApplication.OpenUrl(url);
+				UIApplication.SharedApplication.OpenUrl(url, new NSDictionary(), null);
 #else
 				NSWorkspace.SharedWorkspace.OpenUrl(url);
 #endif
+			}
+
+			NSUrl BuildUrl(Uri uri)
+			{
+				var urlComponents = new NSUrlComponents();
+				urlComponents.Scheme = uri.Scheme;
+				urlComponents.Host = uri.Host;
+				urlComponents.Path = uri.AbsolutePath;
+				urlComponents.Query = uri.Query;
+
+				return urlComponents.Url;
 			}
 
 			public void StartTimer(TimeSpan interval, Func<bool> callback)

@@ -91,17 +91,6 @@ namespace Xamarin.Forms.Platform.iOS
 			get { return this; }
 		}
 
-		//TODO: this was deprecated in iOS8.0 and is not called in 9.0+
-		public override void DidRotate(UIInterfaceOrientation fromInterfaceOrientation)
-		{
-			base.DidRotate(fromInterfaceOrientation);
-
-			View.SetNeedsLayout();
-
-			var parentingViewController = (ParentingViewController)ViewControllers.Last();
-			parentingViewController?.UpdateLeftBarButtonItem();
-		}
-
 		public Task<bool> PopToRootAsync(Page page, bool animated = true)
 		{
 			return OnPopToRoot(page, animated);
@@ -937,13 +926,6 @@ namespace Xamarin.Forms.Platform.iOS
 
 			public event EventHandler Appearing;
 
-			public override void DidRotate(UIInterfaceOrientation fromInterfaceOrientation)
-			{
-				base.DidRotate(fromInterfaceOrientation);
-
-				View.SetNeedsLayout();
-			}
-
 			public event EventHandler Disappearing;
 
 			public override void ViewDidAppear(bool animated)
@@ -1286,14 +1268,6 @@ namespace Xamarin.Forms.Platform.iOS
 				if (Child != null && (childRenderer = Platform.GetRenderer(Child)) != null)
 					return childRenderer.ViewController.ShouldAutorotate();
 				return base.ShouldAutorotate();
-			}
-
-			public override bool ShouldAutorotateToInterfaceOrientation(UIInterfaceOrientation toInterfaceOrientation)
-			{
-				IVisualElementRenderer childRenderer;
-				if (Child != null && (childRenderer = Platform.GetRenderer(Child)) != null)
-					return childRenderer.ViewController.ShouldAutorotateToInterfaceOrientation(toInterfaceOrientation);
-				return base.ShouldAutorotateToInterfaceOrientation(toInterfaceOrientation);
 			}
 
 			public override bool ShouldAutomaticallyForwardRotationMethods => true;

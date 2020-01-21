@@ -1,5 +1,6 @@
 using Foundation;
 using System;
+using System.Linq;
 using UIKit;
 using Xamarin.Forms.Internals;
 
@@ -180,5 +181,10 @@ namespace Xamarin.Forms.Platform.iOS
 		internal static bool IsHorizontal(this Button.ButtonContentLayout layout) =>
 			layout.Position == Button.ButtonContentLayout.ImagePosition.Left ||
 			layout.Position == Button.ButtonContentLayout.ImagePosition.Right;
+
+		internal static UIWindow GetCurrentKeyWindow(this UIApplication application)
+		{
+			return application.Windows.FirstOrDefault(w => w.IsKeyWindow);
+		}
 	}
 }

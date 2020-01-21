@@ -369,25 +369,6 @@ namespace Xamarin.Forms.Platform.iOS
 			_masterController.View.BackgroundColor = UIColor.White;
 		}
 
-		public override void WillRotate(UIInterfaceOrientation toInterfaceOrientation, double duration)
-		{
-			// I tested this code on iOS9+ and it's never called
-			if (!Forms.IsiOS9OrNewer)
-			{
-				if (!MasterDetailPage.ShouldShowSplitMode && IsMasterVisible)
-				{
-					MasterDetailPage.CanChangeIsPresented = true;
-					PreferredDisplayMode = UISplitViewControllerDisplayMode.PrimaryHidden;
-					PreferredDisplayMode = UISplitViewControllerDisplayMode.Automatic;
-				}
-
-				MasterDetailPage.UpdateMasterBehavior();
-				MessagingCenter.Send<IVisualElementRenderer>(this, NavigationRenderer.UpdateToolbarButtons);
-			}
-
-			base.WillRotate(toInterfaceOrientation, duration);
-		}
-
 		public override UIViewController ChildViewControllerForStatusBarHidden()
 		{
 			if (((MasterDetailPage)Element).Detail != null)

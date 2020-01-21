@@ -149,20 +149,6 @@ namespace Xamarin.Forms.Platform.iOS
 			Carousel.PagesChanged += OnPagesChanged;
 		}
 
-		public override void ViewDidUnload()
-		{
-			base.ViewDidUnload();
-
-			if (_scrollView != null)
-				_scrollView.DecelerationEnded -= OnDecelerationEnded;
-
-			if (Carousel != null)
-			{
-				Carousel.PropertyChanged -= OnPropertyChanged;
-				Carousel.PagesChanged -= OnPagesChanged;
-			}
-		}
-
 		public override void WillRotate(UIInterfaceOrientation toInterfaceOrientation, double duration)
 		{
 			_ignoreNativeScrolling = true;

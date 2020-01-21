@@ -289,7 +289,7 @@ namespace Xamarin.Forms.Platform.iOS
 			if (initialSize == CGSize.Empty)
 			{
 				NSString testString = new NSString("Tj");
-				initialSize = testString.StringSize(Control.Font);
+				initialSize = testString.GetSizeUsingAttributes(new UIStringAttributes { Font = Control.Font });
 			}
 
 			Control.Font = Element.ToUIFont();
