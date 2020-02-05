@@ -264,6 +264,8 @@
     <Compile Include="Renderers\SwipeViewRenderer.cs" />
     <Compile Include="Extensions\UIApplicationExtensions.cs" />
     <Compile Include="Extensions\UICollectionViewExtensions.cs" />
+    <Compile Include="CollectionView\CarouselUICollectionView.cs" />
+    <Compile Include="CollectionView\CarouselViewDataSource.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\StringResources.ar.resx" />
