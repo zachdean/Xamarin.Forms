@@ -99,10 +99,12 @@ namespace Xamarin.Forms.Platform.iOS
 				if (_rendererRef == null)
 					return;
 
-				IVisualElementRenderer renderer;
-				if (_rendererRef.TryGetTarget(out renderer))
-					renderer.NativeView.Frame = view.Bounds.ToRectangleF();
-
+				try
+				{
+					if (_rendererRef.TryGetTarget(out IVisualElementRenderer renderer))
+						renderer.NativeView.Frame = view.Bounds.ToRectangleF();
+				}
+				catch (ObjectDisposedException) { }
 				Performance.Stop(reference);
 			}
 
