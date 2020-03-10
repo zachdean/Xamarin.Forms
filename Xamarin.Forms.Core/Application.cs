@@ -8,6 +8,7 @@ using Xamarin.Forms.Internals;
 using Xamarin.Forms.Platform;
 using System.Diagnostics;
 using Xamarin.Forms.Core;
+using Xamarin.Essentials;
 
 namespace Xamarin.Forms
 {
