@@ -626,7 +626,12 @@ namespace Xamarin.Forms.Platform.Android
 		}
 
 		protected virtual Drawable GetCloseButtonDrawable()
-			=> ContextCompat.GetDrawable(Context, Resource.Drawable.abc_ic_clear_material);
+		{
+			var closeButton = ContextCompat.GetDrawable(Context, Resource.Drawable.abc_ic_clear_material);
+			closeButton.SetColorFilter(Color.Accent, FilterMode.SrcIn);
+
+			return closeButton;
+		}
 
 		void ListenForCloseBtnTouch(bool listen)
 		{
