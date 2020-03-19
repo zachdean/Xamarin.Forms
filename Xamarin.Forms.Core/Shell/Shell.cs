@@ -503,7 +503,17 @@ namespace Xamarin.Forms
 				if (navigationRequest.Request.GlobalRoutes.Count > 0 && navigationRequest.StackRequest != NavigationRequest.WhatToDoWithTheStack.ReplaceIt)
 				{
 					// TODO get rid of this hack and fix so if there's a stack the current page doesn't display
-					Device.BeginInvokeOnMainThread(async () =>
+					await Device.InvokeOnMainThreadAsync(async () =>
+					{
+						await CurrentItem.CurrentItem.GoToAsync(navigationRequest, queryData, animate);
+					});
+				}
+				else if(navigationRequest.Request.GlobalRoutes.Count == 0 &&
+					navigationRequest.StackRequest == NavigationRequest.WhatToDoWithTheStack.ReplaceIt &&
+					currentShellSection?.Navigation?.NavigationStack?.Count > 1)
+				{
+					// TODO get rid of this hack and fix so if there's a stack the current page doesn't display
+					await Device.InvokeOnMainThreadAsync(async () =>
 					{
 						await CurrentItem.CurrentItem.GoToAsync(navigationRequest, queryData, animate);
 					});
