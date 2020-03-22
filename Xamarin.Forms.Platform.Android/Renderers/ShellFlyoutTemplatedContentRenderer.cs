@@ -77,21 +77,7 @@ namespace Xamarin.Forms.Platform.Android
 
 			Profile.FramePartition("Add HeaderView");
 			_actionBarHeight = (int)context.ToPixels(56);
-
-			_flyoutHeader = ((IShellController)shellContext.Shell).FlyoutHeader;
-			if (_flyoutHeader != null)
-				_flyoutHeader.MeasureInvalidated += OnFlyoutHeaderMeasureInvalidated;
-
-			_headerView = new HeaderContainer(context, _flyoutHeader)
-			{
-				MatchWidth = true
-			};
-			_headerView.SetMinimumHeight(_actionBarHeight);
-			_headerView.LayoutParameters = new AppBarLayout.LayoutParams(LP.MatchParent, LP.WrapContent)
-			{
-				ScrollFlags = AppBarLayout.LayoutParams.ScrollFlagScroll
-			};
-			_appBar.AddView(_headerView);
+			UpdateFlyoutHeader();
 
 			Profile.FramePartition("Recycler.SetAdapter");
 			_adapter = new ShellFlyoutRecyclerAdapter(shellContext, OnElementSelected);
@@ -155,6 +141,38 @@ namespace Xamarin.Forms.Platform.Android
 				UpdateFlyoutBackground();
 			else if (e.Is(Shell.FlyoutVerticalScrollModeProperty))
 				UpdateVerticalScrollMode();
+			else if (e.IsOneOf(
+				Shell.FlyoutHeaderProperty,
+				Shell.FlyoutHeaderTemplateProperty))
+				UpdateFlyoutHeader();
+		}
+
+		void UpdateFlyoutHeader()
+		{
+			if(_headerView != null)
+			{
+				_appBar.RemoveView(_headerView);
+			}
+
+			if (_flyoutHeader != null)
+			{
+				_flyoutHeader.MeasureInvalidated -= OnFlyoutHeaderMeasureInvalidated;
+			}
+
+			_flyoutHeader = ((IShellController)_shellContext.Shell).FlyoutHeader;
+			if (_flyoutHeader != null)
+				_flyoutHeader.MeasureInvalidated += OnFlyoutHeaderMeasureInvalidated;
+
+			_headerView = new HeaderContainer(_shellContext.AndroidContext, _flyoutHeader)
+			{
+				MatchWidth = true
+			};
+			_headerView.SetMinimumHeight(_actionBarHeight);
+			_headerView.LayoutParameters = new AppBarLayout.LayoutParams(LP.MatchParent, LP.WrapContent)
+			{
+				ScrollFlags = AppBarLayout.LayoutParams.ScrollFlagScroll
+			};
+			_appBar.AddView(_headerView);
 		}
 
 		void UpdateVerticalScrollMode()

@@ -548,7 +548,7 @@ namespace Xamarin.Forms
 			if (!isLastItem)
 			{
 				var route = Routing.GetRoute(element);
-				if (string.IsNullOrEmpty(route) || route.StartsWith(Routing.ImplicitPrefix, StringComparison.Ordinal))
+				if (string.IsNullOrEmpty(route) || Routing.IsImplicit(route))
 					return;
 				prefix = route + ".";
 			}
@@ -709,7 +709,7 @@ namespace Xamarin.Forms
 				SendStructureChanged();
 			};
 
-			void SetCurrentItem()
+			async void SetCurrentItem()
 			{
 				var shellItems = ShellController.GetItems();
 
@@ -718,12 +718,32 @@ namespace Xamarin.Forms
 
 				ShellItem shellItem = null;
 
-				foreach (var item in shellItems)
+				// If shell item has been removed try to renavigate to current location
+				// Just in case the item was replaced. This is mainly relevant for hot reload
+				if (CurrentItem != null)
 				{
-					if (item is ShellItem && ValidDefaultShellItem(item))
+					try
 					{
-						shellItem = item;
-						break;
+						var location = CurrentState.Location;
+						location = Routing.Remove(location, true, true);
+						await GoToAsync(location, false);
+						return;
+					}
+					catch (Exception exc)
+					{
+						Log.Warning(nameof(Shell), $"If you're using hot reload add a route to everything in your shell file:  {exc}");
+					}
+				}
+
+				if (shellItem == null)
+				{
+					foreach (var item in shellItems)
+					{
+						if (item is ShellItem && ValidDefaultShellItem(item))
+						{
+							shellItem = item;
+							break;
+						}
 					}
 				}
 
