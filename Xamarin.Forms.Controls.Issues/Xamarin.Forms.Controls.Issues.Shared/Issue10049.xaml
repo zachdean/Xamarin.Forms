@@ -1,0 +1,48 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<controls:TestContentPage
+    xmlns:controls="clr-namespace:Xamarin.Forms.Controls"
+    xmlns="http://xamarin.com/schemas/2014/forms"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    x:Class="Xamarin.Forms.Controls.Issues.Issue10049">
+    <ContentPage.Resources>
+
+        <Style TargetType="Entry">
+            <Setter Property="Margin"
+                    Value="20, 0" />
+            <Setter Property="FontSize"
+                    Value="18" />
+        </Style>
+
+        <Style TargetType="Label">
+            <Setter Property="Margin"
+                    Value="20, 0" />
+        </Style>
+
+    </ContentPage.Resources>
+    <StackLayout Margin="10">
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="CommonStates">
+                <VisualState x:Name="Normal" />
+                <VisualState x:Name="BigWindow">
+                    <VisualState.Setters>
+                        <Setter Property="Scale" Value="0.8" />
+                        <Setter TargetName="MyEntry" Property="Entry.Text" Value="Paris" />
+                    </VisualState.Setters>
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="500"/>
+                    </VisualState.StateTriggers>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+        <Label 
+            Text="What is the capital of France?" />
+        <Entry 
+            x:Name="MyEntry" 
+            Placeholder="Enter answer" />
+        <Button 
+            Text="Reveal answer" />
+    </StackLayout>
+</controls:TestContentPage>
