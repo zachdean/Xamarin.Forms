@@ -242,6 +242,48 @@ namespace Xamarin.Forms.Core.UnitTests
 		}
 
 		[Test]
+		public void TestFromHsv()
+		{
+			var color = Color.FromRgb(1, .29, .752);
+			var colorHsv = Color.FromHsv(321, 71, 100);
+			Assert.That(color.R, Is.EqualTo(colorHsv.R).Within(0.001));
+			Assert.That(color.G, Is.EqualTo(colorHsv.G).Within(0.001));
+			Assert.That(color.B, Is.EqualTo(colorHsv.B).Within(0.001));
+		}
+
+		[Test]
+		public void TestFromHsva()
+		{
+			var color = Color.FromRgba(1, .29, .752, .5);
+			var colorHsv = Color.FromHsva(321, 71, 100, 50);
+			Assert.That(color.R, Is.EqualTo(colorHsv.R).Within(0.001));
+			Assert.That(color.G, Is.EqualTo(colorHsv.G).Within(0.001));
+			Assert.That(color.B, Is.EqualTo(colorHsv.B).Within(0.001));
+			Assert.That(color.A, Is.EqualTo(colorHsv.A).Within(0.001));
+		}
+
+		[Test]
+		public void TestFromHsvDouble()
+		{
+			var color = Color.FromRgb(1, .29, .758);
+			var colorHsv = Color.FromHsv(.89, .71, 1);
+			Assert.That(color.R, Is.EqualTo(colorHsv.R).Within(0.001));
+			Assert.That(color.G, Is.EqualTo(colorHsv.G).Within(0.001));
+			Assert.That(color.B, Is.EqualTo(colorHsv.B).Within(0.001));
+		}
+
+		[Test]
+		public void TestFromHsvaDouble()
+		{
+			var color = Color.FromRgba(1, .29, .758, .5);
+			var colorHsv = Color.FromHsva(.89, .71, 1, .5);
+			Assert.That(color.R, Is.EqualTo(colorHsv.R).Within(0.001));
+			Assert.That(color.G, Is.EqualTo(colorHsv.G).Within(0.001));
+			Assert.That(color.B, Is.EqualTo(colorHsv.B).Within(0.001));
+			Assert.That(color.A, Is.EqualTo(colorHsv.A).Within(0.001));
+		}
+
+		[Test]
 		public void FromRGBDouble ()
 		{
 			var color = Color.FromRgb (0.2, 0.3, 0.4);
@@ -328,6 +370,17 @@ namespace Xamarin.Forms.Core.UnitTests
 		public void TestSystemDrawingColorEmptyToColorDefault()
 		{
 			Assert.AreEqual(Color.Default, (Color)System.Drawing.Color.Empty);
+		}
+
+		[Test]
+		public void DefaultColorsMatch()
+		{
+			//This spot-checks a few of the fields in Color
+			Assert.AreEqual(Color.CornflowerBlue, Color.FromRgb(100, 149, 237));
+			Assert.AreEqual(Color.DarkSalmon, Color.FromRgb(233, 150, 122));
+			Assert.AreEqual(Color.Transparent, Color.FromRgba(255, 255, 255, 0));
+			Assert.AreEqual(Color.Wheat, Color.FromRgb(245, 222, 179));
+			Assert.AreEqual(Color.White, Color.FromRgb(255, 255, 255));
 		}
 	}
 }
