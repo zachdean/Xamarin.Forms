@@ -42,7 +42,8 @@ namespace Xamarin.Forms.Platform.iOS
 		[Preserve(Conditional = true)]
 		public SwipeViewRenderer()
 		{
-			SwipeView.VerifySwipeViewFlagEnabled(nameof(SwipeViewRenderer));
+			if (ShouldVerifySwipeViewFlagEnabled())
+				SwipeView.VerifySwipeViewFlagEnabled(nameof(SwipeViewRenderer));
 
 			_tapGestureRecognizer = new UITapGestureRecognizer(HandleTap)
 			{
@@ -1170,6 +1171,14 @@ namespace Xamarin.Forms.Platform.iOS
 				return;
 
 			swipeItem.OnInvoked();
+		}
+
+		bool ShouldVerifySwipeViewFlagEnabled()
+		{
+			if (UIApplication.SharedApplication?.Delegate?.GetType()?.FullName == "XamarinFormsPreviewer.iOS.AppDelegate")
+				return false;
+
+			return true;
 		}
 
 		void OnParentScrolled(object sender, ScrolledEventArgs e)
