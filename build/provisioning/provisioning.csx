@@ -15,7 +15,7 @@ string macSDK_macos = $"https://download.visualstudio.microsoft.com/download/pr/
 
 if (IsMac)
 {
-	Item (XreItem.Xcode_11_1_0_rc).XcodeSelect ();
+	//Item (XreItem.Xcode_11_1_0_rc).XcodeSelect ();
 
   if(!String.IsNullOrEmpty(monoSDK_macos))
     Item ("Mono", monoVersion)
