@@ -4,14 +4,13 @@ steps:
 
   - task: xamops.azdevex.provisionator-task.provisionator@1
     displayName: 'Provisionator'
-    condition: eq(variables['provisioning'], 'true')
     inputs:
       provisioning_script: $(provisionator.osxPath)
       provisioning_extra_args: $(provisionator.extraArguments)
 
   - task: Bash@3
     displayName: 'Cake Provision'
-    condition: eq(variables['provisioningCake'], 'true')
+    condition: eq(variables['awefawefwaefwaefw'], 'true')
     inputs:
       targetType: 'filePath'
       filePath: 'build.sh'

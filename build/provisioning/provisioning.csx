@@ -1,6 +1,6 @@
 
-string monoMajorVersion = "6.4.0";
-string monoPatchVersion = "198";
+string monoMajorVersion = "6.8.0";
+string monoPatchVersion = "123";
 string monoVersion = $"{monoMajorVersion}.{monoPatchVersion}";
 
 string monoSDK_windows = $"https://download.mono-project.com/archive/{monoMajorVersion}/windows-installer/mono-{monoVersion}-x64-0.msi";
@@ -8,10 +8,10 @@ string androidSDK_windows = "https://download.visualstudio.microsoft.com/downloa
 string iOSSDK_windows = "";
 string macSDK_windows = "";
 
-string androidSDK_macos = "https://download.visualstudio.microsoft.com/download/pr/d5a432e4-09f3-4da6-9bdd-1d4fdd87f34c/c4ce0854064ffc16b957f22ccc08f9df/xamarin.android-10.0.0.43.pkg";
-string monoSDK_macos = $"https://download.mono-project.com/archive/{monoMajorVersion}/macos-10-universal/MonoFramework-MDK-{monoVersion}.macos10.xamarin.universal.pkg";
-string iOSSDK_macos = $"https://bosstoragemirror.blob.core.windows.net/wrench/jenkins/d16-3/5e8a208b5f44c4885060d95e3c3ad68d6a5e95e8/40/package/xamarin.ios-13.2.0.42.pkg";
-string macSDK_macos = $"https://bosstoragemirror.blob.core.windows.net/wrench/jenkins/d16-3/5e8a208b5f44c4885060d95e3c3ad68d6a5e95e8/40/package/xamarin.mac-6.2.0.42.pkg";
+string androidSDK_macos = "https://download.visualstudio.microsoft.com/download/pr/8f94ca38-039a-4c9f-a51a-a6cb33c76a8c/aa46188c5f7a2e0c6f2d4bd4dc261604/xamarin.android-10.2.0.100.pkg";
+string monoSDK_macos = $"https://download.visualstudio.microsoft.com/download/pr/8f94ca38-039a-4c9f-a51a-a6cb33c76a8c/3a376d8c817ec4d720ecca2d95ceb4c1/monoframework-mdk-6.8.0.123.macos10.xamarin.universal.pkg";
+string iOSSDK_macos = $"https://download.visualstudio.microsoft.com/download/pr/8f94ca38-039a-4c9f-a51a-a6cb33c76a8c/21e09d8084eb7c15eaa07c970e0eccdc/xamarin.ios-13.14.1.39.pkg";
+string macSDK_macos = $"https://download.visualstudio.microsoft.com/download/pr/8f94ca38-039a-4c9f-a51a-a6cb33c76a8c/979144aead55378df75482d35957cdc9/xamarin.mac-6.14.1.39.pkg";
 
 if (IsMac)
 {
@@ -22,15 +22,15 @@ if (IsMac)
       .Source (_ => monoSDK_macos);
 
 	if(!String.IsNullOrEmpty(androidSDK_macos))
-		Item ("Xamarin.Android", "10.0.0.43")
+		Item ("Xamarin.Android", "10.2.0.100")
       .Source (_ => androidSDK_macos);
 
 	if(!String.IsNullOrEmpty(iOSSDK_macos))
-		Item ("Xamarin.iOS", "13.2.0.42")
+		Item ("Xamarin.iOS", "13.14.1.39")
       .Source (_ => iOSSDK_macos);
 
 	if(!String.IsNullOrEmpty(macSDK_macos))
-		Item ("Xamarin.Mac", "6.2.0.42")
+		Item ("Xamarin.Mac", "6.14.1.39")
       .Source (_ => macSDK_macos);
     
 	ForceJavaCleanup();
