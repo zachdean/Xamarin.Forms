@@ -34,14 +34,13 @@ jobs:
 
       - task: xamops.azdevex.provisionator-task.provisionator@1
         displayName: 'Provisionator'
-        condition: eq(variables['provisioning'], 'true')
         inputs:
           provisioning_script: ${{ parameters.provisionatorPath }}
           provisioning_extra_args: ${{ parameters.provisionator.extraArguments }}
 
       - task: Bash@3
         displayName: 'Cake Provision'
-        condition: eq(variables['provisioningCake'], 'true')
+        condition: eq(variables['provisawefawefioningCake'], 'true')
         inputs:
           targetType: 'filePath'
           filePath: 'build.sh'
