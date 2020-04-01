@@ -174,6 +174,7 @@ Task("provision-monosdk")
 
 Task("provision")
     .Description("Install SDKs required to build project")
+    .IsDependentOn("provision-monosdk")
     .IsDependentOn("provision-androidsdk");
 
 Task("NuGetPack")
