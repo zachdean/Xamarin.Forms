@@ -107,9 +107,6 @@ jobs:
     name: osx
     buildForVS2017: 'false'
     displayName: 'OSX Phase'
-    - ${{ if eq(parameters.vmOSXPool, 'XamarinForms') }}:
-      demands: 
-        - Agent.OS -equals Darwin
 
 - template: build/steps/build-osx.yml
   parameters:
@@ -119,7 +116,7 @@ jobs:
     buildForVS2017: 'true'
     displayName: 'OSX Phase 2017'
     - ${{ if eq(parameters.vmOSXPool, 'XamarinForms') }}:
-      demands: 
+      - demands: 
         - Agent.OS -equals Darwin
 
 - job: nuget_pack
