@@ -102,16 +102,16 @@ jobs:
 
 - template: build/steps/build-osx.yml
   parameters:
-    vmImage: 'XamarinForms'
-    vmPool: 'XamarinForms'
+    vmImage: $(osx2019VmImage)
+    vmPool: $(osx2019VmPool)
     name: osx
     buildForVS2017: 'false'
     displayName: 'OSX Phase'
 
 - template: build/steps/build-osx.yml
   parameters:
-    vmImage: 'macOS-10.14'
-    vmPool: 'Azure Pipelines'
+    vmImage: $(macOSXVmImage)
+    vmPool: $(osx2017VmPool)
     name: osx_2017
     buildForVS2017: 'true'
     displayName: 'OSX Phase 2017'
