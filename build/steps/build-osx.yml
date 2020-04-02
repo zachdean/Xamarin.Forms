@@ -14,7 +14,9 @@ jobs:
     pool:
       name: ${{ parameters.vmPool }}
       vmImage: ${{ parameters.vmImage }}
-      demands: ${{ parameters.demands }}
+      - ${{ if eq(parameters.vmPool, 'XamarinForms') }}:
+        demands: 
+          - Agent.OS -equals Darwin
     variables:
       provisionator.osxPath : 'build/provisioning/provisioning.csx'
       buildConfiguration: $(DefaultBuildConfiguration)
