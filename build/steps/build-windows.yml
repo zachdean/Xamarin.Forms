@@ -28,8 +28,8 @@ jobs:
     pool:
       name: ${{ parameters.vmPool }}
       vmImage: ${{ parameters.vmImage }}
+      demands: ${{ parameters.demands }}
     dependsOn: ${{ parameters.dependsOn }}
-    demands: ${{ parameters.demands }}
     strategy:
       matrix:
         debug:
