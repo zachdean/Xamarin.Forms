@@ -24,7 +24,7 @@ fi
 
 # Define default arguments.
 SCRIPT="build.cake"
-VERBOSITY="verbose"
+VERBOSITY="diagnostic"
 DRYRUN=
 SHOW_VERSION=false
 SCRIPT_ARGUMENTS=()
