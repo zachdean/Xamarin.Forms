@@ -2,7 +2,9 @@ parameters:
   name: ''            # in the form type_platform_host
   displayName: ''            
   vmImage: ''         # the VM image
+  vmPool: ''         # the VM pool
   buildForVS2017: 'false'
+  demands: []
 
 jobs:
   - job: ${{ parameters.name }}
@@ -10,11 +12,9 @@ jobs:
       clean: all
     displayName: ${{ parameters.displayName }}
     pool:
+      name:  ${{ parameters.vmPool }}
       vmImage: ${{ parameters.vmImage }}
-      demands:
-        - sh
-        - msbuild
-        - Xamarin.iOS
+      demands: ${{ parameters.demands }}
     variables:
       provisionator.osxPath : 'build/provisioning/provisioning.csx'
       buildConfiguration: $(DefaultBuildConfiguration)

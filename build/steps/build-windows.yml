@@ -17,6 +17,7 @@ parameters:
   includeUwp: 'true'
   includeAndroid: 'true'
   includeNonUwpAndNonAndroid: 'true'
+  demands: []
 
 jobs:
   - job: ${{ parameters.name }}
@@ -28,6 +29,7 @@ jobs:
       name: ${{ parameters.vmPool }}
       vmImage: ${{ parameters.vmImage }}
     dependsOn: ${{ parameters.dependsOn }}
+    demands: ${{ parameters.demands }}
     strategy:
       matrix:
         debug:

@@ -67,6 +67,8 @@ jobs:
     vmImage: $(vs2019VmImage)
     vmPool: $(vs2019VmPool)
     provisionatorPath : 'build/provisioning/provisioning.csx'
+    demands: 
+      - Agent.OS -equals Windows_NT
 
 - template: build/steps/build-android.yml
   parameters:
@@ -104,6 +106,8 @@ jobs:
     name: osx
     buildForVS2017: 'false'
     displayName: 'OSX Phase'
+    demands: 
+      - Agent.OS -equals Darwin
 
 - template: build/steps/build-osx.yml
   parameters:
@@ -111,6 +115,8 @@ jobs:
     name: osx_2017
     buildForVS2017: 'true'
     displayName: 'OSX Phase 2017'
+    demands: 
+      - Agent.OS -equals Darwin
 
 - job: nuget_pack
   workspace:
