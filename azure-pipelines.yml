@@ -103,6 +103,7 @@ jobs:
 - template: build/steps/build-osx.yml
   parameters:
     vmImage: $(macOSXVmImage)
+    vmPool: 'Azure Pipelines'
     name: osx
     buildForVS2017: 'false'
     displayName: 'OSX Phase'
@@ -112,6 +113,7 @@ jobs:
 - template: build/steps/build-osx.yml
   parameters:
     vmImage: 'macOS-10.14'
+    vmPool: 'Azure Pipelines'
     name: osx_2017
     buildForVS2017: 'true'
     displayName: 'OSX Phase 2017'
