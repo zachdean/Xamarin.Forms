@@ -12,7 +12,7 @@ jobs:
       clean: all
     displayName: ${{ parameters.displayName }}
     pool:
-      name:  ${{ parameters.vmPool }}
+      name: ${{ parameters.vmPool }}
       vmImage: ${{ parameters.vmImage }}
       demands: ${{ parameters.demands }}
     variables:
