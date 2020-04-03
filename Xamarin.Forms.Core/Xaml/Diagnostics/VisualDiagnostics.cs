@@ -22,7 +22,35 @@ namespace Xamarin.Forms.Xaml.Diagnostics
 		internal static void SendVisualTreeChanged(object parent, object child)
 		{
 			if (DebuggerHelper.DebuggerIsAttached)
-				VisualTreeChanged?.Invoke(parent, new VisualTreeChangeEventArgs(parent, child, -1, child != null ? VisualTreeChangeType.Add : VisualTreeChangeType.Remove));
+				VisualTreeChanged?.Invoke(parent, new VisualTreeChangeEventArgs(parent, child, FindChildIndex(parent as Element, child as Element), child != null ? VisualTreeChangeType.Add : VisualTreeChangeType.Remove));
+		}
+
+		internal static int FindChildIndex(Element parent, Element child)
+		{
+			try
+			{
+				// If parent is null, there are no children
+				// so it should be the top of the stack.
+				if (parent == null)
+					return 0;
+
+				// If child is null, then it's not an element
+				// LogicialChildren is a collection of elements
+				// so something was passed in that should not have been.
+				// Return -1 so the API consumer can re-init the parent nodes.
+				if (child == null)
+					return -1;
+
+				return parent.LogicalChildren.IndexOf(child);
+			}
+			catch (Exception ex)
+			{
+				// If we somehow fail, log the error and return -1
+				// The API consumer can at least re-init the parent nodes
+				// to try again
+				System.Diagnostics.Debug.WriteLine(ex);
+				return -1;
+			}
 		}
 
 		public static event EventHandler<VisualTreeChangeEventArgs> VisualTreeChanged;
