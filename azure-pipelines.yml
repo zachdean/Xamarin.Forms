@@ -100,21 +100,41 @@ jobs:
     buildConfiguration: $(AndroidBuildConfiguration)
     provisionatorPath : 'build/provisioning/provisioning.csx'
 
-- template: build/steps/build-osx.yml
-  parameters:
-    vmImage: $(osx2019VmImage)
-    vmPool: $(osx2019VmPool)
-    name: osx
-    buildForVS2017: 'false'
-    displayName: 'OSX Phase'
-
-- template: build/steps/build-osx.yml
-  parameters:
+- job: osx
+  workspace:
+    clean: all
+  displayName: OSX Phase
+  pool: $(osx2019VmPool)
     vmImage: $(macOSXVmImage)
-    vmPool: $(osx2017VmPool)
-    name: osx_2017
+    demands:
+      - Agent.OSVersionFamily -equals 10.15
+  variables:
+    provisionator.osxPath : 'build/provisioning/provisioning.csx'
+    buildConfiguration: $(DefaultBuildConfiguration)
+    iOSCertSecureFileName: 'Xamarin Forms iOS Certificate.p12'
+    iOSProvisioningSecureFileName: 'Xamarin Forms iOS Provisioning.mobileprovision'
+    buildForVS2017: 'false'
+  steps:
+    - template: build/steps/build-osx.yml
+
+- job: osx_2017
+  workspace:
+    clean: all
+  displayName: OSX 2017 Phase
+  pool:
+    vmImage: 'macOS-10.14'
+    demands:
+      - sh
+      - msbuild
+      - Xamarin.iOS
+  variables:
+    provisionator.osxPath : 'build/provisioning/provisioning.csx'
+    buildConfiguration: $(DefaultBuildConfiguration)
+    iOSCertSecureFileName: 'Xamarin Forms iOS Certificate.p12'
+    iOSProvisioningSecureFileName: 'Xamarin Forms iOS Provisioning.mobileprovision'
     buildForVS2017: 'true'
-    displayName: 'OSX Phase 2017'
+  steps:
+    - template: build/steps/build-osx.yml
 
 - job: nuget_pack
   workspace:
