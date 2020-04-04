@@ -16,7 +16,7 @@ jobs:
       vmImage: ${{ parameters.vmImage }}
       ${{ if eq(parameters.vmPool, 'XamarinForms') }}:
         demands: 
-          - Agent.OS -equals Darwin
+          - Agent.OSVersionFamily -equals 10.15
     variables:
       provisionator.osxPath : 'build/provisioning/provisioning.csx'
       buildConfiguration: $(DefaultBuildConfiguration)
