@@ -4,9 +4,9 @@ namespace Xamarin.Forms
 {
     public class AppThemeChangedEventArgs : EventArgs
     {
-        public AppThemeChangedEventArgs(AppTheme appTheme) =>
+        public AppThemeChangedEventArgs(Essentials.AppTheme appTheme) =>
             RequestedTheme = appTheme;
 
-        public AppTheme RequestedTheme { get; }
+        public Essentials.AppTheme RequestedTheme { get; }
     }
 }
