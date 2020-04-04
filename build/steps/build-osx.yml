@@ -82,7 +82,7 @@ jobs:
       inputs:
         solutionFile: $(slnPath)
         configuration: $(buildConfiguration)
-        args: /bl:$(Build.ArtifactStagingDirectory)/ios-2017_$(buildForVS2017).binlog
+        args: /bl:$(Build.ArtifactStagingDirectory)/ios-2017_$(buildForVS2017).binlog /p:/p:AndroidSdkDirectory='/Users/builder/Library/Developer/Xamarin/android-sdk-macosx'
 
 
     - task: CopyFiles@2
