@@ -16,6 +16,8 @@ string macSDK_macos = $"https://download.visualstudio.microsoft.com/download/pr/
 if (IsMac)
 {
 	Item (XreItem.Java_OpenJDK_1_8_0_9);
+	Console.WriteLine ($"AndroidSdkPath: {new AndroidSdkInfo().AndroidSdkPath}");
+	SetEnv ("ANDROID_HOME", new AndroidSdkInfo().AndroidSdkPath);
 
   	if(!String.IsNullOrEmpty(monoSDK_macos))
     	Item ("Mono", monoVersion)
