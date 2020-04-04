@@ -256,6 +256,6 @@ namespace Xamarin.Forms.Platform.UWP
 			return await taskCompletionSource.Task;
 		}
 
-		public AppTheme RequestedTheme => Essentials.AppInfo.RequestedTheme;
+		public Essentials.AppTheme RequestedTheme => Essentials.AppInfo.RequestedTheme;
 	}
 }
