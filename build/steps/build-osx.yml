@@ -14,8 +14,7 @@ jobs:
     pool:
       name: ${{ parameters.vmPool }}
       vmImage: ${{ parameters.vmImage }}
-      ${{ if eq(variables['osx2019VmPool'], 'XamarinForms') }}:
-        demands: 
+      demands: 
           - Agent.OSVersionFamily -equals 10.15
     variables:
       provisionator.osxPath : 'build/provisioning/provisioning.csx'
