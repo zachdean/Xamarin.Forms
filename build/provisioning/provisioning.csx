@@ -15,6 +15,7 @@ string macSDK_macos = $"https://download.visualstudio.microsoft.com/download/pr/
 
 if (IsMac)
 {
+	Item (XreItem.Xcode_11_4_0).XcodeSelect ();
 	Item (XreItem.Java_OpenJDK_1_8_0_9);
 	
 	SetEnv ("ANDROID_HOME", "/Users/builder/Library/Developer/Xamarin/android-sdk-macosx");
