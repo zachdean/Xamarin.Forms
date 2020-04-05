@@ -104,7 +104,8 @@ jobs:
   workspace:
     clean: all
   displayName: OSX Phase
-  pool: 'XamarinForms'
+  pool: 
+    name: $(osx2019VmPool)
     vmImage: $(macOSXVmImage)
     demands:
       - Agent.OSVersionFamily -equals 10.15
