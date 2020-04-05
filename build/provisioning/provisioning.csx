@@ -70,9 +70,11 @@ else
 }
 
 // Item(XreItem.Java_OpenJDK_1_8_0_25);
-AndroidSdk ().ApiLevel((AndroidApiLevel)24);
-AndroidSdk ().ApiLevel((AndroidApiLevel)28);
-AndroidSdk ().ApiLevel((AndroidApiLevel)29);
+AndroidSdk ()
+	.ApiLevel((AndroidApiLevel)24)
+	.ApiLevel((AndroidApiLevel)28)
+	.ApiLevel((AndroidApiLevel)29)
+	.SdkManagerPackage ("build-tools;29.0.3");
 
 void ln (string source, string destination)
 {
