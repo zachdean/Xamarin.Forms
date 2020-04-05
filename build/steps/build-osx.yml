@@ -29,20 +29,6 @@ steps:
     condition: ne(variables['NUGET_VERSION'], '')
     inputs:
       versionSpec: $(NUGET_VERSION)
-  
-  - task: DownloadBuildArtifacts@0
-    displayName: 'Download build artifact nuget'
-    condition: eq(variables['System.TeamProject'], 'DevDiv')
-    inputs:
-      artifactName: 'nuget'
-      downloadPath: '$(Build.ArtifactsDirectory)'
-
-  - task: CopyFiles@2
-    displayName: 'Copy Files to: $(System.DefaultWorkingDirectory)'
-    condition: eq(variables['System.TeamProject'], 'DevDiv')
-    inputs:
-      SourceFolder: '$(Build.ArtifactsDirectory)/nuget/$(buildConfiguration)'
-      TargetFolder: '$(System.DefaultWorkingDirectory)/Nuget'
 
   - task: NuGetCommand@2
     displayName: 'NuGet restore'
@@ -50,7 +36,6 @@ steps:
       command: restore
       restoreSolution: 'Xamarin.Forms.sln'
       feedsToUse: config
-      nugetConfigPath: 'DevopsNuget.config'
 
   - task: MSBuild@1
     displayName: 'Build solution Xamarin.Forms.Build.Tasks/Xamarin.Forms.Build.Tasks.csproj'
