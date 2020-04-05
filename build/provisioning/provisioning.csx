@@ -9,8 +9,8 @@ string macSDK_windows = "";
 
 string androidSDK_macos = "https://download.visualstudio.microsoft.com/download/pr/8f94ca38-039a-4c9f-a51a-a6cb33c76a8c/aa46188c5f7a2e0c6f2d4bd4dc261604/xamarin.android-10.2.0.100.pkg";
 string monoSDK_macos = $"https://download.visualstudio.microsoft.com/download/pr/8f94ca38-039a-4c9f-a51a-a6cb33c76a8c/3a376d8c817ec4d720ecca2d95ceb4c1/monoframework-mdk-6.8.0.123.macos10.xamarin.universal.pkg";
-string iOSSDK_macos = $"https://download.visualstudio.microsoft.com/download/pr/6e56949e-1beb-4550-abf9-ff404868de82/cf7090bee19401076987a57cd12f11e5/xamarin.ios-13.16.0.11.pkg";
-string macSDK_macos = $"https://download.visualstudio.microsoft.com/download/pr/6e56949e-1beb-4550-abf9-ff404868de82/547895e66c0543faccb25933d8691371/xamarin.mac-6.16.0.11.pkg";
+string iOSSDK_macos = $"https://bosstoragemirror.blob.core.windows.net/wrench/jenkins/d16-5-xcode11.4/b75deaf8277c77200bdb9349d7e677ab07622fad/17/package/notarized/xamarin.ios-13.16.0.13.pkg";
+string macSDK_macos = $"https://bosstoragemirror.blob.core.windows.net/wrench/jenkins/d16-5-xcode11.4/b75deaf8277c77200bdb9349d7e677ab07622fad/17/package/notarized/xamarin.mac-6.16.0.13.pkg";
 
 
 if (IsMac)
