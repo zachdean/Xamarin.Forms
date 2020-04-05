@@ -147,6 +147,8 @@ jobs:
   pool:
     name: $(vs2019VmPool)
     vmImage: $(vs2019VmImage)
+    demands: 
+        - Agent.OS -equals Windows_NT
   variables:
     FormsIdAppend: ''
     buildConfiguration: $(DefaultBuildConfiguration)
