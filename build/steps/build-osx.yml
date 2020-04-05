@@ -33,9 +33,7 @@ steps:
   - task: NuGetCommand@2
     displayName: 'NuGet restore'
     inputs:
-      command: restore
       restoreSolution: 'Xamarin.Forms.sln'
-      feedsToUse: config
 
   - task: MSBuild@1
     displayName: 'Build solution Xamarin.Forms.Build.Tasks/Xamarin.Forms.Build.Tasks.csproj'
@@ -54,26 +52,12 @@ steps:
     inputs:
       provProfileSecureFile: 'Xamarin Forms iOS Provisioning.mobileprovision'
 
-  - task: MSBuild@1
-    displayName: 'Build Control Gallery IPA'
+  - task: XamariniOS@2
+    displayName: 'Build Xamarin.iOS solution $(slnPath)'
     inputs:
-      solution: 'Xamarin.Forms.ControlGallery.iOS/Xamarin.Forms.ControlGallery.iOS.csproj'
+      solutionFile: $(slnPath)
       configuration: $(buildConfiguration)
-      msbuildArguments: /bl:$(Build.ArtifactStagingDirectory)/ios-cg.binlog /p:BuildIpa=true
-
-  - task: MSBuild@1
-    displayName: 'Build iOS Tests'
-    inputs:
-      solution: 'Xamarin.Forms.Core.iOS.UITests/Xamarin.Forms.Core.iOS.UITests.csproj'
-      configuration: $(buildConfiguration)
-      msbuildArguments: /bl:$(Build.ArtifactStagingDirectory)/ios-uitests.binlog
-
-  - task: MSBuild@1
-    displayName: 'Build Android Tests'
-    inputs:
-      solution: 'Xamarin.Forms.Core.Android.UITests/Xamarin.Forms.Core.Android.UITests.csproj'
-      configuration: $(buildConfiguration)
-      msbuildArguments: /bl:$(Build.ArtifactStagingDirectory)/android-uitests.binlog
+      args: /bl:$(Build.ArtifactStagingDirectory)/ios-2017_$(buildForVS2017).binlog
 
   - task: CopyFiles@2
     displayName: 'Copy test-cloud.exe'
@@ -84,7 +68,6 @@ steps:
       CleanTargetFolder: true
       OverWrite: true
       flattenFolders: true
-
 
   - task: CopyFiles@2
     displayName: 'Copy iOS Files for UITest'
@@ -101,7 +84,6 @@ steps:
       TargetFolder: '$(build.artifactstagingdirectory)/ios'
       CleanTargetFolder: true
       flattenFolders: true
-
 
   - task: CopyFiles@2
     displayName: 'Copy Android Files for UITest'
