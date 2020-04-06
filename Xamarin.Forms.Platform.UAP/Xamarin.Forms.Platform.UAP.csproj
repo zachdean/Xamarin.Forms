@@ -126,6 +126,6 @@
     <None Remove="obj\Debug\netstandard2.0\GitInfo.cache" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Xamarin.Essentials" Version="1.5.1" />
+    <PackageReference Include="Xamarin.Essentials" Version="1.5.2" />
   </ItemGroup>
 </Project>
