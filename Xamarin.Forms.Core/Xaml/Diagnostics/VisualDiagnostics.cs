@@ -22,7 +22,7 @@ namespace Xamarin.Forms.Xaml.Diagnostics
 		internal static void SendVisualTreeChanged(object parent, object child)
 		{
 			if (DebuggerHelper.DebuggerIsAttached)
-				VisualTreeChanged?.Invoke(parent, new VisualTreeChangeEventArgs(parent, child, FindChildIndex(parent as Element, child as Element), child != null ? VisualTreeChangeType.Add : VisualTreeChangeType.Remove));
+				VisualTreeChanged?.Invoke(parent, new VisualTreeChangeEventArgs(parent, child, FindChildIndex(parent as Element, child as Element), parent != null ? VisualTreeChangeType.Add : VisualTreeChangeType.Remove));
 		}
 
 		internal static int FindChildIndex(Element parent, Element child)
