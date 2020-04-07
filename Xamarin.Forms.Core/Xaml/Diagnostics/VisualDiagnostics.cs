@@ -29,10 +29,10 @@ namespace Xamarin.Forms.Xaml.Diagnostics
 		{
 			try
 			{
-				// If parent is null, there are no children
-				// so it should be the top of the stack.
+				// If parent is null, then the child element is being removed.
+				// Return -1 so the API consumer can re-init the parent nodes.
 				if (parent == null)
-					return 0;
+					return -1;
 
 				// If child is null, then it's not an element
 				// LogicialChildren is a collection of elements
