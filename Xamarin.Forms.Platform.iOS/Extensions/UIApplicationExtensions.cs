@@ -1,5 +1,4 @@
-﻿using System;
-using UIKit;
+﻿using UIKit;
 
 namespace Xamarin.Forms.Platform.iOS
 {
@@ -21,7 +20,15 @@ namespace Xamarin.Forms.Platform.iOS
 #else
 			return application.KeyWindow;
 #endif
+		}
 
+		public static bool UsePreviewerDelegate(this UIApplication application)
+		{
+#if __MOBILE__
+			return application?.Delegate?.GetType()?.FullName == "XamarinFormsPreviewer.iOS.AppDelegate";
+#else
+			return false;
+#endif
 		}
 	}
 }

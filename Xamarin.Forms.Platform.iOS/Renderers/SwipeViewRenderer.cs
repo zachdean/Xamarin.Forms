@@ -1195,7 +1195,7 @@ namespace Xamarin.Forms.Platform.iOS
 
 		bool ShouldVerifySwipeViewFlagEnabled()
 		{
-			if (UIApplication.SharedApplication?.Delegate?.GetType()?.FullName == "XamarinFormsPreviewer.iOS.AppDelegate")
+			if (UIApplication.SharedApplication.UsePreviewerDelegate())
 				return false;
 
 			return true;
