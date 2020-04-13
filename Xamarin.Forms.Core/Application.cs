@@ -84,13 +84,10 @@ namespace Xamarin.Forms
 
 				_mainPage = value;
 
-				if (_mainPage != null)
-				{
-					_mainPage.Parent = this;
-					_mainPage.NavigationProxy.Inner = NavigationProxy;
-					InternalChildren.Add(_mainPage);
-				}
+				_mainPage.Parent = this;
+				InternalChildren.Add(_mainPage);
 				OnPropertyChanged();
+				_mainPage.NavigationProxy.Inner = NavigationProxy;
 			}
 		}
 
