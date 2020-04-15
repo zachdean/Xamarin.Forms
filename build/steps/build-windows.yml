@@ -162,7 +162,7 @@ steps:
         Xamarin.Forms.DualScreen/bin/$(BuildConfiguration)/**/*.mdb
         Xamarin.Forms.DualScreen.UnitTests/bin/$(BuildConfiguration)/**/*.dll
 
-    TargetFolder: ${{ parameters.artifactsTargetFolder }}
+      TargetFolder: ${{ parameters.artifactsTargetFolder }}
 
     
 - task: CopyFiles@2
