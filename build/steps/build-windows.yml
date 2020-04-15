@@ -165,48 +165,48 @@ steps:
       TargetFolder: ${{ parameters.artifactsTargetFolder }}
 
     
-- task: CopyFiles@2
-  displayName: 'Copy Android Files dlls'
-  condition: eq('${{ parameters.includeAndroid }}', true)
-  inputs:
-    Contents: |
-      Stubs/**/bin/**/*.dll
-      Xamarin.Forms.Platform.Android/bin/$(BuildConfiguration)/**/*.dll
-      Xamarin.Forms.Platform.Android/bin/$(BuildConfiguration)/**/*.pdb
-      Xamarin.Forms.Platform.Android.FormsViewGroup/bin/$(BuildConfiguration)/**/*.dll
-      Xamarin.Forms.Platform.Android.FormsViewGroup/bin/$(BuildConfiguration)/**/*.pdb
-      Xamarin.Forms.Material.Android/bin/$(BuildConfiguration)/**/*.dll
-      Xamarin.Forms.Material.Android/bin/$(BuildConfiguration)/**/*.pdb
-      Xamarin.Forms.Material.Android/bin/$(BuildConfiguration)/**/*.mdb
-      Xamarin.Forms.Maps.Android/bin/$(BuildConfiguration)/**/*.dll
-      Xamarin.Forms.Platform.Android.AppLinks/bin/$(BuildConfiguration)/**/*.dll
-      Xamarin.Forms.Platform.Android.AppLinks/bin/$(BuildConfiguration)/**/*.pdb
-      Xamarin.Forms.Platform.Android.AppLinks/bin/$(BuildConfiguration)/**/*.mdb
-      Xamarin.Forms.DualScreen/bin/$(BuildConfiguration)/**/*.dll
-      Xamarin.Forms.DualScreen/bin/$(BuildConfiguration)/**/*.pdb
-      Xamarin.Forms.DualScreen/bin/$(BuildConfiguration)/**/*.mdb
-      Xamarin.Forms.DualScreen.UnitTests/bin/$(BuildConfiguration)/**/*.dll
-      **/*.binlog
+  - task: CopyFiles@2
+    displayName: 'Copy Android Files dlls'
+    condition: eq('${{ parameters.includeAndroid }}', true)
+    inputs:
+      Contents: |
+        Stubs/**/bin/**/*.dll
+        Xamarin.Forms.Platform.Android/bin/$(BuildConfiguration)/**/*.dll
+        Xamarin.Forms.Platform.Android/bin/$(BuildConfiguration)/**/*.pdb
+        Xamarin.Forms.Platform.Android.FormsViewGroup/bin/$(BuildConfiguration)/**/*.dll
+        Xamarin.Forms.Platform.Android.FormsViewGroup/bin/$(BuildConfiguration)/**/*.pdb
+        Xamarin.Forms.Material.Android/bin/$(BuildConfiguration)/**/*.dll
+        Xamarin.Forms.Material.Android/bin/$(BuildConfiguration)/**/*.pdb
+        Xamarin.Forms.Material.Android/bin/$(BuildConfiguration)/**/*.mdb
+        Xamarin.Forms.Maps.Android/bin/$(BuildConfiguration)/**/*.dll
+        Xamarin.Forms.Platform.Android.AppLinks/bin/$(BuildConfiguration)/**/*.dll
+        Xamarin.Forms.Platform.Android.AppLinks/bin/$(BuildConfiguration)/**/*.pdb
+        Xamarin.Forms.Platform.Android.AppLinks/bin/$(BuildConfiguration)/**/*.mdb
+        Xamarin.Forms.DualScreen/bin/$(BuildConfiguration)/**/*.dll
+        Xamarin.Forms.DualScreen/bin/$(BuildConfiguration)/**/*.pdb
+        Xamarin.Forms.DualScreen/bin/$(BuildConfiguration)/**/*.mdb
+        Xamarin.Forms.DualScreen.UnitTests/bin/$(BuildConfiguration)/**/*.dll
+        **/*.binlog
 
-    TargetFolder: ${{ parameters.artifactsTargetFolder }}
+      TargetFolder: ${{ parameters.artifactsTargetFolder }}
 
-- task: CopyFiles@2
-  displayName: 'Copy Pages Files dlls'
-  condition: eq('${{ parameters.includePages }}', true)
-  inputs:
-    Contents: |
-      Xamarin.Forms.Pages/bin/$(BuildConfiguration)/**/*.dll
-      Xamarin.Forms.Pages/bin/$(BuildConfiguration)/**/*.pdb
-      Xamarin.Forms.Pages/bin/$(BuildConfiguration)/**/*.mdb
-      Xamarin.Forms.Pages.Azure/bin/$(BuildConfiguration)/**/*.dll
-      Xamarin.Forms.Pages.Azure/bin/$(BuildConfiguration)/**/*.pdb
-      Xamarin.Forms.Pages.Azure/bin/$(BuildConfiguration)/**/*.mdb
-      Xamarin.Forms.Pages.UnitTests/bin/$(BuildConfiguration)/**/*.dll
+  - task: CopyFiles@2
+    displayName: 'Copy Pages Files dlls'
+    condition: eq('${{ parameters.includePages }}', true)
+    inputs:
+      Contents: |
+        Xamarin.Forms.Pages/bin/$(BuildConfiguration)/**/*.dll
+        Xamarin.Forms.Pages/bin/$(BuildConfiguration)/**/*.pdb
+        Xamarin.Forms.Pages/bin/$(BuildConfiguration)/**/*.mdb
+        Xamarin.Forms.Pages.Azure/bin/$(BuildConfiguration)/**/*.dll
+        Xamarin.Forms.Pages.Azure/bin/$(BuildConfiguration)/**/*.pdb
+        Xamarin.Forms.Pages.Azure/bin/$(BuildConfiguration)/**/*.mdb
+        Xamarin.Forms.Pages.UnitTests/bin/$(BuildConfiguration)/**/*.dll
 
-    TargetFolder: ${{ parameters.artifactsTargetFolder }}
+      TargetFolder: ${{ parameters.artifactsTargetFolder }}
 
-- task: PublishBuildArtifacts@1
-  displayName: 'Publish Artifact: ${{ parameters.artifactsName }}'
-  condition: always()
-  inputs:
-    ArtifactName: ${{ parameters.artifactsName }}
+  - task: PublishBuildArtifacts@1
+    displayName: 'Publish Artifact: ${{ parameters.artifactsName }}'
+    condition: always()
+    inputs:
+      ArtifactName: ${{ parameters.artifactsName }}
