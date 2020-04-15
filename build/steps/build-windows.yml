@@ -159,8 +159,8 @@ steps:
         Xamarin.Forms.Maps.UWP/bin/$(BuildConfiguration)/**/*.xbf
         Xamarin.Forms.DualScreen/bin/$(BuildConfiguration)/**/*.dll
         Xamarin.Forms.DualScreen/bin/$(BuildConfiguration)/**/*.pdb
-      Xamarin.Forms.DualScreen/bin/$(BuildConfiguration)/**/*.mdb
-      Xamarin.Forms.DualScreen.UnitTests/bin/$(BuildConfiguration)/**/*.dll
+        Xamarin.Forms.DualScreen/bin/$(BuildConfiguration)/**/*.mdb
+        Xamarin.Forms.DualScreen.UnitTests/bin/$(BuildConfiguration)/**/*.dll
 
     TargetFolder: ${{ parameters.artifactsTargetFolder }}
 
