@@ -37,6 +37,7 @@ namespace Xamarin.Forms
 		public static readonly BindableProperty TitleViewProperty = BindableProperty.CreateAttached("TitleView", typeof(View), typeof(NavigationPage), null, propertyChanging: TitleViewPropertyChanging);
 
 		static readonly BindablePropertyKey CurrentPagePropertyKey = BindableProperty.CreateReadOnly("CurrentPage", typeof(Page), typeof(NavigationPage), null);
+
 		public static readonly BindableProperty CurrentPageProperty = CurrentPagePropertyKey.BindableProperty;
 
 		static readonly BindablePropertyKey RootPagePropertyKey = BindableProperty.CreateReadOnly(nameof(RootPage), typeof(Page), typeof(NavigationPage), null);
@@ -537,5 +538,38 @@ namespace Xamarin.Forms
 		{
 			return _platformConfigurationRegistry.Value.On<T>();
 		}
+
+		// We don't want to just set bindable properties
+		// We should just walk the tree and figure out which 
+		// one is relevant (check out what I did inside Page.cs)
+		//protected override void StatusBarColorUpdated()
+		//{
+		//	if (CurrentPage == null)
+		//		return;
+
+		//	if (StatusBarColor != (Color)StatusBarColorProperty.DefaultValue)
+		//	{
+		//		CurrentPage.StatusBarColor = StatusBarColor;
+		//	}
+		//	else
+		//	{
+		//		CurrentPage.RefreshStatusBarColor();
+		//	}
+		//}
+
+		//protected override void StatusBarStyleUpdated()
+		//{
+		//	if (CurrentPage == null)
+		//		return;
+
+		//	if (CurrentPage != null && StatusBarStyle != (StatusBarStyle)StatusBarStyleProperty.DefaultValue)
+		//	{
+		//		CurrentPage.StatusBarStyle = StatusBarStyle;
+		//	}
+		//	else
+		//	{
+		//		CurrentPage.RefreshStatusBarStyle();
+		//	}
+		//}
 	}
 }

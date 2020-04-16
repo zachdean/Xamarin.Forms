@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using Android.App;
 using Android.Content;
 using Android.Content.Res;
 using Android.OS;
@@ -65,6 +66,7 @@ namespace Xamarin.Forms.Platform.Android
 			var pageContainer = Parent as PageContainer;
 			if (pageContainer != null && (pageContainer.IsInFragment || pageContainer.Visibility == ViewStates.Gone))
 				return;
+
 			PageController.SendAppearing();
 		}
 
@@ -74,6 +76,7 @@ namespace Xamarin.Forms.Platform.Android
 			var pageContainer = Parent as PageContainer;
 			if (pageContainer != null && pageContainer.IsInFragment)
 				return;
+
 			PageController.SendDisappearing();
 		}
 
@@ -88,14 +91,19 @@ namespace Xamarin.Forms.Platform.Android
 			}
 
 			UpdateBackground(false);
-
 			Clickable = true;
+			//UpdateStatusBarColor();
+			//UpdateStatusBarStyle();
 		}
 
 		protected override void OnElementPropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
 			base.OnElementPropertyChanged(sender, e);
-			if (e.PropertyName == Page.BackgroundImageSourceProperty.PropertyName)
+			if (e.PropertyName == Page.StatusBarColorProperty.PropertyName)
+				UpdateStatusBarColor();
+			else if (e.PropertyName == Page.StatusBarStyleProperty.PropertyName)
+				UpdateStatusBarStyle();
+			else if(e.PropertyName == Page.BackgroundImageSourceProperty.PropertyName)
 				UpdateBackground(true);
 			else if (e.PropertyName == VisualElement.BackgroundColorProperty.PropertyName)
 				UpdateBackground(false);
@@ -160,6 +168,62 @@ namespace Xamarin.Forms.Platform.Android
 					}
 				}
 			});
+		}
+
+
+		T GetEffectiveValue<T>(BindableProperty bindableProperty)
+		{
+			Element element = Element;
+
+			while(element != null && !element.IsSet(bindableProperty))
+				element = element.Parent;
+
+			if(element == null)
+				return default(T);
+
+			return (T)Element.GetValue(bindableProperty);
+		}
+
+		void UpdateStatusBarColor()
+		{
+			//if (!Element.HasAppeared)
+			//	return;
+
+			var statusBar = GetEffectiveValue<Color>(Page.StatusBarColorProperty);
+			if (statusBar == Color.Default)
+				return;
+
+			(Context.GetActivity() as FormsAppCompatActivity)?.SetStatusBarColor(statusBar.ToAndroid());
+		}
+
+		void UpdateStatusBarStyle()
+		{
+			//if (!Element.HasAppeared)
+			//	return;
+
+			if (Build.VERSION.SdkInt >= BuildVersionCodes.M)
+			{
+				var window = (Context.GetActivity() as FormsAppCompatActivity)?.Window;
+				if (window == null)
+				{
+					return;
+				}
+
+				var statusBar = GetEffectiveValue<StatusBarStyle>(Page.StatusBarStyleProperty);
+
+				switch (Element.StatusBarStyle)
+				{
+					case StatusBarStyle.Default:
+						window.DecorView.SystemUiVisibility = (StatusBarVisibility)SystemUiFlags.Visible;
+						break;
+					case StatusBarStyle.LightContent:
+						window.DecorView.SystemUiVisibility = (StatusBarVisibility)SystemUiFlags.Visible;
+						break;
+					case StatusBarStyle.DarkContent:
+						window.DecorView.SystemUiVisibility = (StatusBarVisibility)SystemUiFlags.LightStatusBar;
+						break;
+				}
+			}
 		}
 
 		void IOrderedTraversalController.UpdateTraversalOrder()

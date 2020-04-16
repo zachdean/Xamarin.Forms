@@ -143,6 +143,9 @@ namespace Xamarin.Forms.Platform.iOS
 
 					parent = parent.Parent;
 				}
+
+				//UpdateStatusBarColor();
+				//UpdateStatusBarStyle();
 			}
 
 			EffectUtilities.RegisterEffectControlProvider(this, oldElement, element);
@@ -324,6 +327,10 @@ namespace Xamarin.Forms.Platform.iOS
 		{
 			if (e.PropertyName == VisualElement.BackgroundColorProperty.PropertyName)
 				UpdateBackground();
+			else if(e.PropertyName == Page.StatusBarColorProperty.PropertyName)
+				UpdateStatusBarColor();
+			else if (e.PropertyName == Page.StatusBarStyleProperty.PropertyName)
+				UpdateStatusBarStyle();
 			else if (e.PropertyName == Page.BackgroundImageSourceProperty.PropertyName)
 				UpdateBackground();
 			else if (e.PropertyName == Page.TitleProperty.PropertyName)
@@ -557,6 +564,69 @@ namespace Xamarin.Forms.Platform.iOS
 				_tabThickness = tabThickness;
 				UpdateUseSafeArea();
 			}
+		}
+
+		void UpdateStatusBarColor()
+		{
+			if (!Page.HasAppeared)
+				return;
+
+			if (Page.StatusBarColor == Color.Default)
+				return;
+
+			var statusBarColor = Page.StatusBarColor.ToUIColor();
+			if (Forms.IsiOS13OrNewer)
+			{
+				foreach (var window in UIApplication.SharedApplication.Windows)
+				{
+					const int statusBarTag = 38482;
+					UIView statusBar = window.ViewWithTag(statusBarTag) ?? new UIView(UIApplication.SharedApplication.StatusBarFrame);
+					statusBar.Tag = statusBarTag;
+					statusBar.BackgroundColor = statusBarColor;
+					statusBar.TintColor = statusBarColor;
+					window.AddSubview(statusBar);
+				}
+			}
+			else
+			{
+				var statusBar = UIApplication.SharedApplication.ValueForKey(new NSString("statusBar")) as UIView;
+				if (statusBar != null && statusBar.RespondsToSelector(new ObjCRuntime.Selector("setBackgroundColor:")))
+				{
+					statusBar.BackgroundColor = statusBarColor;
+				}
+			}
+
+			GetCurrentViewController().SetNeedsStatusBarAppearanceUpdate();
+		}
+
+		void UpdateStatusBarStyle()
+		{
+			if (!Page.HasAppeared)
+				return;
+
+			switch (Page.StatusBarStyle)
+			{
+				case StatusBarStyle.Default:
+					UIApplication.SharedApplication.SetStatusBarStyle(UIStatusBarStyle.Default, false);
+					break;
+				case StatusBarStyle.LightContent:
+					UIApplication.SharedApplication.SetStatusBarStyle(UIStatusBarStyle.LightContent, false);
+					break;
+				case StatusBarStyle.DarkContent:
+					UIApplication.SharedApplication.SetStatusBarStyle(UIStatusBarStyle.DarkContent, false);
+					break;
+			}
+
+			GetCurrentViewController().SetNeedsStatusBarAppearanceUpdate();
+		}
+
+		UIViewController GetCurrentViewController()
+		{
+			var window = UIApplication.SharedApplication.KeyWindow;
+			var vc = window.RootViewController;
+			while (vc.PresentedViewController != null)
+				vc = vc.PresentedViewController;
+			return vc;
 		}
 
 		public override bool PrefersHomeIndicatorAutoHidden => Page.OnThisPlatform().PrefersHomeIndicatorAutoHidden();

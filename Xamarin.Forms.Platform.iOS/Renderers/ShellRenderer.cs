@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using Foundation;
 using UIKit;
 
 namespace Xamarin.Forms.Platform.iOS
@@ -236,6 +237,14 @@ namespace Xamarin.Forms.Platform.iOS
 				View.AddSubview(_currentShellItemRenderer.ViewController.View);
 				View.SendSubviewToBack(_currentShellItemRenderer.ViewController.View);
 			}
+			else if (e.PropertyName == Page.StatusBarColorProperty.PropertyName)
+			{
+				UpdateStatusBarColor();
+			}
+			else if (e.PropertyName == Page.StatusBarStyleProperty.PropertyName)
+			{
+				UpdateStatusBarStyle();
+			}
 		}
 
 		protected virtual void OnElementSet(Shell element)
@@ -244,6 +253,8 @@ namespace Xamarin.Forms.Platform.iOS
 				return;
 
 			element.PropertyChanged += OnElementPropertyChanged;
+			UpdateStatusBarColor();
+			UpdateStatusBarStyle();
 		}
 
 		protected async void SetCurrentShellItemController(IShellItemRenderer value)
@@ -289,6 +300,69 @@ namespace Xamarin.Forms.Platform.iOS
 			{
 				OnCurrentItemChanged();
 			}
+		}
+
+		void UpdateStatusBarColor()
+		{
+			//if (!Shell.HasAppeared)
+			//	return;
+
+			if (Shell.StatusBarColor == Color.Default)
+				return;
+
+			var statusBarColor = Shell.StatusBarColor.ToUIColor();
+			if (Forms.IsiOS13OrNewer)
+			{
+				foreach (var window in UIApplication.SharedApplication.Windows)
+				{
+					const int statusBarTag = 38482;
+					UIView statusBar = window.ViewWithTag(statusBarTag) ?? new UIView(UIApplication.SharedApplication.StatusBarFrame);
+					statusBar.Tag = statusBarTag;
+					statusBar.BackgroundColor = statusBarColor;
+					statusBar.TintColor = statusBarColor;
+					window.AddSubview(statusBar);
+				}
+			}
+			else
+			{
+				var statusBar = UIApplication.SharedApplication.ValueForKey(new NSString("statusBar")) as UIView;
+				if (statusBar != null && statusBar.RespondsToSelector(new ObjCRuntime.Selector("setBackgroundColor:")))
+				{
+					statusBar.BackgroundColor = statusBarColor;
+				}
+			}
+
+			GetCurrentViewController().SetNeedsStatusBarAppearanceUpdate();
+		}
+
+		void UpdateStatusBarStyle()
+		{
+			//if (!Shell.HasAppeared)
+			//	return;
+
+			switch (Shell.StatusBarStyle)
+			{
+				case StatusBarStyle.Default:
+					UIApplication.SharedApplication.SetStatusBarStyle(UIStatusBarStyle.Default, false);
+					break;
+				case StatusBarStyle.LightContent:
+					UIApplication.SharedApplication.SetStatusBarStyle(UIStatusBarStyle.LightContent, false);
+					break;
+				case StatusBarStyle.DarkContent:
+					UIApplication.SharedApplication.SetStatusBarStyle(UIStatusBarStyle.DarkContent, false);
+					break;
+			}
+			
+			GetCurrentViewController().SetNeedsStatusBarAppearanceUpdate();
+		}
+
+		UIViewController GetCurrentViewController()
+		{
+			var window = UIApplication.SharedApplication.KeyWindow;
+			var vc = window.RootViewController;
+			while (vc.PresentedViewController != null)
+				vc = vc.PresentedViewController;
+			return vc;
 		}
 
 		// this won't work on the previewer if it's private

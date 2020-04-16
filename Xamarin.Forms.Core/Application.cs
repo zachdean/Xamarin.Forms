@@ -39,6 +39,13 @@ namespace Xamarin.Forms
 			SystemResources = DependencyService.Get<ISystemResourcesProvider>().GetSystemResources();
 			SystemResources.ValuesChanged += OnParentResourcesChanged;
 			_platformConfigurationRegistry = new Lazy<PlatformConfigurationRegistry<Application>>(() => new PlatformConfigurationRegistry<Application>(this));
+
+			PageAppearing += Application_PageAppearing;
+		}
+
+		private void Application_PageAppearing(object sender, Page e)
+		{
+			e.UpdateAppearingStyles();
 		}
 
 		public void Quit()

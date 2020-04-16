@@ -6,6 +6,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using Xamarin.Forms.Internals;
 using Xamarin.Forms.Platform;
 
@@ -36,6 +37,12 @@ namespace Xamarin.Forms
 
 		public static readonly BindableProperty TitleProperty = BindableProperty.Create("Title", typeof(string), typeof(Page), null);
 
+		public static readonly BindableProperty StatusBarColorProperty = BindableProperty.Create(nameof(StatusBarColor), typeof(Color), typeof(Page), Color.Default, 
+			propertyChanged: (bo, o, n) => ((Page)bo).StatusBarColorUpdated());
+
+		public static readonly BindableProperty StatusBarStyleProperty = BindableProperty.Create(nameof(StatusBarStyle), typeof(StatusBarStyle), typeof(Page), StatusBarStyle.Default,
+			propertyChanged: (bo, o, n) => ((Page)bo).StatusBarStyleUpdated());
+
 		public static readonly BindableProperty IconImageSourceProperty = BindableProperty.Create(nameof(IconImageSource), typeof(ImageSource), typeof(Page), default(ImageSource));
 
 		[Obsolete("IconProperty is obsolete as of 4.0.0. Please use IconImageSourceProperty instead.")]
@@ -43,13 +50,13 @@ namespace Xamarin.Forms
 		public static readonly BindableProperty IconProperty = IconImageSourceProperty;
 
 		readonly Lazy<PlatformConfigurationRegistry<Page>> _platformConfigurationRegistry;
-
 		bool _allocatedFlag;
 		Rectangle _containerArea;
-
+		bool _hasAppeared;
 		bool _containerAreaSet;
 
-		bool _hasAppeared;
+		[EditorBrowsable(EditorBrowsableState.Never)]
+		bool HasAppeared { get => _hasAppeared; }
 
 		ReadOnlyCollection<Element> _logicalChildren;
 
@@ -127,10 +134,22 @@ namespace Xamarin.Forms
 			set { SetValue(TitleProperty, value); }
 		}
 
+		public Color StatusBarColor
+		{
+			get { return (Color)GetValue(StatusBarColorProperty); }
+			set { SetValue(StatusBarColorProperty, value); }
+		}
+
+		public StatusBarStyle StatusBarStyle
+		{
+			get { return (StatusBarStyle)GetValue(StatusBarStyleProperty); }
+			set { SetValue(StatusBarStyleProperty, value); }
+		}
+
 		public IList<ToolbarItem> ToolbarItems { get; internal set; }
 
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        public Rectangle ContainerArea
+		[EditorBrowsable(EditorBrowsableState.Never)]
+		public Rectangle ContainerArea
 		{
 			get { return _containerArea; }
 			set
@@ -143,15 +162,15 @@ namespace Xamarin.Forms
 			}
 		}
 
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        public bool IgnoresContainerArea
+		[EditorBrowsable(EditorBrowsableState.Never)]
+		public bool IgnoresContainerArea
 		{
 			get { return (bool)GetValue(IgnoresContainerAreaProperty); }
 			set { SetValue(IgnoresContainerAreaProperty, value); }
 		}
 
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        public ObservableCollection<Element> InternalChildren { get; } = new ObservableCollection<Element>();
+		[EditorBrowsable(EditorBrowsableState.Never)]
+		public ObservableCollection<Element> InternalChildren { get; } = new ObservableCollection<Element>();
 
 		internal override IEnumerable<Element> ChildrenNotDrawnByThisElement
 		{
@@ -237,6 +256,14 @@ namespace Xamarin.Forms
 				_pendingActions.Clear();
 				foreach(var pendingAction in actionsToProcess)
 					pendingAction();
+			}
+
+			// This is when the renderer gets attached
+			// so we can just see if has appeared is true and then
+			// tell the properties to propagate to the renderer
+			if(_hasAppeared)
+			{
+				UpdateAppearingStyles();
 			}
 		}
 
@@ -437,15 +464,17 @@ namespace Xamarin.Forms
 
 			OnAppearing();
 			Appearing?.Invoke(this, EventArgs.Empty);
-
 			var pageContainer = this as IPageContainer<Page>;
 			pageContainer?.CurrentPage?.SendAppearing();
+
+			//RefreshStatusBarColor();
+			//RefreshStatusBarStyle();
 
 			FindApplication(this)?.OnPageAppearing(this);
 		}
 
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        public void SendDisappearing()
+		[EditorBrowsable(EditorBrowsableState.Never)]
+		public void SendDisappearing()
 		{
 			if (!_hasAppeared)
 				return;
@@ -460,7 +489,6 @@ namespace Xamarin.Forms
 
 			OnDisappearing();
 			Disappearing?.Invoke(this, EventArgs.Empty);
-
 			FindApplication(this)?.OnPageDisappearing(this);
 		}
 
@@ -568,6 +596,58 @@ namespace Xamarin.Forms
 				newTitleView.Parent = this;
 
 			_titleView = newTitleView;
+		}
+
+		protected virtual void StatusBarColorUpdated()
+		{
+
+		}
+
+		protected virtual void StatusBarStyleUpdated()
+		{
+
+		}
+
+
+		internal void UpdateAppearingStyles()
+		{
+			RefreshStatusBarColor();
+			RefreshStatusBarStyle();
+		}
+
+		
+		void RefreshStatusBarColor()
+		{
+			var pageCurrentPage = GetCurrentPage(this);
+
+			if (pageCurrentPage == this)
+				OnPropertyChanged(nameof(StatusBarColor));
+			else
+				pageCurrentPage.RefreshStatusBarColor();
+		}
+
+		void RefreshStatusBarStyle()
+		{
+			var pageCurrentPage = GetCurrentPage(this);
+
+			if (pageCurrentPage == this)
+				OnPropertyChanged(nameof(StatusBarStyle));
+			else
+				pageCurrentPage.RefreshStatusBarStyle();
+		}
+
+
+		// figure out the active page 
+		internal Page GetCurrentPage(Page currentPage)
+		{
+			if (currentPage is MasterDetailPage mdp)
+				return GetCurrentPage(mdp.Detail);
+			else if (currentPage is Shell shell && shell.CurrentItem?.CurrentItem is IShellSectionController ssc)
+				return ssc.PresentedPage;
+			else if (currentPage is IPageContainer<Page> pc)
+				return GetCurrentPage(pc.CurrentPage);
+			else
+				return currentPage;
 		}
 	}
 }

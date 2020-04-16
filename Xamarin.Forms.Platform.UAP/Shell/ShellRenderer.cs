@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using Windows.Foundation.Metadata;
+using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
@@ -167,6 +168,14 @@ namespace Xamarin.Forms.Platform.UWP
 			{
 				UpdateFlyoutBackgroundColor();
 			}
+			else if (e.PropertyName == Page.StatusBarColorProperty.PropertyName)
+			{
+				UpdateStatusBarColor();
+			}
+			else if (e.PropertyName == Page.StatusBarStyleProperty.PropertyName)
+			{
+				UpdateStatusBarStyle();
+			}
 		}
 
 		protected virtual void UpdateFlyoutBackgroundColor()
@@ -211,6 +220,7 @@ namespace Xamarin.Forms.Platform.UWP
 			((IShellController)shell).AddAppearanceObserver(this, shell);
 			(shell as IShellController).ItemsCollectionChanged += OnItemsCollectionChanged;
 			UpdateFlyoutBackgroundColor();
+			UpdateStatusBarStyle();
 		}
 
 		void OnItemsCollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
@@ -300,6 +310,66 @@ namespace Xamarin.Forms.Platform.UWP
 					IsPaneToggleButtonVisible = false;
 					PaneDisplayMode = Microsoft.UI.Xaml.Controls.NavigationViewPaneDisplayMode.Left;
 					break;
+			}
+		}
+
+		void UpdateStatusBarColor()
+		{
+			//if (!Element.HasAppeared)
+			//	return;
+
+			if (Element.StatusBarColor == Color.Default)
+				return;
+
+			if (ApiInformation.IsTypePresent(typeof(StatusBar).FullName ?? string.Empty))
+			{
+				var statusBar = StatusBar.GetForCurrentView();
+				if (statusBar != null)
+				{
+					statusBar.BackgroundColor = Element.StatusBarColor.ToWindowsColor();
+				}
+			}
+			else
+			{
+				var titleBar = ApplicationView.GetForCurrentView()?.TitleBar;
+				if (titleBar != null)
+				{
+					titleBar.BackgroundColor = Element.StatusBarColor.ToWindowsColor();
+				}
+			}
+		}
+
+		void UpdateStatusBarStyle()
+		{
+			//if (!Element.HasAppeared)
+			//	return;
+
+			Color foregroundColor = Color.Default;
+			switch (Element.StatusBarStyle)
+			{
+				case StatusBarStyle.LightContent:
+					foregroundColor = Color.Black;
+					break;
+				case StatusBarStyle.DarkContent:
+					foregroundColor = Color.White;
+					break;
+			}
+
+			if (ApiInformation.IsTypePresent(typeof(StatusBar).FullName ?? string.Empty))
+			{
+				var statusBar = StatusBar.GetForCurrentView();
+				if (statusBar != null)
+				{
+					statusBar.ForegroundColor = foregroundColor.ToWindowsColor();
+				}
+			}
+			else
+			{
+				var titleBar = ApplicationView.GetForCurrentView()?.TitleBar;
+				if (titleBar != null)
+				{
+					titleBar.ForegroundColor = foregroundColor.ToWindowsColor();
+				}
 			}
 		}
 
