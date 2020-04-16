@@ -53,7 +53,7 @@ namespace Xamarin.Forms.Platform.Android
 
 		public SwipeViewRenderer(Context context) : base(context)
 		{
-			if (ShouldVerifySwipeViewFlagEnabled())
+			if (ShouldVerifySwipeViewFlagEnabled(context))
 				SwipeView.VerifySwipeViewFlagEnabled(nameof(SwipeViewRenderer));
 
 			_context = context;
@@ -1149,9 +1149,9 @@ namespace Xamarin.Forms.Platform.Android
 			swipeItem.OnInvoked();
 		}
 
-		bool ShouldVerifySwipeViewFlagEnabled()
+		static bool ShouldVerifySwipeViewFlagEnabled(Context context)
 		{
-			if (_context.IsDesignerContext())
+			if (context.IsDesignerContext())
 				return false;
 
 			return true;
