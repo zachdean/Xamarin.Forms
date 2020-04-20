@@ -383,11 +383,15 @@ namespace Xamarin.Forms
 					defaultImageClass.Setters.Add(new Setter { Property = Image.MarginProperty, Value = new Thickness(12, 0, 12, 0) });					
 				}
 
-				image.SetBinding(Image.SourceProperty, iconBinding);
+				Binding imageBinding = new Binding(iconBinding);
+				defaultImageClass.Setters.Add(new Setter { Property = Image.SourceProperty, Value = imageBinding });
+
 				grid.Children.Add(image);
 
 				var label = new Label();
-				label.SetBinding(Label.TextProperty, textBinding);
+				Binding labelBinding = new Binding(textBinding);
+				defaultLabelClass.Setters.Add(new Setter { Property = Label.TextProperty, Value = labelBinding });
+
 				grid.Children.Add(label, 1, 0);
 
 				if (Device.RuntimePlatform == Device.Android)
