@@ -275,7 +275,7 @@ namespace Xamarin.Forms
 				DefaultFlyoutItemLayoutStyle,
 				FlyoutItem.LabelStyle,
 				FlyoutItem.ImageStyle,
-				FlyoutItem.GridStyle };
+				FlyoutItem.LayoutStyle };
 
 			if (source?.Classes != null)
 				foreach (var styleClass in source.Classes)
@@ -407,6 +407,12 @@ namespace Xamarin.Forms
 					defaultLabelClass.Setters.Add(new Setter { Property = Label.HorizontalOptionsProperty, Value = LayoutOptions.Start });
 					defaultLabelClass.Setters.Add(new Setter { Property = Label.HorizontalTextAlignmentProperty, Value = TextAlignment.Start });
 				}
+
+				INameScope nameScope = new NameScope();
+				NameScope.SetNameScope(grid, nameScope);
+				nameScope.RegisterName("FlyoutItemLayout", grid);
+				nameScope.RegisterName("FlyoutItemImage", image);
+				nameScope.RegisterName("FlyoutItemLabel", label);
 
 				UpdateFlyoutItemStyles(grid, styleSelectable);
 				grid.Resources = new ResourceDictionary() { defaultGridClass, defaultLabelClass, defaultImageClass };
