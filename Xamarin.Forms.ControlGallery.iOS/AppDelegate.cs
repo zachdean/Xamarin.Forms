@@ -11,7 +11,6 @@ using Xamarin.Forms.Controls;
 using Xamarin.Forms.Controls.Issues;
 using Xamarin.Forms.Platform.iOS;
 
-[assembly: Dependency(typeof(TestCloudService))]
 [assembly: Dependency(typeof(CacheService))]
 [assembly: ExportRenderer(typeof(DisposePage), typeof(DisposePageRenderer))]
 [assembly: ExportRenderer(typeof(DisposeLabel), typeof(DisposeLabelRenderer))]
@@ -71,26 +70,6 @@ namespace Xamarin.Forms.ControlGallery.iOS
 				((DisposeLabel)Element).SendRendererDisposed();
 			}
 			base.Dispose(disposing);
-		}
-	}
-
-	public class TestCloudService : ITestCloudService
-	{
-		public bool IsOnTestCloud()
-		{
-			var isInTestCloud = Environment.GetEnvironmentVariable("XAMARIN_TEST_CLOUD");
-
-			return isInTestCloud != null && isInTestCloud.Equals("1");
-		}
-
-		public string GetTestCloudDeviceName()
-		{
-			return Environment.GetEnvironmentVariable("XTC_DEVICE_NAME");
-		}
-
-		public string GetTestCloudDevice()
-		{
-			return Environment.GetEnvironmentVariable("XTC_DEVICE");
 		}
 	}
 

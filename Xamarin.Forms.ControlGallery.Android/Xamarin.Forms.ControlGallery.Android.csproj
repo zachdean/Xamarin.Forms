@@ -116,7 +116,6 @@
     <Compile Include="ColorPicker.cs" />
     <Compile Include="SampleNativeControl.cs" />
     <Compile Include="StaggeredCollectionViewRenderer.cs" />
-    <Compile Include="TestCloudService.cs" />
     <Compile Include="_1909CustomRenderer.cs" />
     <Compile Include="_2489CustomRenderer.cs" />
     <Compile Include="_38989CustomRenderer.cs" />
@@ -179,7 +178,7 @@
     <AndroidResource Include="Resources\drawable\Icon.png" />
     <AndroidResource Include="Resources\drawable\cover1.jpg" />
   </ItemGroup>
-  <ItemGroup>  
+  <ItemGroup>
     <ProjectReference Include="..\Xamarin.Forms.Controls\Xamarin.Forms.Controls.csproj">
       <Project>{cb9c96ce-125c-4a68-b6a1-c3ff1fbf93e1}</Project>
       <Name>Xamarin.Forms.Controls</Name>

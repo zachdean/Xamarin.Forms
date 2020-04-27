@@ -17,23 +17,19 @@ namespace Xamarin.Forms.Controls
 	public class App : Application
 	{
 		public const string AppName = "XamarinFormsControls";
-		static string s_insightsKey;
-
+		
 		// ReSharper disable once InconsistentNaming
 		public static int IOSVersion = -1;
 
 		public static List<string> AppearingMessages = new List<string>();
 
 		static Dictionary<string, string> s_config;
-		readonly ITestCloudService _testCloudService;
-
+		
 		public const string DefaultMainPageId = "ControlGalleryMainPage";
 
 		public static bool PreloadTestCasesIssuesList { get; set; } = true;
 		public App()
 		{
-			_testCloudService = DependencyService.Get<ITestCloudService>();
-
 			SetMainPage(CreateDefaultMainPage());
 
 			//TestMainPageSwitches();

@@ -18,7 +18,6 @@ using Android.Views;
 using AColor = Android.Graphics.Color;
 
 [assembly: Dependency (typeof (CacheService))]
-[assembly: Dependency (typeof (TestCloudService))]
 [assembly: ExportRenderer (typeof (DisposePage), typeof (DisposePageRenderer))]
 [assembly: ExportRenderer (typeof (DisposeLabel), typeof (DisposeLabelRenderer))]
 [assembly: ExportEffect (typeof (BorderEffect), "BorderEffect")]
