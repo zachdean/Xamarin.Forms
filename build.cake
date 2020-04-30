@@ -40,7 +40,9 @@ var packageVersion = Argument("packageVersion", "");
 var releaseChannelArg = Argument("CHANNEL", "Stable");
 releaseChannelArg = EnvironmentVariable("CHANNEL") ?? releaseChannelArg;
 var teamProject = Argument("TeamProject", "");
-bool buildForVS2017 = EnvironmentVariable("buildForVS2017") ?? Convert.ToBoolean(Argument("buildForVS2017", "false"));
+
+var buildForVS2017Arg = EnvironmentVariable("buildForVS2017") ?? Argument("buildForVS2017", "false");
+bool buildForVS2017 = Convert.ToBoolean(buildForVS2017Arg);
 
 string artifactStagingDirectory = Argument("Build_ArtifactStagingDirectory", (string)null) ?? EnvironmentVariable("Build.ArtifactStagingDirectory") ?? EnvironmentVariable("Build_ArtifactStagingDirectory") ?? ".";
 var ANDROID_HOME = EnvironmentVariable("ANDROID_HOME") ??
