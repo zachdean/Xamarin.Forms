@@ -35,6 +35,22 @@ if (IsMac)
 		XamarinChannel("Stable");
 	}
 
+	if(!String.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable ("ANDROID_SDK_MAC")))
+		Item ("Xamarin.Android")
+      		.Source (_ => Environment.GetEnvironmentVariable ("ANDROID_SDK_MAC"));
+
+	if(!String.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable ("IOS_SDK_MAC")))
+		Item ("Xamarin.iOS")
+      		.Source (_ => Environment.GetEnvironmentVariable ("IOS_SDK_MAC"));
+
+	if(!String.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable ("MONO_SDK_MAC")))
+		Item ("Mono")
+      		.Source (_ => Environment.GetEnvironmentVariable ("MONO_SDK_MAC"));
+
+	if(!String.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable ("MAC_SDK_MAC")))
+		Item ("Xamarin.Mac")
+      		.Source (_ => Environment.GetEnvironmentVariable ("MAC_SDK_MAC"));
+
   	if(!String.IsNullOrEmpty(monoSDK_macos))
     	Item ("Mono", monoVersion)
       		.Source (_ => monoSDK_macos);
@@ -53,6 +69,23 @@ if (IsMac)
 }
 else
 {
+
+	if(!String.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable ("ANDROID_SDK_WINDOWS")))
+		Item ("Xamarin.Android")
+      		.Source (_ => Environment.GetEnvironmentVariable ("ANDROID_SDK_WINDOWS"));
+
+	if(!String.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable ("IOS_SDK_WINDOWS")))
+		Item ("Xamarin.iOS")
+      		.Source (_ => Environment.GetEnvironmentVariable ("IOS_SDK_WINDOWS"));
+
+	if(!String.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable ("MONO_SDK_WINDOWS")))
+		Item ("Mono")
+      		.Source (_ => Environment.GetEnvironmentVariable ("MONO_SDK_WINDOWS"));
+
+	if(!String.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable ("MAC_SDK_WINDOWS")))
+		Item ("Xamarin.Mac")
+      		.Source (_ => Environment.GetEnvironmentVariable ("MAC_SDK_WINDOWS"));
+			  
 	if(!String.IsNullOrEmpty(androidSDK_windows))
 		Item ("Xamarin.Android", "10.0.0.43")
       		.Source (_ => androidSDK_windows);
