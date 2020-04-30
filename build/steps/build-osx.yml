@@ -31,7 +31,7 @@ steps:
     inputs:
       targetType: 'filePath'
       filePath: 'build.sh'
-      arguments: --target provision --TeamProject="$(System.TeamProject)" --buildForVS2017=$(buildForVS2017)
+      arguments: --target provision --TeamProject="$(System.TeamProject)"
 
   - task: UseDotNet@2
     displayName: 'Install .net core $(DOTNET_VERSION)'

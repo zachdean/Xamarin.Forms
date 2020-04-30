@@ -54,6 +54,8 @@ string[] androidSdkManagerInstalls = new string[0]; //new [] { "platforms;androi
 Information ("ANDROID_HOME: {0}", ANDROID_HOME);
 Information ("Team Project: {0}", teamProject);
 Information ("buildForVS2017: {0}", buildForVS2017);
+Information ("EnvironmentVariable buildForVS2017: {0}", EnvironmentVariable("buildForVS2017"));
+Information ("Argument buildForVS2017: {0}", Argument("buildForVS2017", "not set"));
 
 var releaseChannel = ReleaseChannel.Stable;
 if(releaseChannelArg == "Preview")
