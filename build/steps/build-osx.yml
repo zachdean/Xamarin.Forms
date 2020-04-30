@@ -2,6 +2,13 @@ steps:
   - checkout: self
     clean: true
 
+  - task: Bash@3
+    displayName: 'Setup Environment Variables'        
+    inputs:
+      targetType: 'filePath'
+      filePath: 'build.sh'
+      arguments: --target SetEnvironentVariables --buildForVS2017="$(buildForVS2017)"
+
   - task: xamops.azdevex.provisionator-task.provisionator@1
     displayName: 'Provision Xcode'
     condition: and(ne(variables['REQUIRED_XCODE'], ''), eq(variables['buildForVS2017'], 'false'))
@@ -112,7 +119,6 @@ steps:
       OverWrite: true
       flattenFolders: true
 
-
   - task: CopyFiles@2
     displayName: 'Copy iOS Files for UITest'
     condition: eq(variables['buildForVS2017'], 'false')
@@ -129,6 +135,21 @@ steps:
       CleanTargetFolder: true
       flattenFolders: true
 
+  - task: CopyFiles@2
+    displayName: 'Copy iOS Files for UITest 2017'
+    condition: eq(variables['buildForVS2017'], 'true')
+    inputs:
+      Contents: |
+       **/$(IpaName)
+       Xamarin.Forms.Core.iOS.UITests/bin/$(BuildConfiguration)/Newtonsoft.Json.*
+       Xamarin.Forms.Core.iOS.UITests/bin/$(BuildConfiguration)/nunit.*
+       Xamarin.Forms.Core.iOS.UITests/bin/$(BuildConfiguration)/NUnit3.*
+       Xamarin.Forms.Core.iOS.UITests/bin/$(BuildConfiguration)/Plugin.*
+       Xamarin.Forms.Core.iOS.UITests/bin/$(BuildConfiguration)/Xamarin.*
+
+      TargetFolder: '$(build.artifactstagingdirectory)/ios_2017'
+      CleanTargetFolder: true
+      flattenFolders: true
 
   - task: CopyFiles@2
     displayName: 'Copy Android Files for UITest'

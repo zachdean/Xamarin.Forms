@@ -29,15 +29,29 @@ jobs:
         android_legacy:
           renderers: 'LEGACY'
           outputfolder: 'legacyRenderers'
+          buildForVS2017: 'false'
         android_preAppCompat:
           renderers: 'PREAPPCOMPAT'
           outputfolder: 'preAppCompat'
+          buildForVS2017: 'false'
         android_newRenderers:
           renderers: 'FAST'
           outputfolder: 'newRenderers'
+          buildForVS2017: 'false'
+        android_newRenderers_2017:
+          renderers: 'FAST'
+          outputfolder: 'newRenderers'
+          buildForVS2017: 'true'
     steps:
       - checkout: self
         clean: true
+
+      - task: Bash@3
+        displayName: 'Setup Environment Variables'        
+        inputs:
+          targetType: 'filePath'
+          filePath: 'build.sh'
+          arguments: --target SetEnvironentVariables --buildForVS2017="$(buildForVS2017)"
 
       - task: xamops.azdevex.provisionator-task.provisionator@1
         displayName: 'Provisionator'
@@ -115,10 +129,20 @@ jobs:
 
       - task: CopyFiles@2
         displayName: 'Copy Android apk $(renderers) for UITest'
+        condition: eq(variables['buildForVS2017'], 'false')
         inputs:
           Contents: |
             Xamarin.Forms.ControlGallery.Android/$(outputfolder)/$(ApkName)
           TargetFolder: '$(build.artifactstagingdirectory)/androidApp'
+          CleanTargetFolder: true
+
+      - task: CopyFiles@2
+        displayName: 'Copy Android apk $(renderers) for UITest 2017'
+        condition: eq(variables['buildForVS2017'], 'true')
+        inputs:
+          Contents: |
+            Xamarin.Forms.ControlGallery.Android/$(outputfolder)/$(ApkName)
+          TargetFolder: '$(build.artifactstagingdirectory)/androidApp_2017'
           CleanTargetFolder: true
 
       - task: PublishBuildArtifacts@1

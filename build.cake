@@ -40,7 +40,7 @@ var packageVersion = Argument("packageVersion", "");
 var releaseChannelArg = Argument("CHANNEL", "Stable");
 releaseChannelArg = EnvironmentVariable("CHANNEL") ?? releaseChannelArg;
 var teamProject = Argument("TeamProject", "");
-bool buildForVS2017 = Convert.ToBoolean(Argument("buildForVS2017", "false"));
+bool buildForVS2017 = EnvironmentVariable("buildForVS2017") ?? Convert.ToBoolean(Argument("buildForVS2017", "false"));
 
 string artifactStagingDirectory = Argument("Build_ArtifactStagingDirectory", (string)null) ?? EnvironmentVariable("Build.ArtifactStagingDirectory") ?? EnvironmentVariable("Build_ArtifactStagingDirectory") ?? ".";
 var ANDROID_HOME = EnvironmentVariable("ANDROID_HOME") ??
@@ -69,7 +69,7 @@ string monoPatchVersion = "";
 string monoMajorVersion = "";
 string monoVersion = "";
 
-if(buildForVS2017 || teamProject == "DevDiv")
+if(buildForVS2017)
 {
     // VS2017
     monoMajorVersion = "5.18.1";
@@ -144,6 +144,14 @@ Information ("iosSDK: {0}", iosSDK);
 //////////////////////////////////////////////////////////////////////
 // TASKS
 //////////////////////////////////////////////////////////////////////
+
+Task("SetEnvironentVariables")
+    .Description("This Sets Environment Variables for later scripts to use")
+    .Does(() =>
+{
+    Environment.SetEnvironment("buildForVS2017", buildForVS2017);
+});
+
 
 Task("Clean")
     .Description("Deletes all the obj/bin directories")
