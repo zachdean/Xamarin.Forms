@@ -46,12 +46,9 @@ jobs:
       - checkout: self
         clean: true
 
-      - task: Bash@3
-        displayName: 'Setup Environment Variables'        
-        inputs:
-          targetType: 'filePath'
-          filePath: 'build.sh'
-          arguments: --target SetEnvironentVariables --buildForVS2017="$(buildForVS2017)"
+      - script: |
+          echo "##vso[task.setvariable buildForVS2017=$(buildForVS2017)]$COMMAND"
+        displayName: 'Setup Environment Variables'
 
       - task: xamops.azdevex.provisionator-task.provisionator@1
         displayName: 'Provisionator'

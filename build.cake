@@ -145,14 +145,6 @@ Information ("iosSDK: {0}", iosSDK);
 // TASKS
 //////////////////////////////////////////////////////////////////////
 
-Task("SetEnvironentVariables")
-    .Description("This Sets Environment Variables for later scripts to use")
-    .Does(() =>
-{
-    Environment.SetEnvironment("buildForVS2017", buildForVS2017);
-});
-
-
 Task("Clean")
     .Description("Deletes all the obj/bin directories")
     .Does(() =>
