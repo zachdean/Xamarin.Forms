@@ -211,7 +211,10 @@ stages:
   - stage: android_2017
     displayName: Build Android
     # condition: eq(variables['System.TeamProject'], 'devdiv') }
-    dependsOn: windows
+    ${{ if eq(variables['System.TeamProject'], 'devdiv') }}:
+      dependsOn: windows
+    ${{ if eq(variables['System.TeamProject'], 'public') }}:
+      dependsOn: []
     jobs:
       - template: build/steps/build-android.yml
         parameters:
