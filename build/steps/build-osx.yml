@@ -2,10 +2,6 @@ steps:
   - checkout: self
     clean: true
 
-  - script: |
-      echo "##vso[task.setvariable variable=buildForVS2017;]$buildForVS2017"
-    displayName: 'Setup Environment Variables'
-
   - task: xamops.azdevex.provisionator-task.provisionator@1
     displayName: 'Provision Xcode'
     condition: and(ne(variables['REQUIRED_XCODE'], ''), eq(variables['buildForVS2017'], 'false'))
@@ -31,7 +27,7 @@ steps:
     inputs:
       targetType: 'filePath'
       filePath: 'build.sh'
-      arguments: --target provision --TeamProject="$(System.TeamProject)"
+      arguments: --target provision --TeamProject="$(System.TeamProject)" --buildForVS2017=$(buildForVS2017)
 
   - task: UseDotNet@2
     displayName: 'Install .net core $(DOTNET_VERSION)'
