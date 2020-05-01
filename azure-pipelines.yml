@@ -1,6 +1,4 @@
 variables:
-- name: DefaultBuildConfiguration
-  value: Debug
 - name: DefaultBuildPlatform
   value: 'any cpu'
 - name: ApkName
@@ -209,7 +207,7 @@ stages:
           buildForVS2017: false
 
   - stage: android_2017
-    displayName: Build Android
+    displayName: Build Android 2017
     # condition: eq(variables['System.TeamProject'], 'devdiv') }
     ${{ if eq(variables['System.TeamProject'], 'devdiv') }}:
       dependsOn: windows
