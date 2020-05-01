@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <Target Name="CI-Build-Android" >
+      <MSBuild Projects="Xamarin.Forms.sln"
+               Targets="Restore"
+               Properties="Configuration=Release;XamarinFormsVersion=4.7.0.159"/>
+      
+      <MSBuild Projects="Xamarin.Forms.Build.Tasks/Xamarin.Forms.Build.Tasks.csproj"
+               Properties="Configuration=Release;XamarinFormsVersion=4.7.0.159"/>
+      
+      <MSBuild Projects="Xamarin.Forms.ControlGallery.Android/Xamarin.Forms.ControlGallery.Android.csproj"
+               Targets="Rebuild;SignAndroidPackage"
+               Properties="Configuration=Release;ANDROID_RENDERERS=LEGACY;CI=true;XamarinFormsVersion=4.7.0.159 "/>
+    </Target>
+</Project>

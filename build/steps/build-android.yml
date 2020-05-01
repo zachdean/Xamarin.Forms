@@ -84,6 +84,13 @@ jobs:
           SourceFolder: 'Nuget/nuget/${{ parameters.buildConfiguration }}'
           TargetFolder: 'Nuget'
 
+      - task: Bash@3
+        displayName: 'Build Android $(renderers)'
+        inputs:
+          targetType: 'filePath'
+          filePath: 'build.sh'
+          arguments: --target CI-Build-Android --ANDROID_RENDERERS="$(renderers)" --configuration="${{ parameters.buildConfiguration }}"
+
       - task: NuGetCommand@2
         displayName: 'NuGet restore ${{ parameters.slnPath }}'
         inputs:
