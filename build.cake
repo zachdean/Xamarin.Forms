@@ -377,12 +377,10 @@ Task("CI-Build-Android")
         };
         
         binaryLogger.FileName = $"{artifactStagingDirectory}/android-{ANDROID_RENDERERS}.binlog";
-        MSBuild("./Xamarin.Forms.ControlGallery.Android/Xamarin.Forms.ControlGallery.Android.csproj", 
+        MSBuild("./build.csproj", 
             msbuildSettings
-                .WithTarget("Rebuild")
-                .WithTarget("SignAndroidPackage")
                 .WithProperty("ANDROID_RENDERERS", ANDROID_RENDERERS)
-                .WithProperty("CI", "true")
+                .WithProperty("XamarinFormsVersion", XamarinFormsVersion)
             );
     }
     catch(Exception)
