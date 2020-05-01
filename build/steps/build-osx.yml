@@ -3,7 +3,8 @@ steps:
     clean: true
 
   - script: |
-      echo "##vso[task.setvariable variable=buildForVS2017]$(buildForVS2017)"
+      echo '##vso[task.setvariable variable=buildForVS2017;]'$buildForVS2017
+      echo '##vso[task.setvariable variable=buildForVS2017;]$buildForVS2017
     displayName: 'Setup Environment Variables'
 
   - task: xamops.azdevex.provisionator-task.provisionator@1
