@@ -215,7 +215,7 @@ stages:
     jobs:
       - template: build/steps/build-android.yml
         parameters:
-          vmImage: $(macOSXVmImage)
+          vmImage: 'macOS-10.14'
           provisionatorPath : 'build/provisioning/provisioning.csx'
           buildForVS2017: true
 
