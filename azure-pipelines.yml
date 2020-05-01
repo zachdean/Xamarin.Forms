@@ -210,7 +210,7 @@ stages:
 
   - stage: android_2017
     displayName: Build Android
-    condition: eq(variables['System.TeamProject'], 'devdiv') }
+    # condition: eq(variables['System.TeamProject'], 'devdiv') }
     dependsOn: windows
     jobs:
       - template: build/steps/build-android.yml
