@@ -209,7 +209,7 @@ stages:
 
   - stage: android_2017
     displayName: Build Android 2017
-    # condition: eq(variables['System.TeamProject'], 'devdiv') }
+    condition: eq(variables['System.TeamProject'], 'devdiv') }
     ${{ if eq(variables['System.TeamProject'], 'devdiv') }}:
       dependsOn: windows
     ${{ if eq(variables['System.TeamProject'], 'public') }}:
