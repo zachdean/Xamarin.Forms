@@ -1,0 +1,55 @@
+﻿<controls:TestContentPage
+    x:Class="Xamarin.Forms.Controls.Issues.Issue10014"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"  
+    xmlns:controls="clr-namespace:Xamarin.Forms.Controls"
+    mc:Ignorable="d"
+    Title="Issue 9646">
+    <ContentView 
+        LayoutChanged="OnLayoutChanged">
+        <CollectionView
+            x:Name="Collection"
+            VerticalScrollBarVisibility="Never"
+            HorizontalScrollBarVisibility="Never"
+            VerticalOptions="Start"
+            HeightRequest="250">
+            <CollectionView.ItemsLayout>
+                <LinearItemsLayout 
+                    ItemSpacing="10"
+                    Orientation="Vertical"
+                    SnapPointsAlignment="Start"
+                    SnapPointsType="Mandatory" />
+            </CollectionView.ItemsLayout>
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Entry 
+                        HorizontalTextAlignment="End"
+                        VerticalTextAlignment="Center"
+                        Text="{Binding}"
+                        BackgroundColor="Salmon"
+                        FontSize="48"
+                        IsReadOnly="True" />
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+            <CollectionView.ItemsSource>
+                <x:Array Type="{x:Type x:String}">
+                    <x:String>0</x:String>
+                    <x:String>1</x:String>
+                    <x:String>2</x:String>
+                    <x:String>3</x:String>
+                    <x:String>4</x:String>
+                    <x:String>5</x:String>
+                    <x:String>6</x:String>
+                    <x:String>7</x:String>
+                    <x:String>8</x:String>
+                    <x:String>9</x:String>
+                    <x:String>10</x:String>
+                    <x:String>11</x:String>
+                    <x:String>12</x:String>
+                </x:Array>
+            </CollectionView.ItemsSource>
+        </CollectionView>
+    </ContentView>
+</controls:TestContentPage>
