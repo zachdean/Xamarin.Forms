@@ -14,7 +14,7 @@ string macSDK_macos = "";//$"https://download.visualstudio.microsoft.com/downloa
 
 
 
-Console.WriteLine ("buildForVS2017", Environment.GetEnvironmentVariable ("buildForVS2017"));
+Console.WriteLine ("buildForVS2017: {0}", Environment.GetEnvironmentVariable ("buildForVS2017"));
 
 if (IsMac)
 {
@@ -28,10 +28,10 @@ if (IsMac)
 	Item (XreItem.Java_OpenJDK_1_8_0_25);
 
 	string releaseChannel = Environment.GetEnvironmentVariable ("CHANNEL");
-	Console.WriteLine ("ANDROID_SDK_MAC", Environment.GetEnvironmentVariable ("ANDROID_SDK_MAC"));
-	Console.WriteLine ("IOS_SDK_MAC", Environment.GetEnvironmentVariable ("IOS_SDK_MAC"));
-	Console.WriteLine ("MONO_SDK_MAC", Environment.GetEnvironmentVariable ("MONO_SDK_MAC"));
-	Console.WriteLine ("MAC_SDK_MAC", Environment.GetEnvironmentVariable ("MAC_SDK_MAC"));
+	Console.WriteLine ("ANDROID_SDK_MAC: {0}", Environment.GetEnvironmentVariable ("ANDROID_SDK_MAC"));
+	Console.WriteLine ("IOS_SDK_MAC: {0}", Environment.GetEnvironmentVariable ("IOS_SDK_MAC"));
+	Console.WriteLine ("MONO_SDK_MAC: {0}", Environment.GetEnvironmentVariable ("MONO_SDK_MAC"));
+	Console.WriteLine ("MAC_SDK_MAC: {0}", Environment.GetEnvironmentVariable ("MAC_SDK_MAC"));
 
 	if(releaseChannel == "Preview")
 	{
