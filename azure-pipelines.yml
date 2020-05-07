@@ -230,6 +230,8 @@ stages:
       dependsOn: []
     jobs:
       - job: osx
+        ${{ if eq(variables['System.TeamProject'], 'devdiv') }}:
+          timeoutInMinutes: 120
         workspace:
           clean: all
         displayName: OSX Phase
