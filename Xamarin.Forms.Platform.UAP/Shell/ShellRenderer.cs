@@ -42,6 +42,7 @@ namespace Xamarin.Forms.Platform.UWP
 				PaneOpening += (s, e) => OnPaneOpening();
 			ItemInvoked += OnMenuItemInvoked;
 			Style = Windows.UI.Xaml.Application.Current.Resources["ShellNavigationView"] as Windows.UI.Xaml.Style;
+
 		}
 
 		public Brush FlyoutBackgroundColor
@@ -202,6 +203,7 @@ namespace Xamarin.Forms.Platform.UWP
 			if (shell == null)
 				return;
 
+			this.DataContext = _shell;
 			var shr = CreateShellHeaderRenderer(shell);
 			PaneCustomContent = shr;
 			MenuItemsSource = IterateItems();
@@ -212,6 +214,8 @@ namespace Xamarin.Forms.Platform.UWP
 			(shell as IShellController).ItemsCollectionChanged += OnItemsCollectionChanged;
 			UpdateFlyoutBackgroundColor();
 		}
+
+		
 
 		void OnItemsCollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
 		{

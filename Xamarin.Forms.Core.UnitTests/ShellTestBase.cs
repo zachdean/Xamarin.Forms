@@ -92,27 +92,38 @@ namespace Xamarin.Forms.Core.UnitTests
 		}
 
 		protected ShellItem CreateShellItem(
-			TemplatedPage page = null, 
-			bool asImplicit = false, 
-			string shellContentRoute = null, 
-			string shellSectionRoute = null, 
+			TemplatedPage page = null,
+			bool asImplicit = false,
+			string shellContentRoute = null,
+			string shellSectionRoute = null,
 			string shellItemRoute = null,
 			bool templated = false)
 		{
-			ShellItem item = null;
+			return CreateShellItem<ShellItem>();
+		}
+
+		protected T CreateShellItem<T>(
+			TemplatedPage page = null,
+			bool asImplicit = false,
+			string shellContentRoute = null,
+			string shellSectionRoute = null,
+			string shellItemRoute = null,
+			bool templated = false) where T : ShellItem
+		{
+			T item = null;
 			var section = CreateShellSection(page, asImplicit, shellContentRoute, shellSectionRoute, templated: templated);
 
 			if (!String.IsNullOrWhiteSpace(shellItemRoute))
 			{
-				item = new ShellItem();
+				item = Activator.CreateInstance<T>();
 				item.Route = shellItemRoute;
 				item.Items.Add(section);
 			}
 			else if (asImplicit)
-				item = ShellItem.CreateFromShellSection(section);
+				item = (T)ShellItem.CreateFromShellSection(section);
 			else
 			{
-				item = new ShellItem();
+				item = Activator.CreateInstance<T>();
 				item.Items.Add(section);
 			}
 

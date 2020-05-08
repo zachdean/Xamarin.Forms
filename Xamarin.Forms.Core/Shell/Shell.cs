@@ -70,6 +70,16 @@ namespace Xamarin.Forms
 		public static DataTemplate GetItemTemplate(BindableObject obj) => (DataTemplate)obj.GetValue(ItemTemplateProperty);
 		public static void SetItemTemplate(BindableObject obj, DataTemplate itemTemplate) => obj.SetValue(ItemTemplateProperty, itemTemplate);
 
+
+		public static readonly BindableProperty FlyoutContentTemplateProperty =
+			BindableProperty.CreateAttached(nameof(FlyoutContentTemplate), typeof(DataTemplate), typeof(Shell), null, BindingMode.OneTime);
+
+		public static DataTemplate GetFlyoutContentTemplate(BindableObject obj) => (DataTemplate)obj.GetValue(FlyoutContentTemplateProperty);
+		public static void SetFlyoutContentTemplate(BindableObject obj, DataTemplate itemTemplate) => obj.SetValue(FlyoutContentTemplateProperty, itemTemplate);
+
+
+
+
 		public static BackButtonBehavior GetBackButtonBehavior(BindableObject obj) => (BackButtonBehavior)obj.GetValue(BackButtonBehaviorProperty);
 		public static void SetBackButtonBehavior(BindableObject obj, BackButtonBehavior behavior) => obj.SetValue(BackButtonBehaviorProperty, behavior);
 
@@ -870,6 +880,12 @@ namespace Xamarin.Forms
 			set => SetItemTemplate(this, value);
 		}
 
+		public DataTemplate FlyoutContentTemplate
+		{
+			get => GetFlyoutContentTemplate(this);
+			set => SetFlyoutContentTemplate(this, value);
+		}
+
 		public DataTemplate MenuItemTemplate
 		{
 			get => GetMenuItemTemplate(this);
@@ -933,7 +949,8 @@ namespace Xamarin.Forms
 				}
 			}
 
-			foreach (var shellItem in ShellController.GetItems())
+			var items = ShellController.GetItems();
+			foreach (var shellItem in items)
 			{
 				if (shellItem.FlyoutDisplayOptions == FlyoutDisplayOptions.AsMultipleItems)
 				{

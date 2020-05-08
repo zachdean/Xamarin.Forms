@@ -4,6 +4,7 @@ using Android.Graphics.Drawables;
 using AndroidX.AppCompat.Widget;
 using AndroidX.RecyclerView.Widget;
 using Google.Android.Material.AppBar;
+using AndroidX.CoordinatorLayout.Widget;
 #else
 using Android.Support.V7.Widget;
 using Android.Support.Design.Widget;
@@ -36,11 +37,12 @@ namespace Xamarin.Forms.Platform.Android
 		Drawable _defaultBackgroundColor;
 		ImageView _bgImage;
 		AppBarLayout _appBar;
-		RecyclerView _recycler;
-		ShellFlyoutRecyclerAdapter _adapter;
+		//RecyclerView _recycler;
+		//ShellFlyoutRecyclerAdapter _adapter;
 		View _flyoutHeader;
 		int _actionBarHeight;
 		ScrollLayoutManager _layoutManager;
+		IShellController ShellController => _shellContext.Shell;
 
 		public ShellFlyoutTemplatedContentRenderer(IShellContext shellContext)
 		{
@@ -65,12 +67,35 @@ namespace Xamarin.Forms.Platform.Android
 			var coordinator = LayoutInflater.FromContext(context).Inflate(Resource.Layout.FlyoutContent, null);
 
 			Profile.FramePartition("Find Recycler");
-			_recycler = coordinator.FindViewById<RecyclerView>(Resource.Id.flyoutcontent_recycler);
+			//_recycler = coordinator.FindViewById<RecyclerView>(Resource.Id.flyoutcontent_recycler);
+
+			
 
 			Profile.FramePartition("Find AppBar");
 			_appBar = coordinator.FindViewById<AppBarLayout>(Resource.Id.flyoutcontent_appbar);
 
 			_rootView = coordinator as ViewGroup;
+
+			var flyoutView = (View)Shell.GetFlyoutContentTemplate(_shellContext.Shell)
+				.CreateContent();
+
+			flyoutView.BindingContext = ShellController.GenerateFlyoutGrouping();
+			flyoutView.Parent = _shellContext.Shell;
+
+			var flyoutContent = new ContainerView(_shellContext.AndroidContext, flyoutView)
+			{
+				MatchHeight = true,
+				MatchWidth = true
+			};
+
+			CoordinatorLayout.LayoutParams layoutParams
+				= new CoordinatorLayout.LayoutParams(
+					LP.MatchParent,
+					LP.MatchParent);
+
+			layoutParams.Behavior = new AppBarLayout.ScrollingViewBehavior();
+			flyoutContent.LayoutParameters = layoutParams;
+			_rootView.AddView(flyoutContent);
 
 			Profile.FramePartition("Add Listener");
 			_appBar.AddOnOffsetChangedListener(this);
@@ -80,11 +105,11 @@ namespace Xamarin.Forms.Platform.Android
 			UpdateFlyoutHeader();
 
 			Profile.FramePartition("Recycler.SetAdapter");
-			_adapter = new ShellFlyoutRecyclerAdapter(shellContext, OnElementSelected);
-			_recycler.SetClipToPadding(false);
-			_recycler.SetLayoutManager(_layoutManager = new ScrollLayoutManager(context, (int)Orientation.Vertical, false));
-			_recycler.SetLayoutManager(new LinearLayoutManager(context, (int)Orientation.Vertical, false));
-			_recycler.SetAdapter(_adapter);
+			//_adapter = new ShellFlyoutRecyclerAdapter(shellContext, OnElementSelected);
+			//_recycler.SetClipToPadding(false);
+			//_recycler.SetLayoutManager(_layoutManager = new ScrollLayoutManager(context, (int)Orientation.Vertical, false));
+			//_recycler.SetLayoutManager(new LinearLayoutManager(context, (int)Orientation.Vertical, false));
+			//_recycler.SetAdapter(_adapter);
 
 			Profile.FramePartition("Initialize BgImage");
 			var metrics = context.Resources.DisplayMetrics;
@@ -117,6 +142,31 @@ namespace Xamarin.Forms.Platform.Android
 			Profile.FramePartition(nameof(UpdateVerticalScrollMode));
 			UpdateVerticalScrollMode();
 			Profile.FrameEnd();
+		}
+
+		StackLayout createFlyoutCode()
+		{
+			var flyoutLayout = new StackLayout();
+
+			DataTemplate dataTemplate = ShellController.GetFlyoutItemDataTemplate(_shellContext.Shell);
+			BindableLayout.SetItemsSource(flyoutLayout, ShellController.GenerateFlyoutGrouping());
+			BindableLayout.SetItemTemplate(flyoutLayout, new DataTemplate(() =>
+			{
+				StackLayout flyoutItemsLayout = new StackLayout();
+
+				flyoutItemsLayout.BindingContextChanged += (s, __) =>
+				{
+					if (s is BindableObject boFlyout)
+					{
+						BindableLayout.SetItemsSource(boFlyout, (System.Collections.IEnumerable)boFlyout.BindingContext);
+					}
+				};
+
+				BindableLayout.SetItemTemplate(flyoutItemsLayout, dataTemplate);
+				return flyoutItemsLayout;
+			}));
+
+			return flyoutLayout;
 		}
 
 		void OnFlyoutHeaderMeasureInvalidated(object sender, EventArgs e)
@@ -318,14 +368,14 @@ namespace Xamarin.Forms.Platform.Android
 					_appBar.RemoveView(_headerView);
 				}
 
-				if (_recycler != null)
-				{
-					_recycler.SetLayoutManager(null);
-					_recycler.SetAdapter(null);
-					_recycler.Dispose();
-				}
+				//if (_recycler != null)
+				//{
+				//	_recycler.SetLayoutManager(null);
+				//	_recycler.SetAdapter(null);
+				//	_recycler.Dispose();
+				//}
 
-				_adapter?.Dispose();
+				//_adapter?.Dispose();
 				_headerView.Dispose();
 				_rootView.Dispose();
 				_layoutManager?.Dispose();
@@ -337,8 +387,8 @@ namespace Xamarin.Forms.Platform.Android
 				_headerView = null;
 				_shellContext = null;
 				_appBar = null;
-				_recycler = null;
-				_adapter = null;
+				//_recycler = null;
+				//_adapter = null;
 				_defaultBackgroundColor = null;
 				_layoutManager = null;
 				_bgImage = null;

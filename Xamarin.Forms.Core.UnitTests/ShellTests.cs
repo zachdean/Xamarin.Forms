@@ -382,7 +382,7 @@ namespace Xamarin.Forms.Core.UnitTests
 		{
 			var shell = new Shell();
 			ShellTestPage pagetoTest = new ShellTestPage();
-			pagetoTest.BindingContext = pagetoTest;		
+			pagetoTest.BindingContext = pagetoTest;
 			var one = CreateShellItem(pagetoTest, shellContentRoute: "content", templated: useDataTemplates);
 			shell.Items.Add(one);
 			ShellTestPage page = null;
@@ -894,6 +894,30 @@ namespace Xamarin.Forms.Core.UnitTests
 			Assert.False(shell.ChildrenNotDrawnByThisElement.Contains(layout));
 		}
 
+		[Test]
+		public async Task ShellFlyoutChangeableOnShellWithFlyoutItem()
+		{
+			Shell shell = new Shell();
+			var flyoutItem = CreateShellItem<FlyoutItem>();
+			shell.Items.Add(flyoutItem);
+			shell.FlyoutBehavior = FlyoutBehavior.Locked;
+			Assert.AreEqual(FlyoutBehavior.Locked, shell.GetEffectiveFlyoutBehavior());
+			shell.FlyoutBehavior = FlyoutBehavior.Disabled;
+			Assert.AreEqual(FlyoutBehavior.Disabled, shell.GetEffectiveFlyoutBehavior());
+		}
+
+		[Test]
+		public async Task ShellFlyoutChangeableOnShellWithTabBar()
+		{
+			Shell shell = new Shell();
+			var tabBarItem = CreateShellItem<TabBar>();
+			shell.Items.Add(tabBarItem);
+			shell.FlyoutBehavior = FlyoutBehavior.Flyout;
+			Assert.AreEqual(FlyoutBehavior.Flyout, shell.GetEffectiveFlyoutBehavior());
+			shell.FlyoutBehavior = FlyoutBehavior.Disabled;
+			Assert.AreEqual(FlyoutBehavior.Disabled, shell.GetEffectiveFlyoutBehavior());
+		}
+
 
 		[Test]
 		public async Task ShellFlyoutBehaviorCalculation()
@@ -1303,10 +1327,10 @@ namespace Xamarin.Forms.Core.UnitTests
 			var classStyle = new Style(typeof(Grid))
 			{
 				Setters = {
-					new Setter 
+					new Setter
 					{
 						Property = VisualStateManager.VisualStateGroupsProperty,
-						Value = groups 
+						Value = groups
 					}
 				},
 				Class = FlyoutItem.LayoutStyle,

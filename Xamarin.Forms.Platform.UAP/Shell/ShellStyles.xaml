@@ -466,9 +466,14 @@
                                             HorizontalContentAlignment="Stretch"
                                             Grid.Row="4" />
 
+                                        <xf:ShellFlyoutRenderer Grid.Row="6">
+                                        </xf:ShellFlyoutRenderer>
+                                        
+                                        
                                         <!-- Left nav list -->
                                         <winui:NavigationViewList
                                             x:Name="MenuItemsHost"
+                                            Visibility="Collapsed" 
                                             AutomationProperties.Name="{TemplateBinding AutomationProperties.Name}"
                                             Grid.Row="6"
                                             Margin="0,0,0,20"
