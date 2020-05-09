@@ -294,6 +294,9 @@ namespace Xamarin.Forms
 			return new DataTemplate(() =>
 			{
 				var grid = new Grid();
+
+				
+
 				if (Device.RuntimePlatform == Device.UWP)
 					grid.ColumnSpacing = grid.RowSpacing = 0;
 

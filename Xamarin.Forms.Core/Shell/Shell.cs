@@ -973,7 +973,7 @@ namespace Xamarin.Forms
 							IncrementGroup();
 						}
 						else
-						{
+						{							
 							if (!(shellSection.Parent is TabBar))
 								currentGroup.Add(shellSection);
 
