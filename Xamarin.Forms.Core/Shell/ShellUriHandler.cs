@@ -22,7 +22,7 @@ namespace Xamarin.Forms
 			if (path.OriginalString.StartsWith("..") && shell?.CurrentState != null)
 			{
 				var result = Path.Combine(shell.CurrentState.FullLocation.OriginalString, path.OriginalString);
-				var returnValue = ConvertToStandardFormat(shell, new Uri(result, UriKind.Relative));
+				var returnValue = ConvertToStandardFormat("scheme", "host", null, new Uri(result, UriKind.Relative));
 				return new Uri(FormatUri(returnValue.PathAndQuery), UriKind.Relative);
 			}
 
@@ -54,8 +54,17 @@ namespace Xamarin.Forms
 
 			return new Uri(path, UriKind.Relative);
 		}
-		
+
 		public static Uri ConvertToStandardFormat(Shell shell, Uri request)
+		{
+			request = FormatUri(request, shell);
+			return ConvertToStandardFormat(
+				shell?.RouteScheme, 
+				shell?.RouteHost, 
+				shell?.Route, request);
+		}
+
+		public static Uri ConvertToStandardFormat(string routeScheme, string routeHost, string route, Uri request)
 		{
 			string pathAndQuery = null;
 			if (request.IsAbsoluteUri)
@@ -65,20 +74,22 @@ namespace Xamarin.Forms
 
 			var segments = new List<string>(pathAndQuery.Split(_pathSeparators, StringSplitOptions.RemoveEmptyEntries));
 
-			if (segments.Count > 0 && segments[0] != (shell?.RouteHost ?? RouteHost))
-				segments.Insert(0, (shell?.RouteHost ?? RouteHost));
+			if (segments.Count > 0 && segments[0] != (routeHost))
+				segments.Insert(0, (routeHost));
 
-			if (segments.Count > 1 && segments[1] != (shell?.Route ?? Route))
-				segments.Insert(1, (shell?.Route ?? Route));
+			if (segments.Count > 1 && segments[1] != (route))
+				segments.Insert(1, (route));
 
 			var path = String.Join(_pathSeparator, segments.ToArray());
-			string uri = $"{(shell?.RouteScheme ?? RouteScheme)}://{path}";
+
+			string uri = $"{(routeScheme)}://{path}";
 
 			return new Uri(uri);
 		}
 
-		internal static ShellRouteState GetNavigationRequest(Shell shell, Uri uri, bool enableRelativeShellRoutes = false)
+		internal static ShellRouteState GetNavigationRequest(Shell shell, Uri navigationUri, bool enableRelativeShellRoutes = false)
 		{
+			var uri = navigationUri;
 			uri = FormatUri(uri, shell);
 			Uri request = ConvertToStandardFormat(shell, uri);
 			var possibleRouteMatches = GenerateRoutePaths(shell, request, uri, enableRelativeShellRoutes);

@@ -1115,6 +1115,7 @@ namespace Xamarin.Forms
 				{
 					content.OnAppearing(async () =>
 					{
+						OnNavigated(args);
 						Navigated?.Invoke(this, args);
 						await ShellNavigationRequest.NavigatedToAsync(new ShellNavigationArgs(this, null));
 					});

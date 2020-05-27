@@ -149,8 +149,18 @@ namespace Xamarin.Forms
 
 			builder.Append(queryString);
 
-			FullUriWithImplicit = ShellUriHandler.ConvertToStandardFormat(null, new Uri(builder.ToString(), UriKind.Relative));
-			FullUri = ShellUriHandler.ConvertToStandardFormat(null, new Uri(builderWithoutImplicit.ToString(), UriKind.Relative));
+			if (builder.Length > 0)
+				FullUriWithImplicit = new Uri(builder.Insert(0, @"//").ToString(), UriKind.Relative);
+
+			if (builderWithoutImplicit.Length > 0)
+				FullUri = new Uri(builderWithoutImplicit.Insert(0, @"//").ToString(), UriKind.Relative);
+
+
+			//if(builder.Length > 0)
+			//	FullUriWithImplicit = ShellUriHandler.ConvertToStandardFormat(null, new Uri(builder.Insert(0, @"//").ToString(), UriKind.Relative));
+
+			//if(builderWithoutImplicit.Length > 0)
+			//	FullUri = ShellUriHandler.ConvertToStandardFormat(null, new Uri(builderWithoutImplicit.Insert(0, @"//").ToString(), UriKind.Relative));
 		}
 
 		public Uri FullUri { get; private set; }
@@ -213,7 +223,6 @@ namespace Xamarin.Forms
 			CurrentRoute = new RoutePath(pathParts, new Dictionary<string, string>());
 			Routes = new[] { CurrentRoute };
 		}
-
 
 		public ShellRouteState(RoutePath routePath)
 		{
