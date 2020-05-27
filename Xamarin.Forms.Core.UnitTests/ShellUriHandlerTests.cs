@@ -63,7 +63,6 @@ namespace Xamarin.Forms.Core.UnitTests
 		[Test]
 		public async Task GlobalNavigateTwice()
 		{
-
 			var shell = new Shell();
 			var item1 = CreateShellItem(asImplicit: true, shellContentRoute: "rootlevelcontent1");
 
@@ -87,7 +86,7 @@ namespace Xamarin.Forms.Core.UnitTests
 			Routing.RegisterRoute("/seg1/seg2/seg3", typeof(object));			
 			var request = ShellUriHandler.GetNavigationRequest(shell, CreateUri("/seg1/seg2/seg3"));
 
-			Assert.AreEqual("app://shell/IMPL_shell/seg1/seg2/seg3", request.Request.FullUri.ToString());
+			Assert.AreEqual("app://shell/IMPL_shell/seg1/seg2/seg3", request.CurrentRoute.FullUriWithImplicit.ToString());
 		}
 
 		[Test]
@@ -120,8 +119,8 @@ namespace Xamarin.Forms.Core.UnitTests
 			await shell.GoToAsync("//item1/section1/rootlevelcontent1");
 			var request = ShellUriHandler.GetNavigationRequest(shell, CreateUri("section1/edit"), true);
 
-			Assert.AreEqual(1, request.Request.GlobalRoutes.Count);
-			Assert.AreEqual("item1/section1/edit", request.Request.GlobalRoutes.First());
+			Assert.AreEqual(4, request.CurrentRoute.PathParts.Count);
+			Assert.AreEqual("item1/section1/edit", request.CurrentRoute.PathParts[3].Path);
 		}
 
 		[Test]
@@ -137,9 +136,9 @@ namespace Xamarin.Forms.Core.UnitTests
 
 			var request = ShellUriHandler.GetNavigationRequest(shell, CreateUri("//rootlevelcontent1/add/edit"));
 
-			Assert.AreEqual(2, request.Request.GlobalRoutes.Count);
-			Assert.AreEqual("section1/add", request.Request.GlobalRoutes.First());
-			Assert.AreEqual("section1/edit", request.Request.GlobalRoutes.Skip(1).First());
+			Assert.AreEqual(5, request.CurrentRoute.PathParts.Count);
+			Assert.AreEqual("section1/add", request.CurrentRoute.PathParts[3].Path);
+			Assert.AreEqual("section1/edit", request.CurrentRoute.PathParts[4].Path);
 		}
 
 		[Test]
@@ -154,8 +153,8 @@ namespace Xamarin.Forms.Core.UnitTests
 
 			var request = ShellUriHandler.GetNavigationRequest(shell, CreateUri("//rootlevelcontent1/edit"));
 
-			Assert.AreEqual(1, request.Request.GlobalRoutes.Count);			
-			Assert.AreEqual("edit", request.Request.GlobalRoutes.First());
+			Assert.AreEqual(4, request.CurrentRoute.PathParts.Count);
+			Assert.AreEqual("edit", request.CurrentRoute.PathParts[3].Path);
 		}
 
 		[Test]
@@ -171,8 +170,8 @@ namespace Xamarin.Forms.Core.UnitTests
 			await shell.GoToAsync("//rootlevelcontent1");
 			var request = ShellUriHandler.GetNavigationRequest(shell, CreateUri("edit"));
 
-			Assert.AreEqual(1, request.Request.GlobalRoutes.Count);
-			Assert.AreEqual("edit", request.Request.GlobalRoutes.First());
+			Assert.AreEqual(4, request.CurrentRoute.PathParts.Count);
+			Assert.AreEqual("edit", request.CurrentRoute.PathParts[3].Path);
 		}
 
 
@@ -189,7 +188,7 @@ namespace Xamarin.Forms.Core.UnitTests
 			await shell.GoToAsync("//rootlevelcontent1");
 			var request = ShellUriHandler.GetNavigationRequest(shell, CreateUri("edit"), true);
 
-			Assert.AreEqual("section1/edit", request.Request.GlobalRoutes.First());
+			Assert.AreEqual("section1/edit", request.CurrentRoute.PathParts[3].Path);
 		}
 
 		[Test]

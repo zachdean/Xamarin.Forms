@@ -3,10 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
-
-#if NETSTANDARD1_0
 using System.Linq;
-#endif
 
 using System.Reflection;
 using System.Runtime.CompilerServices;
@@ -54,17 +51,7 @@ namespace Xamarin.Forms
 			var template = ContentTemplate;
 			var content = Content;
 
-			Page result = null;
-			if (template == null)
-			{
-				if (content is Page page)
-					result = page;
-			}
-			else
-			{
-				result = ContentCache ?? (Page)template.CreateContent(content, this);
-				ContentCache = result;
-			}
+			Page result = ContentCache ?? ShellContentCreator.Create(new ShellContentCreateArgs(this));
 
 			if (result == null)
 				throw new InvalidOperationException($"No Content found for {nameof(ShellContent)}, Title:{Title}, Route {Route}");
@@ -72,8 +59,16 @@ namespace Xamarin.Forms
 			if (GetValue(QueryAttributesProperty) is IDictionary<string, string> delayedQueryParams)
 				result.SetValue(QueryAttributesProperty, delayedQueryParams);
 
+			if (result != ContentCache)
+				ContentCache = result;
+			
 			return result;
 		}
+
+		#region Navigation Interfaces
+		IShellContentCreator ShellContentCreator => (Parent.Parent.Parent as Shell).ShellContentCreator;
+		IShellPartAppearing ShellPartAppearing => (Parent.Parent.Parent as Shell).ShellPartAppearing;
+		#endregion
 
 		void IShellContentController.RecyclePage(Page page)
 		{
@@ -106,7 +101,7 @@ namespace Xamarin.Forms
 			SendPageAppearing((ContentCache ?? Content) as Page);
 		}
 
-		void SendPageAppearing(Page page)
+		async void SendPageAppearing(Page page)
 		{
 			if (page == null)
 				return;
@@ -116,13 +111,18 @@ namespace Xamarin.Forms
 				page.ParentSet += OnPresentedPageParentSet;
 				void OnPresentedPageParentSet(object sender, EventArgs e)
 				{
-					page.SendAppearing();
+					var p = (Page)sender;
+					if (p.Parent != null)
+						SendPageAppearing(p);
+
 					(sender as Page).ParentSet -= OnPresentedPageParentSet;
 				}
 			}
 			else
-			{
+			{				
 				page.SendAppearing();
+				var routePath = (this.Parent.Parent.Parent as Shell).RouteState;
+				await ShellPartAppearing.AppearingAsync(new ShellLifecycleArgs(this, routePath.CurrentRoute.PathParts.FirstOrDefault(x => x.ShellPart == this), routePath.CurrentRoute));
 			}
 		}
 
@@ -244,6 +244,9 @@ namespace Xamarin.Forms
 
 			if (ContentCache is BindableObject bindable)
 				bindable.SetValue(QueryAttributesProperty, query);
+
+			if (ContentCache != Content && ContentCache is BindableObject contentCacheBo)
+				contentCacheBo.SetValue(QueryAttributesProperty, query);
 		}
 
 		static void OnQueryAttributesPropertyChanged(BindableObject bindable, object oldValue, object newValue)

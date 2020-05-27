@@ -76,30 +76,6 @@ namespace Xamarin.Forms
 			callback(DisplayedPage);
 		}
 
-		internal Task GoToPart(NavigationRequest request, Dictionary<string, string> queryData)
-		{
-			ShellContent shellContent = request.Request.Content;
-
-			if (shellContent == null)
-				shellContent = ShellSectionController.GetItems()[0];
-
-			if (request.Request.GlobalRoutes.Count > 0)
-			{
-				// TODO get rid of this hack and fix so if there's a stack the current page doesn't display
-				Device.BeginInvokeOnMainThread(async () =>
-				{
-					await GoToAsync(request, queryData, false);
-				});
-			}
-
-			Shell.ApplyQueryAttributes(shellContent, queryData, request.Request.GlobalRoutes.Count == 0);
-
-			if (CurrentItem != shellContent)
-				SetValueFromRenderer(CurrentItemProperty, shellContent);
-
-			return Task.FromResult(true);
-		}
-
 		bool IShellSectionController.RemoveContentInsetObserver(IShellContentInsetObserver observer)
 		{
 			return _observers.Remove(observer);
@@ -329,28 +305,48 @@ namespace Xamarin.Forms
 			return (ShellSection)(ShellContent)page;
 		}
 
-		internal async Task GoToAsync(NavigationRequest request, IDictionary<string, string> queryData, bool? animate)
+		internal async Task GoToAsync(ShellRouteState navigationRequest, bool animate, Uri uri, ShellRouteState shellRouteState)
 		{
-			List<string> globalRoutes = request.Request.GlobalRoutes;
 			List<Page> navStack = null;
 			string route = String.Empty;
+			var currentRoute = navigationRequest.CurrentRoute;
+			var pathParts = currentRoute.PathParts;
+			
+			uri = ShellUriHandler.FormatUri(uri);
+			bool replaceEntireStack = false;
+			if (uri.IsAbsoluteUri)
+				replaceEntireStack = true;
+			else if (uri.OriginalString.StartsWith("//", StringComparison.Ordinal) || uri.OriginalString.StartsWith("\\\\", StringComparison.Ordinal))
+				replaceEntireStack = true;
+
+			IReadOnlyList<PathPart> globalRoutes = null;
+			if (replaceEntireStack)
+			{
+				globalRoutes = pathParts.Skip(3).ToList();
+			}
+			else
+			{
+				// skip all global routes already pushed
+				globalRoutes = pathParts.Skip(shellRouteState.CurrentRoute.PathParts.Count).ToList();
+			}
 
 			if (globalRoutes == null || globalRoutes.Count == 0)
 			{
-				await Navigation.PopToRootAsync(animate ?? false);
+				await Navigation.PopToRootAsync(animate);
 				return;
 			}
+
 
 			int whereToStartNavigation = 0;
 			
 			// Pop the stack down to where it no longer matches 
-			if (request.StackRequest == NavigationRequest.WhatToDoWithTheStack.ReplaceIt)
+			if (replaceEntireStack)
 			{
 				for (int i = 0; i < globalRoutes.Count; i++)
 				{
 					whereToStartNavigation = i;
 					bool isLast = i == globalRoutes.Count - 1;
-					route = globalRoutes[i];
+					route = globalRoutes[i].Path;
 					
 					navStack = BuildFlattenedNavigationStack(new List<Page>(_navStack), Navigation?.ModalStack);
 					
@@ -371,11 +367,15 @@ namespace Xamarin.Forms
 							// pop everything after this route
 							popCount = i + 2;
 							whereToStartNavigation++;
-							Shell.ApplyQueryAttributes(navPage, queryData, isLast);
+							
+							if (i < LogicalChildren.Count)
+								await ShellApplyParameters.ApplyParametersAsync(new ShellLifecycleArgs((BaseShellItem)LogicalChildren[i], globalRoutes[i], currentRoute));
+							else
+								Shell.ApplyQueryAttributes(navPage, currentRoute.NavigationParameters, isLast);
 
 							// If we're not on the last loop of the stack then continue
 							// otherwise pop the rest of the stack
-							if(!isLast)
+							if (!isLast)
 								continue;
 						}
 
@@ -406,7 +406,7 @@ namespace Xamarin.Forms
 					if (content == null)
 						break;
 
-					Shell.ApplyQueryAttributes(content, queryData, isLast);
+					await ShellApplyParameters.ApplyParametersAsync(new ShellLifecycleArgs((BaseShellItem)LogicalChildren[i], globalRoutes[i], currentRoute));
 				}
 			}
 			
@@ -420,14 +420,14 @@ namespace Xamarin.Forms
 			for (int i = whereToStartNavigation; i < globalRoutes.Count; i++)
 			{
 				bool isLast = i == globalRoutes.Count - 1;
-				route = globalRoutes[i];
+				route = globalRoutes[i].Path;
 				var content = Routing.GetOrCreateContent(route) as Page;
 				if (content == null)
 					break;
 
+				// Modal currently not hooked up to navigation service
 				var isModal = (Shell.GetPresentationMode(content) & PresentationMode.Modal) == PresentationMode.Modal;
-
-				Shell.ApplyQueryAttributes(content, queryData, isLast);
+				Shell.ApplyQueryAttributes(content, globalRoutes[i].NavigationParameters, isLast);
 				if (isModal)
 				{
 					modalPageStacks.Add(content);
@@ -448,7 +448,7 @@ namespace Xamarin.Forms
 			for (int i = Navigation.ModalStack.Count; i < modalPageStacks.Count; i++)
 			{
 				bool isLast = i == modalPageStacks.Count - 1;
-				bool isAnimated = animate ?? (Shell.GetPresentationMode(modalPageStacks[i]) & PresentationMode.NotAnimated) != PresentationMode.NotAnimated;
+				bool isAnimated = (Shell.GetPresentationMode(modalPageStacks[i]) & PresentationMode.NotAnimated) != PresentationMode.NotAnimated;
 				IsPushingModalStack = !isLast;
 				await ((NavigationImpl)Navigation).PushModalAsync(modalPageStacks[i], isAnimated);
 			}
@@ -459,7 +459,7 @@ namespace Xamarin.Forms
 					
 				if(isLast)
 				{
-					bool isAnimated = animate ?? (Shell.GetPresentationMode(nonModalPageStacks[i]) & PresentationMode.NotAnimated) != PresentationMode.NotAnimated;
+					bool isAnimated = (Shell.GetPresentationMode(nonModalPageStacks[i]) & PresentationMode.NotAnimated) != PresentationMode.NotAnimated;
 					await OnPushAsync(nonModalPageStacks[i], isAnimated);
 				}
 				else
@@ -848,8 +848,24 @@ namespace Xamarin.Forms
 
 		void AddPage(Page page)
 		{
-			_logicalChildren.Add(page);
-			OnChildAdded(page);
+			if (page.Parent == null)
+			{
+				page.Parent = new ShellContent()
+				{
+					Content = page,
+					Route = Routing.GetRoute(page)
+				};
+			}
+
+			if (page.Parent is ShellContent content)
+			{
+				_logicalChildren.Add(content);
+				OnChildAdded(content);
+			}
+			else
+			{
+				throw new ArgumentException($"Invalid type on parent: {page.Parent}");
+			}
 		}
 
 		void ItemsCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -906,6 +922,12 @@ namespace Xamarin.Forms
 			base.SendAppearing();
 			PresentedPageAppearing();
 		}
+
+		#region Navigation Interfaces
+		IShellApplyParameters ShellApplyParameters => (Parent.Parent as Shell).ShellApplyParameters;
+		IShellContentCreator ShellContentCreator => (Parent.Parent as Shell).ShellContentCreator;
+		IShellPartAppearing ShellPartAppearing => (Parent.Parent as Shell).ShellPartAppearing;
+		#endregion
 
 		class NavigationImpl : NavigationProxy
 		{
