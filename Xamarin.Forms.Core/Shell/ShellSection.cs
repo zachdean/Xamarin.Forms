@@ -312,7 +312,7 @@ namespace Xamarin.Forms
 			var currentRoute = navigationRequest.CurrentRoute;
 			var pathParts = currentRoute.PathParts;
 			
-			uri = ShellUriHandler.FormatUri(uri);
+			uri = ShellUriHandler.FormatUri(uri, this.Shell);
 			bool replaceEntireStack = false;
 			if (uri.IsAbsoluteUri)
 				replaceEntireStack = true;

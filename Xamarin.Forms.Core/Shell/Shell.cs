@@ -507,7 +507,7 @@ namespace Xamarin.Forms
 
 
 			// Generalize with shellsection
-			var uri = ShellUriHandler.FormatUri(state.FullLocation);
+			var uri = ShellUriHandler.FormatUri(state.FullLocation, this);
 			bool replaceEntireStack = false;
 			if (uri.IsAbsoluteUri)
 				replaceEntireStack = true;
@@ -592,11 +592,11 @@ namespace Xamarin.Forms
 					// TODO get rid of this hack and fix so if there's a stack the current page doesn't display
 					await Device.InvokeOnMainThreadAsync(() =>
 					{
-						return CurrentItem.CurrentItem.GoToAsync(navigationRequest, queryData, animate);
+						return CurrentItem.CurrentItem.GoToAsync(navigationRequest, animate, state.FullLocation, RouteState);
 					});
 				}
-				else if(navigationRequest.Request.GlobalRoutes.Count == 0 &&
-					navigationRequest.StackRequest == NavigationRequest.WhatToDoWithTheStack.ReplaceIt &&
+				else if(globalRoutes.Count == 0 &&
+					replaceEntireStack &&
 					currentShellSection?.Navigation?.NavigationStack?.Count > 1)
 				{
 					// TODO get rid of this hack and fix so if there's a stack the current page doesn't display
@@ -673,7 +673,7 @@ namespace Xamarin.Forms
 			if (!isLastItem)
 			{
 				var route = Routing.GetRoute(element);
-				if (string.IsNullOrEmpty(route) || route.StartsWith(Routing.ImplicitPrefix, StringComparison.Ordinal))
+				if (string.IsNullOrEmpty(route) || Routing.IsImplicit(route))
 					return new Dictionary<string, string>();
 				prefix = route + ".";
 			}
@@ -1104,7 +1104,7 @@ namespace Xamarin.Forms
 			}
 		}
 
-		internal void ProcessNavigated(ShellNavigatedEventArgs args)
+		internal async void ProcessNavigated(ShellNavigatedEventArgs args)
 		{
 			if (_accumulateNavigatedEvents)
 				_accumulatedEvent = args;

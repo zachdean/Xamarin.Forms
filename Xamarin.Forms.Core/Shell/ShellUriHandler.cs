@@ -22,7 +22,7 @@ namespace Xamarin.Forms
 			if (path.OriginalString.StartsWith("..") && shell?.CurrentState != null)
 			{
 				var result = Path.Combine(shell.CurrentState.FullLocation.OriginalString, path.OriginalString);
-				var returnValue = ConvertToStandardFormat("scheme", "host", null, new Uri(result, UriKind.Relative));
+				var returnValue = ConvertToStandardFormat(shell, new Uri(result, UriKind.Relative));
 				return new Uri(FormatUri(returnValue.PathAndQuery), UriKind.Relative);
 			}
 
@@ -54,14 +54,8 @@ namespace Xamarin.Forms
 
 			return new Uri(path, UriKind.Relative);
 		}
-
-		public static Uri ConvertToStandardFormat(Shell shell, Uri request)
-		{
-			request = FormatUri(request, shell);
-			return ConvertToStandardFormat(shell?.RouteScheme, shell?.RouteHost, shell?.Route, request);
-		}
 		
-		public static Uri ConvertToStandardFormat(string routeScheme, string routeHost, string route, Uri request)
+		public static Uri ConvertToStandardFormat(Shell shell, Uri request)
 		{
 			string pathAndQuery = null;
 			if (request.IsAbsoluteUri)
@@ -85,7 +79,7 @@ namespace Xamarin.Forms
 
 		internal static ShellRouteState GetNavigationRequest(Shell shell, Uri uri, bool enableRelativeShellRoutes = false)
 		{
-			uri = FormatUri(uri);
+			uri = FormatUri(uri, shell);
 			Uri request = ConvertToStandardFormat(shell, uri);
 			var possibleRouteMatches = GenerateRoutePaths(shell, request, uri, enableRelativeShellRoutes);
 
