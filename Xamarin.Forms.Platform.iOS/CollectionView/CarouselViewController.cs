@@ -27,26 +27,22 @@ namespace Xamarin.Forms.Platform.iOS
 			Carousel.PropertyChanged += CarouselViewPropertyChanged;
 			Carousel.Scrolled += CarouselViewScrolled;
 			_oldViews = new List<View>();
+		}
 
 		protected override UICollectionView CreateUICollectionView()
 		{
-			if(Carousel.Loop)
+			if (Carousel.Loop)
 			{
 				var dataSource = new CarouselViewDataSource(ItemsView, ItemsViewLayout, ItemsSource, DetermineCellReuseId());
 
 				return new CarouselUICollectionView(View.Bounds, ItemsViewLayout, dataSource);
 			}
-			return base.CreateUICollectionView();
-		}
-
-		protected override UICollectionViewDelegateFlowLayout CreateDelegator()
-		{
-			return new CarouselViewDelegator(ItemsViewLayout, this);
+			return CreateUICollectionView();
 		}
 
 		public override UICollectionViewCell GetCell(UICollectionView collectionView, NSIndexPath indexPath)
 		{
-			var cell = base.GetCell(collectionView, indexPath);
+			var cell = GetCell(collectionView, indexPath);
 
 			var element = (cell as CarouselTemplatedCell)?.VisualElementRenderer?.Element;
 			if (element != null)
@@ -56,7 +52,7 @@ namespace Xamarin.Forms.Platform.iOS
 
 		public override void ViewWillLayoutSubviews()
 		{
-			base.ViewWillLayoutSubviews();
+			ViewWillLayoutSubviews();
 			if (!_viewInitialized)
 			{
 				_viewInitialized = true;
@@ -69,14 +65,14 @@ namespace Xamarin.Forms.Platform.iOS
 
 		public override void ViewDidLayoutSubviews()
 		{
-			base.ViewDidLayoutSubviews();
+			ViewDidLayoutSubviews();
 			if (CollectionView.Bounds.Size != _size)
 			{
 				_size = CollectionView.Bounds.Size;
 				BoundsSizeChanged();
 			}
-			
-			UpdateInitialPosition();
+
+			//UpdateInitialPosition();
 		}
 
 		public override void DraggingStarted(UIScrollView scrollView)
@@ -92,10 +88,10 @@ namespace Xamarin.Forms.Platform.iOS
 		public override void UpdateItemsSource()
 		{
 			UnsubscribeCollectionItemsSourceChanged(ItemsSource);
-			base.UpdateItemsSource();
+			UpdateItemsSource();
 			SubscribeCollectionItemsSourceChanged(ItemsSource);
 			_initialPositionSet = false;
-			UpdateInitialPosition();
+			//UpdateInitialPosition();
 		}
 
 		protected override bool IsHorizontal => (Carousel?.ItemsLayout as ItemsLayout)?.Orientation == ItemsLayoutOrientation.Horizontal;
@@ -107,18 +103,18 @@ namespace Xamarin.Forms.Platform.iOS
 			if (Carousel.ItemTemplate != null)
 				return CarouselTemplatedCell.ReuseId;
 
-			return base.DetermineCellReuseId();
+			return DetermineCellReuseId();
 		}
 
 		protected override void RegisterViewTypes()
 		{
 			CollectionView.RegisterClassForCell(typeof(CarouselTemplatedCell), CarouselTemplatedCell.ReuseId);
-			base.RegisterViewTypes();
+			RegisterViewTypes();
 		}
 
 		protected override IItemsViewSource CreateItemsViewSource()
 		{
-			var itemsSource = base.CreateItemsViewSource();
+			var itemsSource = CreateItemsViewSource();
 			SubscribeCollectionItemsSourceChanged(itemsSource);
 			return itemsSource;
 		}
@@ -126,7 +122,7 @@ namespace Xamarin.Forms.Platform.iOS
 		protected void BoundsSizeChanged()
 		{
 			ItemsViewLayout.ConstrainTo(CollectionView.Bounds.Size);
-			
+
 			//We call ReloadData so our VisibleCells also update their size
 			CollectionView.ReloadData();
 
@@ -147,8 +143,22 @@ namespace Xamarin.Forms.Platform.iOS
 
 		void CarouselViewScrolled(object sender, ItemsViewScrolledEventArgs e)
 		{
-			SetPosition(e.CenterItemIndex);
+			var realIndex = GetRealIndex(e.CenterItemIndex);
+
+			SetPosition(realIndex);
 			UpdateVisualStates();
+		}
+
+		int GetRealIndex(int index)
+		{
+			var realIndex = index;
+			var count = ItemsSource.ItemCount;
+			if (Carousel.Loop && count > 0)
+			{
+				realIndex = index % count;
+			}
+
+			return realIndex;
 		}
 
 		void CollectionItemsSourceChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
@@ -185,8 +195,10 @@ namespace Xamarin.Forms.Platform.iOS
 
 			_gotoPosition = -1;
 
-			SetCurrentItem(carouselPosition);
-			SetPosition(carouselPosition);
+			var realIndex = GetRealIndex(carouselPosition);
+
+			SetCurrentItem(realIndex);
+			SetPosition(realIndex);
 		}
 
 		void SubscribeCollectionItemsSourceChanged(IItemsViewSource itemsSource)
@@ -203,10 +215,10 @@ namespace Xamarin.Forms.Platform.iOS
 
 		void CarouselViewPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs changedProperty)
 		{
-			if (changedProperty.Is(CarouselView.PositionProperty))
-				UpdateFromPosition();
-			else if (changedProperty.Is(CarouselView.CurrentItemProperty))
-				UpdateFromCurrentItem();
+			//if (changedProperty.Is(CarouselView.PositionProperty))
+			//	UpdateFromPosition();
+			//else if (changedProperty.Is(CarouselView.CurrentItemProperty))
+			//	UpdateFromCurrentItem();
 		}
 
 		void SetPosition(int position)
