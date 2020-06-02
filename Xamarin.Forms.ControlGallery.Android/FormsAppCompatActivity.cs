@@ -11,13 +11,15 @@ using Xamarin.Forms.Platform.Android;
 using Xamarin.Forms.Platform.Android.AppLinks;
 using System.Linq;
 using Xamarin.Forms.Internals;
+using Android.OS.Strictmode;
+using Java.Util.Concurrent;
 
 namespace Xamarin.Forms.ControlGallery.Android
 {
 	// This is the AppCompat version of Activity1
 
 	[Activity(Label = "Control Gallery", Icon = "@drawable/icon", Theme = "@style/MyTheme",
-		MainLauncher = true, HardwareAccelerated = true, 
+		MainLauncher = true, HardwareAccelerated = true,
 		ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation | ConfigChanges.ScreenLayout | ConfigChanges.SmallestScreenSize | ConfigChanges.UiMode)]
 	[IntentFilter(new[] { Intent.ActionView },
 		Categories = new[]
@@ -29,10 +31,19 @@ namespace Xamarin.Forms.ControlGallery.Android
 		DataScheme = "http", DataHost = App.AppName, DataPathPrefix = "/gallery/"
 		)
 	]
-	public partial class Activity1 : FormsAppCompatActivity
+	public partial class Activity1 : FormsAppCompatActivity, StrictMode.IOnVmViolationListener
 	{
 		protected override void OnCreate(Bundle bundle)
 		{
+			if ((int)Build.VERSION.SdkInt >= 28)
+			{
+				StrictMode.SetVmPolicy(new StrictMode.VmPolicy.Builder()
+				 .DetectNonSdkApiUsage()
+				 .PenaltyListener(Executors.NewSingleThreadExecutor(), this)
+				 .PenaltyLog()
+				 .Build());
+			}
+
 			Profile.Start();
 
 			ToolbarResource = Resource.Layout.Toolbar;
@@ -52,7 +63,8 @@ namespace Xamarin.Forms.ControlGallery.Android
 			FormsMaps.Init(this, bundle);
 			FormsMaterial.Init(this, bundle);
 			AndroidAppLinks.Init(this);
-			Forms.ViewInitialized += (sender, e) => {
+			Forms.ViewInitialized += (sender, e) =>
+			{
 				//				if (!string.IsNullOrWhiteSpace(e.View.StyleId)) {
 				//					e.NativeView.ContentDescription = e.View.StyleId;
 				//				}
@@ -83,7 +95,8 @@ namespace Xamarin.Forms.ControlGallery.Android
 			SetUpForceRestartTest();
 
 			// Make the activity accessible to platform unit tests
-			DependencyResolver.ResolveUsing((t) => {
+			DependencyResolver.ResolveUsing((t) =>
+			{
 				if (t == typeof(Context))
 				{
 					return this;
@@ -113,6 +126,10 @@ namespace Xamarin.Forms.ControlGallery.Android
 		public bool IsPreAppCompat()
 		{
 			return false;
+		}
+
+		public void OnVmViolation(Violation v)
+		{
 		}
 	}
 }
