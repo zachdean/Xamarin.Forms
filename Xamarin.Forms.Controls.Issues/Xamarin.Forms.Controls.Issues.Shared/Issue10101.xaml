@@ -21,6 +21,15 @@
     <StackLayout>
         <Label x:Name="label" Text="I should keep my color" />
         <Button x:Name="button" Text="Change text on label"  Clicked="button_Clicked" />
+
+        <Label x:Name="labelColor" Text="Welcome to Xamarin.Forms!" HorizontalOptions="Center"
+               VerticalOptions="CenterAndExpand">
+            <Label.GestureRecognizers>
+                <TapGestureRecognizer Tapped="OnTapped" />
+            </Label.GestureRecognizers>
+        </Label>
+        <Label x:Name="labelText" Text="" HorizontalOptions="Center"
+               VerticalOptions="CenterAndExpand" />
     </StackLayout>
 
 </local:TestContentPage>
