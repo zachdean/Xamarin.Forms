@@ -175,19 +175,6 @@ namespace Xamarin.Forms.Platform.iOS
 				}
 			}
 
-			if (Forms.IsiOS11OrNewer)
-			{
-				return base.ShouldInvalidateLayout(preferredAttributes, originalAttributes);
-			}
-
-			// For iOS 10 and lower, we have to invalidate on header/footer changes here; otherwise, all of the 
-			// headers and footers will draw on top of one another
-			if (preferredAttributes.RepresentedElementKind == UICollectionElementKindSectionKey.Header
-				|| preferredAttributes.RepresentedElementKind == UICollectionElementKindSectionKey.Footer)
-			{
-				return true;
-			}
-
 			return base.ShouldInvalidateLayout(preferredAttributes, originalAttributes);
 		}
 
@@ -224,7 +211,7 @@ namespace Xamarin.Forms.Platform.iOS
 				// This is the size we'll give all of our cells from here on out
 				ItemSize = measure;
 
-				// Make sure autolayout is disabled 
+				// Make sure autolayout is disabled
 				EstimatedItemSize = CGSize.Empty;
 			}
 			else
@@ -312,7 +299,7 @@ namespace Xamarin.Forms.Platform.iOS
 					alignment, ScrollDirection);
 			}
 
-			// If there are multiple items in the viewport, we need to choose the one which is 
+			// If there are multiple items in the viewport, we need to choose the one which is
 			// closest to the relevant part of the viewport while being sufficiently visible
 
 			// Find the spot in the viewport we're trying to align with
@@ -358,7 +345,7 @@ namespace Xamarin.Forms.Platform.iOS
 			// Determine the index of the current item
 			var currentIndex = visibleElements.IndexOf(currentItem);
 
-			// Figure out the step size when jumping to the "next" element 
+			// Figure out the step size when jumping to the "next" element
 			var span = 1;
 			if (_itemsLayout is GridItemsLayout gridItemsLayout)
 			{
@@ -413,10 +400,10 @@ namespace Xamarin.Forms.Platform.iOS
 			}
 			catch (MonoTouchException)
 			{
-				// This happens on iOS 10 if we have any empty groups in our ItemsSource. Catching here and 
+				// This happens on iOS 10 if we have any empty groups in our ItemsSource. Catching here and
 				// returning a UICollectionViewFlowLayoutInvalidationContext means that the application does not
-				// crash, though any group headers/footers will initially draw in the wrong location. It's possible to 
-				// work around this problem by forcing a full layout update after the headers/footers have been 
+				// crash, though any group headers/footers will initially draw in the wrong location. It's possible to
+				// work around this problem by forcing a full layout update after the headers/footers have been
 				// drawn in the wrong places
 			}
 
@@ -430,7 +417,7 @@ namespace Xamarin.Forms.Platform.iOS
 				return base.LayoutAttributesForSupplementaryView(kind, indexPath);
 			}
 
-			// iOS 10 and lower doesn't create these and will throw an exception in GetViewForSupplementaryElement 
+			// iOS 10 and lower doesn't create these and will throw an exception in GetViewForSupplementaryElement
 			// without them, so we need to do it manually here
 			return UICollectionViewLayoutAttributes.CreateForSupplementaryView(kind, indexPath);
 		}
@@ -456,7 +443,7 @@ namespace Xamarin.Forms.Platform.iOS
 			if (ItemsUpdatingScrollMode == ItemsUpdatingScrollMode.KeepItemsInView
 			   || ItemsUpdatingScrollMode == ItemsUpdatingScrollMode.KeepLastItemInView)
 			{
-				// If this update will shift the visible items,  we'll have to adjust for 
+				// If this update will shift the visible items,  we'll have to adjust for
 				// that later in TargetContentOffsetForProposedContentOffset
 				_adjustContentOffset = UpdateWillShiftVisibleItems(CollectionView, updateItems);
 			}
