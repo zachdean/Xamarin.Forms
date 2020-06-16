@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using Xamarin.Forms.Controls.Issues;
@@ -109,6 +110,27 @@ namespace Xamarin.Forms.Controls
 
 		public Page CreateDefaultMainPage()
 		{
+			/*Console.WriteLine("CONSOLEE");
+			int ii = 0;
+			return new ContentPage()
+			{
+				Content = new ListView()
+				{
+					ItemsSource = Enumerable.Range(0,2000),
+					ItemTemplate =
+					new DataTemplate(() =>
+					{
+						Label label = new Label();
+						label.Text = "who dunnit";
+						label.AutomationId = $"Pants{ii++}";
+						return new ViewCell()
+						{
+							View = label
+						};
+					})
+				}
+			};
+			*/
 			var layout = new StackLayout { BackgroundColor = Color.Red };
 			layout.Children.Add(new Label { Text = "This is master Page" });
 			var master = new ContentPage { Title = "Master", Content = layout, BackgroundColor = Color.SkyBlue, IconImageSource ="menuIcon" };
@@ -125,7 +147,6 @@ namespace Xamarin.Forms.Controls
 			mdp.Master.IconImageSource.SetAutomationPropertiesHelpText("This as MDP icon");
 			mdp.Master.IconImageSource.SetAutomationPropertiesName("MDPICON");
 			return mdp;
-			//return new XamStore.StoreShell();
 		}
 
 		protected override void OnAppLinkRequestReceived(Uri uri)

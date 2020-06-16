@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+      <TargetFramework>netcoreapp2.1</TargetFramework>
+      <IsPackable>false</IsPackable>
+      <SampleProject>true</SampleProject>
+    </PropertyGroup>
+    <ItemGroup>
+        <PackageReference Include="Appium.WebDriver" Version="4.1.1" />
+        <PackageReference Include="nunit" Version="3.12.0" />
+        <PackageReference Include="NUnit3TestAdapter" Version="3.16.1">
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+            <PrivateAssets>all</PrivateAssets>
+        </PackageReference>
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.6.1" />
+    </ItemGroup>
+</Project>

@@ -1,4 +1,5 @@
 using Foundation;
+using ObjCRuntime;
 using System;
 using System.Collections.Generic;
 using UIKit;
@@ -19,7 +20,13 @@ namespace Xamarin.Forms.Platform.iOS
 
 		public PageContainer()
 		{
-			IsAccessibilityElement = false;
+			//IsAccessibilityElement = false;
+		}
+
+		public override bool IsAccessibilityElement
+		{
+			get => _thing == null;
+			set => base.IsAccessibilityElement = value;
 		}
 
 		List<NSObject> AccessibilityElements
@@ -29,8 +36,10 @@ namespace Xamarin.Forms.Platform.iOS
 				// lazy-loading this list so that the expensive call to GetAccessibilityElements only happens when VoiceOver is on.
 				if (_accessibilityElements == null || _accessibilityElements.Count == 0)
 				{
+					Console.WriteLine($"Build Elements: {this}");
 					_accessibilityElements = _parent.GetAccessibilityElements();
 				}
+
 				return _accessibilityElements;
 			}
 		}
@@ -50,7 +59,7 @@ namespace Xamarin.Forms.Platform.iOS
 			base.Dispose(disposing);
 		}
 
-		[Export("accessibilityElementCount")]
+		/*[Export("accessibilityElementCount")]
 		[Internals.Preserve(Conditional = true)]
 		nint AccessibilityElementCount()
 		{
@@ -68,9 +77,12 @@ namespace Xamarin.Forms.Platform.iOS
 			if (AccessibilityElements == null || AccessibilityElements.Count == 0)
 				return NSNull.Null;
 
+
+			Console.WriteLine($"GetAccessibilityElementAt: {index}");
 			// Note: this will only be called when VoiceOver is enabled
 			return AccessibilityElements[(int)index];
 		}
+
 
 		[Export("indexOfAccessibilityElement:")]
 		[Internals.Preserve(Conditional = true)]
@@ -81,6 +93,32 @@ namespace Xamarin.Forms.Platform.iOS
 
 			// Note: this will only be called when VoiceOver is enabled
 			return AccessibilityElements.IndexOf(element);
+		}*/
+
+		NSArray _thing;
+		[Internals.Preserve(Conditional = true)]
+		public virtual NSObject accessibilityElements2
+		{
+			[Export("accessibilityElements", ArgumentSemantic.Copy)]
+			get
+			{
+				if (_thing == null && _thing?.Count == 0)
+				{
+					var elements = _parent.GetAccessibilityElements();
+
+					if (elements != null)
+						_thing = NSArray.FromObjects(elements.ToArray());
+				}
+
+				return _thing;
+			}
 		}
+
+		/*[Export("accessibilityElements:")]
+		[Internals.Preserve(Conditional = true)]
+		NSObject accessibilityElements(NSObject element)
+		{
+			return NSArray.FromObjects(AccessibilityElements);
+		}*/
 	}
 }

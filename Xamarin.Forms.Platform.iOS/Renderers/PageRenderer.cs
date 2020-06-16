@@ -46,10 +46,12 @@ namespace Xamarin.Forms.Platform.iOS
 
 		List<NSObject> DefaultOrder()
 		{
-			var views = new List<NSObject>();
+			/*var views = new List<NSObject>();
 			if (Container != null)
 				views.AddRange(Container.DescendantsTree());
-			return views;
+			return views;*/
+
+			return null;
 		}
 
 		public List<NSObject> GetAccessibilityElements()
@@ -156,7 +158,7 @@ namespace Xamarin.Forms.Platform.iOS
 		public override void LoadView()
 		{
 			//by default use the MainScreen Bounds so Effects can access the Container size
-			if (_pageContainer == null)
+			if (_pageContainer != null)
 				_pageContainer = new PageContainer(this) { Frame = UIScreen.MainScreen.Bounds };
 
 			View = _pageContainer;
