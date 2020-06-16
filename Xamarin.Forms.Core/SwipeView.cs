@@ -9,6 +9,7 @@ namespace Xamarin.Forms
 	[RenderWith(typeof(_SwipeViewRenderer))]
 	public class SwipeView : ContentView, IElementConfiguration<SwipeView>, ISwipeViewController
 	{
+		[EditorBrowsable(EditorBrowsableState.Never)]
 		public const string AutoCloseSwipeViewSignalName = "Xamarin.CloseSwipeView";
 
 		readonly Lazy<PlatformConfigurationRegistry<SwipeView>> _platformConfigurationRegistry;
