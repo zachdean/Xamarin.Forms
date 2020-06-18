@@ -347,6 +347,8 @@ namespace Xamarin.Forms.Platform.Android
             drawableBounds.Right -= halfStrokeWidth;
             drawableBounds.Bottom -= halfStrokeWidth;
 
+            matrix.PreTranslate(drawableBounds.Width() / 2, drawableBounds.Height() / 2);
+
             switch (_aspect)
             {
                 case Stretch.None:

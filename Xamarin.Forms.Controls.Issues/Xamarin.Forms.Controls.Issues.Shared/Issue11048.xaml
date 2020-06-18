@@ -17,31 +17,43 @@
         </Style>
 
     </ContentPage.Resources>
-
-    <Grid Margin="40,100,0,0"
-          TranslationX="400"
-          TranslationY="500"
-          Scale="2">
-        <Path Stroke="Green"
-              StrokeThickness="5"
+    <Grid
+        HorizontalOptions="Start"
+        VerticalOptions="Start"
+        HeightRequest="200"
+        WidthRequest="200"
+        BackgroundColor="LightBlue">
+        <Path
+            Aspect="None"
+            Stroke="Green"
+              StrokeThickness="5" 
               Data="M -100 100 C -100 50, -50 -50, 0 0" />
-        <Path Style="{StaticResource petal}" />
-        <Path Style="{StaticResource petal}"
-              Rotation="45" />
-        <Path Style="{StaticResource petal}"
-              Rotation="90" />
-        <Path Style="{StaticResource petal}"
-              Rotation="135" />
-        <Path Style="{StaticResource petal}"
-              Rotation="180" />
-        <Path Style="{StaticResource petal}"
-              Rotation="225" />
-        <Path Style="{StaticResource petal}"
-              Rotation="270" />
-        <Path Style="{StaticResource petal}"
-              Rotation="315" />
-        <Path Fill="Yellow"
-              Stroke="Black">
+        <Path
+            Style="{StaticResource petal}" />
+        <Path
+            Style="{StaticResource petal}"
+            Rotation="0" />
+        <Path 
+            Style="{StaticResource petal}"
+            Rotation="90" />
+        <Path 
+            Style="{StaticResource petal}"
+            Rotation="135" />
+        <Path
+            Style="{StaticResource petal}"
+            Rotation="180" />
+        <Path
+            Style="{StaticResource petal}"
+            Rotation="225" />
+        <Path
+            Style="{StaticResource petal}"
+            Rotation="270" />
+        <Path
+            Style="{StaticResource petal}"
+            Rotation="315" />
+        <Path
+            Fill="Yellow"
+            Stroke="Black">
             <Path.Data>
                 <EllipseGeometry Center="0, 0"
                                  RadiusX="15"
