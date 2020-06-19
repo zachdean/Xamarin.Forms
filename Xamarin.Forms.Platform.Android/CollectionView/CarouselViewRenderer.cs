@@ -402,7 +402,7 @@ namespace Xamarin.Forms.Platform.Android
 
 				if (centeredView is ItemContentView templatedCell)
 				{
-					var bContext = templatedCell.Content?.Element?.BindingContext;
+					var bContext = templatedCell?.Element?.BindingContext;
 					index = ItemsViewAdapter.GetPositionForItem(bContext);
 				}
 			}
