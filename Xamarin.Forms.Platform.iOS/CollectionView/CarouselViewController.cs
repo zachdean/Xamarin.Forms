@@ -126,6 +126,14 @@ namespace Xamarin.Forms.Platform.iOS
 			Carousel.IsScrolling = isScrolling;
 		}
 
+		internal void UpdateDetectScrolled(bool detectScrolled)
+		{
+			if (detectScrolled)
+				Carousel.Scrolled += CarouselViewScrolled;
+			else
+				Carousel.Scrolled -= CarouselViewScrolled;
+		}
+
 		void CarouselViewScrolled(object sender, ItemsViewScrolledEventArgs e)
 		{
 			SetPosition(e.CenterItemIndex);

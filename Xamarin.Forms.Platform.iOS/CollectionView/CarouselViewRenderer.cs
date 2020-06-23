@@ -24,18 +24,33 @@ namespace Xamarin.Forms.Platform.iOS
 
 			if (changedProperty.Is(CarouselView.PeekAreaInsetsProperty))
 			{
-				(Controller.Layout as CarouselViewLayout).UpdateConstraints(Frame.Size);
+				if(Element.Loop)
+					(Controller.Layout as LoopCarouselViewLayout).UpdateConstraints(Frame.Size);
+				else
+					(Controller.Layout as CarouselViewLayout).UpdateConstraints(Frame.Size);
+
 				Controller.Layout.InvalidateLayout();
 			}
 			else if (changedProperty.Is(CarouselView.IsSwipeEnabledProperty))
 				UpdateIsSwipeEnabled();
 			else if (changedProperty.Is(CarouselView.IsBounceEnabledProperty))
 				UpdateIsBounceEnabled();
+			else if (changedProperty.Is(CarouselView.LoopProperty))
+			{
+				//Controller.UpdateDetectScrolled(false);
+				//var contentOffset = Controller.CollectionView.ContentOffset;
+				//UpdateLayout();
+				//Controller.CollectionView.SetContentOffset(contentOffset, false);
+				//Controller.UpdateDetectScrolled(true);
+			}
 		}
 
 		protected override ItemsViewLayout SelectLayout()
 		{
-			return new CarouselViewLayout(Carousel.ItemsLayout, Carousel);
+			if (Element.Loop)
+				return new LoopCarouselViewLayout(Carousel.ItemsLayout, Carousel);
+			else
+				return new CarouselViewLayout(Carousel.ItemsLayout, Carousel);
 		}
 
 		protected override void SetUpNewElement(CarouselView newElement)
