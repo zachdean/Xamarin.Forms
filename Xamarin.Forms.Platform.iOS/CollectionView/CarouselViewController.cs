@@ -132,10 +132,13 @@ namespace Xamarin.Forms.Platform.iOS
 				Carousel.Scrolled += CarouselViewScrolled;
 			else
 				Carousel.Scrolled -= CarouselViewScrolled;
+
+			System.Diagnostics.Debug.WriteLine($"UpdateDetectScrolled: {detectScrolled}");
 		}
 
 		void CarouselViewScrolled(object sender, ItemsViewScrolledEventArgs e)
 		{
+			System.Diagnostics.Debug.WriteLine($"CarouselViewScrolled: {e.CenterItemIndex}");
 			SetPosition(e.CenterItemIndex);
 			UpdateVisualStates();
 		}
@@ -201,7 +204,8 @@ namespace Xamarin.Forms.Platform.iOS
 		void SetPosition(int position)
 		{
 			var carouselPosition = Carousel.Position;
-			//we arrived center
+
+			// We arrived center
 			if (position == _gotoPosition)
 				_gotoPosition = -1;
 
@@ -238,6 +242,7 @@ namespace Xamarin.Forms.Platform.iOS
 			if (_gotoPosition == -1 && (goToPosition != carouselPosition || forceScroll))
 			{
 				_gotoPosition = goToPosition;
+				System.Diagnostics.Debug.WriteLine($"ScrollToPosition: {goToPosition}");
 				Carousel.ScrollTo(goToPosition, position: Xamarin.Forms.ScrollToPosition.Center, animate: animate);
 			}
 		}

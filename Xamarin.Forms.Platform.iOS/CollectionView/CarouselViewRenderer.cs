@@ -37,11 +37,11 @@ namespace Xamarin.Forms.Platform.iOS
 				UpdateIsBounceEnabled();
 			else if (changedProperty.Is(CarouselView.LoopProperty))
 			{
-				//Controller.UpdateDetectScrolled(false);
-				//var contentOffset = Controller.CollectionView.ContentOffset;
-				//UpdateLayout();
-				//Controller.CollectionView.SetContentOffset(contentOffset, false);
-				//Controller.UpdateDetectScrolled(true);
+				Controller.UpdateDetectScrolled(false);
+				var contentOffset = Controller.CollectionView.ContentOffset;
+				UpdateLayout();
+				Controller.CollectionView.SetContentOffset(contentOffset, false);
+				Controller.UpdateDetectScrolled(true);
 			}
 		}
 

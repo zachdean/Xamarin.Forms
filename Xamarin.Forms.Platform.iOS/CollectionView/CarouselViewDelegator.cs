@@ -11,6 +11,8 @@ namespace Xamarin.Forms.Platform.iOS
 
 		public override void Scrolled(UIScrollView scrollView)
 		{
+			System.Diagnostics.Debug.WriteLine($"CarouselViewDelegator Scrolled");
+
 			base.Scrolled(scrollView);
 
 			(ViewController as CarouselViewController)?.UpdateIsScrolling(true);

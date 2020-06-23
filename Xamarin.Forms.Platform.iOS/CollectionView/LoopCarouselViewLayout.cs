@@ -6,7 +6,7 @@ namespace Xamarin.Forms.Platform.iOS
 {
 	public class LoopCarouselViewLayout : CarouselViewLayout
 	{
-        CarouselView _carouselView;
+		readonly CarouselView _carouselView;
 
         public LoopCarouselViewLayout(ItemsLayout itemsLayout, CarouselView carouselView) : base(itemsLayout, carouselView)
 		{
@@ -44,15 +44,10 @@ namespace Xamarin.Forms.Platform.iOS
                 {
                     CGSize contentSize = base.CollectionViewContentSize;
 
-                    // We add the height (or width) of the collection view to the content size to allow us to seemlessly wrap without any screen artifacts
                     if (ScrollDirection == UICollectionViewScrollDirection.Vertical)
-                    {
                         contentSize = new CGSize(contentSize.Width, contentSize.Height + CollectionView.Bounds.Size.Height + MinimumLineSpacing);
-                    }
                     else
-                    {
                         contentSize = new CGSize(contentSize.Width + CollectionView.Bounds.Size.Width + MinimumLineSpacing, contentSize.Height);
-                    }
 
                     return contentSize;
                 }
@@ -89,24 +84,26 @@ namespace Xamarin.Forms.Platform.iOS
         public override UICollectionViewLayoutAttributes[] LayoutAttributesForElementsInRect(CGRect rect)
         {
             var layoutAttributes = base.LayoutAttributesForElementsInRect(rect);
+            UICollectionViewLayoutAttributes[] wrappingAttributes = null;
+
             if (_carouselView.Loop)
             {
                 if (ScrollDirection == UICollectionViewScrollDirection.Vertical)
                 {
-                    UICollectionViewLayoutAttributes[] wrappingAttributes = base.LayoutAttributesForElementsInRect(new CGRect(
+                    wrappingAttributes = base.LayoutAttributesForElementsInRect(new CGRect(
                         rect.X,
                         rect.Y - base.CollectionViewContentSize.Height,
                         rect.Size.Width,
                         rect.Size.Height));
 
                     foreach (UICollectionViewLayoutAttributes attributes in wrappingAttributes)
-                        attributes.Center = new CGPoint(attributes.Center.X, attributes.Center.Y + base.CollectionViewContentSize.Height + MinimumLineSpacing);
-
-                    //layoutAttributes = layoutAttributes.arrayByAddingObjectsFromArray(wrappingAttributes);
+                        attributes.Center = new CGPoint(
+                            attributes.Center.X,
+                            attributes.Center.Y + base.CollectionViewContentSize.Height + MinimumLineSpacing);
                 }
                 else
                 {
-                    UICollectionViewLayoutAttributes[] wrappingAttributes = base.LayoutAttributesForElementsInRect(new CGRect(
+                    wrappingAttributes = base.LayoutAttributesForElementsInRect(new CGRect(
                         rect.X - base.CollectionViewContentSize.Width,
                         rect.Y,
                         rect.Size.Width,
@@ -114,20 +111,21 @@ namespace Xamarin.Forms.Platform.iOS
 
 
                     foreach (UICollectionViewLayoutAttributes attributes in wrappingAttributes)
-                        attributes.Center = new CGPoint(attributes.Center.X + base.CollectionViewContentSize.Width + MinimumLineSpacing, attributes.Center.Y);
-
-                    //var section = 0;
-                    var itemCount = layoutAttributes.GetLength(0) + wrappingAttributes.GetLength(0);//CollectionView.NumberOfItemsInSection(section);
-                    var layoutAttributesForAllCells = new UICollectionViewLayoutAttributes[itemCount];
-
-                    layoutAttributes.CopyTo(layoutAttributesForAllCells, 0);
-                    wrappingAttributes.CopyTo(layoutAttributesForAllCells, layoutAttributes.GetLength(0));
-
-                    return layoutAttributesForAllCells;
+                        attributes.Center = new CGPoint(
+                            attributes.Center.X + base.CollectionViewContentSize.Width + MinimumLineSpacing,
+                            attributes.Center.Y);
                 }
             }
 
-            return layoutAttributes;
+            var itemCount = layoutAttributes.GetLength(0) + (wrappingAttributes != null ? wrappingAttributes.GetLength(0) : 0);
+            var layoutAttributesForAllCells = new UICollectionViewLayoutAttributes[itemCount];
+
+            layoutAttributes.CopyTo(layoutAttributesForAllCells, 0);
+
+            if (wrappingAttributes != null)
+                wrappingAttributes.CopyTo(layoutAttributesForAllCells, layoutAttributes.GetLength(0));
+
+            return layoutAttributesForAllCells;
         }
 
         public override UICollectionViewLayoutAttributes LayoutAttributesForItem(NSIndexPath indexPath)
