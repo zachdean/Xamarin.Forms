@@ -223,6 +223,40 @@ namespace Xamarin.Forms.Core.UnitTests
 
 
 		[Test]
+		public async Task NestedContextBasedRoutesResolveCorrectly()
+		{
+			var shell = new Shell();
+			var item1 = CreateShellItem<FlyoutItem>(asImplicit: true, shellItemRoute: "animals", shellContentRoute: "monkeys");
+
+			Routing.RegisterRoute("monkeys/monkeyDetails", typeof(ContentPage));
+			Routing.RegisterRoute("monkeys/monkeyDetails/monkeygenome", typeof(ContentPage));
+
+			shell.Items.Add(item1);
+
+			await shell.GoToAsync("monkeyDetails");
+			await shell.GoToAsync("monkeygenome");
+			Assert.That(shell.CurrentState.Location.ToString(), Is.EqualTo("//animals/monkeys/monkeyDetails/monkeygenome"));
+		}
+
+		[Test]
+		public async Task NestedContextCanRouteWithSingleMatch()
+		{
+			var shell = new Shell();
+			var item1 = CreateShellItem<FlyoutItem>(asImplicit: true, shellItemRoute: "animals", shellContentRoute: "monkeys");
+
+			Routing.RegisterRoute("monkeys/monkeyDetails", typeof(ContentPage));
+			Routing.RegisterRoute("monkeys/monkeyDetails/monkeygenome", typeof(ContentPage));
+
+			shell.Items.Add(item1);
+
+			await shell.GoToAsync("monkeyDetails/monkeygenome");
+
+			Assert.AreEqual(3, shell.CurrentItem.CurrentItem.Navigation.NavigationStack.Count);
+			Assert.That(shell.CurrentState.Location.ToString(), Is.EqualTo("//animals/monkeys/monkeyDetails/monkeygenome"));
+		}
+
+
+		[Test]
 		public async Task ShellSectionWithRelativeEditUpOneLevel()
 		{
 			var shell = new Shell();

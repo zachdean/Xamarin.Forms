@@ -334,7 +334,7 @@ namespace Xamarin.Forms
 
 		internal async Task GoToAsync(NavigationRequest request, IDictionary<string, string> queryData, bool? animate)
 		{
-			List<string> globalRoutes = request.Request.GlobalRoutes;
+			IReadOnlyList<string> globalRoutes = request.Request.GlobalRoutes;
 			List<Page> navStack = null;
 			string route = String.Empty;
 

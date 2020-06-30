@@ -642,6 +642,7 @@ namespace Xamarin.Forms
 			else
 				AddGlobalRoute(userSegment, shellSegment);
 		}
+
 		public RouteRequestBuilder(RouteRequestBuilder builder)
 		{
 			_allSegments = builder._allSegments;
@@ -659,6 +660,7 @@ namespace Xamarin.Forms
 			_globalRouteMatches.Add(routeName);
 			_fullSegments.Add(segment);
 			_matchedSegments.Add(segment);
+			IsFullMatch = (_matchedSegments.Count == _allSegments.Length);
 		}
 
 		public void AddMatch(string shellSegment, string userSegment, object node)
@@ -711,6 +713,16 @@ namespace Xamarin.Forms
 				_matchedSegments.Add(shellSegment);
 
 			_fullSegments.Add(shellSegment);
+			switch (node)
+			{
+				case ShellUriHandler.GlobalRouteItem globalRoute:
+					IsFullMatch = globalRoute.IsFinished;
+					break;
+				default:
+					IsFullMatch = (_matchedSegments.Count == _allSegments.Length);
+					break;
+
+			}
 		}
 
 		public string NextSegment
@@ -736,6 +748,7 @@ namespace Xamarin.Forms
 				return Routing.FormatRoute(String.Join(_uriSeparator, _allSegments.Skip(nextMatch)));
 			}
 		}
+
 		public string[] RemainingSegments
 		{
 			get
@@ -759,13 +772,11 @@ namespace Xamarin.Forms
 		public string PathNoImplicit => MakeUriString(_matchedSegments);
 		public string PathFull => MakeUriString(_fullSegments);
 
-		public bool IsFullMatch => _matchedSegments.Count == _allSegments.Length;
-		public List<string> GlobalRouteMatches => _globalRouteMatches;
-		public List<string> SegmentsMatched => _matchedSegments;
-
+		public bool IsFullMatch { get; private set; }
+		//public bool IsFullMatch => _matchedSegments.Count == _allSegments.Length;
+		public IReadOnlyList<string> GlobalRouteMatches => _globalRouteMatches;
+		public IReadOnlyList<string> SegmentsMatched => _matchedSegments;
 	}
-
-
 
 	[DebuggerDisplay("RequestDefinition = {Request}, StackRequest = {StackRequest}")]
 	internal class NavigationRequest
@@ -794,7 +805,7 @@ namespace Xamarin.Forms
 	[DebuggerDisplay("Full = {FullUri}, Short = {ShortUri}")]
 	internal class RequestDefinition
 	{
-		public RequestDefinition(Uri fullUri, ShellItem item, ShellSection section, ShellContent content, List<string> globalRoutes)
+		public RequestDefinition(Uri fullUri, ShellItem item, ShellSection section, ShellContent content, IReadOnlyList<string> globalRoutes)
 		{
 			FullUri = fullUri;
 			Item = item;
@@ -812,7 +823,7 @@ namespace Xamarin.Forms
 		public ShellItem Item { get; }
 		public ShellSection Section { get; }
 		public ShellContent Content { get; }
-		public List<string> GlobalRoutes { get; }
+		public IReadOnlyList<string> GlobalRoutes { get; }
 	}
 
 
