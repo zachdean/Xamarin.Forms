@@ -205,7 +205,7 @@ namespace Xamarin.Forms.Platform.Android
 				base.ScrollTo(args);
 		}
 
-		protected override IItemsLayout GetItemsLayout() => Carousel.ItemsLayout;
+		protected override IItemsLayout GetItemsLayout() => Carousel?.ItemsLayout;
 
 		int GetItemWidth()
 		{
