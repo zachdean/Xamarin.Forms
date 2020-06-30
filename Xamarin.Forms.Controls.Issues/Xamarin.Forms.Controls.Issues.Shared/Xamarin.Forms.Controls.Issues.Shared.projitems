@@ -822,6 +822,7 @@
       <DependentUpon>Issue9827.xaml</DependentUpon>
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Issue10699.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Issue10942.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)_TemplateMarkup.xaml.cs">
       <DependentUpon>_TemplateMarkup.xaml</DependentUpon>
       <SubType>Code</SubType>
