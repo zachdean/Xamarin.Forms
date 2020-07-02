@@ -109,6 +109,13 @@ namespace Xamarin.Forms.Controls.GalleryPages.CollectionViewGalleries.CarouselVi
 				Selected = newItem;
 			}
 		});
+
+		public ICommand AddCommand => new Command(() =>
+		{
+			var newIndex = Items.Count;
+			Items.Add(new CarouselItem(newIndex, "cardBackground.png"));
+			Position = newIndex;
+		});
 	}
 
 	[Preserve(AllMembers = true)]

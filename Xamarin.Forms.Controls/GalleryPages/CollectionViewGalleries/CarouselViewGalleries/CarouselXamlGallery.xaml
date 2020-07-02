@@ -27,6 +27,7 @@
         <StackLayout Grid.Row="4" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalOptions="Center">
             <Button Command="{Binding PreviousCommand}" AutomationId="btnPrev" Text="&lt;" FontAttributes="Bold" BackgroundColor="LightGray" TextColor="Black" />
             <Button Command="{Binding RemoveCommand}"  AutomationId="btnRemove" Text="{Binding Path=Selected.Index, StringFormat='Remove {0}'}" BackgroundColor="LightGray" TextColor="Black" />
+            <Button Command="{Binding AddCommand}"  AutomationId="btnAdd" Text="Add" FontAttributes="Bold" BackgroundColor="LightGray" TextColor="Black" />
             <Button Command="{Binding NextCommand}"  AutomationId="btnNext" Text="&gt;" FontAttributes="Bold" BackgroundColor="LightGray" TextColor="Black" />
         </StackLayout>
         <CarouselView AutomationId="TheCarouselView" x:Name="carousel" ItemsSource="{Binding Items}" Position="{Binding Position}" Grid.Row="5" Grid.ColumnSpan="2"
