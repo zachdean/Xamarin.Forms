@@ -381,6 +381,9 @@ namespace Xamarin.Forms
 					case NamedPlatformColor.TertiaryLabel:
 						resultColor = UIColor.TertiaryLabelColor;
 						break;
+					case NamedPlatformColor.SystemBackground:
+						resultColor = UIColor.SystemBackgroundColor;
+						break;
 					default:
 						resultColor = UIColor.FromName(name);
 						break;

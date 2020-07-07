@@ -3,6 +3,7 @@
 	public static class NamedPlatformColor
 	{
 		// iOS & macOS
+		public const string SystemBackground = "systemBackground";
 		public const string SystemBlue = "systemBlue";
 		public const string SystemGreen = "systemGreen";
 		public const string SystemIndigo = "systemIndigo";
