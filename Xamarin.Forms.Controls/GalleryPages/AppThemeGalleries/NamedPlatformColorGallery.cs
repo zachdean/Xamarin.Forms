@@ -88,7 +88,8 @@ namespace Xamarin.Forms.Controls.GalleryPages.AppThemeGalleries
 					NamedPlatformColor.SystemGray4,
 					NamedPlatformColor.SystemGray5,
 					NamedPlatformColor.SystemGray6,
-					NamedPlatformColor.OpaqueSeparator
+					NamedPlatformColor.OpaqueSeparator,
+					NamedPlatformColor.SystemBackground
 				});
 			}
 
