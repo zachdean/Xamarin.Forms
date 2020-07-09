@@ -196,9 +196,10 @@ namespace Xamarin.Forms.Platform.Android
 
 			if (_carouselViewLoopManager == null)
 				return;
-			//Special case here 
-			//We could have a race condition where we are scrolling our collection to center the first item
-			//And at the same time the user is requesting we go to a particular item
+
+			// Special case here 
+			// We could have a race condition where we are scrolling our collection to center the first item
+			// And at the same time the user is requesting we go to a particular item
 			if (position == -1 && Carousel.Loop)
 				_carouselViewLoopManager.AddPendingScrollTo(args);
 			else
@@ -400,6 +401,7 @@ namespace Xamarin.Forms.Platform.Android
 		{
 			_noNeedForScroll = false;
 			var index = e.CenterItemIndex;
+
 			if (Carousel.Loop)
 			{
 				var centeredView = this.GetCenteredView();
@@ -410,6 +412,7 @@ namespace Xamarin.Forms.Platform.Android
 					index = ItemsViewAdapter.GetPositionForItem(bContext);
 				}
 			}
+
 			UpdatePosition(index);
 			UpdateVisualStates();
 		}
@@ -458,7 +461,6 @@ namespace Xamarin.Forms.Platform.Android
 				_oldPosition = carouselPosition;
 				return;
 			}
-
 
 			if (carouselPosition >= itemCount || carouselPosition < 0)
 				throw new IndexOutOfRangeException($"Can't set CarouselView to position {carouselPosition}. ItemsSource has {itemCount} items.");
@@ -576,7 +578,6 @@ namespace Xamarin.Forms.Platform.Android
 		class CarouselViewLoopManager
 		{
 			IItemsViewSource _itemsSource;
-
 			Queue<ScrollToRequestEventArgs> _pendingScrollTo = new Queue<ScrollToRequestEventArgs>();
 
 			public void CenterIfNeeded(RecyclerView recyclerView, bool isHorizontal)
@@ -621,12 +622,17 @@ namespace Xamarin.Forms.Platform.Android
 				var diffToStart = currentCarouselPosition + (itemSourceCount - newPosition);
 				var diffToEnd = itemSourceCount - currentCarouselPosition + newPosition;
 				var centerView = recyclerView.GetCenteredView();
+
+				if (centerView == null)
+					return -1;
+
 				var centerPosition = linearLayoutManager.GetPosition(centerView);
 
 				var increment = currentCarouselPosition - newPosition;
-				var incrementAbs = System.Math.Abs(increment);
+				var incrementAbs = Math.Abs(increment);
 
 				int goToPosition;
+
 				if (diffToStart < incrementAbs)
 					goToPosition = centerPosition - diffToStart;
 				else if (diffToEnd < incrementAbs)
