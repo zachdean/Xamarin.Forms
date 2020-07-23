@@ -49,30 +49,30 @@ namespace Xamarin.Forms.Platform.Android
 
 		protected virtual bool IsHorizontal => (Carousel?.ItemsLayout)?.Orientation == ItemsLayoutOrientation.Horizontal;
 
-		protected override int DetermineTargetPosition(ScrollToRequestEventArgs args)
-		{
-			if (args.Mode == ScrollToMode.Element)
-				return ItemsViewAdapter.GetPositionForItem(args.Item);
+		//protected override int DetermineTargetPosition(ScrollToRequestEventArgs args)
+		//{
+		//	if (args.Mode == ScrollToMode.Element)
+		//		return ItemsViewAdapter.GetPositionForItem(args.Item);
 
-			if (!Carousel.Loop)
-				return args.Index;
+		//	if (!Carousel.Loop)
+		//		return args.Index;
 
-			if (_carouselViewLoopManager == null)
-				return -1;
+		//	if (_carouselViewLoopManager == null)
+		//		return -1;
 
-			var carouselPosition = GetCarouselViewCurrentIndex(Carousel.Position);
-			var getGoIndex = _carouselViewLoopManager.GetGoToIndex(this, carouselPosition, args.Index);
+		//	var carouselPosition = GetCarouselViewCurrentIndex(Carousel.Position);
+		//	var getGoIndex = _carouselViewLoopManager.GetGoToIndex(this, carouselPosition, args.Index);
 
-			return getGoIndex;
-		}
+		//	return getGoIndex;
+		//}
 
-		public override bool OnTouchEvent(MotionEvent e)
-		{
-			if (Carousel.Loop)
-				_carouselViewLoopManager.CenterIfNeeded(this, IsHorizontal);
+		//public override bool OnTouchEvent(MotionEvent e)
+		//{
+		//	if (Carousel.Loop)
+		//		_carouselViewLoopManager.CenterIfNeeded(this, IsHorizontal);
 
-			return base.OnTouchEvent(e);
-		}
+		//	return base.OnTouchEvent(e);
+		//}
 
 		protected override void Dispose(bool disposing)
 		{
@@ -130,7 +130,7 @@ namespace Xamarin.Forms.Platform.Android
 			var oldItemViewAdapter = ItemsViewAdapter;
 			UnsubscribeCollectionItemsSourceChanged(oldItemViewAdapter);
 
-			ItemsViewAdapter = new CarouselViewAdapter<ItemsView, IItemsViewSource>(Carousel,
+			ItemsViewAdapter = new ItemsViewAdapter<ItemsView, IItemsViewSource>(Carousel,
 				(view, context) => new SizedItemContentView(Context, GetItemWidth, GetItemHeight));
 
 			_gotoPosition = -1;
@@ -197,33 +197,35 @@ namespace Xamarin.Forms.Platform.Android
 			base.UpdateItemSpacing();
 		}
 
-		protected override void ScrollTo(ScrollToRequestEventArgs args)
-		{
-			var position = DetermineTargetPosition(args);
+		//protected override void ScrollTo(ScrollToRequestEventArgs args)
+		//{
+		//	var position = DetermineTargetPosition(args);
 
-			if (_carouselViewLoopManager == null)
-				return;
+		//	if (_carouselViewLoopManager == null)
+		//		return;
 
-			// Special case here 
-			// We could have a race condition where we are scrolling our collection to center the first item
-			// And at the same time the user is requesting we go to a particular item
-			if (position == -1 && Carousel.Loop)
-			{
-				_carouselViewLoopManager.AddPendingScrollTo(args);
-				return;
-			}
+		//	// Special case here 
+		//	// We could have a race condition where we are scrolling our collection to center the first item
+		//	// And at the same time the user is requesting we go to a particular item
+		//	if (position == -1 && Carousel.Loop)
+		//	{
+		//		_carouselViewLoopManager.AddPendingScrollTo(args);
+		//		return;
+		//	}
 
-			if (args.IsAnimated)
-			{
-				ScrollHelper.AnimateScrollToPosition(position, args.ScrollToPosition);
-			}
-			else
-			{
-				ScrollHelper.JumpScrollToPosition(position, args.ScrollToPosition);
-			}
-		}
+		//	if (args.IsAnimated)
+		//	{
+		//		ScrollHelper.AnimateScrollToPosition(position, args.ScrollToPosition);
+		//	}
+		//	else
+		//	{
+		//		ScrollHelper.JumpScrollToPosition(position, args.ScrollToPosition);
+		//	}
+		//}
 
 		protected override IItemsLayout GetItemsLayout() => Carousel?.ItemsLayout;
+
+		protected override LayoutManager SelectLayoutManager(IItemsLayout layoutSpecification) =>  new CarouselLoopLayoutManager(Carousel, Context);
 
 		int GetItemWidth()
 		{
