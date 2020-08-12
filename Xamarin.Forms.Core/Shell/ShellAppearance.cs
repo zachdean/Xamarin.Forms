@@ -78,10 +78,10 @@ namespace Xamarin.Forms
 		internal ShellAppearance()
 		{
 			for (int i = 0; i < _brushArray.Length; i++)
-				_brushArray[0] = Brush.Default;
+				_brushArray[i] = Brush.Default;
 
 			for (int i = 0; i < _doubleArray.Length; i++)
-				_doubleArray[0] = double.MinValue;
+				_doubleArray[i] = double.MinValue;
 		}
 
 		public override bool Equals(object obj)

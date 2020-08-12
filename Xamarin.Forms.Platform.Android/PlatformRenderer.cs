@@ -76,6 +76,17 @@ namespace Xamarin.Forms.Platform.Android
 			Profile.FrameEnd();
 		}
 
+
+		public override void RequestLayout()
+		{
+			base.RequestLayout();
+		}
+
+		public override void Invalidate()
+		{
+			base.Invalidate();
+		}
+
 		protected override void OnMeasure(int widthMeasureSpec, int heightMeasureSpec)
 		{
 			SetMeasuredDimension(MeasureSpec.GetSize(widthMeasureSpec), MeasureSpec.GetSize(heightMeasureSpec));

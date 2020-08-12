@@ -143,8 +143,6 @@ namespace Xamarin.Forms.Platform.Android
 			var elementHolder = (ElementViewHolder)holder;
 
 			elementHolder.Bar.Visibility = item.DrawTopLine ? ViewStates.Visible : ViewStates.Gone;
-
-			DataTemplate dataTemplate = ShellController.GetFlyoutItemDataTemplate(item.Element);
 			elementHolder.Element = item.Element;
 		}
 
@@ -152,27 +150,13 @@ namespace Xamarin.Forms.Platform.Android
 		{
 			var template = _templateMap[viewType];
 
-			var content = (View)template.CreateContent();
-			content.Parent = _shellContext.Shell;
-
 			var linearLayout = new LinearLayoutWithFocus(parent.Context)
 			{
 				Orientation = Orientation.Vertical,
-				LayoutParameters = new RecyclerView.LayoutParams(LP.MatchParent, LP.WrapContent),
-				Content = content
+				LayoutParameters = new RecyclerView.LayoutParams(LP.MatchParent, LP.WrapContent)
 			};
 
-			var bar = new AView(parent.Context);
-			bar.SetBackgroundColor(Color.Black.MultiplyAlpha(0.14).ToAndroid());
-			bar.LayoutParameters = new LP(LP.MatchParent, (int)parent.Context.ToPixels(1));
-			linearLayout.AddView(bar);
-
-			var container = new ContainerView(parent.Context, content);
-			container.MatchWidth = true;
-			container.LayoutParameters = new LP(LP.MatchParent, LP.WrapContent);
-			linearLayout.AddView(container);
-
-			return new ElementViewHolder(container, linearLayout, bar, _selectedCallback);
+			return new ElementViewHolder(template, linearLayout, _selectedCallback, _shellContext);
 		}
 
 
@@ -250,18 +234,32 @@ namespace Xamarin.Forms.Platform.Android
 			AView _itemView;
 			bool _disposed;
 			ContainerView _containerView;
+			IShellContext _shellContext;
+			DataTemplate _template;
 
-			public ElementViewHolder(ContainerView view, AView itemView, AView bar, Action<Element> selectedCallback) : base(itemView)
+			public ElementViewHolder(DataTemplate template, ViewGroup itemView, Action<Element> selectedCallback, IShellContext shellContext) : base(itemView)
 			{
-				_containerView = view;
+				_template = template;
+				_shellContext = shellContext;
+				var bar = new AView(itemView.Context);
+				bar.SetBackgroundColor(Color.Black.MultiplyAlpha(0.14).ToAndroid());
+				bar.LayoutParameters = new LP(LP.MatchParent, (int)itemView.Context.ToPixels(1));
+				itemView.AddView(bar);
+
+				var container = new ContainerView(itemView.Context, (View)null);
+				container.MatchWidth = true;
+				container.LayoutParameters = new LP(LP.MatchParent, LP.WrapContent);
+				itemView.AddView(container);
+
+				_containerView = container;
 				_itemView = itemView;
-				View = view.View;
 				Bar = bar;
 				_selectedCallback = selectedCallback;
 			}
 
-			public View View { get; }
 			public AView Bar { get; }
+
+			public View View => _containerView?.View;
 			public Element Element
 			{
 				get { return _element; }
@@ -274,13 +272,20 @@ namespace Xamarin.Forms.Platform.Android
 					{
 						_element.ClearValue(Platform.RendererProperty);
 						_element.PropertyChanged -= OnElementPropertyChanged;
+
+						if (_containerView.View != null)
+						{
+							_containerView.View.BindingContext = null;
+							_containerView.View.Parent = null;
+						}
+
+						_containerView.View = null;
 					}
 
 					if(_itemView != null)
 						_itemView.Click -= OnClicked;
 
 					_element = value;
-					View.BindingContext = value;
 
 					if (_element != null)
 					{
@@ -289,17 +294,21 @@ namespace Xamarin.Forms.Platform.Android
 						_element.PropertyChanged += OnElementPropertyChanged;
 						_itemView.Click += OnClicked;
 						UpdateVisualState();
-					}
-					else
-					{
-						_containerView.View = null;
+
+
+						var template = _template.SelectDataTemplate(_element, _element);
+						var content = (View)template.CreateContent();
+						content.BindingContext = value;
+						content.Parent = _shellContext.Shell;
+						PropertyPropagationExtensions.PropagatePropertyChanged(null, content, _element);
+						_containerView.View = content;
 					}
 				}
 			}
 
 			void UpdateVisualState()
 			{
-				if (Element is BaseShellItem baseShellItem && baseShellItem != null)
+				if (Element is BaseShellItem baseShellItem && baseShellItem != null && View != null)
 				{
 					if (baseShellItem.IsChecked)
 						VisualStateManager.GoToState(View, "Selected");

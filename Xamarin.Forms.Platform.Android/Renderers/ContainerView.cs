@@ -39,6 +39,9 @@ namespace Xamarin.Forms.Platform.Android
 			get { return _view; }
 			set
 			{
+				if (_view == value)
+					return;
+
 				_view = value;
 				OnViewSet(value);
 			}
