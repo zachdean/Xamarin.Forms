@@ -2,35 +2,9 @@
 
 namespace Xamarin.Forms.DualScreen
 {
-	public enum TwoPaneViewMode
-	{
-		SinglePane, Wide, Tall
-	}
-
-	public enum TwoPaneViewTallModeConfiguration
-	{
-		SinglePane,
-		TopBottom,
-		BottomTop,
-	}
-
-	public enum TwoPaneViewWideModeConfiguration
-	{
-		SinglePane,
-		LeftRight,
-		RightLeft,
-	}
-
-	public enum TwoPaneViewPriority
-	{
-		Pane1,
-		Pane2
-	}
-
 	[ContentProperty("")]
 	public partial class TwoPaneView : Grid
 	{
-
 		static TwoPaneView()
 		{
 #if UWP
@@ -221,7 +195,9 @@ namespace Xamarin.Forms.DualScreen
 			_modeStates.States.Add(new VisualState() { Name = "ViewMode_TopBottom" });
 			_modeStates.States.Add(new VisualState() { Name = "ViewMode_BottomTop" });
 
-			VisualStateManager.SetVisualStateGroups(this, new VisualStateGroupList() { _modeStates });
+			VisualStateManager
+				.GetVisualStateGroups(this)
+				.Add(_modeStates);
 
 			RowDefinitions = new RowDefinitionCollection() { new RowDefinition(), new RowDefinition(), new RowDefinition() };
 			ColumnDefinitions = new ColumnDefinitionCollection() { new ColumnDefinition(), new ColumnDefinition(), new ColumnDefinition() };

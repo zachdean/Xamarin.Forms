@@ -23,7 +23,6 @@ namespace Xamarin.Forms.Platform.Android
 		Dictionary<int, DataTemplate> _templateMap = new Dictionary<int, DataTemplate>();
 		Action<Element> _selectedCallback;
 		bool _disposed;
-		ElementViewHolder _elementViewHolder;
 
 		public ShellFlyoutRecyclerAdapter(IShellContext shellContext, Action<Element> selectedCallback)
 		{
@@ -64,18 +63,10 @@ namespace Xamarin.Forms.Platform.Android
 			var id = ((IDataTemplateController)template).Id;
 
 			_templateMap[id] = template;
-
+			
 			return id;
 		}
 
-		public override void OnBindViewHolder(RecyclerView.ViewHolder holder, int position)
-		{
-			var item = _listItems[position];
-			var elementHolder = (ElementViewHolder)holder;
-
-			elementHolder.Bar.Visibility = item.DrawTopLine ? ViewStates.Visible : ViewStates.Gone;
-			elementHolder.Element = item.Element;
-		}
 
 		class LinearLayoutWithFocus : LinearLayout, ITabStop, IVisualElementRenderer
 		{
@@ -146,6 +137,17 @@ namespace Xamarin.Forms.Platform.Android
 			}
 		}
 
+		public override void OnBindViewHolder(RecyclerView.ViewHolder holder, int position)
+		{
+			var item = _listItems[position];
+			var elementHolder = (ElementViewHolder)holder;
+
+			elementHolder.Bar.Visibility = item.DrawTopLine ? ViewStates.Visible : ViewStates.Gone;
+
+			DataTemplate dataTemplate = ShellController.GetFlyoutItemDataTemplate(item.Element);
+			elementHolder.Element = item.Element;
+		}
+
 		public override RecyclerView.ViewHolder OnCreateViewHolder(ViewGroup parent, int viewType)
 		{
 			var template = _templateMap[viewType];
@@ -170,9 +172,18 @@ namespace Xamarin.Forms.Platform.Android
 			container.LayoutParameters = new LP(LP.MatchParent, LP.WrapContent);
 			linearLayout.AddView(container);
 
-			_elementViewHolder = new ElementViewHolder(content, linearLayout, bar, _selectedCallback);
+			return new ElementViewHolder(container, linearLayout, bar, _selectedCallback);
+		}
 
-			return _elementViewHolder;
+
+		public override void OnViewRecycled(Java.Lang.Object holder)
+		{
+			base.OnViewRecycled(holder);
+
+			if (holder is ElementViewHolder viewHolder)
+			{
+				viewHolder.Element = null;
+			}
 		}
 
 		protected virtual List<AdapterListItem> GenerateItemList()
@@ -213,12 +224,8 @@ namespace Xamarin.Forms.Platform.Android
 			if (disposing)
 			{
 				((IShellController)Shell).StructureChanged -= OnShellStructureChanged;
-
-				_elementViewHolder?.Dispose();
-
 				_listItems = null;
 				_selectedCallback = null;
-				_elementViewHolder = null;
 			}
 
 			base.Dispose(disposing);
@@ -242,12 +249,13 @@ namespace Xamarin.Forms.Platform.Android
 			Element _element;
 			AView _itemView;
 			bool _disposed;
+			ContainerView _containerView;
 
-			public ElementViewHolder(View view, AView itemView, AView bar, Action<Element> selectedCallback) : base(itemView)
+			public ElementViewHolder(ContainerView view, AView itemView, AView bar, Action<Element> selectedCallback) : base(itemView)
 			{
+				_containerView = view;
 				_itemView = itemView;
-				itemView.Click += OnClicked;
-				View = view;
+				View = view.View;
 				Bar = bar;
 				_selectedCallback = selectedCallback;
 			}
@@ -268,6 +276,9 @@ namespace Xamarin.Forms.Platform.Android
 						_element.PropertyChanged -= OnElementPropertyChanged;
 					}
 
+					if(_itemView != null)
+						_itemView.Click -= OnClicked;
+
 					_element = value;
 					View.BindingContext = value;
 
@@ -276,7 +287,12 @@ namespace Xamarin.Forms.Platform.Android
 						FastRenderers.AutomationPropertiesProvider.AccessibilitySettingsChanged(_itemView, value);
 						_element.SetValue(Platform.RendererProperty, _itemView);
 						_element.PropertyChanged += OnElementPropertyChanged;
+						_itemView.Click += OnClicked;
 						UpdateVisualState();
+					}
+					else
+					{
+						_containerView.View = null;
 					}
 				}
 			}
@@ -316,10 +332,11 @@ namespace Xamarin.Forms.Platform.Android
 				if (disposing)
 				{
 					_itemView.Click -= OnClicked;
-
+					_containerView?.Dispose();
+					_containerView = null;
 					Element = null;
 					_itemView = null;
-					_selectedCallback = null;
+					_selectedCallback = null;					
 				}
 
 				base.Dispose(disposing);

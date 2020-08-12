@@ -83,7 +83,7 @@ namespace Xamarin.Forms.Platform.Android
 				}
 
 				var view = GetView();
-				if(view != null && _dragSource.ContainsKey(view))
+				if (view != null && _dragSource.ContainsKey(view))
 				{
 					_dragSource.Remove(view);
 				}
@@ -129,7 +129,8 @@ namespace Xamarin.Forms.Platform.Android
 			switch (e.Action)
 			{
 				case DragAction.Started:
-					return HandleDragOver(package);
+					return true;
+				//HandleDragOver(package);
 				case DragAction.Drop:
 					{
 						HandleDrop(e.LocalState, package, e.ClipData);
@@ -151,10 +152,9 @@ namespace Xamarin.Forms.Platform.Android
 					}
 					break;
 				case DragAction.Entered:
-					{
-						return HandleDragOver(package);
-					}
+					return HandleDragOver(package);
 				case DragAction.Location:
+					return HandleDragLeave(package);
 				case DragAction.Exited:
 					return true;
 			}
@@ -166,6 +166,22 @@ namespace Xamarin.Forms.Platform.Android
 		{
 			var args = new DropCompletedEventArgs();
 			SendEventArgs<DragGestureRecognizer>(rec => rec.SendDropCompleted(args), element);
+		}
+
+		bool HandleDragLeave(DataPackage package)
+		{
+			var dragEventArgs = new DragEventArgs(package);
+			bool validTarget = false;
+			SendEventArgs<DropGestureRecognizer>(rec =>
+			{
+				if (!rec.AllowDrop)
+					return;
+
+				rec.SendDragLeave(dragEventArgs);
+				validTarget = validTarget || dragEventArgs.AcceptedOperation != DataPackageOperation.None;
+			});
+
+			return validTarget;
 		}
 
 		bool HandleDragOver(DataPackage package)
@@ -186,7 +202,7 @@ namespace Xamarin.Forms.Platform.Android
 
 		void HandleDrop(object sender, DataPackage datapackage, ClipData clipData)
 		{
-			if(datapackage == null)
+			if (datapackage == null)
 			{
 				var clipItem = clipData.GetItemAt(0);
 
@@ -213,7 +229,7 @@ namespace Xamarin.Forms.Platform.Android
 				{
 					await rec.SendDrop(args, element);
 				}
-				catch(Exception e)
+				catch (Exception e)
 				{
 					Internals.Log.Warning(nameof(DropGestureRecognizer), $"{e}");
 				}
@@ -250,8 +266,8 @@ namespace Xamarin.Forms.Platform.Android
 				if (!args.Handled)
 				{
 					if (args.Data.Image != null)
-					{						
-						mimeTypes.Add("image/jpeg");						
+					{
+						mimeTypes.Add("image/jpeg");
 						item = ConvertToClipDataItem(args.Data.Image, mimeTypes);
 					}
 					else
@@ -291,7 +307,7 @@ namespace Xamarin.Forms.Platform.Android
 
 				var dragShadowBuilder = new AView.DragShadowBuilder(v);
 
-				if(Forms.IsNougatOrNewer)
+				if (Forms.IsNougatOrNewer)
 					v.StartDragAndDrop(data, dragShadowBuilder, v, (int)ADragFlags.Global | (int)ADragFlags.GlobalUriRead);
 				else
 #pragma warning disable CS0618 // Type or member is obsolete
@@ -304,7 +320,7 @@ namespace Xamarin.Forms.Platform.Android
 		{
 			if (source is UriImageSource uriImageSource)
 			{
-				if(!mimeTypes.Contains(ClipDescription.MimetypeTextUrilist))
+				if (!mimeTypes.Contains(ClipDescription.MimetypeTextUrilist))
 					mimeTypes.Add(ClipDescription.MimetypeTextUrilist);
 
 				var aUri = AUri.Parse(uriImageSource.Uri.ToString());

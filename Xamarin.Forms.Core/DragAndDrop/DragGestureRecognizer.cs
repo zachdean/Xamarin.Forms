@@ -5,12 +5,13 @@ using System.ComponentModel;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Xamarin.Forms.PlatformConfiguration.AndroidSpecific;
 
 namespace Xamarin.Forms
 {
 	public class DragGestureRecognizer : GestureRecognizer
 	{
-		public static readonly BindableProperty CanDragProperty = BindableProperty.Create(nameof(CanDrag), typeof(bool), typeof(DragGestureRecognizer), false);
+		public static readonly BindableProperty CanDragProperty = BindableProperty.Create(nameof(CanDrag), typeof(bool), typeof(DragGestureRecognizer), true);
 
 		public static readonly BindableProperty DropCompletedCommandProperty = BindableProperty.Create(nameof(DropCompletedCommand), typeof(ICommand), typeof(DragGestureRecognizer), null);
 
@@ -19,6 +20,8 @@ namespace Xamarin.Forms
 		public static readonly BindableProperty DragStartingCommandProperty = BindableProperty.Create(nameof(DragStartingCommand), typeof(ICommand), typeof(DragGestureRecognizer), null);
 
 		public static readonly BindableProperty DragStartingCommandParameterProperty = BindableProperty.Create(nameof(DragStartingCommandParameter), typeof(object), typeof(DragGestureRecognizer), null);
+
+		VisualElement _parent;
 
 		public DragGestureRecognizer()
 		{
@@ -72,7 +75,13 @@ namespace Xamarin.Forms
 		{
 			var args = new DragStartingEventArgs();
 
-			SendDragStarting(args, element);
+			DragStartingCommand?.Execute(DragStartingCommandParameter);
+			DragStarting?.Invoke(this, args);
+
+			if (!args.Handled)
+			{
+				args.Data.PropertiesInternal.Add("DragSource", element);
+			}
 
 			if (args.Cancel || args.Handled)
 				return args;
@@ -87,16 +96,48 @@ namespace Xamarin.Forms
 			return args;
 		}
 
-		void SendDragStarting(DragStartingEventArgs args, VisualElement element)
+		protected override void OnParentSet()
 		{
-			_ = args ?? throw new ArgumentNullException(nameof(args));
+			base.OnParentSet();
 
-			DragStartingCommand?.Execute(DragStartingCommandParameter);
-			DragStarting?.Invoke(this, args);
+			if (_parent != null)
+				DragGestureRecognizer.RemoveVisualStateGroups(_parent);
 
-			if (!args.Handled)
+			if (!(Parent is VisualElement ve))
+				return;
+
+			_parent = ve;
+			DragGestureRecognizer.RemoveVisualStateGroups(_parent);
+		}
+
+		internal static void SetupVisualStateGroups(VisualElement element)
+		{
+			foreach(var stateGroup in VisualStateManager.GetVisualStateGroups(element))
 			{
-				args.Data.PropertiesInternal.Add("DragSource", element);
+				if (stateGroup.Name == "DragAndDropStates")
+					return;
+			}
+
+			VisualStateGroup dragAndDropStates = new VisualStateGroup()
+			{
+				Name = "DragAndDropStates"
+			};
+
+			dragAndDropStates.States.Add(new VisualState() { Name = "DragNormal" });
+			dragAndDropStates.States.Add(new VisualState() { Name = "DragOver" });
+			dragAndDropStates.States.Add(new VisualState() { Name = "Dragging" });
+		}
+
+		internal static void RemoveVisualStateGroups(VisualElement element)
+		{
+			var groups = VisualStateManager.GetVisualStateGroups(element);
+			foreach (var stateGroup in VisualStateManager.GetVisualStateGroups(element))
+			{
+				if (stateGroup.Name == "DragAndDropStates")
+				{
+					groups.Remove(stateGroup);
+					return;
+				}
 			}
 		}
 	}

@@ -74,7 +74,14 @@ namespace Xamarin.Forms.DualScreen
 
 				bool isDuo = _HingeService._isDuo = ScreenHelper.IsDualScreenDevice(_mainActivity);
 				if (!isDuo)
+				{
+					if (_mainActivity is IDeviceInfoProvider infoProvider)
+					{
+						infoProvider.ConfigurationChanged += _HingeService.ConfigurationChanged;
+					}
+
 					return;
+				}
 
 				var screenHelper = _HingeService._helper ?? new ScreenHelper();
 				isDuo = screenHelper.Initialize(_mainActivity);
@@ -131,7 +138,7 @@ namespace Xamarin.Forms.DualScreen
 								
 				var hinge = _helper.GetHingeBoundsDip();
 
-				if (hinge == null)
+				if (hinge == null || !IsSpanned)
 					return Rectangle.Zero;
 				
 				var hingeDp = new Rectangle((hinge.Left), (hinge.Top), (hinge.Width()), (hinge.Height()));
@@ -139,6 +146,7 @@ namespace Xamarin.Forms.DualScreen
 				return hingeDp;
 			}
 
+			public bool IsDualScreenDevice => IsDuo;
 			public bool IsLandscape
 			{
 				get
