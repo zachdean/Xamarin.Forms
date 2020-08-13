@@ -153,9 +153,10 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 			ViewRenderer.MeasureExactly(this, Element, Context);
 		}
 
-
 		public override void Draw(Canvas canvas)
 		{
+			canvas.ClipShape(Context, Element);
+
 			if (_backgroundTracker?.BackgroundDrawable != null)
 				_backgroundTracker.BackgroundDrawable.DrawCircle(canvas, canvas.Width, canvas.Height, base.Draw);
 			else
@@ -212,7 +213,7 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 		protected virtual void OnElementChanged(ElementChangedEventArgs<Button> e)
 		{
 			ElementChanged?.Invoke(this, new VisualElementChangedEventArgs(e.OldElement, e.NewElement));
-		
+
 			if (e.OldElement != null)
 			{
 				e.OldElement.PropertyChanged -= OnElementPropertyChanged;
@@ -246,6 +247,11 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 
 		protected virtual void OnElementPropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
+			if (this.IsDisposed())
+			{
+				return;
+			}	
+
 			if(Control?.LayoutParameters == null && _hasLayoutOccurred)
 			{
 				ElementPropertyChanged?.Invoke(this, e);

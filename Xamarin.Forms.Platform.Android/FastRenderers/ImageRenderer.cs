@@ -85,6 +85,13 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 			base.Invalidate();
 		}
 
+		public override void Draw(Canvas canvas)
+		{
+			canvas.ClipShape(Context, Element);
+
+			base.Draw(canvas);
+		}
+
 		protected virtual void OnElementChanged(ElementChangedEventArgs<Image> e)
 		{
 			this.EnsureId();
@@ -214,6 +221,11 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 
 		protected virtual void OnElementPropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
+			if (this.IsDisposed())
+			{
+				return;
+			}
+
 			ElementPropertyChanged?.Invoke(this, e);
 		}
 	}

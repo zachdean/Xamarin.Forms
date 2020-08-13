@@ -32,6 +32,19 @@ namespace Xamarin.Forms
 			return source.StartsWith(DefaultPrefix, StringComparison.Ordinal);
 		}
 
+		internal static bool IsDefault(BindableObject source)
+		{
+			return IsDefault(GetRoute(source));
+		}
+
+		internal static bool IsUserDefined(BindableObject source)
+		{
+			if (source == null)
+				return false;
+
+			return !(IsDefault(source) || IsImplicit(source));
+		}
+
 		internal static void Clear()
 		{
 			s_routes.Clear();
@@ -90,19 +103,29 @@ namespace Xamarin.Forms
 
 		internal static Uri Remove(Uri uri, bool implicitRoutes, bool defaultRoutes)
 		{
-			uri = ShellUriHandler.FormatUri(uri);
+			uri = ShellUriHandler.FormatUri(uri, null);
 
 			string[] parts = uri.OriginalString.TrimEnd(_pathSeparator[0]).Split(_pathSeparator[0]);
 
 			bool userDefinedRouteAdded = false;
 			List<string> toKeep = new List<string>();
 			for (int i = 0; i < parts.Length; i++)
+			{
+				// This means there are no routes defined on the shell but the user has navigated to a global route
+				// so we need to attach the final route where the user left the shell
+				if (s_routes.ContainsKey(parts[i]) && !userDefinedRouteAdded && i > 0)
+				{
+					toKeep.Add(parts[i - 1]);
+				}
+
 				if (!(IsDefault(parts[i]) && defaultRoutes) && !(IsImplicit(parts[i]) && implicitRoutes))
 				{
 					if (!String.IsNullOrWhiteSpace(parts[i]))
 						userDefinedRouteAdded = true;
+
 					toKeep.Add(parts[i]);
 				}
+			}
 
 			if(!userDefinedRouteAdded && parts.Length > 0)
 			{
@@ -110,11 +133,6 @@ namespace Xamarin.Forms
 			}
 
 			return new Uri(string.Join(_pathSeparator, toKeep), UriKind.Relative);
-		}
-
-		internal static Uri RemoveImplicit(Uri uri)
-		{
-			return Remove(uri, true, false);
 		}
 
 		public static string FormatRoute(List<string> segments)

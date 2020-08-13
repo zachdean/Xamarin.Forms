@@ -15,6 +15,12 @@ using Xamarin.Forms.Controls.GalleryPages.CollectionViewGalleries.CarouselViewGa
 using Xamarin.Forms.Controls.GalleryPages.RefreshViewGalleries;
 using Xamarin.Forms.Controls.GalleryPages.SwipeViewGalleries;
 using Xamarin.Forms.Controls.GalleryPages.PlatformTestsGallery;
+using Xamarin.Forms.Controls.GalleryPages.AppThemeGalleries;
+using Xamarin.Forms.Controls.GalleryPages.ExpanderGalleries;
+using Xamarin.Forms.Controls.GalleryPages.RadioButtonGalleries;
+using Xamarin.Forms.Controls.GalleryPages.ShapesGalleries;
+using Xamarin.Forms.Controls.GalleryPages.GradientGalleries;
+using Xamarin.Forms.Controls.GalleryPages.DragAndDropGalleries;
 
 namespace Xamarin.Forms.Controls
 {
@@ -217,6 +223,7 @@ namespace Xamarin.Forms.Controls
 		public CoreRootView()
 		{
 			var roots = new[] {
+				new CoreViewContainer ("SwapRoot - Tests", typeof(PlatformTestsConsole)),
 				new CoreViewContainer ("SwapRoot - CarouselPage", typeof(CoreCarouselPage)),
 				new CoreViewContainer ("SwapRoot - ContentPage", typeof(CoreContentPage)),
 				new CoreViewContainer ("SwapRoot - MasterDetailPage", typeof(CoreMasterDetailPage)),
@@ -291,8 +298,11 @@ namespace Xamarin.Forms.Controls
 				new GalleryPageFactory(() => new EmbeddedFonts(), "Embedded Fonts"),
 				new GalleryPageFactory(() => new MemoryLeakGallery(), "Memory Leak"),
 				new GalleryPageFactory(() => new Issues.A11yTabIndex(), "Accessibility TabIndex"),
+				new GalleryPageFactory(() => new RadioButtonGalleries(), "RadioButton Gallery"),
+				new GalleryPageFactory(() => new RadioButtonCoreGalleryPage(), "RadioButton Core Gallery"),
 				new GalleryPageFactory(() => new FontImageSourceGallery(), "Font ImageSource"),
-				new GalleryPageFactory(() => new IndicatorsSample(), "Indicator Gallery"),
+				new GalleryPageFactory(() => new ExpanderGalleries(), "Expander Gallery"),
+				new GalleryPageFactory(() => new IndicatorGalleries(), "IndicatorView Gallery"),				
 				new GalleryPageFactory(() => new CarouselViewGallery(), "CarouselView Gallery"),
 				new GalleryPageFactory(() => new CarouselViewCoreGalleryPage(), "CarouselView Core Gallery"),
 				new GalleryPageFactory(() => new CollectionViewGallery(), "CollectionView Gallery"),
@@ -335,8 +345,10 @@ namespace Xamarin.Forms.Controls
 				new GalleryPageFactory(() => new ButtonBorderBackgroundGalleryPage(VisualMarker.Material), "Button Border & Background Gallery (Material)"),
 				new GalleryPageFactory(() => new CheckBoxCoreGalleryPage(), "CheckBox Gallery"),
 				new GalleryPageFactory(() => new DatePickerCoreGalleryPage(), "DatePicker Gallery"),
+				new GalleryPageFactory(() => new DragAndDropGallery(), "Drag and Drop Gallery"),
 				new GalleryPageFactory(() => new EditorCoreGalleryPage(), "Editor Gallery"),
 				new GalleryPageFactory(() => new FrameCoreGalleryPage(), "Frame Gallery"),
+				new GalleryPageFactory(() => new GradientsGallery(), "Brushes Gallery"),
 				new GalleryPageFactory(() => new ImageCoreGalleryPage(), "Image Gallery"),
 				new GalleryPageFactory(() => new ImageButtonCoreGalleryPage(), "Image Button Gallery"),
 				new GalleryPageFactory(() => new KeyboardCoreGallery(), "Keyboard Gallery"),
@@ -353,6 +365,7 @@ namespace Xamarin.Forms.Controls
 				new GalleryPageFactory(() => new ScrollGallery(ScrollOrientation.Horizontal), "ScrollView Gallery Horizontal"),
 				new GalleryPageFactory(() => new ScrollGallery(ScrollOrientation.Both), "ScrollView Gallery 2D"),
 				new GalleryPageFactory(() => new SearchBarCoreGalleryPage(), "SearchBar Gallery"),
+				new GalleryPageFactory(() => new ShapesGallery(), "Shapes Gallery"),
 				new GalleryPageFactory(() => new SliderCoreGalleryPage(), "Slider Gallery"),
 				new GalleryPageFactory(() => new StepperCoreGalleryPage(), "Stepper Gallery"),
 				new GalleryPageFactory(() => new SwitchCoreGalleryPage(), "Switch Gallery"),
@@ -364,6 +377,7 @@ namespace Xamarin.Forms.Controls
 				new GalleryPageFactory(() => new WebViewCoreGalleryPage(), "WebView Gallery"),
 				new GalleryPageFactory(() => new WkWebViewCoreGalleryPage(), "WkWebView Gallery"),
 				new GalleryPageFactory(() => new DynamicViewGallery(), "Dynamic ViewGallery"),
+				new GalleryPageFactory(() => new AppThemeGallery(), "AppTheme Gallery"),
 				//pages
  				new GalleryPageFactory(() => new RootContentPage ("Content"), "RootPages Gallery"),
 				new GalleryPageFactory(() => new MasterDetailPageTabletPage(), "MasterDetailPage Tablet Page"),
@@ -427,6 +441,7 @@ namespace Xamarin.Forms.Controls
 				new GalleryPageFactory(() => new ViewCellGallery(), "ViewCell Gallery - Legacy"),
 				new GalleryPageFactory(() => new WebViewGallery(), "WebView Gallery - Legacy"),
 				new GalleryPageFactory(() => new BindableLayoutGalleryPage(), "BindableLayout Gallery - Legacy"),
+				new GalleryPageFactory(() => new ShowModalWithTransparentBkgndGalleryPage(), "Modal With Transparent Background Gallery - Legacy"),
 			};
 
 		public CorePageView(Page rootPage, NavigationBehavior navigationBehavior = NavigationBehavior.PushAsync)
@@ -486,7 +501,13 @@ namespace Xamarin.Forms.Controls
 				var item = args.SelectedItem;
 				var page = item as GalleryPageFactory;
 				if (page != null)
-					await PushPage(page.Realize());
+				{
+					var realize = page.Realize();
+					if (realize is Shell)
+						Application.Current.MainPage = realize;
+					else
+						await PushPage(realize);
+				}
 
 				SelectedItem = null;
 			};
@@ -494,18 +515,10 @@ namespace Xamarin.Forms.Controls
 			SetValue(AutomationProperties.NameProperty, "Core Pages");
 		}
 
-		NavigationBehavior navigationBehavior;
 
 		async Task PushPage(Page contentPage)
 		{
-			if (navigationBehavior == NavigationBehavior.PushModalAsync)
-			{
-				await Navigation.PushModalAsync(contentPage);
-			}
-			else
-			{
-				await Navigation.PushAsync(contentPage);
-			}
+			await Navigation.PushAsync(contentPage);
 		}
 
 		readonly Dictionary<string, GalleryPageFactory> _titleToPage;

@@ -24,6 +24,7 @@ namespace Xamarin.Forms.Platform.Android
 		int _gotoPosition = -1;
 		bool _noNeedForScroll;
 		bool _initialized;
+		bool _isVisible;
 
 		List<View> _oldViews;
 		CarouselViewwOnGlobalLayoutListener _carouselViewLayoutListener;
@@ -62,7 +63,6 @@ namespace Xamarin.Forms.Platform.Android
 			AddLayoutListener();
 			UpdateIsSwipeEnabled();
 			UpdateIsBounceEnabled();
-			UpdateInitialPosition();
 			UpdateItemSpacing();
 		}
 
@@ -131,7 +131,6 @@ namespace Xamarin.Forms.Platform.Android
 			if (adapter != null)
 			{
 				adapter.NotifyItemChanged(_oldPosition);
-				Carousel.ScrollTo(_oldPosition, position: Xamarin.Forms.ScrollToPosition.Center);
 			}
 
 			base.UpdateItemSpacing();
@@ -190,13 +189,16 @@ namespace Xamarin.Forms.Platform.Android
 			var oldItemViewAdapter = ItemsViewAdapter;
 			UnsubscribeCollectionItemsSourceChanged(oldItemViewAdapter);
 
-			ItemsViewAdapter = new ItemsViewAdapter<ItemsView, IItemsViewSource>(ItemsView,
+			ItemsViewAdapter = new ItemsViewAdapter<ItemsView, IItemsViewSource>(ItemsView, 
 				(view, context) => new SizedItemContentView(Context, GetItemWidth, GetItemHeight));
-
 
 			_gotoPosition = -1;
 
+
 			SwapAdapter(ItemsViewAdapter, false);
+
+			if (_oldPosition > 0)
+				UpdateInitialPosition();
 
 			if (ItemsViewAdapter?.ItemsSource is ObservableItemsSource observableItemsSource)
 				observableItemsSource.CollectionItemsSourceChanged += CollectionItemsSourceChanged;
@@ -245,6 +247,9 @@ namespace Xamarin.Forms.Platform.Android
 				&& currentItemPosition != -1)
 			{
 				carouselPosition = currentItemPosition;
+				//if we are adding a item and we want to stay on the same position
+				//we don't need to scroll
+				_noNeedForScroll = true;
 			}
 
 			_gotoPosition = -1;
@@ -258,6 +263,7 @@ namespace Xamarin.Forms.Platform.Android
 			{
 				UpdateItemDecoration();
 			}
+
 			UpdateVisualStates();
 		}
 
@@ -293,7 +299,19 @@ namespace Xamarin.Forms.Platform.Android
 
 			_oldPosition = position;
 
+			if (_oldPosition > 0)
+				_gotoPosition = _oldPosition;
+
 			SetCurrentItem(_oldPosition);
+			Carousel.ScrollTo(_oldPosition, position: Xamarin.Forms.ScrollToPosition.Center, animate: Carousel.AnimatePositionChanges);
+		}
+
+		void UpdatePositionFromVisibilityChanges()
+		{
+			if (_isVisible != Carousel.IsVisible)
+				UpdateInitialPosition();
+
+			_isVisible = Carousel.IsVisible;
 		}
 
 		void UpdateVisualStates()
@@ -360,6 +378,7 @@ namespace Xamarin.Forms.Platform.Android
 
 		void CarouselViewScrolled(object sender, ItemsViewScrolledEventArgs e)
 		{
+			_noNeedForScroll = false;
 			UpdatePosition(e.CenterItemIndex);
 			UpdateVisualStates();
 		}
@@ -402,7 +421,12 @@ namespace Xamarin.Forms.Platform.Android
 			var carouselPosition = Carousel.Position;
 
 			if (itemCount == 0)
+			{
+				//we are trying to set a position but our Collection doesn't have items still
+				_oldPosition = carouselPosition;
 				return;
+			}
+
 
 			if (carouselPosition >= itemCount || carouselPosition < 0)
 				throw new IndexOutOfRangeException($"Can't set CarouselView to position {carouselPosition}. ItemsSource has {itemCount} items.");
@@ -439,12 +463,13 @@ namespace Xamarin.Forms.Platform.Android
 		{
 			if (!_initialized)
 			{
-				Carousel.Scrolled += CarouselViewScrolled;
-
 				UpdateInitialPosition();
+				Carousel.Scrolled += CarouselViewScrolled;
 				_initialized = true;
+				_isVisible = Carousel.IsVisible;
 			}
 
+			UpdatePositionFromVisibilityChanges();
 			UpdateVisualStates();
 		}
 
@@ -460,7 +485,7 @@ namespace Xamarin.Forms.Platform.Android
 
 		class CarouselViewOnScrollListener : RecyclerViewScrollListener<ItemsView, IItemsViewSource>
 		{
-			public CarouselViewOnScrollListener(ItemsView itemsView, ItemsViewAdapter<ItemsView, IItemsViewSource> itemsViewAdapter) : base(itemsView, itemsViewAdapter)
+			public CarouselViewOnScrollListener(ItemsView itemsView, ItemsViewAdapter<ItemsView, IItemsViewSource> itemsViewAdapter) : base(itemsView, itemsViewAdapter, true)
 			{
 			}
 

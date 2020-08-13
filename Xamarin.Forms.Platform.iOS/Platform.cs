@@ -1,14 +1,14 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using CoreGraphics;
 using Foundation;
 using UIKit;
 using Xamarin.Forms.Internals;
-using RectangleF = CoreGraphics.CGRect;
 using Xamarin.Forms.PlatformConfiguration.iOSSpecific;
+using IOPath = System.IO.Path;
+using RectangleF = CoreGraphics.CGRect;
 
 namespace Xamarin.Forms.Platform.iOS
 {
@@ -162,7 +162,6 @@ namespace Xamarin.Forms.Platform.iOS
 		{
 			EndEditing();
 
-
 			var elementConfiguration = modal as IElementConfiguration<Page>;
 
 			var presentationStyle = elementConfiguration?.On<PlatformConfiguration.iOS>()?.ModalPresentationStyle().ToNativeModalPresentationStyle();
@@ -314,7 +313,7 @@ namespace Xamarin.Forms.Platform.iOS
 			if (_appeared)
 				return;
 
-			_renderer.View.BackgroundColor = UIColor.White;
+			_renderer.View.BackgroundColor = ColorExtensions.BackgroundColor;
 			_renderer.View.ContentMode = UIViewContentMode.Redraw;
 
 #pragma warning disable CS0618 // Type or member is obsolete
@@ -584,11 +583,11 @@ namespace Xamarin.Forms.Platform.iOS
 				if (uri.LocalPath.StartsWith("/local"))
 				{
 					var libraryPath = NSFileManager.DefaultManager.GetUrls(NSSearchPathDirectory.LibraryDirectory, NSSearchPathDomain.User)[0].Path;
-					filePath = Path.Combine(libraryPath, uri.LocalPath.Substring(7));
+					filePath = IOPath.Combine(libraryPath, uri.LocalPath.Substring(7));
 				}
 				else if (uri.LocalPath.StartsWith("/temp"))
 				{
-					filePath = Path.Combine(Path.GetTempPath(), uri.LocalPath.Substring(6));
+					filePath = IOPath.Combine(IOPath.GetTempPath(), uri.LocalPath.Substring(6));
 				}
 				else
 				{

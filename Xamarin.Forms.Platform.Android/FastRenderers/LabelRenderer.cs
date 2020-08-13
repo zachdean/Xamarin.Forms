@@ -125,6 +125,8 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 			if (!string.IsNullOrEmpty(hint) && setHint)
 				Control.Hint = string.Empty;
 
+			var hc = MeasureSpec.GetSize(heightConstraint);
+
 			Measure(widthConstraint, heightConstraint);
 			var result = new SizeRequest(new Size(MeasuredWidth, MeasuredHeight), new Size());
 
@@ -275,6 +277,11 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 
 		protected virtual void OnElementPropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
+			if (this.IsDisposed())
+			{
+				return;
+			}
+
 			ElementPropertyChanged?.Invoke(this, e);
 
 			if (Control?.LayoutParameters == null && _hasLayoutOccurred)
@@ -293,7 +300,7 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 				UpdateCharacterSpacing();
 			else if (e.PropertyName == Label.TextDecorationsProperty.PropertyName)
 				UpdateTextDecorations();
-			else if (e.PropertyName == Label.TextProperty.PropertyName || e.PropertyName == Label.FormattedTextProperty.PropertyName)
+			else if (e.IsOneOf(Label.TextProperty, Label.FormattedTextProperty, Label.TextTransformProperty))
 				UpdateText();
 			else if (e.PropertyName == Label.LineHeightProperty.PropertyName)
 				UpdateLineHeight();
@@ -413,7 +420,7 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 						break;
 
 					default:
-						Text = Element.Text;
+							Text = Element.UpdateFormsText(Element.Text, Element.TextTransform);
 						break;
 				}
 				
