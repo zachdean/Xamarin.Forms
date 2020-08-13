@@ -96,9 +96,12 @@ namespace Xamarin.Forms.Platform.Android
 		void SendEventArgs<TRecognizer>(Action<TRecognizer> func, View view = null)
 		{
 			view = view ?? GetView();
-			var renderer = Platform.GetRenderer(view);
+			//var renderer = Platform.GetRenderer(view);
 
-			if (!renderer.View.IsAlive() && view != null)
+			//if (renderer == null)
+			//	return;
+
+			if (view == null)
 				return;
 
 			var gestures =
@@ -143,11 +146,13 @@ namespace Xamarin.Forms.Platform.Android
 					{
 						HandleDrop(e.LocalState, package, e.ClipData);
 
-						if (element is View vSource && _dragSource.ContainsKey(element))
+						if (element is View vSource)
 						{
 							HandleDropCompleted(vSource);
-							_dragSource.Remove(element);
 						}
+
+						if(_dragSource.ContainsKey(element))
+							_dragSource.Remove(element);
 
 						return true;
 					}
