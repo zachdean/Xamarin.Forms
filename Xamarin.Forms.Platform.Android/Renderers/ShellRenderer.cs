@@ -80,10 +80,7 @@ namespace Xamarin.Forms.Platform.Android
 		{
 			var width = (int)AndroidContext.ToPixels(Element.Width);
 			var height = (int)AndroidContext.ToPixels(Element.Height);
-			var view = _flyoutRenderer.AndroidView;
-
-			//if(view.MeasuredHeight != height || view.MeasuredWidth != width)
-				_flyoutRenderer.AndroidView.Layout(0, 0, width, height);
+			_flyoutRenderer.AndroidView.Layout(0, 0, width, height);
 		}
 
 		#endregion IVisualElementRenderer

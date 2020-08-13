@@ -303,7 +303,15 @@ namespace Xamarin.Forms.Platform.Android
 					Shell.SetValueFromRenderer(Shell.FlyoutIsPresentedProperty, true);
 					_currentLockMode = LockModeLockedOpen;
 					SetDrawerLockMode(_currentLockMode);
-					_content.SetPadding((int)FlyoutWidth, _content.PaddingTop, _content.PaddingRight, _content.PaddingBottom);
+
+					int leftPadding = (int)FlyoutWidth;
+
+					if(_isduo && _flyoutWidth == double.MinValue && DualScreenService.IsSpanned && !DualScreenService.IsLandscape)
+					{
+						leftPadding += (int)Context.ToPixels(DualScreenService.GetHinge().Width);
+					}
+
+					_content.SetPadding(leftPadding, _content.PaddingTop, _content.PaddingRight, _content.PaddingBottom);
 					break;
 			}
 

@@ -227,17 +227,17 @@ namespace Xamarin.Forms.Platform.Android
 			public Element Element { get; set; }
 		}
 
-		public class ElementViewHolder : RecyclerView.ViewHolder
+		class ElementViewHolder : RecyclerView.ViewHolder
 		{
 			Action<Element> _selectedCallback;
 			Element _element;
-			AView _itemView;
+			LinearLayoutWithFocus _itemView;
 			bool _disposed;
 			ContainerView _containerView;
 			IShellContext _shellContext;
 			DataTemplate _template;
 
-			public ElementViewHolder(DataTemplate template, ViewGroup itemView, Action<Element> selectedCallback, IShellContext shellContext) : base(itemView)
+			public ElementViewHolder(DataTemplate template, LinearLayoutWithFocus itemView, Action<Element> selectedCallback, IShellContext shellContext) : base(itemView)
 			{
 				_template = template;
 				_shellContext = shellContext;
@@ -302,6 +302,7 @@ namespace Xamarin.Forms.Platform.Android
 						content.Parent = _shellContext.Shell;
 						PropertyPropagationExtensions.PropagatePropertyChanged(null, content, _element);
 						_containerView.View = content;
+						_itemView.Content = content;
 					}
 				}
 			}
