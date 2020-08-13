@@ -123,29 +123,29 @@ namespace Xamarin.Forms.Platform.Android
 			}
 
 			DataPackage package = null;
-
 			if (e.LocalState is IVisualElementRenderer renderer &&
-				_dragSource.ContainsKey(renderer.Element))
+				renderer.Element is VisualElement element &&
+				_dragSource.ContainsKey(element))
 			{
-				package = _dragSource[renderer.Element];
+				package = _dragSource[element];
 			}
 			else
 			{
 				renderer = null;
-			}
+				element = null;
+			}			
 
 			switch (e.Action)
 			{
 				case DragAction.Started:
 					return true;
-				//HandleDragOver(package);
 				case DragAction.Drop:
 					{
-						var element = renderer?.Element;
 						HandleDrop(e.LocalState, package, e.ClipData);
-						if (element != null && _dragSource.ContainsKey(element))
+
+						if (element is View vSource && _dragSource.ContainsKey(element))
 						{
-							HandleDropCompleted(element as View);
+							HandleDropCompleted(vSource);
 							_dragSource.Remove(element);
 						}
 
