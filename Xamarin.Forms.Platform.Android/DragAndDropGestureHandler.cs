@@ -133,21 +133,23 @@ namespace Xamarin.Forms.Platform.Android
 				//HandleDragOver(package);
 				case DragAction.Drop:
 					{
+						var element = renderer?.Element;
 						HandleDrop(e.LocalState, package, e.ClipData);
-						if (renderer != null && _dragSource.ContainsKey(renderer.Element))
+						if (element != null && _dragSource.ContainsKey(element))
 						{
-							HandleDropCompleted(renderer.Element as View);
-							_dragSource.Remove(renderer.Element);
+							HandleDropCompleted(element as View);
+							_dragSource.Remove(element);
 						}
 
 						return true;
 					}
 				case DragAction.Ended:
 					{
-						if (renderer != null && _dragSource.ContainsKey(renderer.Element))
+						var element = renderer?.Element;
+						if (element != null && _dragSource.ContainsKey(element))
 						{
-							HandleDropCompleted(renderer.Element as View);
-							_dragSource.Remove(renderer.Element);
+							HandleDropCompleted(element as View);
+							_dragSource.Remove(element);
 						}
 					}
 					break;
