@@ -136,7 +136,8 @@ namespace Xamarin.Forms.Platform.Android
 
 			Shell.PropertyChanged += OnShellPropertyChanged;
 
-			_isduo = DualScreenService?.IsDualScreenDevice ?? false;
+			//_isduo = DualScreenService?.IsDualScreenDevice ?? false;
+			_isduo = false;
 			if (_isduo)
 			{
 				DualScreenService.OnScreenChanged += OnDualScreenServiceScreenChanged;

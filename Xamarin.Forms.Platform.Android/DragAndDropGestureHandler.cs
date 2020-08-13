@@ -154,9 +154,9 @@ namespace Xamarin.Forms.Platform.Android
 				case DragAction.Entered:
 					return HandleDragOver(package);
 				case DragAction.Location:
-					return HandleDragLeave(package);
-				case DragAction.Exited:
 					return true;
+				case DragAction.Exited:
+					return HandleDragLeave(package);
 			}
 
 			return false;
