@@ -117,14 +117,22 @@ namespace Xamarin.Forms.Platform.Android
 
 		public bool OnDrag(AView v, DragEvent e)
 		{
+			if(e.Action == DragAction.Ended)
+			{
+				return true;
+			}
+
 			DataPackage package = null;
+
 			if (e.LocalState is IVisualElementRenderer renderer &&
 				_dragSource.ContainsKey(renderer.Element))
 			{
 				package = _dragSource[renderer.Element];
 			}
 			else
+			{
 				renderer = null;
+			}
 
 			switch (e.Action)
 			{
@@ -144,14 +152,7 @@ namespace Xamarin.Forms.Platform.Android
 						return true;
 					}
 				case DragAction.Ended:
-					{
-						var element = renderer?.Element;
-						if (element != null && _dragSource.ContainsKey(element))
-						{
-							HandleDropCompleted(element as View);
-							_dragSource.Remove(element);
-						}
-					}
+					// this is never reached
 					break;
 				case DragAction.Entered:
 					return HandleDragOver(package);
