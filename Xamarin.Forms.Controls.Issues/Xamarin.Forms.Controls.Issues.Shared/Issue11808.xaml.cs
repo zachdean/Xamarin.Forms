@@ -57,7 +57,7 @@ namespace Xamarin.Forms.Controls.Issues
 
 			for (int i = 0; i < 10; i++)
 			{
-				Items.Add($"Item {i}");
+				Items.Add($"Item {i + 1} (Swipe to Left)");
 			}
 		}
 	}
