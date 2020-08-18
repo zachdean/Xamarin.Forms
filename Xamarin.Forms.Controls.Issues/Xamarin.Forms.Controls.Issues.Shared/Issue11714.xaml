@@ -1,0 +1,65 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<controls:TestContentPage
+    xmlns:controls="clr-namespace:Xamarin.Forms.Controls"
+    xmlns="http://xamarin.com/schemas/2014/forms"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    x:Class="Xamarin.Forms.Controls.Issues.Issue11714"
+    Title="Issue 11714">
+    <controls:TestContentPage.Resources>
+        <ResourceDictionary>
+
+            <LinearGradientBrush x:Key="LinearBrush" StartPoint="0, 0" EndPoint="1, 0">
+                <GradientStop Color="LightGreen" Offset="0.1" />
+                <GradientStop Color="DarkGreen" Offset="0.9" />
+            </LinearGradientBrush>
+
+            <Style x:Key="GradientContainerStyle" TargetType="Grid">
+                <Setter Property="HorizontalOptions" Value="Start" />
+                <Setter Property="HeightRequest" Value="100" />
+                <Setter Property="WidthRequest" Value="100" />
+            </Style>
+
+            <Style x:Key="ShadowFrameStyle" TargetType="Frame">
+                <Setter Property="HasShadow" Value="True" />
+                <Setter Property="CornerRadius" Value="48" />
+                <Setter Property="Background" Value="Transparent" />
+            </Style>
+
+            <Style x:Key="GradientBoxStyle" TargetType="BoxView">
+                <Setter Property="Background" Value="{StaticResource LinearBrush}" />
+                <Setter Property="CornerRadius" Value="48" />
+            </Style>
+
+            <Style x:Key="TransparentButtonStyle" TargetType="Button">
+                <Setter Property="Background" Value="Transparent" />
+                <Setter Property="TextColor" Value="White" />
+                <Setter Property="FontSize" Value="Large" />
+            </Style>
+
+        </ResourceDictionary>
+    </controls:TestContentPage.Resources>
+    <StackLayout
+        Padding="0">
+        <Label
+            Padding="12"
+            BackgroundColor="Black"
+            TextColor="White"
+            Text="If the order of the elements (Z-Index) is correct, the test has passed."/>
+        <Grid
+            Padding="12">
+            <Grid
+                Style="{StaticResource GradientContainerStyle}">
+                <Frame
+                    Style="{StaticResource ShadowFrameStyle}" />
+                <BoxView
+                    Style="{StaticResource GradientBoxStyle}" />
+                <Button
+                    Style="{StaticResource TransparentButtonStyle}"
+                    Text="+" />
+            </Grid>
+        </Grid>
+    </StackLayout>
+</controls:TestContentPage>
