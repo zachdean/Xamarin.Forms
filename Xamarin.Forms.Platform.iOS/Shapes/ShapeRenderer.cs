@@ -19,9 +19,6 @@ namespace Xamarin.Forms.Platform.MacOS
         where TShape : Shape
         where TNativeShape : ShapeView
     {
-        double _height;
-        double _width;
-
         protected override void OnElementChanged(ElementChangedEventArgs<TShape> args)
         {
             base.OnElementChanged(args);
@@ -44,16 +41,8 @@ namespace Xamarin.Forms.Platform.MacOS
         {
             base.OnElementPropertyChanged(sender, args);
 
-            if (args.PropertyName == VisualElement.HeightProperty.PropertyName)
-            {
-                _height = Element.Height;
+            if (args.PropertyName == VisualElement.HeightProperty.PropertyName || args.PropertyName == VisualElement.WidthProperty.PropertyName)
                 UpdateSize();
-            }
-            else if (args.PropertyName == VisualElement.WidthProperty.PropertyName)
-            {
-                _width = Element.Width;
-                UpdateSize();
-            }
             else if (args.PropertyName == Shape.AspectProperty.PropertyName)
                 UpdateAspect();
             else if (args.PropertyName == Shape.FillProperty.PropertyName)
@@ -91,7 +80,10 @@ namespace Xamarin.Forms.Platform.MacOS
 
         void UpdateSize()
         {
-            Control.ShapeLayer.UpdateSize(new CGSize(new nfloat(_width), new nfloat(_height)));
+            nfloat height = new nfloat(Math.Max(Element.Height, 0));
+            nfloat width = new nfloat(Math.Max(Element.Width, 0));
+
+            Control.ShapeLayer.UpdateSize(new CGSize(width, height));
         }
 
         void UpdateFill()

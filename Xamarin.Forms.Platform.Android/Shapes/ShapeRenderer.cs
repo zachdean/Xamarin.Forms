@@ -17,9 +17,6 @@ namespace Xamarin.Forms.Platform.Android
          where TShape : Shape
          where TNativeShape : ShapeView
     {
-        double _height;
-        double _width;
-
         public ShapeRenderer(Context context) : base(context)
         {
 
@@ -48,16 +45,8 @@ namespace Xamarin.Forms.Platform.Android
         {
             base.OnElementPropertyChanged(sender, args);
 
-            if (args.PropertyName == VisualElement.HeightProperty.PropertyName)
-            {
-                _height = Element.Height;
+            if (args.PropertyName == VisualElement.HeightProperty.PropertyName || args.PropertyName == VisualElement.WidthProperty.PropertyName)
                 UpdateSize();
-            }
-            else if (args.PropertyName == VisualElement.WidthProperty.PropertyName)
-            {
-                _width = Element.Width;
-                UpdateSize();
-            }
             else if (args.PropertyName == Shape.AspectProperty.PropertyName)
                 UpdateAspect();
             else if (args.PropertyName == Shape.FillProperty.PropertyName)
@@ -90,7 +79,10 @@ namespace Xamarin.Forms.Platform.Android
 
         void UpdateSize()
         {
-            Control.UpdateSize(_width, _height);
+            double height = Math.Max(Element.Height, 0);
+            double width = Math.Max(Element.Width, 0);
+
+            Control.UpdateSize(width, height);
         }
 
         void UpdateAspect()
