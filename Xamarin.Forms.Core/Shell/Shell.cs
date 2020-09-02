@@ -1088,7 +1088,7 @@ namespace Xamarin.Forms
 			}
 
 			var args = new ShellNavigatingEventArgs(this.CurrentState, "", ShellNavigationSource.Pop, true);
-			OnNavigating(args);
+			HandleNavigating(args);
 			return args.Cancelled;
 
 			async void NavigationPop()
@@ -1143,11 +1143,40 @@ namespace Xamarin.Forms
 		{
 		}
 
-		ShellNavigationState _lastNavigating;
+		ShellNavigatingEventArgs _pendingArgs = null;
+
 		protected virtual void OnNavigating(ShellNavigatingEventArgs args)
 		{
-			Navigating?.Invoke(this, args);
-			_lastNavigating = args.Target;
+
+		}
+
+		void HandleNavigating(ShellNavigatingEventArgs args)
+		{
+			if (_pendingArgs == null)
+			{
+				Navigating?.Invoke(this, args);
+				OnNavigating(args);
+			}
+			else
+			{
+				_pendingArgs = null;
+				return;
+			}
+
+			if(args.DeferalCount > 0 && args.CanCancel)
+			{
+				_pendingArgs = args;
+				args.RegisterDeferalCallback(async () =>
+				{
+					if (args.Cancelled)
+					{
+						_pendingArgs = null;
+						return;
+					}
+
+					await GoToAsync(args.Target);
+				});
+			}	
 		}
 
 		static void OnCurrentItemChanged(BindableObject bindable, object oldValue, object newValue)
@@ -1408,7 +1437,7 @@ namespace Xamarin.Forms
 
 			var navArgs = new ShellNavigatingEventArgs(CurrentState, proposedState, source, canCancel);
 
-			OnNavigating(navArgs);
+			HandleNavigating(navArgs);
 			//System.Diagnostics.Debug.WriteLine("Proposed: " + proposedState.Location);
 			return !navArgs.Cancelled;
 		}

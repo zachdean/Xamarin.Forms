@@ -28,6 +28,53 @@ namespace Xamarin.Forms
 			return true;
 		}
 
-		public bool Cancelled { get; private set; }
+		public bool Cancelled 
+		{ 
+			get => _cancelled || _deferalCount > 0;
+			private set => _cancelled = value; 
+		}
+
+		public ShellNavigatingDeferral GetDeferral()
+		{
+			if (!CanCancel)
+				return null;
+
+			_deferalCount++;
+			return new ShellNavigatingDeferral(DecrementDeferral);
+		}
+
+		void DecrementDeferral()
+		{
+			_deferalCount--;
+			if (_deferalCount == 0)
+				_callback();
+		}
+
+		int _deferalCount;
+
+		internal int DeferalCount => _deferalCount;
+		Action _callback;
+		private bool _cancelled;
+
+		internal void RegisterDeferalCallback(Action callback)
+		{
+			_callback = callback;
+		}
+	}
+
+	public class ShellNavigatingDeferral
+	{
+		Action _completed;
+
+		public ShellNavigatingDeferral(Action completed)
+		{
+			_completed = completed;
+		}
+
+		public void Complete()
+		{
+			_completed();
+			_completed = null;
+		}
 	}
 }
