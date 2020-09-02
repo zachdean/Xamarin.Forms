@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using Windows.UI.Text;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Media;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media;
 using Xamarin.Forms.Internals;
 using IOPath = System.IO.Path;
-using WApplication = Windows.UI.Xaml.Application;
+using WApplication = Microsoft.UI.Xaml.Application;
 
 namespace Xamarin.Forms.Platform.UWP
 {
@@ -30,7 +30,7 @@ namespace Xamarin.Forms.Platform.UWP
 			self.FontWeight = font.FontAttributes.HasFlag(FontAttributes.Bold) ? FontWeights.Bold : FontWeights.Normal;
 		}
 
-		public static void ApplyFont(this Windows.UI.Xaml.Documents.TextElement self, Font font)
+		public static void ApplyFont(this Microsoft.UI.Xaml.Documents.TextElement self, Font font)
 		{
 			self.FontSize = font.UseNamedSize ? font.NamedSize.GetFontSize() : font.FontSize;
 			self.FontFamily = font.ToFontFamily();

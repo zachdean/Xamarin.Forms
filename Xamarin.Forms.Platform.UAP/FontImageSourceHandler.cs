@@ -4,8 +4,8 @@ using System.Threading.Tasks;
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Text;
 using Microsoft.Graphics.Canvas.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Media;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media;
 using WFontIconSource = Microsoft.UI.Xaml.Controls.FontIconSource;
 
 namespace Xamarin.Forms.Platform.UWP
@@ -14,7 +14,7 @@ namespace Xamarin.Forms.Platform.UWP
 	{
 		float _minimumDpi = 300;
 
-		public Task<Windows.UI.Xaml.Media.ImageSource> LoadImageAsync(ImageSource imagesource,
+		public Task<Microsoft.UI.Xaml.Media.ImageSource> LoadImageAsync(ImageSource imagesource,
 			CancellationToken cancelationToken = default(CancellationToken))
 		{
 			if (!(imagesource is FontImageSource fontsource))
@@ -48,7 +48,9 @@ namespace Xamarin.Forms.Platform.UWP
 					ds.DrawTextLayout(layout, x, 1f, iconcolor);
 				}
 
-				return Task.FromResult((Windows.UI.Xaml.Media.ImageSource)imageSource);
+				return Task.FromResult< Microsoft.UI.Xaml.Media.ImageSource>(null);
+				// WINUII
+				//return Task.FromResult((Microsoft.UI.Xaml.Media.ImageSource)imageSource);
 			}
 		}
 

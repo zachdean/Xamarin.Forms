@@ -4,7 +4,7 @@ using Windows.ApplicationModel;
 
 namespace Xamarin.Forms.Platform.UWP
 {
-	public abstract class WindowsBasePage : Windows.UI.Xaml.Controls.Page
+	public abstract class WindowsBasePage : Microsoft.UI.Xaml.Controls.Page
 	{
 
 		Application _application;
@@ -13,8 +13,8 @@ namespace Xamarin.Forms.Platform.UWP
 		{
 			if (!Windows.ApplicationModel.DesignMode.DesignModeEnabled)
 			{
-				Windows.UI.Xaml.Application.Current.Suspending += OnApplicationSuspending;
-				Windows.UI.Xaml.Application.Current.Resuming += OnApplicationResuming;
+				Microsoft.UI.Xaml.Application.Current.Suspending += OnApplicationSuspending;
+				Microsoft.UI.Xaml.Application.Current.Resuming += OnApplicationResuming;
 			}
 		}
 

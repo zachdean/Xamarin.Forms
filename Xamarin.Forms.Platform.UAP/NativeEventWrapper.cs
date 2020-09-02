@@ -3,7 +3,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.UI.Xaml;
+using Microsoft.UI.Xaml;
 using Xamarin.Forms.Internals;
 
 namespace Xamarin.Forms.Platform.UWP

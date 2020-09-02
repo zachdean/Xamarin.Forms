@@ -4,11 +4,11 @@ using System.Threading;
 using System.Threading.Tasks;
 using Windows.System;
 using Windows.UI.Core;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Input;
-using WBrush = Windows.UI.Xaml.Media.Brush;
-using WVisualStateManager = Windows.UI.Xaml.VisualStateManager;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Input;
+using WBrush = Microsoft.UI.Xaml.Media.Brush;
+using WVisualStateManager = Microsoft.UI.Xaml.VisualStateManager;
 
 namespace Xamarin.Forms.Platform.UWP
 {
@@ -48,9 +48,9 @@ namespace Xamarin.Forms.Platform.UWP
 		InputScope _passwordInputScope;
 		InputScope _numericPasswordInputScope;
 		ScrollViewer _scrollViewer;
-		Windows.UI.Xaml.Controls.Grid _rootGrid;
-		Windows.UI.Xaml.VisualState _DeleteButtonVisibleState;
-		Windows.UI.Xaml.VisualStateGroup _DeleteButtonVisibleStateGroups;
+		Microsoft.UI.Xaml.Controls.Grid _rootGrid;
+		Microsoft.UI.Xaml.VisualState _DeleteButtonVisibleState;
+		Microsoft.UI.Xaml.VisualStateGroup _DeleteButtonVisibleStateGroups;
 		InputScope _cachedInputScope;
 		bool _cachedPredictionsSetting;
 		bool _cachedSpellCheckSetting;
@@ -156,7 +156,7 @@ namespace Xamarin.Forms.Platform.UWP
 		{
 			base.OnApplyTemplate();
 
-			_rootGrid = GetTemplateChild("RootGrid") as Windows.UI.Xaml.Controls.Grid;
+			_rootGrid = GetTemplateChild("RootGrid") as Microsoft.UI.Xaml.Controls.Grid;
 			if (_rootGrid != null)
 			{
 				var stateGroups = WVisualStateManager.GetVisualStateGroups(_rootGrid).ToList();
@@ -340,7 +340,7 @@ namespace Xamarin.Forms.Platform.UWP
 				base.OnKeyDown(e);
 		}
 
-		void OnTextChanged(object sender, Windows.UI.Xaml.Controls.TextChangedEventArgs textChangedEventArgs)
+		void OnTextChanged(object sender, Microsoft.UI.Xaml.Controls.TextChangedEventArgs textChangedEventArgs)
 		{
 			if (IsPassword)
 			{
@@ -440,7 +440,7 @@ namespace Xamarin.Forms.Platform.UWP
 		{
 			// If we're modifying the properties related to the focus state of the control (e.g., 
 			// ForegroundFocusBrush), the changes won't be reflected immediately because they are only applied
-			// when the Windows.UI.XAML.VisualStateManager moves to the "Focused" state. So we have to force a 
+			// when the Microsoft.UI.Xaml.VisualStateManager moves to the "Focused" state. So we have to force a 
 			// "refresh" of the Focused state by going to that state again
 
 			if (!(dependencyObject is Control control) || control.FocusState == FocusState.Unfocused)
@@ -481,7 +481,7 @@ namespace Xamarin.Forms.Platform.UWP
 			{
 				_copyOfTextBox = new FormsTextBox
 				{
-					Style = Windows.UI.Xaml.Application.Current.Resources["FormsTextBoxStyle"] as Windows.UI.Xaml.Style
+					Style = Microsoft.UI.Xaml.Application.Current.Resources["FormsTextBoxStyle"] as Microsoft.UI.Xaml.Style
 				};
 
 				// This causes the copy to be initially setup correctly. 

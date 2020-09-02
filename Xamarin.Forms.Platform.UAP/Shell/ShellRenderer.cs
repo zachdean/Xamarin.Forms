@@ -2,14 +2,14 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using Windows.Foundation.Metadata;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using WBrush = Windows.UI.Xaml.Media.Brush;
-using WSolidColorBrush = Windows.UI.Xaml.Media.SolidColorBrush;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using WBrush = Microsoft.UI.Xaml.Media.Brush;
+using WSolidColorBrush = Microsoft.UI.Xaml.Media.SolidColorBrush;
 
 namespace Xamarin.Forms.Platform.UWP
 {
-	[Windows.UI.Xaml.Data.Bindable]
+	[Microsoft.UI.Xaml.Data.Bindable]
 	public class ShellRenderer : Microsoft.UI.Xaml.Controls.NavigationView, IVisualElementRenderer, IAppearanceObserver, IFlyoutBehaviorObserver
 	{
 		public static readonly DependencyProperty FlyoutBackgroundColorProperty = DependencyProperty.Register(
@@ -38,13 +38,13 @@ namespace Xamarin.Forms.Platform.UWP
 			IsPaneOpen = false;
 			Content = ItemRenderer = CreateShellItemRenderer();
 			MenuItemTemplateSelector = CreateShellFlyoutTemplateSelector();
-			if (ApiInformation.IsEventPresent("Windows.UI.Xaml.Controls.NavigationView", "PaneClosing"))
+			if (ApiInformation.IsEventPresent("Microsoft.UI.Xaml.Controls.NavigationView", "PaneClosing"))
 				PaneClosing += (s, e) => OnPaneClosed();
-			if (ApiInformation.IsEventPresent("Windows.UI.Xaml.Controls.NavigationView", "PaneOpening"))
+			if (ApiInformation.IsEventPresent("Microsoft.UI.Xaml.Controls.NavigationView", "PaneOpening"))
 				PaneOpening += (s, e) => OnPaneOpening();
 			ItemInvoked += OnMenuItemInvoked;
 			BackRequested += OnBackRequested;
-			Style = Windows.UI.Xaml.Application.Current.Resources["ShellNavigationView"] as Windows.UI.Xaml.Style;
+			//Style = Microsoft.UI.Xaml.Application.Current.Resources["ShellNavigationView"] as Microsoft.UI.Xaml.Style;
 		}
 
 		async void OnBackRequested(Microsoft.UI.Xaml.Controls.NavigationView sender, Microsoft.UI.Xaml.Controls.NavigationViewBackRequestedEventArgs args)
@@ -81,7 +81,7 @@ namespace Xamarin.Forms.Platform.UWP
 			UpdateFlyoutBackgroundColor();
 			UpdateFlyoutBackdrop();
 
-			if(_flyoutBehavior == FlyoutBehavior.Flyout)
+			if(ShellSplitView != null && _flyoutBehavior == FlyoutBehavior.Flyout)
 				ShellSplitView.UpdateFlyoutBackdrop();
 		}
 
@@ -164,7 +164,7 @@ namespace Xamarin.Forms.Platform.UWP
 		#endregion IVisualElementRenderer
 
 
-		ShellSplitView ShellSplitView => (ShellSplitView)GetTemplateChild("RootSplitView");
+		ShellSplitView ShellSplitView => GetTemplateChild("RootSplitView") as ShellSplitView;
 		protected internal Shell Element { get; set; }
 
 		internal Shell Shell => Element;
@@ -192,7 +192,7 @@ namespace Xamarin.Forms.Platform.UWP
 
 		void UpdateFlyoutBackdrop()
 		{
-			if (_flyoutBehavior != FlyoutBehavior.Flyout)
+			if (ShellSplitView != null && _flyoutBehavior != FlyoutBehavior.Flyout)
 				return;
 
 			var splitView = ShellSplitView;

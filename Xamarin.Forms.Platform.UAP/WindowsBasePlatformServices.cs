@@ -18,8 +18,8 @@ using Windows.Storage.Streams;
 using Windows.System;
 using Windows.UI.Core;
 using Windows.UI.ViewManagement;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Media;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Media;
 using Xamarin.Forms.Internals;
 using IOPath = System.IO.Path;
 
@@ -105,10 +105,10 @@ namespace Xamarin.Forms.Platform.UWP
 
 		public Color GetNamedColor(string name)
 		{
-			if (!Windows.UI.Xaml.Application.Current?.Resources.ContainsKey(name) ?? true)
+			if (!Microsoft.UI.Xaml.Application.Current?.Resources.ContainsKey(name) ?? true)
 				return Color.Default;
 
-			return ((Windows.UI.Color)Windows.UI.Xaml.Application.Current?.Resources[name]).ToFormsColor();
+			return ((Windows.UI.Color)Microsoft.UI.Xaml.Application.Current?.Resources[name]).ToFormsColor();
 		}
 
 		public async Task<Stream> GetStreamAsync(Uri uri, CancellationToken cancellationToken)
@@ -256,6 +256,6 @@ namespace Xamarin.Forms.Platform.UWP
 			return await taskCompletionSource.Task;
 		}
 
-		public OSAppTheme RequestedTheme => Windows.UI.Xaml.Application.Current.RequestedTheme == ApplicationTheme.Dark ? OSAppTheme.Dark : OSAppTheme.Light;
+		public OSAppTheme RequestedTheme => Microsoft.UI.Xaml.Application.Current.RequestedTheme == ApplicationTheme.Dark ? OSAppTheme.Dark : OSAppTheme.Light;
 	}
 }

@@ -1,7 +1,7 @@
 ﻿using System;
 using Windows.System.Display;
-using Windows.UI.Xaml;
-using Controls = Windows.UI.Xaml.Controls;
+using Microsoft.UI.Xaml;
+using Controls = Microsoft.UI.Xaml.Controls;
 
 namespace Xamarin.Forms.Platform.UWP
 {
@@ -149,7 +149,7 @@ namespace Xamarin.Forms.Platform.UWP
 
 		void ControlMediaOpened(object sender, RoutedEventArgs e)
 		{
-			Controller.Duration = Control.NaturalDuration.HasTimeSpan ? Control.NaturalDuration.TimeSpan : (TimeSpan?)null;
+			Controller.Duration = Control.NaturalDuration.TimeSpan != TimeSpan.Zero ? Control.NaturalDuration.TimeSpan : (TimeSpan?)null;
 			Controller.VideoHeight = Control.NaturalVideoHeight;
 			Controller.VideoWidth = Control.NaturalVideoWidth;
 			Control.Volume = Element.Volume;
@@ -166,16 +166,16 @@ namespace Xamarin.Forms.Platform.UWP
 
 			switch (Control.CurrentState)
 			{
-				case Windows.UI.Xaml.Media.MediaElementState.Playing:
+				case Microsoft.UI.Xaml.Media.MediaElementState.Playing:
 					if (Element.KeepScreenOn)
 					{
 						_request.RequestActive();
 					}
 					break;
 
-				case Windows.UI.Xaml.Media.MediaElementState.Paused:
-				case Windows.UI.Xaml.Media.MediaElementState.Stopped:
-				case Windows.UI.Xaml.Media.MediaElementState.Closed:
+				case Microsoft.UI.Xaml.Media.MediaElementState.Paused:
+				case Microsoft.UI.Xaml.Media.MediaElementState.Stopped:
+				case Microsoft.UI.Xaml.Media.MediaElementState.Closed:
 					if (Element.KeepScreenOn)
 					{
 						_request.RequestRelease();
@@ -186,26 +186,26 @@ namespace Xamarin.Forms.Platform.UWP
 			Controller.CurrentState = FromWindowsMediaElementState(Control.CurrentState);
 		}
 
-		static MediaElementState FromWindowsMediaElementState(Windows.UI.Xaml.Media.MediaElementState state)
+		static MediaElementState FromWindowsMediaElementState(Microsoft.UI.Xaml.Media.MediaElementState state)
 		{
 			switch(state)
 			{
-				case Windows.UI.Xaml.Media.MediaElementState.Buffering:
+				case Microsoft.UI.Xaml.Media.MediaElementState.Buffering:
 					return MediaElementState.Buffering;
 
-				case Windows.UI.Xaml.Media.MediaElementState.Closed:
+				case Microsoft.UI.Xaml.Media.MediaElementState.Closed:
 					return MediaElementState.Closed;
 
-				case Windows.UI.Xaml.Media.MediaElementState.Opening:
+				case Microsoft.UI.Xaml.Media.MediaElementState.Opening:
 					return MediaElementState.Opening;
 
-				case Windows.UI.Xaml.Media.MediaElementState.Paused:
+				case Microsoft.UI.Xaml.Media.MediaElementState.Paused:
 					return MediaElementState.Paused;
 
-				case Windows.UI.Xaml.Media.MediaElementState.Playing:
+				case Microsoft.UI.Xaml.Media.MediaElementState.Playing:
 					return MediaElementState.Playing;
 
-				case Windows.UI.Xaml.Media.MediaElementState.Stopped:
+				case Microsoft.UI.Xaml.Media.MediaElementState.Stopped:
 					return MediaElementState.Stopped;
 			}
 
@@ -256,7 +256,7 @@ namespace Xamarin.Forms.Platform.UWP
 				case nameof(MediaElement.KeepScreenOn):
 					if (Element.KeepScreenOn)
 					{
-						if (Control.CurrentState == Windows.UI.Xaml.Media.MediaElementState.Playing)
+						if (Control.CurrentState == Microsoft.UI.Xaml.Media.MediaElementState.Playing)
 						{
 							_request.RequestActive();
 						}

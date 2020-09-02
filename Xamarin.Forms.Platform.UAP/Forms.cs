@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
+using Microsoft.UI.Xaml;
 using Windows.ApplicationModel.Activation;
 using Windows.ApplicationModel.Resources.Core;
-using Windows.UI.Xaml;
 using Xamarin.Forms.Internals;
 using Xamarin.Forms.Platform.UWP;
-using WSolidColorBrush = Windows.UI.Xaml.Media.SolidColorBrush;
+using WSolidColorBrush = Microsoft.UI.Xaml.Media.SolidColorBrush;
 
 namespace Xamarin.Forms
 {
@@ -20,12 +20,12 @@ namespace Xamarin.Forms
 
 		public static bool IsInitialized { get; private set; }
 		
-		public static void Init(IActivatedEventArgs launchActivatedEventArgs, IEnumerable<Assembly> rendererAssemblies = null)
+		public static void Init(ILaunchActivatedEventArgs launchActivatedEventArgs, IEnumerable<Assembly> rendererAssemblies = null)
 		{
 			if (IsInitialized)
 				return;
 
-			var accent = (WSolidColorBrush)Windows.UI.Xaml.Application.Current.Resources["SystemColorControlAccentBrush"];
+			var accent = (WSolidColorBrush)Microsoft.UI.Xaml.Application.Current.Resources["SystemColorControlAccentBrush"];
 			Color.SetAccent(accent.ToFormsColor());
 
 #if !UWP_16299
@@ -33,14 +33,14 @@ namespace Xamarin.Forms
 #else
 			Log.Listeners.Add(new DelegateLogListener((c, m) => Trace.WriteLine(m, c)));
 #endif
-			if (!Windows.UI.Xaml.Application.Current.Resources.ContainsKey("RootContainerStyle"))
+			if (!Microsoft.UI.Xaml.Application.Current.Resources.ContainsKey("RootContainerStyle"))
 			{
-				Windows.UI.Xaml.Application.Current.Resources.MergedDictionaries.Add(GetTabletResources());
+				Microsoft.UI.Xaml.Application.Current.Resources.MergedDictionaries.Add(GetTabletResources());
 			}
 
 			try
 			{
-				Windows.UI.Xaml.Application.Current.Resources.MergedDictionaries.Add(new Microsoft.UI.Xaml.Controls.XamlControlsResources());
+				Microsoft.UI.Xaml.Application.Current.Resources.MergedDictionaries.Add(new Microsoft.UI.Xaml.Controls.XamlControlsResources());
 			}
 			catch
 			{
@@ -96,9 +96,9 @@ namespace Xamarin.Forms
 			return FlowDirection.MatchParent;
 		}
 
-		internal static Windows.UI.Xaml.ResourceDictionary GetTabletResources()
+		internal static Microsoft.UI.Xaml.ResourceDictionary GetTabletResources()
 		{
-			return new Windows.UI.Xaml.ResourceDictionary {
+			return new Microsoft.UI.Xaml.ResourceDictionary {
 				Source = new Uri("ms-appx:///Xamarin.Forms.Platform.UAP/Resources.xbf")
 			};
 		}

@@ -1,8 +1,11 @@
-﻿using Windows.UI.Composition;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Hosting;
+﻿
+#pragma warning disable CS8305
+
+using Microsoft.UI.Composition;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Hosting;
 using Xamarin.Forms.Shapes;
-using WRectangleGeometry = Windows.UI.Xaml.Media.RectangleGeometry;
+using WRectangleGeometry = Microsoft.UI.Xaml.Media.RectangleGeometry;
 
 #if UWP_18362
 using WVector2 = System.Numerics.Vector2;
@@ -64,3 +67,4 @@ namespace Xamarin.Forms.Platform.UWP
 		}
 	}
 }
+#pragma warning restore CS8305 // Type is for evaluation purposes only and is subject to change or removal in future updates.

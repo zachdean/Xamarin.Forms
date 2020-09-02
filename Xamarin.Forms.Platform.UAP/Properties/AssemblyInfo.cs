@@ -23,7 +23,7 @@ using Rectangle = Xamarin.Forms.Shapes.Rectangle;
 [assembly: ExportRenderer(typeof(Slider), typeof(SliderRenderer))]
 [assembly: ExportRenderer(typeof(Switch), typeof(SwitchRenderer))]
 [assembly: ExportRenderer(typeof(SwipeView), typeof(SwipeViewRenderer))]
-[assembly: ExportRenderer(typeof(WebView), typeof(WebViewRenderer))]
+//[assembly: ExportRenderer(typeof(WebView), typeof(WebViewRenderer))]
 [assembly: ExportRenderer(typeof(Frame), typeof(FrameRenderer))]
 [assembly: ExportRenderer(typeof(ActivityIndicator), typeof(ActivityIndicatorRenderer))]
 [assembly: ExportRenderer(typeof(Editor), typeof(EditorRenderer))]

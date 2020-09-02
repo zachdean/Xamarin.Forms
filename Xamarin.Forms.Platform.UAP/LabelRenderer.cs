@@ -5,15 +5,15 @@ using System.Text.RegularExpressions;
 using System.Xml.Linq;
 using Windows.Foundation;
 using Windows.UI.Text;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Automation.Peers;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Documents;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Automation.Peers;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Documents;
 using Xamarin.Forms.Platform.UAP;
 using Xamarin.Forms.PlatformConfiguration.WindowsSpecific;
 using Specifics = Xamarin.Forms.PlatformConfiguration.WindowsSpecific.Label;
 using WRect = Windows.Foundation.Rect;
-using WThickness = Windows.UI.Xaml.Thickness;
+using WThickness = Microsoft.UI.Xaml.Thickness;
 
 namespace Xamarin.Forms.Platform.UWP
 {
@@ -435,7 +435,7 @@ namespace Xamarin.Forms.Platform.UWP
 
 		void UpdatePadding(TextBlock textBlock)
 		{
-			textBlock.Padding = new WThickness(
+			textBlock.Padding = WinUIHelpers.CreateThickness(
 					Element.Padding.Left,
 					Element.Padding.Top,
 					Element.Padding.Right,
