@@ -8,33 +8,39 @@ namespace Xamarin.Forms.StyleSheets
 		{
 		}
 
+		public Specificity Specificity { get; set; }
+
 		public static Selector Parse(CssReader reader, char stopChar = '\0')
 		{
 			Selector root = All, workingRoot = All;
+			Specificity specificity = new Specificity();
 			Operator workingRootParent = null;
-			Action<Operator, Selector> setCurrentSelector = (op, sel) => SetCurrentSelector(ref root, ref workingRoot, ref workingRootParent, op, sel);
+			void setCurrentSelector(Operator op, Selector sel) => SetCurrentSelector(ref root, ref workingRoot, ref workingRootParent, op, sel);
 
 			int p;
 			reader.SkipWhiteSpaces();
 			while ((p = reader.Peek()) > 0) {
 				switch (unchecked((char)p)) {
-				case '*':
+				case '*':	//Universal selector
 					setCurrentSelector(new And(), All);
+					//The universal selector and inherited values have a specificity of 0 - *, body * and similar have a zero specificity.
 					reader.Read();
 					break;
-				case '.':
+				case '.':	//class selector
 					reader.Read();
 					var className = reader.ReadIdent();
 					if (className == null)
 						return Invalid;
 					setCurrentSelector(new And(), new Class(className));
+					specificity.P2++;
 					break;
-				case '#':
+				case '#':	//id selector
 					reader.Read();
 					var id = reader.ReadName();
 					if (id == null)
 						return Invalid;
 					setCurrentSelector(new And(), new Id(id));
+					specificity.P1++;
 					break;
 				case '[':
 					throw new NotImplementedException("Attributes not implemented");
@@ -64,6 +70,7 @@ namespace Xamarin.Forms.StyleSheets
 					if (element == null)
 					return Invalid;
 					setCurrentSelector(new And(), new Base(element));
+					specificity.P3++;
 					break;
 				case ' ':
 				case '\t':
@@ -98,9 +105,11 @@ namespace Xamarin.Forms.StyleSheets
 					if (elementName == null)
 						return Invalid;
 					setCurrentSelector(new And(), new Element(elementName));
+					specificity.P3++;
 					break;
 				}
 			}
+			root.Specificity = specificity;
 			return root;
 		}
 
@@ -300,6 +309,28 @@ namespace Xamarin.Forms.StyleSheets
 				//	}
 				//return siblingIndex != -1;
 			}
+		}		
+	}
+
+	internal struct Specificity
+	{
+		public int P0 { get; set; }
+		public int P1 { get; set; }
+		public int P2 { get; set; }
+		public int P3 { get; set; }
+
+		public int Compare(Specificity other)
+		{
+			var eq = P0.CompareTo(other.P0);
+			if (eq != 0)
+				return eq;
+			eq = P1.CompareTo(other.P1);
+			if (eq != 0)
+				return eq;
+			eq = P2.CompareTo(other.P2);
+			if (eq != 0)
+				return eq;
+			return P3.CompareTo(other.P3);
 		}
 	}
 }

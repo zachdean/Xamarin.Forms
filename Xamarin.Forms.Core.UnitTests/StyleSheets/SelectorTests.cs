@@ -114,5 +114,22 @@ namespace Xamarin.Forms.StyleSheets.UnitTests
 			Assert.AreEqual(label4match, selector.Matches(Label4));
 			Assert.AreEqual(content0match, selector.Matches(ContentView0));
 		}
+
+		[TestCase("*", 0, 0, 0, 0)]
+		[TestCase("li", 0, 0, 0, 1)]
+		[TestCase("body#home div#featured p.text", 0, 2, 1, 3)]
+		[TestCase("ul li", 0, 0, 0, 2)]
+		[TestCase("ul ol+li", 0, 0, 0, 3)]
+		[TestCase("ul ol li.first", 0, 0, 1, 3)]
+		[TestCase("ul ^ol li.first", 0, 0, 1, 3)]
+		[TestCase("li.last.featured", 0, 0, 2, 1)]
+		[TestCase("div p.big-text", 0, 0, 1, 2)]
+		[TestCase("#author-name", 0, 1, 0, 0)]
+		[TestCase("body #blog-list .post p", 0, 1, 1, 2)]
+		public void Specificity(string selectorString, int p0, int p1, int p2, int p3)
+		{
+			var selector = Selector.Parse(new CssReader(new StringReader(selectorString)));
+			Assert.That(selector.Specificity, Is.EqualTo(new Specificity { P0 = p0, P1 = p1, P2 = p2, P3 = p3 }));
+		}
 	}
 }
