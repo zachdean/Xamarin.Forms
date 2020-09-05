@@ -1767,6 +1767,70 @@ namespace Xamarin.Forms.Core.UnitTests
 
 		}
 
+		[Test]
+		public async Task ImplicitRoutesValidWhileNavigating()
+		{
+			var flyoutItem = CreateShellItem<FlyoutItem>();
+			var itemRoute = Routing.GetRoute(flyoutItem.CurrentItem.CurrentItem);
+			var page1 = new ContentPage();
+			var page2 = new ContentPage();
+			TestShell shell = new TestShell()
+			{
+				Items = { flyoutItem }
+			};
+
+			Assert.That(shell.CurrentState.Location.ToString(),
+				Is.EqualTo($"//{itemRoute}"));
+
+			await shell.Navigation.PushAsync(page1);
+
+			Assert.That(shell.CurrentState.Location.ToString(),
+				Is.EqualTo($"//{itemRoute}/{Routing.GetRoute(page1)}"));
+
+			await shell.Navigation.PushAsync(page2);
+
+			Assert.That(shell.CurrentState.Location.ToString(),
+				Is.EqualTo($"//{itemRoute}/{Routing.GetRoute(page1)}/{Routing.GetRoute(page2)}"));
+
+			await shell.GoToAsync("..");
+
+			Assert.That(shell.CurrentState.Location.ToString(),
+				Is.EqualTo($"//{itemRoute}/{Routing.GetRoute(page1)}"));
+		}
+
+		/*[Test]
+		public async Task DeferPopNavigation()
+		{
+			TestShell shell = new TestShell()
+			{
+				Items = { CreateShellItem<FlyoutItem>() }
+			};
+
+
+			await shell.Navigation.PushAsync(new ContentPage());
+			await shell.Navigation.PushAsync(new ContentPage());
+
+			ShellNavigatingDeferral _token = null;
+			shell.Navigating += (_, args) =>
+			{
+				_token = args.GetDeferral();
+			};
+
+			var source = new TaskCompletionSource<object>();
+			shell.Navigated += (_, args) =>
+			{
+				source.SetResult(true);
+			};
+
+			await shell.Navigation.PopAsync();
+			Assert.AreEqual(3, shell.Navigation.NavigationStack.Count);
+			_token.Complete();
+
+			await source.Task;
+
+			Assert.AreEqual(2, shell.Navigation.NavigationStack.Count);
+		}*/
+
 		//[Test]
 		//public void FlyoutItemLabelStyleCanBeChangedAfterRendered()
 		//{

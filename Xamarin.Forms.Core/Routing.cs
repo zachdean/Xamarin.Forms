@@ -8,25 +8,52 @@ namespace Xamarin.Forms
 	{
 		static int s_routeCount = 0;
 		static Dictionary<string, RouteFactory> s_routes = new Dictionary<string, RouteFactory>();
+		static Dictionary<string, Page> s_implicitPageRoutes = new Dictionary<string, Page>();
 
 		const string ImplicitPrefix = "IMPL_";
 		const string DefaultPrefix = "D_FAULT_";
-		const string _pathSeparator = "/";
+		internal const string PathSeparator = "/";
+
+		internal static void RegisterImplicitPageRoute(Page page)
+		{
+			s_implicitPageRoutes[GetRoute(page)] = page;
+		}
+
+		List<Page> BuildFlattenedNavigationStack(List<Page> startingList, IReadOnlyList<Page> modalStack)
+		{
+			if (modalStack == null)
+				return startingList;
+
+			for (int i = 0; i < modalStack.Count; i++)
+			{
+				startingList.Add(modalStack[i]);
+				for (int j = 1; j < modalStack[i].Navigation.NavigationStack.Count; j++)
+				{
+					startingList.Add(modalStack[i].Navigation.NavigationStack[j]);
+				}
+			}
+
+			return startingList;
+		}
 
 		internal static string GenerateImplicitRoute(string source)
 		{
 			if (IsImplicit(source))
 				return source;
+
 			return String.Concat(ImplicitPrefix, source);
 		}
+
 		internal static bool IsImplicit(string source)
 		{
 			return source.StartsWith(ImplicitPrefix, StringComparison.Ordinal);
 		}
+
 		internal static bool IsImplicit(BindableObject source)
 		{
 			return IsImplicit(GetRoute(source));
 		}
+
 		internal static bool IsDefault(string source)
 		{
 			return source.StartsWith(DefaultPrefix, StringComparison.Ordinal);
@@ -61,7 +88,7 @@ namespace Xamarin.Forms
 
 		internal static string[] GetRouteKeys()
 		{
-			string[] keys = new string[s_routes.Count];
+			string[] keys = new string[s_routes.Count + s_implicitPageRoutes.Count];
 			s_routes.Keys.CopyTo(keys, 0);
 			return keys;
 		}
@@ -101,43 +128,9 @@ namespace Xamarin.Forms
 			return $"{source}/";
 		}
 
-		internal static Uri Remove(Uri uri, bool implicitRoutes, bool defaultRoutes)
-		{
-			uri = ShellUriHandler.FormatUri(uri, null);
-
-			string[] parts = uri.OriginalString.TrimEnd(_pathSeparator[0]).Split(_pathSeparator[0]);
-
-			bool userDefinedRouteAdded = false;
-			List<string> toKeep = new List<string>();
-			for (int i = 0; i < parts.Length; i++)
-			{
-				// This means there are no routes defined on the shell but the user has navigated to a global route
-				// so we need to attach the final route where the user left the shell
-				if (s_routes.ContainsKey(parts[i]) && !userDefinedRouteAdded && i > 0)
-				{
-					toKeep.Add(parts[i - 1]);
-				}
-
-				if (!(IsDefault(parts[i]) && defaultRoutes) && !(IsImplicit(parts[i]) && implicitRoutes))
-				{
-					if (!String.IsNullOrWhiteSpace(parts[i]))
-						userDefinedRouteAdded = true;
-
-					toKeep.Add(parts[i]);
-				}
-			}
-
-			if(!userDefinedRouteAdded && parts.Length > 0)
-			{
-				toKeep.Add(parts[parts.Length - 1]);
-			}
-
-			return new Uri(string.Join(_pathSeparator, toKeep), UriKind.Relative);
-		}
-
 		public static string FormatRoute(List<string> segments)
 		{
-			var route = FormatRoute(String.Join(_pathSeparator, segments));
+			var route = FormatRoute(String.Join(PathSeparator, segments));
 			return route;
 		}
 

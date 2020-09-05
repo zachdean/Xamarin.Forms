@@ -1,9 +1,14 @@
 ﻿using System;
+using System.Threading;
 
 namespace Xamarin.Forms
 {
 	public class ShellNavigatingEventArgs : EventArgs
 	{
+		int _deferalCount;
+		Action _deferralFinishedCallback;
+		bool _cancelled;
+
 		public ShellNavigatingEventArgs(ShellNavigationState current, ShellNavigationState target, ShellNavigationSource source, bool canCancel)
 		{
 			Current = current;
@@ -39,42 +44,24 @@ namespace Xamarin.Forms
 			if (!CanCancel)
 				return null;
 
-			_deferalCount++;
+			Interlocked.Increment(ref _deferalCount);
 			return new ShellNavigatingDeferral(DecrementDeferral);
 		}
 
 		void DecrementDeferral()
 		{
-			_deferalCount--;
-			if (_deferalCount == 0)
-				_callback();
+			if (Interlocked.Decrement(ref _deferalCount) == 0)
+			{
+				_deferralFinishedCallback?.Invoke();
+				_deferralFinishedCallback = null;
+			}
 		}
 
-		int _deferalCount;
-
 		internal int DeferalCount => _deferalCount;
-		Action _callback;
-		private bool _cancelled;
 
 		internal void RegisterDeferalCallback(Action callback)
 		{
-			_callback = callback;
-		}
-	}
-
-	public class ShellNavigatingDeferral
-	{
-		Action _completed;
-
-		public ShellNavigatingDeferral(Action completed)
-		{
-			_completed = completed;
-		}
-
-		public void Complete()
-		{
-			_completed();
-			_completed = null;
+			_deferralFinishedCallback = callback;
 		}
 	}
 }
