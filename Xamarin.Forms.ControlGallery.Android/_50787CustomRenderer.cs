@@ -1,4 +1,4 @@
-﻿#if !FORMS_APPLICATION_ACTIVITY && !PRE_APPLICATION_CLASS
+﻿#if !FORMS_APPLICATION_ACTIVITY
 using Android.Content;
 using Xamarin.Forms;
 using Xamarin.Forms.ControlGallery.Android;

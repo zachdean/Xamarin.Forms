@@ -244,9 +244,6 @@ namespace Xamarin.Forms.Controls
 			ItemTemplate = template;
 			ItemsSource = roots;
 
-#if PRE_APPLICATION_CLASS
-			ItemSelected += (sender, args) => MessagingCenter.Send (this, Messages.ChangeRoot, ((CoreViewContainer)args.SelectedItem).PageType);
-#else
 			ItemSelected += (sender, args) =>
 			{
 				var app = Application.Current as App;
@@ -256,7 +253,7 @@ namespace Xamarin.Forms.Controls
 					app.SetMainPage(page);
 				}
 			};
-#endif
+			
 			SetValue(AutomationProperties.NameProperty, "SwapRoot");
 		}
 	}

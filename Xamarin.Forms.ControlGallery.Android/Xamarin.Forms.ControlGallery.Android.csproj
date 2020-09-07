@@ -33,7 +33,6 @@
       This will let the old and new yaml configurations coexist -->
     <ANDROID_RENDERERS Condition="'$(ANDROID_RENDERERS)' == '' AND '$(CI)' == 'false'">FAST</ANDROID_RENDERERS>
     <DefineConstants Condition="'$(ANDROID_RENDERERS)' == 'FAST'">$(DefineConstants);TEST_EXPERIMENTAL_RENDERERS</DefineConstants>
-    <DefineConstants Condition="'$(ANDROID_RENDERERS)' == 'PREAPPCOMPAT'">$(DefineConstants);FORMS_APPLICATION_ACTIVITY</DefineConstants>
     <DefineConstants Condition="'$(ANDROID_RENDERERS)' == 'LEGACY'">$(DefineConstants)</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
@@ -97,7 +96,6 @@
     <Compile Include="BrokenNativeControl.cs" />
     <Compile Include="CacheService.cs" />
     <Compile Include="DrawableExtensions.cs" />
-    <Compile Include="FormsApplicationActivity.cs" />
     <Compile Include="DisposeLabelRenderer.cs" />
     <Compile Include="DisposePageRenderer.cs" />
     <Compile Include="FormsAppCompatActivity.cs" />
@@ -109,7 +107,6 @@
     <Compile Include="Resources\Resource.Designer.cs" />
     <Compile Include="Tests\TestingPlatformService.cs" />
     <Compile Include="Tests\PlatformTestSettings.cs" />
-    <Compile Include="PreApplicationClassActivity.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RegistrarValidationService.cs" />
     <Compile Include="CustomRenderers.cs" />

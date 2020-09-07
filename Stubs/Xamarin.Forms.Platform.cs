@@ -7,6 +7,7 @@ using Xamarin.Forms;
 
 #if __ANDROID__
 using Xamarin.Forms.Platform.Android;
+using Xamarin.Forms.Platform.Android.AppCompat;
 #elif TIZEN4_0
 using Xamarin.Forms.Platform.Tizen;
 #elif __IOS__
@@ -48,7 +49,7 @@ namespace Xamarin.Forms.Platform
 #endif
 	internal class _ImageRenderer { }
 
-	[RenderWith (typeof (ButtonRenderer))]
+	[RenderWith (typeof (Android.AppCompat.ButtonRenderer))]
 	internal class _ButtonRenderer { }
 
 	[RenderWith(typeof(ImageButtonRenderer))]
@@ -86,7 +87,7 @@ namespace Xamarin.Forms.Platform
 	[RenderWith (typeof (SearchBarRenderer))]
 	internal class _SearchBarRenderer { }
 
-	[RenderWith (typeof (SwitchRenderer))]
+	[RenderWith (typeof (Android.AppCompat.SwitchRenderer))]
 	internal class _SwitchRenderer { }
 
 	[RenderWith (typeof (DatePickerRenderer))]
@@ -95,7 +96,7 @@ namespace Xamarin.Forms.Platform
 	[RenderWith (typeof (TimePickerRenderer))]
 	internal class _TimePickerRenderer { }
 
-	[RenderWith (typeof (PickerRenderer))]
+	[RenderWith (typeof (Android.AppCompat.PickerRenderer))]
 	internal class _PickerRenderer { }
 
 	[RenderWith (typeof (StepperRenderer))]
@@ -110,7 +111,7 @@ namespace Xamarin.Forms.Platform
 	[RenderWith (typeof (ActivityIndicatorRenderer))]
 	internal class _ActivityIndicatorRenderer { }
 
-	[RenderWith (typeof (FrameRenderer))]
+	[RenderWith (typeof (Android.AppCompat.FrameRenderer))]
 	internal class _FrameRenderer { }
 
 #if __ANDROID__
@@ -144,22 +145,22 @@ namespace Xamarin.Forms.Platform
 #endif
 	internal class _TabbedPageRenderer { }
 
-#if !WINDOWS_PHONE && !WINDOWS_PHONE_APP && !TIZEN4_0
+#if !WINDOWS_PHONE && !WINDOWS_PHONE_APP && !TIZEN4_0 && !__ANDROID__
 	[RenderWith (typeof (NavigationRenderer))]
 #else
 	[RenderWith (typeof (NavigationPageRenderer))]
 #endif
 	internal class _NavigationPageRenderer { }
 
-	[RenderWith (typeof (CarouselPageRenderer))]
+	[RenderWith (typeof (Android.AppCompat.CarouselPageRenderer))]
 	internal class _CarouselPageRenderer { }
 
 	[RenderWith (typeof (PageRenderer))]
 	internal class _PageRenderer { }
 
-#if !__IOS__ && !TIZEN4_0
+#if !__IOS__ && !TIZEN4_0 && !__ANDROID__
 	[RenderWith (typeof (MasterDetailRenderer))]
-#elif TIZEN4_0
+#elif TIZEN4_0 || __ANDROID__
 	[RenderWith (typeof(MasterDetailPageRenderer))]
 #else
 	[RenderWith (typeof (PhoneMasterDetailRenderer))]

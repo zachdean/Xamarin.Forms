@@ -36,6 +36,11 @@ namespace Xamarin.Forms.Platform.Android.AppCompat
 			FormsAppCompatActivity.BackPressed += HandleBackPressed;
 		}
 
+		internal ViewGroup GetViewGroup()
+		{
+			return _renderer;
+		}
+
 		internal bool NavAnimationInProgress
 		{
 			get { return _navAnimationInProgress; }

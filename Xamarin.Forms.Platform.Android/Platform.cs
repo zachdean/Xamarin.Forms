@@ -90,8 +90,7 @@ namespace Xamarin.Forms.Platform.Android
 				return;
 			}
 
-			FormsApplicationActivity.BackPressed += HandleBackPressed;
-
+			FormsAppCompatActivity.BackPressed += HandleBackPressed;
 			_toolbarTracker.CollectionChanged += ToolbarTrackerOnCollectionChanged;
 		}
 
@@ -187,7 +186,7 @@ namespace Xamarin.Forms.Platform.Android
 				PopupManager.Unsubscribe(_context);
 			}
 
-			FormsApplicationActivity.BackPressed -= HandleBackPressed;
+			FormsAppCompatActivity.BackPressed -= HandleBackPressed;
 			_toolbarTracker.CollectionChanged -= ToolbarTrackerOnCollectionChanged;
 			_toolbarTracker.Target = null;
 
@@ -543,8 +542,6 @@ namespace Xamarin.Forms.Platform.Android
 				ShowActionBar();
 			else
 				HideActionBar();
-
-			UpdateMasterDetailToggle();
 		}
 
 		internal void UpdateActionBarBackgroundColor()
@@ -569,41 +566,6 @@ namespace Xamarin.Forms.Platform.Android
 			}
 			using (Drawable drawable = colorToUse == Color.Default ? GetActionBarBackgroundDrawable() : new ColorDrawable(colorToUse.ToAndroid()))
 				ActionBar.SetBackgroundDrawable(drawable);
-		}
-
-		internal void UpdateMasterDetailToggle(bool update = false)
-		{
-			if (CurrentMasterDetailPage == null)
-			{
-				if (MasterDetailPageToggle == null)
-					return;
-				// clear out the icon
-				ClearMasterDetailToggle();
-				return;
-			}
-			if (!CurrentMasterDetailPage.ShouldShowToolbarButton() || (CurrentMasterDetailPage.Master.IconImageSource?.IsEmpty ?? true) ||
-				(MasterDetailPageController.ShouldShowSplitMode && CurrentMasterDetailPage.IsPresented))
-			{
-				//clear out existing icon;
-				ClearMasterDetailToggle();
-				return;
-			}
-
-			if (MasterDetailPageToggle == null || update)
-			{
-				ClearMasterDetailToggle();
-				GetNewMasterDetailToggle();
-			}
-
-			bool state;
-			if (CurrentNavigationPage == null)
-				state = true;
-			else
-				state = !UpButtonShouldNavigate();
-			if (state == MasterDetailPageToggle.DrawerIndicatorEnabled)
-				return;
-			MasterDetailPageToggle.DrawerIndicatorEnabled = state;
-			MasterDetailPageToggle.SyncState();
 		}
 
 		void AddChild(VisualElement view, bool layout = false)
@@ -668,17 +630,6 @@ namespace Xamarin.Forms.Platform.Android
 
 			result.Add(root);
 			return result;
-		}
-
-		void ClearMasterDetailToggle()
-		{
-			if (MasterDetailPageToggle == null)
-				return;
-
-			MasterDetailPageToggle.DrawerIndicatorEnabled = false;
-			MasterDetailPageToggle.SyncState();
-			MasterDetailPageToggle.Dispose();
-			MasterDetailPageToggle = null;
 		}
 
 		void CurrentNavigationPageOnPopped(object sender, NavigationEventArgs eventArg)
@@ -780,34 +731,6 @@ namespace Xamarin.Forms.Platform.Android
 				return result;
 			}
 		}
-
-		void GetNewMasterDetailToggle()
-		{
-			var drawer = GetRenderer(CurrentMasterDetailPage) as MasterDetailRenderer;
-			if (drawer == null)
-				return;
-
-			if (_activity == null)
-			{
-				return;
-			}
-
-			// TODO: this must be changed to support the other image source types
-			var fileImageSource = CurrentMasterDetailPage.Master.IconImageSource as FileImageSource;
-			if (fileImageSource == null)
-					throw new InvalidOperationException("Icon property must be a FileImageSource on Master page");
-
-			int icon = ResourceManager.GetDrawableByName(fileImageSource);
-
-			FastRenderers.AutomationPropertiesProvider.GetDrawerAccessibilityResources(_activity, CurrentMasterDetailPage, out int resourceIdOpen, out int resourceIdClose);
-#pragma warning disable 618 // Eventually we will need to determine how to handle the v7 ActionBarDrawerToggle for AppCompat
-			MasterDetailPageToggle = new ActionBarDrawerToggle(_activity, drawer, icon,
-			                                                   resourceIdOpen == 0 ? global::Android.Resource.String.Ok : resourceIdOpen,
-													  		   resourceIdClose == 0 ? global::Android.Resource.String.Ok : resourceIdClose);
-#pragma warning restore 618
-			MasterDetailPageToggle.SyncState();
-		}
-
 
 		bool HandleBackPressed(object sender, EventArgs e)
 		{

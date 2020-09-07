@@ -95,50 +95,6 @@ namespace Xamarin.Forms.ControlGallery.iOS
 		}
 	}
 
-#if PRE_APPLICATION_CLASS
-	[Register ("AppDelegate")]
-	public partial class AppDelegate : UIApplicationDelegate
-	{
-		 UIWindow window;
-
-		public override bool FinishedLaunching (UIApplication app, NSDictionary options)
-		{
-			// create a new window instance based on the screen size
-			window = new UIWindow (UIScreen.MainScreen.Bounds);
-
-			UINavigationBar.Appearance.TintColor = Color.Yellow.ToUIColor ();
-			UINavigationBar.Appearance.BarTintColor = Color.Green.ToUIColor ();
-
-			//override navigation bar title with text attributes
-			UINavigationBar.Appearance.SetTitleTextAttributes(new UITextAttributes () {
-				TextColor = Color.Pink.ToUIColor ()
-			});
-
-			Xamarin.Calabash.Start ();
-			Forms.Init ();
-			FormsMaps.Init ();
-			window.RootViewController = FormsApp.GetFormsApp ().CreateViewController ();
-		
-			MessagingCenter.Subscribe<RootPagesGallery, Type> (this, Messages.ChangeRoot, (sender, pagetype) => {
-				window = new UIWindow (UIScreen.MainScreen.Bounds);
-				window.RootViewController = ((Page) Activator.CreateInstance(pagetype)).CreateViewController();
-				window.MakeKeyAndVisible ();
-			});
-
-			MessagingCenter.Subscribe<HomeButton> (this, Messages.GoHome, (sender) => {
-				window = new UIWindow (UIScreen.MainScreen.Bounds);
-				window.RootViewController = FormsApp.GetFormsApp ().CreateViewController ();
-				window.MakeKeyAndVisible ();
-			});
-
-			// make the window visible
-			window.MakeKeyAndVisible ();
-
-			return true;
-		}
-	}
-
-#else
 	[Register("AppDelegate")]
 	public partial class AppDelegate : FormsApplicationDelegate
 	{
@@ -452,4 +408,3 @@ namespace Xamarin.Forms.ControlGallery.iOS
 		}
 	}
 }
-#endif

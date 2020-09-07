@@ -11,31 +11,10 @@ namespace Xamarin.Forms.Platform.Android
 	public static class PageExtensions
 	{
 #pragma warning disable 618
-		[Obsolete("ContentPage.CreateFragment() is obsolete as of version 3.2. Please use ContentPage.CreateSupportFragment() instead.")]
-		[EditorBrowsable(EditorBrowsableState.Never)]
-		public static Fragment CreateFragment(this ContentPage view, Context context)
-		{
-			if (!Forms.IsInitialized)
-				throw new InvalidOperationException("call Forms.Init() before this");
-
-			if (!(view.RealParent is Application))
-			{
-				Application app = new DefaultApplication();
-				app.MainPage = view;
-			}
-
-			var platform = new Platform(context, true);
-			platform.SetPage(view);
-
-			var vg = platform.GetViewGroup();
-
-			return new EmbeddedFragment(vg, platform);
-		}
-
 		class EmbeddedFragment : Fragment
 		{
 			readonly ViewGroup _content;
-			readonly Platform _platform;
+			readonly AppCompat.Platform _platform;
 			bool _disposed;
 
 			// ReSharper disable once UnusedMember.Local (Android uses this on configuration change
@@ -43,7 +22,7 @@ namespace Xamarin.Forms.Platform.Android
 			{
 			}
 
-			public EmbeddedFragment(ViewGroup content, Platform platform)
+			public EmbeddedFragment(ViewGroup content, AppCompat.Platform platform)
 			{
 				_content = content;
 				_platform = platform;
@@ -84,7 +63,7 @@ namespace Xamarin.Forms.Platform.Android
 				app.MainPage = view;
 			}
 
-			var platform = new Platform(context, true);
+			var platform = new AppCompat.Platform(context);
 			platform.SetPage(view);
 
 			var vg = platform.GetViewGroup();
@@ -99,7 +78,7 @@ namespace Xamarin.Forms.Platform.Android
 		class EmbeddedSupportFragment : Fragment
 		{
 			readonly ViewGroup _content;
-			readonly Platform _platform;
+			readonly AppCompat.Platform _platform;
 			bool _disposed;
 
 			// ReSharper disable once UnusedMember.Local (Android uses this on configuration change
@@ -107,7 +86,7 @@ namespace Xamarin.Forms.Platform.Android
 			{
 			}
 
-			public EmbeddedSupportFragment(ViewGroup content, Platform platform)
+			public EmbeddedSupportFragment(ViewGroup content, AppCompat.Platform platform)
 			{
 				_content = content;
 				_platform = platform;
