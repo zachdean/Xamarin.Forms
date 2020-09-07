@@ -392,10 +392,7 @@ namespace Xamarin.Forms.Platform.Android
 
 		void UpdateMixedContentMode()
 		{
-			if (Control != null && ((int)Forms.SdkInt >= 21))
-			{
-				Control.Settings.MixedContentMode = (MixedContentHandling)Element.OnThisPlatform().MixedContentMode();
-			}
+			Control.Settings.MixedContentMode = (MixedContentHandling)Element.OnThisPlatform().MixedContentMode();
 		}
 
 		void UpdateEnableZoomControls()

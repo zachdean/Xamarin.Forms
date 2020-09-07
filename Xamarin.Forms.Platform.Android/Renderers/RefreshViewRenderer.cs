@@ -148,9 +148,6 @@ namespace Xamarin.Forms.Platform.Android
 			if (!(view is ViewGroup viewGroup))
 				return base.CanChildScrollUp();
 
-			if (Forms.SdkInt < BuildVersionCodes.JellyBean && viewGroup.IsScrollContainer)
-				return base.CanChildScrollUp();
-
 			if (!CanScrollUpViewByType(view))
 				return false;
 

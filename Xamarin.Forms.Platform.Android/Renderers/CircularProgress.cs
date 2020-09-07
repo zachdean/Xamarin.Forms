@@ -99,7 +99,7 @@ namespace Xamarin.Forms.Platform.Android
 			l += (width - squareSize) / 2;
 			t += (height - squareSize) / 2;
 			int strokeWidth;
-			if (Forms.SdkInt < BuildVersionCodes.N)
+			if (!Forms.IsNougatOrNewer)
 				strokeWidth = squareSize / _paddingRatio23;
 			else
 				strokeWidth = squareSize / _paddingRatio;

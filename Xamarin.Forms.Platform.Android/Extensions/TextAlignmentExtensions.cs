@@ -8,7 +8,7 @@ namespace Xamarin.Forms.Platform.Android
 	{
 		internal static void UpdateHorizontalAlignment(this EditText view, TextAlignment alignment, bool hasRtlSupport, AGravityFlags orMask = AGravityFlags.NoGravity)
 		{
-			if ((int)Build.VERSION.SdkInt < 17 || !hasRtlSupport)
+			if (!hasRtlSupport)
 				view.Gravity = alignment.ToHorizontalGravityFlags() | orMask;
 			else
 				view.TextAlignment = alignment.ToTextAlignment();
@@ -21,7 +21,7 @@ namespace Xamarin.Forms.Platform.Android
 
 		internal static void UpdateTextAlignment(this EditText view, TextAlignment horizontal, TextAlignment vertical)
 		{
-			if ((int)Build.VERSION.SdkInt < 17 || !view.Context.HasRtlSupport())
+			if (!view.Context.HasRtlSupport())
 			{
 				view.Gravity = vertical.ToVerticalGravityFlags() | horizontal.ToHorizontalGravityFlags();
 			}

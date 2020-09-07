@@ -37,7 +37,7 @@ namespace Xamarin.Forms.Platform.Android
 
 			renderer.View.SetCameraDistance(3600);
 
-			if(!_context.IsDesignerContext())
+			if (!_context.IsDesignerContext())
 			{
 				_attachTracker = AttachTracker.Instance;
 				renderer.View.AddOnAttachStateChangeListener(_attachTracker);
@@ -112,12 +112,7 @@ namespace Xamarin.Forms.Platform.Android
 				Performance.Stop(reference, "MeasureAndLayout");
 			}
 
-			// If we're running sufficiently new Android, we have to make sure to update the ClipBounds to
-			// match the new size of the ViewGroup
-			if ((int)Forms.SdkInt >= 18)
-			{
-				UpdateClipToBounds();
-			}
+			UpdateClipToBounds();
 
 			UpdateClip();
 

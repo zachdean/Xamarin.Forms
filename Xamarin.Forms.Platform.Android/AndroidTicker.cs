@@ -4,7 +4,6 @@ using Android.Content;
 using Android.OS;
 using Xamarin.Forms.Internals;
 using GlobalSettings = Android.Provider.Settings.Global;
-using SystemSettings = Android.Provider.Settings.System;
 
 namespace Xamarin.Forms.Platform.Android
 {
@@ -68,17 +67,8 @@ namespace Xamarin.Forms.Platform.Android
 
 			float animationScale;
 
-			if (Forms.IsJellyBeanMr1OrNewer)
-			{
-				animationScale = GlobalSettings.GetFloat(resolver, GlobalSettings.AnimatorDurationScale, 1);
-			}
-			else
-			{
-#pragma warning disable 0618
-				animationScale = SystemSettings.GetFloat(resolver, SystemSettings.AnimatorDurationScale, 1);
-#pragma warning restore 0618
-			}
-
+			animationScale = GlobalSettings.GetFloat(resolver, GlobalSettings.AnimatorDurationScale, 1);
+	
 			return animationScale > 0;
 		}
 

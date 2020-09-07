@@ -14,11 +14,8 @@ namespace Xamarin.Forms.Platform.Android
 {
 	public static class ViewExtensions
 	{
-		static readonly int s_apiLevel;
-
 		static ViewExtensions()
 		{
-			s_apiLevel = (int)Forms.SdkInt;
 		}
 
 		public static void RemoveFromParent(this AView view)
@@ -32,17 +29,7 @@ namespace Xamarin.Forms.Platform.Android
 
 		public static void SetBackground(this AView view, Drawable drawable)
 		{
-			if (s_apiLevel < 16)
-			{
-#pragma warning disable 618 // Using older method for compatibility with API 15
-				view.SetBackgroundDrawable(drawable);
-#pragma warning restore 618
-			}
-			else
-			{
-				view.Background = drawable;
-			}
-
+			view.Background = drawable;
 		}
 
 		public static void SetWindowBackground(this AView view)
@@ -116,7 +103,7 @@ namespace Xamarin.Forms.Platform.Android
 			}
 
 			// setClipBounds is only available in API 18 +
-			if ((int)Build.VERSION.SdkInt >= 18)
+			if ((int)Forms.SdkInt >= 18)
 			{
 				if (!(view is ViewGroup viewGroup))
 				{

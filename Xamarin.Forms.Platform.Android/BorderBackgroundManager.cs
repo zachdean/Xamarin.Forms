@@ -112,7 +112,6 @@ namespace Xamarin.Forms.Platform.Android
 
 				var useDefaultShadow = _renderer.UseDefaultShadow();
 
-				// Use no shadow by default for API < 16
 				float shadowRadius = 0;
 				float shadowDy = 0;
 				float shadowDx = 0;
@@ -125,8 +124,7 @@ namespace Xamarin.Forms.Platform.Android
 					shadowDx = 0;
 					shadowColor = _backgroundDrawable.PressedBackgroundColor.ToAndroid();
 				}
-				// Otherwise get values from the control (but only for supported APIs)
-				else if ((int)Forms.SdkInt >= 16)
+				else
 				{
 					shadowRadius = _renderer.ShadowRadius;
 					shadowDy = _renderer.ShadowDy;

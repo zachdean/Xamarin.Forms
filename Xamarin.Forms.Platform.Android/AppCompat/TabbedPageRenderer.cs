@@ -419,11 +419,7 @@ namespace Xamarin.Forms.Platform.Android.AppCompat
 
 				if (tabs.Visibility != ViewStates.Gone)
 				{
-					//MinimumHeight is only available on API 16+
-					if ((int)Forms.SdkInt >= 16)
-						tabsHeight = Math.Min(height, Math.Max(tabs.MeasuredHeight, tabs.MinimumHeight));
-					else
-						tabsHeight = Math.Min(height, tabs.MeasuredHeight);
+					tabsHeight = Math.Min(height, Math.Max(tabs.MeasuredHeight, tabs.MinimumHeight));
 				}
 
 				pager.Measure(MeasureSpecFactory.MakeMeasureSpec(width, MeasureSpecMode.AtMost), MeasureSpecFactory.MakeMeasureSpec(height, MeasureSpecMode.AtMost));

@@ -69,24 +69,18 @@ namespace Xamarin.Forms.Platform.Android
 
 			if (color.IsDefault)
 			{
-				(Control.Indeterminate ? Control.IndeterminateDrawable : 
+				(Control.Indeterminate ? Control.IndeterminateDrawable :
 					Control.ProgressDrawable).ClearColorFilter();
 			}
 			else
 			{
-				if (Forms.SdkInt < BuildVersionCodes.Lollipop)
-				{
-					(Control.Indeterminate ? Control.IndeterminateDrawable :
-						Control.ProgressDrawable).SetColorFilter(color, FilterMode.SrcIn);
-				}
+
+				var tintList = ColorStateList.ValueOf(color.ToAndroid());
+				if (Control.Indeterminate)
+					Control.IndeterminateTintList = tintList;
 				else
-				{
-					var tintList = ColorStateList.ValueOf(color.ToAndroid());
-					if (Control.Indeterminate)
-						Control.IndeterminateTintList = tintList;
-					else
-						Control.ProgressTintList = tintList;
-				}
+					Control.ProgressTintList = tintList;
+
 			}
 		}
 

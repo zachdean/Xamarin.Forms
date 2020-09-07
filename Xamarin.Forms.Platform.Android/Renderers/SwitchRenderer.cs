@@ -83,7 +83,7 @@ namespace Xamarin.Forms.Platform.Android
 					var aswitch = CreateNativeControl();
 					aswitch.SetOnCheckedChangeListener(this);
 					SetNativeControl(aswitch);
-					_defaultTrackDrawable = Control.TrackDrawable;					
+					_defaultTrackDrawable = Control.TrackDrawable;
 				}
 				else
 				{
@@ -109,27 +109,25 @@ namespace Xamarin.Forms.Platform.Android
 
 		void UpdateOnColor()
 		{
-			if (Element != null)
+			if (Element == null)
+				return;
+
+			if (Control.Checked)
 			{
-				if (Control.Checked)
+				if (Element.OnColor == Color.Default)
 				{
-					if (Element.OnColor == Color.Default)
-					{
-						Control.TrackDrawable = _defaultTrackDrawable;
-					}
-					else
-					{
-						if (Forms.SdkInt >= BuildVersionCodes.JellyBean)
-						{
-							Control.TrackDrawable?.SetColorFilter(Element.OnColor.ToAndroid(), FilterMode.SrcAtop);
-						}
-					}
+					Control.TrackDrawable = _defaultTrackDrawable;
 				}
 				else
 				{
-					Control.TrackDrawable?.ClearColorFilter();
+					Control.TrackDrawable?.SetColorFilter(Element.OnColor.ToAndroid(), FilterMode.SrcAtop);
 				}
 			}
+			else
+			{
+				Control.TrackDrawable?.ClearColorFilter();
+			}
+
 		}
 
 		void UpdateThumbColor()

@@ -58,8 +58,7 @@ namespace Xamarin.Forms
 		static bool? s_is29OrNewer;
 		static bool? s_isMarshmallowOrNewer;
 		static bool? s_isNougatOrNewer;
-		static bool? s_isOreoOrNewer;
-		static bool? s_isJellyBeanMr1OrNewer;
+		static bool? s_isOreoOrNewer;	
 
 		[Obsolete("Context is obsolete as of version 2.5. Please use a local context instead.")]
 		[EditorBrowsable(EditorBrowsableState.Never)]
@@ -95,16 +94,6 @@ namespace Xamarin.Forms
 			}
 		}
 		
-		internal static bool IsJellyBeanMr1OrNewer
-		{
-			get
-			{
-				if (!s_isJellyBeanMr1OrNewer.HasValue)
-					s_isJellyBeanMr1OrNewer = SdkInt >= BuildVersionCodes.JellyBeanMr1;
-				return s_isJellyBeanMr1OrNewer.Value;
-			}
-		}
-
 		internal static bool IsLollipopOrNewer
 		{
 			get

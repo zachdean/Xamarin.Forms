@@ -65,8 +65,7 @@ namespace Xamarin.Forms.Platform.Android
 			UpdateCharacterSpacing();
 			UpdateFont();
 
-			if ((int)Forms.SdkInt > 16)
-				Control.TextAlignment = global::Android.Views.TextAlignment.ViewStart;
+			Control.TextAlignment = global::Android.Views.TextAlignment.ViewStart;
 		}
 
 		protected override void OnElementPropertyChanged(object sender, PropertyChangedEventArgs e)
