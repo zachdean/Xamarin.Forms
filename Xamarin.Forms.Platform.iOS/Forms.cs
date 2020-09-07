@@ -34,22 +34,10 @@ namespace Xamarin.Forms
 		public static bool IsInitialized { get; private set; }
 
 #if __MOBILE__
-		static bool? s_isiOS9OrNewer;
 		static bool? s_isiOS10OrNewer;
 		static bool? s_isiOS11OrNewer;
 		static bool? s_isiOS13OrNewer;
 		static bool? s_respondsTosetNeedsUpdateOfHomeIndicatorAutoHidden;
-
-		internal static bool IsiOS9OrNewer
-		{
-			get
-			{
-				if (!s_isiOS9OrNewer.HasValue)
-					s_isiOS9OrNewer = UIDevice.CurrentDevice.CheckSystemVersion(9, 0);
-				return s_isiOS9OrNewer.Value;
-			}
-		}
-
 
 		internal static bool IsiOS10OrNewer
 		{

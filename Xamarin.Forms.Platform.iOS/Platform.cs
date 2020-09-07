@@ -470,12 +470,6 @@ namespace Xamarin.Forms.Platform.iOS
 				alert.PopoverPresentationController.PermittedArrowDirections = 0; // No arrow
 			}
 
-			if(!Forms.IsiOS9OrNewer)
-			{
-				// For iOS 8, we need to explicitly set the size of the window
-				window.Frame = new RectangleF(0, 0, UIScreen.MainScreen.Bounds.Width, UIScreen.MainScreen.Bounds.Height);
-			}
-
 			window.RootViewController.PresentViewController(alert, true, null);
 		}
 

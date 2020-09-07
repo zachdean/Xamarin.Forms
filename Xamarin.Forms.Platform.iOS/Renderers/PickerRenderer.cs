@@ -15,12 +15,13 @@ namespace Xamarin.Forms.Platform.iOS
 	{
 		readonly HashSet<string> enableActions;
 
-		public ReadOnlyField() {
+		public ReadOnlyField()
+		{
 			string[] actions = { "copy:", "select:", "selectAll:" };
-			enableActions = new HashSet<string> (actions);
+			enableActions = new HashSet<string>(actions);
 		}
 
-		public override bool CanPerform (Selector action, NSObject withSender)
+		public override bool CanPerform(Selector action, NSObject withSender)
 			=> enableActions.Contains(action.Name);
 	}
 
@@ -95,11 +96,8 @@ namespace Xamarin.Forms.Platform.iOS
 					entry.InputView.AutoresizingMask = UIViewAutoresizing.FlexibleHeight;
 					entry.InputAccessoryView.AutoresizingMask = UIViewAutoresizing.FlexibleHeight;
 
-					if (Forms.IsiOS9OrNewer)
-					{
-						entry.InputAssistantItem.LeadingBarButtonGroups = null;
-						entry.InputAssistantItem.TrailingBarButtonGroups = null;
-					}
+					entry.InputAssistantItem.LeadingBarButtonGroups = null;
+					entry.InputAssistantItem.TrailingBarButtonGroups = null;
 
 					_defaultTextColor = entry.TextColor;
 
@@ -144,7 +142,7 @@ namespace Xamarin.Forms.Platform.iOS
 			else if (e.PropertyName == Picker.TextColorProperty.PropertyName || e.PropertyName == VisualElement.IsEnabledProperty.PropertyName)
 				UpdateTextColor();
 			else if (e.PropertyName == Picker.FontAttributesProperty.PropertyName || e.PropertyName == Picker.FontFamilyProperty.PropertyName ||
-			         e.PropertyName == Picker.FontSizeProperty.PropertyName)
+					 e.PropertyName == Picker.FontSizeProperty.PropertyName)
 			{
 				UpdateFont();
 			}
@@ -182,8 +180,8 @@ namespace Xamarin.Forms.Platform.iOS
 			UpdatePicker();
 		}
 
-        protected void UpdateCharacterSpacing()
-        {
+		protected void UpdateCharacterSpacing()
+		{
 			var textAttr = Control.AttributedText.AddCharacterSpacing(Control.Text, Element.CharacterSpacing);
 
 			if (textAttr != null)
@@ -195,9 +193,9 @@ namespace Xamarin.Forms.Platform.iOS
 				UpdateAttributedPlaceholder(placeHolder);
 		}
 
-        protected internal virtual void UpdateFont()
+		protected internal virtual void UpdateFont()
 		{
-			Control.Font = Element.ToUIFont();			
+			Control.Font = Element.ToUIFont();
 		}
 
 		readonly Color _defaultPlaceholderColor = ColorExtensions.PlaceholderColor.ToColor();
@@ -225,7 +223,7 @@ namespace Xamarin.Forms.Platform.iOS
 			UpdateAttributedPlaceholder(Control.AttributedPlaceholder.AddCharacterSpacing(Element.Title, Element.CharacterSpacing));
 		}
 
-		protected virtual void UpdateAttributedPlaceholder(NSAttributedString nsAttributedString) => 
+		protected virtual void UpdateAttributedPlaceholder(NSAttributedString nsAttributedString) =>
 			Control.AttributedPlaceholder = nsAttributedString;
 
 		void UpdatePicker()
@@ -277,7 +275,7 @@ namespace Xamarin.Forms.Platform.iOS
 		}
 		void UpdateVerticalTextAlignment()
 		{
-			Control.VerticalAlignment = Element.VerticalTextAlignment.ToNativeTextAlignment();			
+			Control.VerticalAlignment = Element.VerticalTextAlignment.ToNativeTextAlignment();
 		}
 
 		protected internal virtual void UpdateTextColor()
@@ -290,8 +288,8 @@ namespace Xamarin.Forms.Platform.iOS
 				Control.TextColor = textColor.ToUIColor();
 
 			// HACK This forces the color to update; there's probably a more elegant way to make this happen
-			Control.Text = Control.Text;			
-		}		
+			Control.Text = Control.Text;
+		}
 
 		protected override void Dispose(bool disposing)
 		{
@@ -324,7 +322,7 @@ namespace Xamarin.Forms.Platform.iOS
 					Control.EditingChanged -= OnEditing;
 				}
 
-				if(Element != null)
+				if (Element != null)
 					((INotifyCollectionChanged)Element.Items).CollectionChanged -= RowsCollectionChanged;
 			}
 
@@ -373,7 +371,7 @@ namespace Xamarin.Forms.Platform.iOS
 					SelectedIndex = (int)row;
 				}
 
-				if(_renderer.Element.On<PlatformConfiguration.iOS>().UpdateMode() == UpdateMode.Immediately)
+				if (_renderer.Element.On<PlatformConfiguration.iOS>().UpdateMode() == UpdateMode.Immediately)
 					_renderer.UpdatePickerFromModel(this);
 			}
 

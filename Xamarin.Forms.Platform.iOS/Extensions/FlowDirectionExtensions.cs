@@ -20,7 +20,7 @@ namespace Xamarin.Forms.Platform.iOS
 
 		internal static bool UpdateFlowDirection(this UIView view, IVisualElementController controller)
 		{
-			if (controller == null || view == null || !Forms.IsiOS9OrNewer)
+			if (controller == null || view == null)
 				return false;
 
 			UISemanticContentAttribute updateValue = view.SemanticContentAttribute;
