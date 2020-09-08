@@ -49,7 +49,11 @@ namespace Xamarin.Forms.Platform
 #endif
 	internal class _ImageRenderer { }
 
-	[RenderWith (typeof (Android.AppCompat.ButtonRenderer))]
+#if __ANDROID__
+	[RenderWith(typeof(Android.AppCompat.ButtonRenderer))]
+#else
+	[RenderWith(typeof(ButtonRenderer))]
+#endif
 	internal class _ButtonRenderer { }
 
 	[RenderWith(typeof(ImageButtonRenderer))]
@@ -86,8 +90,11 @@ namespace Xamarin.Forms.Platform
 
 	[RenderWith (typeof (SearchBarRenderer))]
 	internal class _SearchBarRenderer { }
-
+#if __ANDROID__
 	[RenderWith (typeof (Android.AppCompat.SwitchRenderer))]
+#else
+	[RenderWith(typeof(SwitchRenderer))]
+#endif
 	internal class _SwitchRenderer { }
 
 	[RenderWith (typeof (DatePickerRenderer))]
@@ -96,7 +103,11 @@ namespace Xamarin.Forms.Platform
 	[RenderWith (typeof (TimePickerRenderer))]
 	internal class _TimePickerRenderer { }
 
-	[RenderWith (typeof (Android.AppCompat.PickerRenderer))]
+#if __ANDROID__
+	[RenderWith(typeof(Android.AppCompat.PickerRenderer))]
+#else
+	[RenderWith(typeof(PickerRenderer))]
+#endif
 	internal class _PickerRenderer { }
 
 	[RenderWith (typeof (StepperRenderer))]
@@ -111,7 +122,11 @@ namespace Xamarin.Forms.Platform
 	[RenderWith (typeof (ActivityIndicatorRenderer))]
 	internal class _ActivityIndicatorRenderer { }
 
-	[RenderWith (typeof (Android.AppCompat.FrameRenderer))]
+#if __ANDROID__
+	[RenderWith(typeof(Android.AppCompat.FrameRenderer))]
+#else
+	[RenderWith(typeof(FrameRenderer))]
+#endif
 	internal class _FrameRenderer { }
 
 #if __ANDROID__
@@ -152,7 +167,11 @@ namespace Xamarin.Forms.Platform
 #endif
 	internal class _NavigationPageRenderer { }
 
-	[RenderWith (typeof (Android.AppCompat.CarouselPageRenderer))]
+#if __ANDROID__
+	[RenderWith(typeof(Android.AppCompat.CarouselPageRenderer))]
+#else
+	[RenderWith(typeof(CarouselPageRenderer))]
+#endif
 	internal class _CarouselPageRenderer { }
 
 	[RenderWith (typeof (PageRenderer))]
