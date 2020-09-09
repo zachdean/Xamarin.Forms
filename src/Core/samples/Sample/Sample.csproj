@@ -1,0 +1,60 @@
+﻿<Project Sdk="MSBuild.Sdk.Extras">
+	<PropertyGroup>
+		<TargetFrameworks>netstandard2.1;Xamarin.iOS10;MonoAndroid10.0</TargetFrameworks>
+		<LangVersion>8.0</LangVersion>
+	</PropertyGroup>
+	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+		<LangVersion>8.0</LangVersion>
+	</PropertyGroup>
+	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+		<LangVersion>8.0</LangVersion>
+	</PropertyGroup>
+	<ItemGroup Condition="$(TargetFramework.StartsWith('Xamarin.iOS')) != true ">
+		<Compile Remove="**\*.Ios.cs" />
+		<None Include="**\*.Ios.cs" />
+	</ItemGroup>
+	<ItemGroup Condition="$(TargetFramework.StartsWith('Xamarin.Mac')) != true ">
+		<Compile Remove="**\*.Mac.cs" />
+		<None Include="**\*.Mac.cs" />
+	</ItemGroup>
+	<ItemGroup Condition="$(TargetFramework.StartsWith('Xamarin.Mac')) != true And $(TargetFramework.StartsWith('Xamarin.iOS')) != true ">
+		<Compile Remove="**\*.MaciOS.cs" />
+		<None Include="**\*.MaciOS.cs" />
+	</ItemGroup>
+	<ItemGroup Condition="$(TargetFramework.StartsWith('MonoAndroid')) != true ">
+		<Compile Remove="**\*.Android.cs" />
+		<None Include="**\*.Android.cs" />
+	</ItemGroup>
+	<ItemGroup Condition="$(TargetFramework.StartsWith('netstandard')) != true ">
+		<Compile Remove="**\*.Standard.cs" />
+		<None Include="**\*.Standard.cs" />
+	</ItemGroup>
+	<ItemGroup Condition="'$(TargetFramework)' == 'MonoAndroid90'">
+		<PackageReference Include="Xamarin.Android.Support.Design" Version="28.0.0.3" />
+		<PackageReference Include="Xamarin.Android.Support.v4" Version="28.0.0.3" />
+		<PackageReference Include="Xamarin.Android.Support.v7.AppCompat" Version="28.0.0.3" />
+	</ItemGroup>
+	<ItemGroup Condition="'$(TargetFramework)' == 'MonoAndroid10.0'">
+		<PackageReference Include="Xamarin.AndroidX.Lifecycle.LiveData" Version="2.2.0" />
+		<PackageReference Include="Xamarin.Google.Android.Material" Version="1.0.0" />
+		<PackageReference Include="Xamarin.AndroidX.Legacy.Support.V4" Version="1.0.0" />
+	</ItemGroup>
+	<ItemGroup>
+		<Folder Include="Platform\MaciOS\" />
+		<Folder Include="Platform\iOS\" />
+		<Folder Include="Platform\Mac\" />
+		<Folder Include="Platform\Android\" />
+	</ItemGroup>
+	<ItemGroup>
+	  <ProjectReference Include="..\..\Maui.Core\Maui.Core.csproj" />
+	  <ProjectReference Include="..\..\System.Maui.Core\System.Maui.Core.csproj" />
+	</ItemGroup>
+	<ItemGroup>
+	  <Compile Condition=" '$(EnableDefaultCompileItems)' == 'true' " Update="DummyLayout.cs">
+	    <SubType></SubType>
+	  </Compile>
+	  <Compile Condition=" '$(EnableDefaultCompileItems)' == 'true' " Update="Stack.cs">
+	    <SubType></SubType>
+	  </Compile>
+	</ItemGroup>
+</Project>

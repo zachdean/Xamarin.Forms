@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+		<TargetFramework Condition=" '$(OS)' == 'Windows_NT' ">netcoreapp3.1</TargetFramework>
+    <TargetFramework Condition=" '$(OS)' != 'Windows_NT' ">netstandard2.1</TargetFramework>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Maui.Core\Maui.Core.csproj" />
+    <ProjectReference Include="..\..\src\Maui.DummyForms\Maui.DummyForms.csproj" />
+    <ProjectReference Include="..\Sample\Sample.csproj" />
+  </ItemGroup>
+
+</Project>
