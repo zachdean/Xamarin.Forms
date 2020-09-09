@@ -9,6 +9,7 @@ using AndroidX.AppCompat.App;
 using Google.Android.Material.Snackbar;
 using AndroidX.CoordinatorLayout.Widget;
 using AndroidX.Core.Widget;
+using System.Maui.Platform;
 
 namespace Sample.Droid {
 	[Activity (Label = "@string/app_name", Theme = "@style/AppTheme.NoActionBar", MainLauncher = true)]
@@ -28,9 +29,10 @@ namespace Sample.Droid {
 			//page = FindViewById<NestedScrollView> (Resource.Id.Page);
 			//FloatingActionButton fab = FindViewById<FloatingActionButton> (Resource.Id.fab);
 			//fab.Click += FabOnClick;
-			var app = new MyApp ();
+			//var app = new MyApp ();
 
-			var nativeView = (app.MainPage as IPage).ToNative(this);
+			Registrar.Handlers.Register<System.Maui.PocoUI.Button, ButtonRenderer>();
+			var nativeView = new System.Maui.PocoUI.Button().ToNative(this);
 			rootView.AddView(nativeView);
 			//Add ((app.MainPage as ContentPage).Content);
 		}

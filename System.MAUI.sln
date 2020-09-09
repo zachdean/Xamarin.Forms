@@ -3,15 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30413.136
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Xamarin.Forms.Platform.Android", "..\Xamarin.Forms.Platform.Android\Xamarin.Forms.Platform.Android.csproj", "{1AF96996-0796-4717-897E-D5BFDEA890DD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Xamarin.Forms.Platform.Android", "Xamarin.Forms.Platform.Android\Xamarin.Forms.Platform.Android.csproj", "{1AF96996-0796-4717-897E-D5BFDEA890DD}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Xamarin.Forms", "Xamarin.Forms", "{8890A4AC-D179-44F6-905B-6326E3FFE212}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{B4036CCC-3C56-427E-BD37-AB34F26067D8}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "System.Maui", "..\src\Core\src\System.Maui.Core\System.Maui.csproj", "{413E57FC-EB52-47E8-B8E4-4B375FC100DC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "System.Maui", "src\Core\src\System.Maui.Core\System.Maui.csproj", "{413E57FC-EB52-47E8-B8E4-4B375FC100DC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sample.Droid", "..\src\Core\samples\Sample.Droid\Sample.Droid.csproj", "{244483A1-4181-47C6-AE0E-04C35A3BACF7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sample.Droid", "src\Core\samples\Sample.Droid\Sample.Droid.csproj", "{244483A1-4181-47C6-AE0E-04C35A3BACF7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

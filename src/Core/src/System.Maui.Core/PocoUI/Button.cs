@@ -18,7 +18,7 @@ namespace System.Maui.PocoUI
 
 		public Rectangle Frame => throw new NotImplementedException();
 
-		public IViewRenderer Renderer { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+		public IViewRenderer Renderer { get; set; }
 
 		public IFrameworkElement Parent => throw new NotImplementedException();
 
