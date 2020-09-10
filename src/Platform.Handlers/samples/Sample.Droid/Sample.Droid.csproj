@@ -113,6 +113,10 @@
       <Project>{413e57fc-eb52-47e8-b8e4-4b375fc100dc}</Project>
       <Name>System.Maui</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\src\Xamarin.Platform.Handlers\Xamarin.Platform.Handlers.csproj">
+      <Project>{29913989-0f70-48d8-8ede-b1dd217f21d1}</Project>
+      <Name>Xamarin.Platform.Handlers</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

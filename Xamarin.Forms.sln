@@ -59,7 +59,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{2ACC7FFA-2
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{F69A2922-9D5F-4046-8354-8DA6CF45502B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Xamarin.Platform.Handlers", "src\Platform.Handlers\src\Xamarin.Platform.Handlers\Xamarin.Platform.Handlers.csproj", "{29913989-0F70-48D8-8EDE-B1DD217F21D1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Xamarin.Platform.Handlers", "src\Platform.Handlers\src\Xamarin.Platform.Handlers\Xamarin.Platform.Handlers.csproj", "{29913989-0F70-48D8-8EDE-B1DD217F21D1}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sample", "src\Platform.Handlers\samples\Sample\Sample.csproj", "{28164E00-92FB-4EEE-927C-D0CF672A004D}"
 EndProject
@@ -331,7 +331,8 @@ Global
 		{3B72465B-ACAE-43AE-9327-10F372FE5F80}.Release|x64.Build.0 = Release|Any CPU
 		{3B72465B-ACAE-43AE-9327-10F372FE5F80}.Release|x86.ActiveCfg = Release|Any CPU
 		{3B72465B-ACAE-43AE-9327-10F372FE5F80}.Release|x86.Build.0 = Release|Any CPU
-		{29913989-0F70-48D8-8EDE-B1DD217F21D1}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{29913989-0F70-48D8-8EDE-B1DD217F21D1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{29913989-0F70-48D8-8EDE-B1DD217F21D1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{29913989-0F70-48D8-8EDE-B1DD217F21D1}.Debug|ARM.ActiveCfg = Debug|x86
 		{29913989-0F70-48D8-8EDE-B1DD217F21D1}.Debug|ARM64.ActiveCfg = Debug|x86
 		{29913989-0F70-48D8-8EDE-B1DD217F21D1}.Debug|iPhone.ActiveCfg = Debug|x86

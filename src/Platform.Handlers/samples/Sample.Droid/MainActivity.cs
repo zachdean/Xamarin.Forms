@@ -4,12 +4,12 @@ using Android.OS;
 using Android.Runtime;
 using Android.Views;
 using Android.Widget;
-using System.Maui;
 using AndroidX.AppCompat.App;
 using Google.Android.Material.Snackbar;
 using AndroidX.CoordinatorLayout.Widget;
 using AndroidX.Core.Widget;
-using System.Maui.Platform;
+using Xamarin.Platform.Handlers;
+using Xamarin.Platform;
 
 namespace Sample.Droid {
 	[Activity (Label = "@string/app_name", Theme = "@style/AppTheme.NoActionBar", MainLauncher = true)]
@@ -31,8 +31,8 @@ namespace Sample.Droid {
 			//fab.Click += FabOnClick;
 			//var app = new MyApp ();
 
-			Registrar.Handlers.Register<System.Maui.PocoUI.Button, ButtonRenderer>();
-			var nativeView = new System.Maui.PocoUI.Button().ToNative(this);
+			Registrar.Handlers.Register<Xamarin.Platform.PocoUI.Button, ButtonRenderer>();
+			var nativeView = new Xamarin.Platform.PocoUI.Button().ToNative(this);
 			rootView.AddView(nativeView);
 			//Add ((app.MainPage as ContentPage).Content);
 		}

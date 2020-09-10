@@ -19,6 +19,7 @@ using static Android.Content.Res.Resources;
 using Android;
 using AndroidX.Core.Content;
 using Android.Content.Res;
+using System;
 
 namespace Xamarin.Platform.Handlers
 {
