@@ -101,12 +101,12 @@ namespace Xamarin.Forms
 			}
 			else if (Operator == CompositeOperator.Or)
 			{
-				bool isActive = GetIsActiveFromStateTriggers().Any();
+				bool isActive = GetIsActiveFromStateTriggers().Where(t => t).Any();
 				SetActive(isActive);
 			}
 			else if (Operator == CompositeOperator.And)
 			{
-				bool isActive = GetIsActiveFromStateTriggers().All();
+				bool isActive = !GetIsActiveFromStateTriggers().Where(t => !t).Any();
 				SetActive(isActive);
 			}
 		}
