@@ -3,10 +3,10 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
 
-namespace Xamarin.Platform
+namespace Xamarin.Forms
 {
 	[DebuggerDisplay("Width={Width}, Height={Height}")]
-	//[TypeConverter (typeof(Xaml.SizeTypeConverter))]
+	[TypeConverter(typeof(SizeTypeConverter))]
 	public struct Size
 	{
 		double _width;

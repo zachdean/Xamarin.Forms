@@ -1,4 +1,4 @@
-﻿namespace Xamarin.Platform
+﻿namespace Xamarin.Forms
 {
 	public enum TextType
 	{

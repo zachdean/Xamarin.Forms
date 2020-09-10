@@ -1,6 +1,6 @@
 using System.Diagnostics;
 
-namespace Xamarin.Platform
+namespace Xamarin.Forms
 {
 	[DebuggerDisplay("Request={Request.Width}x{Request.Height}, Minimum={Minimum.Width}x{Minimum.Height}")]
 	public struct SizeRequest

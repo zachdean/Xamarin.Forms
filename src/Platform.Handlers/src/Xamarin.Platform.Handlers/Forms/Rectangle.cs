@@ -1,11 +1,38 @@
+// 
+// Rectangle.cs
+//  
+// Author:
+//       Lluis Sanchez <lluis@xamarin.com>
+// 
+// Copyright (c) 2011 Xamarin Inc
+// 
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+// 
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+// THE SOFTWARE.
+
 using System;
 using System.Diagnostics;
 using System.Globalization;
 
-namespace Xamarin.Platform
+namespace Xamarin.Forms
 {
 	[DebuggerDisplay("X={X}, Y={Y}, Width={Width}, Height={Height}")]
-	//[TypeConverter(typeof(RectangleTypeConverter))]
+	[TypeConverter(typeof(RectangleTypeConverter))]
+	//[Obsolete("Xamarin.Forms.Rectangle is obsolete in 4.8. use Xamarin.Forms.Rect instead")]
 	public struct Rectangle
 	{
 		public double X { get; set; }
@@ -49,9 +76,10 @@ namespace Xamarin.Platform
 
 		public override bool Equals(object obj)
 		{
-			if (ReferenceEquals(null, obj))
+			if (obj is null)
 				return false;
-			return obj is Rectangle && Equals((Rectangle)obj);
+
+			return obj is Rectangle rectangle && Equals(rectangle) || obj is Rect rect && Equals(rect);
 		}
 
 		public override int GetHashCode()
@@ -222,5 +250,9 @@ namespace Xamarin.Platform
 			width = Width;
 			height = Height;
 		}
+
+		public static implicit operator Rect(Rectangle rectangle) => new Rect(rectangle.X, rectangle.Y, rectangle.Width, rectangle.Height);
+
+		public static implicit operator Rectangle(Rect rect) => new Rectangle(rect.X, rect.Y, rect.Width, rect.Height);
 	}
 }

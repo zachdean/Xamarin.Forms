@@ -2,10 +2,10 @@ using System;
 using System.Diagnostics;
 using System.Globalization;
 
-namespace Xamarin.Platform
+namespace Xamarin.Forms
 {
 	[DebuggerDisplay("X={X}, Y={Y}")]
-//	[TypeConverter(typeof(PointTypeConverter))]
+	[TypeConverter(typeof(PointTypeConverter))]
 	public struct Point
 	{
 		public double X { get; set; }
