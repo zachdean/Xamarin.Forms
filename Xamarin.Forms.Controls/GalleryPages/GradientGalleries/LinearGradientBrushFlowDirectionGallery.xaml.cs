@@ -46,7 +46,6 @@
 			DatePicker.FlowDirection = flowDirection;
 			Editor.FlowDirection = flowDirection;
 			Entry.FlowDirection = flowDirection;
-			Expander.FlowDirection = flowDirection;
 			Frame.FlowDirection = flowDirection;
 			Grid.FlowDirection = flowDirection;
 			Label.FlowDirection = flowDirection;

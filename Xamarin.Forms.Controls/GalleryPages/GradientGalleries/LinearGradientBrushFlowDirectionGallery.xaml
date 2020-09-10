@@ -109,18 +109,6 @@
                         x:Name="Entry"
                         Background="{StaticResource LinearGradient}"
                         Text="Entry"/>
-                    <Expander
-                        x:Name="Expander"
-                        Background="{StaticResource LinearGradient}">
-                        <Expander.Header>
-                            <Label
-                                Text="Expander Header" />
-                        </Expander.Header>
-                        <Grid>
-                            <Label
-                                Text="Expander Content" />
-                        </Grid>
-                    </Expander>
                     <Frame
                         x:Name="Frame"
                         Background="{StaticResource LinearGradient}"
