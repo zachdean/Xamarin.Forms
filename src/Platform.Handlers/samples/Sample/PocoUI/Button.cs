@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Xamarin.Platform;
 
-namespace Xamarin.Platform.PocoUI
+namespace Sample.PocoUI
 {
 	public class Button : IButton
 	{

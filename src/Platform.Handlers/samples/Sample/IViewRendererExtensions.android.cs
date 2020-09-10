@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Maui;
 using System.Text;
 using Android.Content;
+using Xamarin.Platform;
 
 namespace Sample
 {

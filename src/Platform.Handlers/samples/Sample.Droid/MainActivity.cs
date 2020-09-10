@@ -31,8 +31,8 @@ namespace Sample.Droid {
 			//fab.Click += FabOnClick;
 			//var app = new MyApp ();
 
-			Registrar.Handlers.Register<Xamarin.Platform.PocoUI.Button, ButtonRenderer>();
-			var nativeView = new Xamarin.Platform.PocoUI.Button().ToNative(this);
+			Registrar.Handlers.Register<Sample.PocoUI.Button, ButtonRenderer>();
+			var nativeView = new PocoUI.Button().ToNative(this);
 			rootView.AddView(nativeView);
 			//Add ((app.MainPage as ContentPage).Content);
 		}

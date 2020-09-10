@@ -117,6 +117,10 @@
       <Project>{29913989-0f70-48d8-8ede-b1dd217f21d1}</Project>
       <Name>Xamarin.Platform.Handlers</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Sample\Sample.csproj">
+      <Project>{28164e00-92fb-4eee-927c-d0cf672a004d}</Project>
+      <Name>Sample</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
