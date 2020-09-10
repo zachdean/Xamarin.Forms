@@ -8,7 +8,7 @@ using AndroidX.Core.Content;
 #else
 using Android.Support.V4.Content;
 #endif
-
+using Xamarin.Forms;
 using AColor = Android.Graphics.Color;
 
 namespace Xamarin.Platform.Handlers

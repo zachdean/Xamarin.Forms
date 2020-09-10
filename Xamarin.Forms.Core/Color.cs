@@ -2,12 +2,12 @@ using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
-using Xamarin.Forms.Internals;
+using Xamarin.Platform.Extensions;
 
 namespace Xamarin.Forms
 {
 	[DebuggerDisplay("R={R}, G={G}, B={B}, A={A}, Hue={Hue}, Saturation={Saturation}, Luminosity={Luminosity}")]
-	[TypeConverter(typeof(ColorTypeConverter))]
+	//[TypeConverter(typeof(ColorTypeConverter))]
 	public struct Color
 	{
 		readonly Mode _mode;

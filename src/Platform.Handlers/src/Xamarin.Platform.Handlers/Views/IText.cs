@@ -1,5 +1,6 @@
 ﻿namespace Xamarin.Platform
 {
+	using Xamarin.Forms;
 	public interface IText : IView
 	{
 		string Text { get; }

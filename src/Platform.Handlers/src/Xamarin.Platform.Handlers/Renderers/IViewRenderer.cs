@@ -1,5 +1,6 @@
 ﻿using System;
 using Xamarin.Platform.Core;
+using Xamarin.Forms;
 
 namespace Xamarin.Platform {
 	public interface IViewRenderer

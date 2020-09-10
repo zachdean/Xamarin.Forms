@@ -2,6 +2,7 @@
 using System.Runtime.Versioning;
 using Android.Content;
 using Android.Views;
+using Xamarin.Forms;
 
 namespace Xamarin.Platform.Handlers
 {

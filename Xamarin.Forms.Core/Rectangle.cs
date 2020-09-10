@@ -31,7 +31,7 @@ using System.Globalization;
 namespace Xamarin.Forms
 {
 	[DebuggerDisplay("X={X}, Y={Y}, Width={Width}, Height={Height}")]
-	[TypeConverter(typeof(RectangleTypeConverter))]
+	//[TypeConverter(typeof(RectangleTypeConverter))]
 	//[Obsolete("Xamarin.Forms.Rectangle is obsolete in 4.8. use Xamarin.Forms.Rect instead")]
 	public struct Rectangle
 	{

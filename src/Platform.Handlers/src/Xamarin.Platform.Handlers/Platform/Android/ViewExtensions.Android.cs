@@ -1,4 +1,5 @@
 ﻿using Android.Content.Res;
+using Xamarin.Forms;
 
 namespace Xamarin.Platform.Handlers
 {

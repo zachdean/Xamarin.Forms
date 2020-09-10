@@ -9,6 +9,7 @@ using NativeView = AndroidX.AppCompat.Widget.AppCompatButton;
 #else
 using NativeView = System.Object;
 #endif
+using Xamarin.Forms;
 
 namespace Xamarin.Platform.Handlers {
 	public partial class ButtonRenderer : AbstractViewRenderer<IButton, NativeView>

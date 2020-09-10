@@ -12,6 +12,7 @@ using NativeView = System.Windows.FrameworkElement;
 #elif NETSTANDARD
 using NativeView = System.Object;
 #endif
+using Xamarin.Forms;
 
 namespace Xamarin.Platform.Handlers
 {
