@@ -4,7 +4,7 @@
 namespace Xamarin.Platform.Handlers {
 	public partial class ViewRenderer {
 		public static PropertyMapper<IView> ViewMapper = new PropertyMapper<IView> {
-			[nameof(IView.IsEnabled)] = MapPropertyIsEnabled,
+			//[nameof(IView.IsEnabled)] = MapIsEnabled,
 			[nameof(IView.BackgroundColor)] = MapBackgroundColor,
 			[nameof(IView.Frame)] = MapPropertyFrame,
 		//	[nameof(IClipShapeView.ClipShape)] = MapPropertyClipShape

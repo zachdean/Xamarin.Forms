@@ -6,29 +6,33 @@ using System.Linq;
 namespace Xamarin.Platform
 {
 	public class PropertyMapper {
-		internal Dictionary<string, (Action<IViewRenderer, IFrameworkElement> Action, bool RunOnUpdateAll)> genericMap = new Dictionary<string, (Action<IViewRenderer, IFrameworkElement> action, bool runOnUpdateAll)> ();
-		protected virtual void UpdateProperty (string key, IViewRenderer viewRenderer, IFrameworkElement virtualView)
+		internal Dictionary<string, (Action<IViewRenderer, IFrameworkElement> Action, bool RunOnUpdateAll)> _mapper = new Dictionary<string, (Action<IViewRenderer, IFrameworkElement> action, bool runOnUpdateAll)> ();
+
+		protected virtual void UpdatePropertyCore (string key, IViewRenderer viewRenderer, IFrameworkElement virtualView)
 		{
-			if (genericMap.TryGetValue(key, out var action))
+			if (_mapper.TryGetValue(key, out var action))
 			{
 				action.Action?.Invoke(viewRenderer, virtualView);
 			}
 		}
+
 		public void UpdateProperty (IViewRenderer viewRenderer, IFrameworkElement virtualView, string property)
 		{
 			if (virtualView == null)
 				return;
-			UpdateProperty (property, viewRenderer, virtualView);
+			UpdatePropertyCore (property, viewRenderer, virtualView);
 		}
+
 		public void UpdateProperties (IViewRenderer viewRenderer, IFrameworkElement virtualView)
 		{
 			if (virtualView == null)
 				return;
 			foreach (var key in Keys) {
-				UpdateProperty (key, viewRenderer, virtualView);
+				UpdatePropertyCore (key, viewRenderer, virtualView);
 			}
 		}
-		public virtual ICollection<string> Keys => genericMap.Keys;
+
+		public virtual ICollection<string> Keys => _mapper.Keys;
 	}
 
 	public class PropertyMapper<TVirtualView> : PropertyMapper, IEnumerable
@@ -43,15 +47,15 @@ namespace Xamarin.Platform
 		}
 
 		ICollection<string> cachedKeys;
-		public override ICollection<string> Keys => cachedKeys ??= (Chained?.Keys.Union (keysForStartup) as ICollection<string> ?? genericMap.Keys);
-		ICollection<string> keysForStartup => genericMap.Where(x => x.Value.RunOnUpdateAll).Select(x => x.Key).ToList();
+		public override ICollection<string> Keys => cachedKeys ??= (Chained?.Keys.Union (keysForStartup) as ICollection<string> ?? _mapper.Keys);
+		ICollection<string> keysForStartup => _mapper.Where(x => x.Value.RunOnUpdateAll).Select(x => x.Key).ToList();
 
 		public int Count => Keys.Count;
 
 		public bool IsReadOnly => false;
 
 		public Action<IViewRenderer, TVirtualView> this [string key] {
-			set => genericMap [key] = ((r, v) => value?.Invoke (r, (TVirtualView)v),true);
+			set => Add(key, value, true);
 		}
 
 		public PropertyMapper ()
@@ -62,16 +66,15 @@ namespace Xamarin.Platform
 		{
 			Chained = chained;
 		}
+
 		ActionMapper<TVirtualView> actions;
 		public ActionMapper<TVirtualView> Actions {
 			get => actions ??= new ActionMapper<TVirtualView>(this);
 		}
 
-		
-
-		protected override void UpdateProperty (string key, IViewRenderer viewRenderer, IFrameworkElement virtualView)
+		protected override void UpdatePropertyCore (string key, IViewRenderer viewRenderer, IFrameworkElement virtualView)
 		{
-			if (genericMap.TryGetValue (key, out var action))
+			if (_mapper.TryGetValue (key, out var action))
 				action.Action?.Invoke (viewRenderer, virtualView);
 			else
 				Chained?.UpdateProperty (viewRenderer, virtualView, key);
@@ -81,12 +84,9 @@ namespace Xamarin.Platform
 			=> this [key] = action;
 
 		public void Add(string key, Action<IViewRenderer, TVirtualView> action, bool ignoreOnStartup)
-			=>genericMap[key] = ((r, v) => action?.Invoke(r, (TVirtualView)v), ignoreOnStartup);
+			=> _mapper[key] = ((r, v) => action?.Invoke(r, (TVirtualView)v), ignoreOnStartup);
 
-		
-		
-
-		IEnumerator IEnumerable.GetEnumerator () => genericMap.GetEnumerator ();
+		IEnumerator IEnumerable.GetEnumerator () => _mapper.GetEnumerator ();
 
 		public class ActionMapper<TView>
 			where TView : TVirtualView, IFrameworkElement
@@ -100,7 +100,7 @@ namespace Xamarin.Platform
 
 			public Action<IViewRenderer, TView> this[string key]
 			{
-				set => PropertyMapper.genericMap[key] = ((r, v) => value?.Invoke(r, (TView)v), false);
+				set => PropertyMapper._mapper[key] = ((r, v) => value?.Invoke(r, (TView)v), false);
 			}
 		}
 

@@ -54,5 +54,9 @@ namespace Sample.PocoUI
 		{
 			throw new NotImplementedException();
 		}
+
+		Alignment IView.GetHorizontalAlignment(ILayout layout) => Alignment.Fill;
+
+		Alignment IView.GetVerticalAlignment(ILayout layout) => Alignment.Fill;
 	}
 }

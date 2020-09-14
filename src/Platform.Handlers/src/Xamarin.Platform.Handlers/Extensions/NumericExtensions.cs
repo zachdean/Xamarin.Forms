@@ -4,8 +4,7 @@ using System.Runtime.CompilerServices;
 
 namespace Xamarin.Forms
 {
-	[EditorBrowsable(EditorBrowsableState.Never)]
-	public static class NumericExtensions
+	internal static class NumericExtensions
 	{
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static double Clamp(this double self, double min, double max)
