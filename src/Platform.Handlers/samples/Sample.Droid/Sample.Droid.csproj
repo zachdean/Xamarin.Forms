@@ -109,10 +109,6 @@
     <PackageReference Include="Xamarin.Essentials" Version="1.5.1" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\src\System.Maui.Core\System.Maui.csproj">
-      <Project>{413e57fc-eb52-47e8-b8e4-4b375fc100dc}</Project>
-      <Name>System.Maui</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\src\Xamarin.Platform.Handlers\Xamarin.Platform.Handlers.csproj">
       <Project>{29913989-0f70-48d8-8ede-b1dd217f21d1}</Project>
       <Name>Xamarin.Platform.Handlers</Name>

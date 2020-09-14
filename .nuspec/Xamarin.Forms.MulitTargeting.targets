@@ -1,11 +1,7 @@
-<Project Sdk="MSBuild.Sdk.Extras">
-	<PropertyGroup>
-		<TargetFrameworks>netstandard2.1;Xamarin.iOS10;MonoAndroid10.0</TargetFrameworks>
-		<LangVersion>8.0</LangVersion>
-	</PropertyGroup>
+<Project>
 	<ItemGroup Condition="$(TargetFramework.StartsWith('Xamarin.iOS')) != true ">
-		<Compile Remove="**\*.Ios.cs" />
-		<None Include="**\*.Ios.cs" />
+		<Compile Remove="**\*.iOS.cs" />
+		<None Include="**\*.iOS.cs" />
 	</ItemGroup>
 	<ItemGroup Condition="$(TargetFramework.StartsWith('Xamarin.Mac')) != true ">
 		<Compile Remove="**\*.Mac.cs" />
@@ -23,15 +19,24 @@
 		<Compile Remove="**\*.Standard.cs" />
 		<None Include="**\*.Standard.cs" />
 	</ItemGroup>
-	<ItemGroup Condition="$(TargetFramework.StartsWith('MonoAndroid')) == true ">
-		<PackageReference Include="Xamarin.AndroidX.Lifecycle.LiveData" Version="2.2.0" />
-		<PackageReference Include="Xamarin.Google.Android.Material" Version="1.0.0" />
-		<PackageReference Include="Xamarin.AndroidX.Legacy.Support.V4" Version="1.0.0" />
-	</ItemGroup>
+  <ItemGroup Condition="$(TargetFramework.StartsWith('netcoreapp')) != true ">
+    <Compile Remove="**\*.Win32.cs" />
+    <None Include="**\*.Win32.cs" />
+    <Compile Remove="**\*.xaml.cs" />
+    <None Include="**\*.xaml.cs" />
+    <Compile Remove="**\*.xaml" />
+    <None Include="**\*.xaml" />
+  </ItemGroup>
 	<ItemGroup>
 		<Folder Include="Platform\MaciOS\" />
 		<Folder Include="Platform\iOS\" />
 		<Folder Include="Platform\Mac\" />
 		<Folder Include="Platform\Android\" />
 	</ItemGroup>
+  <PropertyGroup Condition="$(TargetFramework.StartsWith('netcoreapp')) == true ">
+    <UseWpf>true</UseWpf>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netstandard2.0|AnyCPU'">
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+  </PropertyGroup>
 </Project>
