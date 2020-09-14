@@ -1,13 +1,12 @@
 ﻿<Project Sdk="MSBuild.Sdk.Extras">
   <PropertyGroup>
-    <TargetFrameworks>$(TargetFrameworks);netstandard2.0;MonoAndroid10.0</TargetFrameworks>
+    <TargetFrameworks>$(TargetFrameworks);netstandard2.1;MonoAndroid10.0</TargetFrameworks>
     <!--<TargetFrameworks Condition=" '$(OS)' == 'Windows_NT' ">$(TargetFrameworks);netstandard2.0;Xamarin.iOS10;MonoAndroid10.0;Xamarin.Mac20;netcoreapp3.1</TargetFrameworks>
     <TargetFrameworks Condition=" '$(OS)' != 'Windows_NT' ">$(TargetFrameworks);netstandard2.0;Xamarin.iOS10;MonoAndroid10.0;Xamarin.Mac20</TargetFrameworks>-->
     <RootNamespace>Xamarin.Platform.Handlers</RootNamespace>
     <!--<Nullable>enable</Nullable>-->
   </PropertyGroup>
   <PropertyGroup>
-    <LangVersion>8.0</LangVersion>
     <PackageId>Xamarin.Platform.Handlers</PackageId>
     <Product>Maui</Product>
   </PropertyGroup>
