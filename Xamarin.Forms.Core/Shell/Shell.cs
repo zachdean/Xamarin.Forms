@@ -210,41 +210,43 @@ namespace Xamarin.Forms
 		List<(IAppearanceObserver Observer, Element Pivot)> _appearanceObservers = new List<(IAppearanceObserver Observer, Element Pivot)>();
 		List<IFlyoutBehaviorObserver> _flyoutBehaviorObservers = new List<IFlyoutBehaviorObserver>();
 
+
+		internal static BindableObject GetBindableObjectWithFlyoutItemTemplate(BindableObject bo)
+		{
+			if (bo is IMenuItemController)
+			{
+				if (bo is MenuItem mi && mi.Parent != null && mi.Parent.IsSet(MenuItemTemplateProperty))
+					return mi.Parent;
+				else if (bo is MenuShellItem msi && msi.MenuItem != null && msi.MenuItem.IsSet(MenuItemTemplateProperty))
+					return msi.MenuItem;
+			}
+
+			return bo;
+		}
+
 		DataTemplate IShellController.GetFlyoutItemDataTemplate(BindableObject bo)
 		{
 			BindableProperty bp = null;
 			string textBinding;
 			string iconBinding;
-			IStyleSelectable styleClassSource = null;
+			var bindableObjectWithTemplate = GetBindableObjectWithFlyoutItemTemplate(bo);
 
 			if (bo is IMenuItemController)
 			{
 				bp = MenuItemTemplateProperty;
-
-				if (bo is MenuItem mi && mi.Parent != null && mi.Parent.IsSet(bp))
-					bo = mi.Parent;
-				else if (bo is MenuShellItem msi && msi.MenuItem != null && msi.MenuItem.IsSet(bp))
-					bo = msi.MenuItem;
-
-				if (bo is MenuItem myStyle)
-					styleClassSource = myStyle;
-				else if (bo is MenuShellItem msiStyle)
-					styleClassSource = msiStyle.MenuItem;
-
 				textBinding = "Text";
 				iconBinding = "Icon";
 			}
 			else
 			{
-				styleClassSource = bo as IStyleSelectable;
 				bp = ItemTemplateProperty;
 				textBinding = "Title";
 				iconBinding = "FlyoutIcon";
 			}
 
-			if (bo.IsSet(bp))
+			if (bindableObjectWithTemplate.IsSet(bp))
 			{
-				return (DataTemplate)bo.GetValue(bp);
+				return (DataTemplate)bindableObjectWithTemplate.GetValue(bp);
 			}
 
 			if (IsSet(bp))
@@ -252,7 +254,7 @@ namespace Xamarin.Forms
 				return (DataTemplate)GetValue(bp);
 			}
 
-			return BaseShellItem.CreateDefaultFlyoutItemCell(styleClassSource, textBinding, iconBinding);
+			return BaseShellItem.CreateDefaultFlyoutItemCell(textBinding, iconBinding);
 		}
 
 		event EventHandler IShellController.StructureChanged
@@ -1004,47 +1006,59 @@ namespace Xamarin.Forms
 
 			foreach (var shellItem in ShellController.GetItems())
 			{
-				if (!FlyoutItem.GetIsVisible(shellItem))
+				if (!ShowInFlyoutMenu(shellItem))
 					continue;
 
-				if (shellItem.FlyoutDisplayOptions == FlyoutDisplayOptions.AsMultipleItems)
+				if (Routing.IsImplicit(shellItem) || shellItem.FlyoutDisplayOptions == FlyoutDisplayOptions.AsMultipleItems)
 				{
 					IncrementGroup();
 
 					foreach (var shellSection in (shellItem as IShellItemController).GetItems())
 					{
-						if (!FlyoutItem.GetIsVisible(shellSection))
+						if (!ShowInFlyoutMenu(shellSection))
 							continue;
 
-						if (shellSection.FlyoutDisplayOptions == FlyoutDisplayOptions.AsMultipleItems)
+						var shellContents = ((IShellSectionController)shellSection).GetItems();
+						if (Routing.IsImplicit(shellSection) || shellSection.FlyoutDisplayOptions == FlyoutDisplayOptions.AsMultipleItems)
 						{
 							IncrementGroup();
-
-							foreach (var shellContent in shellSection.Items)
+							foreach (var shellContent in shellContents)
 							{
-								if (!FlyoutItem.GetIsVisible(shellContent))
+								if (!ShowInFlyoutMenu(shellContent))
 									continue;
 
 								currentGroup.Add(shellContent);
 								if (shellContent == shellSection.CurrentItem)
 								{
-									currentGroup.AddRange(shellContent.MenuItems);
+									AddMenuItems(shellContent.MenuItems);
 								}
 							}
+
 							IncrementGroup();
 						}
 						else
 						{
 							if (!(shellSection.Parent is TabBar))
-								currentGroup.Add(shellSection);
+							{
+								if (Routing.IsImplicit(shellSection) && shellContents.Count == 1)
+								{
+									if (!ShowInFlyoutMenu(shellContents[0]))
+										continue;
+
+									currentGroup.Add(shellContents[0]);
+								}
+								else
+									currentGroup.Add(shellSection);
+							}
 
 							// If we have only a single child we will also show the items menu items
-							if ((shellSection as IShellSectionController).GetItems().Count == 1 && shellSection == shellItem.CurrentItem)
+							if (shellContents.Count == 1 && shellSection == shellItem.CurrentItem)
 							{
-								currentGroup.AddRange(shellSection.CurrentItem.MenuItems);
+								AddMenuItems(shellSection.CurrentItem.MenuItems);
 							}
 						}
 					}
+
 					IncrementGroup();
 				}
 				else
@@ -1058,6 +1072,19 @@ namespace Xamarin.Forms
 
 			return result;
 
+			bool ShowInFlyoutMenu(BindableObject bo)
+			{
+				return FlyoutItem.GetIsVisible(bo) && Shell.GetFlyoutBehavior(bo) != FlyoutBehavior.Disabled;
+			}
+
+			void AddMenuItems(MenuItemCollection menuItems)
+			{
+				foreach(var item in menuItems)
+				{
+					if (ShowInFlyoutMenu(item))
+						currentGroup.Add(item);
+				}
+			}
 
 			void IncrementGroup()
 			{

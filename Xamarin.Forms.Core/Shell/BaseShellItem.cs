@@ -308,7 +308,40 @@ namespace Xamarin.Forms
 				.StyleClass = bindableObjectStyle;
 		}
 
-		internal static DataTemplate CreateDefaultFlyoutItemCell(IStyleSelectable styleSelectable, string textBinding, string iconBinding)
+		BindableObject NonImplicitParent
+		{
+			get
+			{
+				if (Parent is Shell)
+					return Parent;
+
+				var parent = (BaseShellItem)Parent;
+
+				if (!Routing.IsImplicit(parent))
+					return parent;
+
+				return parent.NonImplicitParent;
+			}
+		}
+
+		//internal bool ShowInFlyout()
+		//{
+		//	if (!FlyoutItem.GetIsVisible(this) || Shell.GetFlyoutBehavior(this) == FlyoutBehavior.Disabled)
+		//		return false;
+
+		//	if ((this is ShellGroupItem sgi) && sgi.FlyoutDisplayOptions == FlyoutDisplayOptions.AsMultipleItems)
+		//		return false;
+
+		//	if (this.NonImplicitParent is ShellGroupItem spgi && spgi.FlyoutDisplayOptions == FlyoutDisplayOptions.AsMultipleItems)
+		//		return true;
+
+		//	if (Parent is TabBar)
+		//		return false;
+
+
+		//}
+
+		internal static DataTemplate CreateDefaultFlyoutItemCell(string textBinding, string iconBinding)
 		{
 			return new DataTemplate(() =>
 			{
@@ -359,6 +392,16 @@ namespace Xamarin.Forms
 					{
 						Property = VisualElement.BackgroundColorProperty,
 						Value = new Color(0.95)
+
+					});
+				}
+
+				if (Device.RuntimePlatform == Device.UWP)
+				{
+					normalState.Setters.Add(new Setter
+					{
+						Property = VisualElement.BackgroundColorProperty,
+						Value = Color.Transparent
 					});
 				}
 
@@ -438,7 +481,16 @@ namespace Xamarin.Forms
 				nameScope.RegisterName("FlyoutItemImage", image);
 				nameScope.RegisterName("FlyoutItemLabel", label);
 
-				UpdateFlyoutItemStyles(grid, styleSelectable);
+				grid.BindingContextChanged += (sender, __) =>
+				{
+					if (sender is Grid g)
+					{
+						var bo = g.BindingContext as BindableObject;
+						var styleClassSource = Shell.GetBindableObjectWithFlyoutItemTemplate(bo) as IStyleSelectable;
+						UpdateFlyoutItemStyles(g, styleClassSource);
+					}
+				};
+
 				grid.Resources = new ResourceDictionary() { defaultGridClass, defaultLabelClass, defaultImageClass };
 				return grid;
 			});
