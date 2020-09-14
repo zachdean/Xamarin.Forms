@@ -109,6 +109,10 @@
     <PackageReference Include="Xamarin.Essentials" Version="1.5.1" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\..\Xamarin.Forms.Core\Xamarin.Forms.Core.csproj">
+      <Project>{57b8b73d-c3b5-4c42-869e-7b2f17d354ac}</Project>
+      <Name>Xamarin.Forms.Core</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\src\Xamarin.Platform.Handlers\Xamarin.Platform.Handlers.csproj">
       <Project>{29913989-0f70-48d8-8ede-b1dd217f21d1}</Project>
       <Name>Xamarin.Platform.Handlers</Name>

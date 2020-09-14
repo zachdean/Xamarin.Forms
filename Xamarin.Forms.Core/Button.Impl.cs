@@ -27,6 +27,10 @@ namespace Xamarin.Forms
 
 		bool IFrameworkElement.IsArrangeValid => throw new NotImplementedException();
 
+		Alignment IView.GetHorizontalAlignment(Xamarin.Platform.ILayout layout) => Alignment.Fill;
+
+		Alignment IView.GetVerticalAlignment(Xamarin.Platform.ILayout layout) => Alignment.Fill;
+
 		void IFrameworkElement.Arrange(Rectangle bounds)
 		{
 			throw new NotImplementedException();
