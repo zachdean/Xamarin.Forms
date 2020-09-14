@@ -1,8 +1,8 @@
 ﻿<Project Sdk="MSBuild.Sdk.Extras">
   <PropertyGroup>
-    <TargetFrameworks>$(TargetFrameworks);netstandard2.1;MonoAndroid10.0</TargetFrameworks>
-    <!--<TargetFrameworks Condition=" '$(OS)' == 'Windows_NT' ">$(TargetFrameworks);netstandard2.1;Xamarin.iOS10;MonoAndroid10.0;Xamarin.Mac20;netcoreapp3.1</TargetFrameworks>
-    <TargetFrameworks Condition=" '$(OS)' != 'Windows_NT' ">$(TargetFrameworks);netstandard2.1;Xamarin.iOS10;MonoAndroid10.0;Xamarin.Mac20</TargetFrameworks>-->
+    <TargetFrameworks>$(TargetFrameworks);netstandard2.0;MonoAndroid10.0</TargetFrameworks>
+    <!--<TargetFrameworks Condition=" '$(OS)' == 'Windows_NT' ">$(TargetFrameworks);netstandard2.0;Xamarin.iOS10;MonoAndroid10.0;Xamarin.Mac20;netcoreapp3.1</TargetFrameworks>
+    <TargetFrameworks Condition=" '$(OS)' != 'Windows_NT' ">$(TargetFrameworks);netstandard2.0;Xamarin.iOS10;MonoAndroid10.0;Xamarin.Mac20</TargetFrameworks>-->
     <RootNamespace>Xamarin.Platform.Handlers</RootNamespace>
     <!--<Nullable>enable</Nullable>-->
   </PropertyGroup>
@@ -45,7 +45,7 @@
 	<PropertyGroup Condition="$(TargetFramework.StartsWith('netcoreapp')) == true ">
 		<UseWpf>true</UseWpf>
 	</PropertyGroup>
-	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netstandard2.1|AnyCPU'">
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netstandard2.0|AnyCPU'">
 	  <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
 	</PropertyGroup>
 	<ItemGroup Condition="'$(TargetFramework)' == 'MonoAndroid90'">

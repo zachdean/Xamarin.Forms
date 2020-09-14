@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using Xamarin.Forms;
 
-namespace Xamarin.Platform.Core
+namespace Xamarin.Forms
 {
 	public static class RectExtensions
 	{

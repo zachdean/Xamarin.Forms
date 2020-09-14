@@ -1,6 +1,6 @@
 ﻿//using Xamarin.Platform.Core.Controls;
 
-#if __MOBILE__
+#if __iOS__
 using NativeColor = UIKit.UIColor;
 #else
 using NativeColor = AppKit.NSColor;

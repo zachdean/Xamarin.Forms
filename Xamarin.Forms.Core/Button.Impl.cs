@@ -6,7 +6,7 @@ using Xamarin.Platform;
 namespace Xamarin.Forms
 {
 	public partial class Button : IButton
-	{		
+	{
 		public IViewRenderer Renderer { get; set; }
 
 		TextType IText.TextType => throw new NotImplementedException();

@@ -1,5 +1,5 @@
 ﻿using System;
-#if __MOBILE__
+#if __iOS__
 using NativeColor = UIKit.UIColor;
 using NativeControl = UIKit.UIControl;
 using NativeView = UIKit.UIView;
