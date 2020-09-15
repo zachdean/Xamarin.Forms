@@ -244,15 +244,6 @@ namespace Xamarin.Forms
 		protected PropertyMapper<T> GetRendererOverides<T>() where T : IView => (PropertyMapper<T>)(propertyMapper as PropertyMapper<T> ?? (propertyMapper = new PropertyMapper<T>()));
 		PropertyMapper IPropertyMapperView.GetPropertyMapperOverrides() => propertyMapper;
 
-		public Alignment GetVerticalAlignment(Xamarin.Platform.ILayout layout)
-		{
-			throw new NotImplementedException();
-		}
-
-		public Alignment GetHorizontalAlignment(Xamarin.Platform.ILayout layout)
-		{
-			throw new NotImplementedException();
-		}
 
 		#endregion
 	}

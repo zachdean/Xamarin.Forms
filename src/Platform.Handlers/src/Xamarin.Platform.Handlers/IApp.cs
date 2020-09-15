@@ -2,6 +2,6 @@
 {
 	public interface IApp
 	{
-
+		IView CreateView();
 	}
 }

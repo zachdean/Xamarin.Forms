@@ -28,7 +28,7 @@ namespace Sample.Droid
 			_page = FindViewById<NestedScrollView>(Resource.Id.Page);
 
 			var app = new MyApp();
-			Add((app.MainPage as ContentPage).Content);
+			Add(app.CreateView());
 		}
 
 		void Add(params IView[] views)

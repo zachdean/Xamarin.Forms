@@ -23,7 +23,7 @@ namespace Sample.iOS
 			_window = new UIWindow();
 			var app = new MyApp();
 
-			IView content = ((ContentPage)app.MainPage).Content;
+			IView content = app.CreateView();
 
 			_window.RootViewController = new UIViewController
 			{
