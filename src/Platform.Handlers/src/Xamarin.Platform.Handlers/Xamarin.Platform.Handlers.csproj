@@ -51,5 +51,8 @@
       <Compile Update="Primitives\TextDecorations.cs">
         <SubType></SubType>
       </Compile>
+      <Compile Update="Primitives\Thickness.cs">
+        <SubType></SubType>
+      </Compile>
     </ItemGroup>
 </Project>
