@@ -7,6 +7,6 @@ namespace Xamarin.Platform.Handlers
 	{
 		protected override UIButton CreateView() => throw new NotImplementedException();
 
-		public static void MapPropertyText(IViewHandler handler, IButton view) { }
+		public static void MapText(IViewHandler handler, IButton view) { }
 	}
 }

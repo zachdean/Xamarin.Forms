@@ -4,7 +4,7 @@
 	{
 		public static PropertyMapper<IButton> ButtonMapper = new PropertyMapper<IButton>(ViewHandler.ViewMapper)
 		{
-			[nameof(IButton.Text)] = MapPropertyText
+			[nameof(IButton.Text)] = MapText
 		};
 
 		public ButtonHandler() : base(ButtonMapper)
