@@ -1,5 +1,7 @@
-﻿using System;
-namespace Xamarin.Platform.Core {
-	public interface IApp {
+﻿namespace Xamarin.Platform.Core
+{
+	public interface IApp
+	{
+
 	}
 }

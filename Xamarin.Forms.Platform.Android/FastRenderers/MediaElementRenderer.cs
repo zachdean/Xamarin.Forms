@@ -10,7 +10,7 @@ using AView = Android.Views.View;
 
 namespace Xamarin.Forms.Platform.Android
 {
-	public sealed class MediaElementRenderer : FrameLayout, IVisualElementRenderer, IViewRenderer, IEffectControlProvider, MediaPlayer.IOnCompletionListener, MediaPlayer.IOnInfoListener, MediaPlayer.IOnPreparedListener, MediaPlayer.IOnErrorListener
+	public sealed class MediaElementRenderer : FrameLayout, IVisualElementRenderer, IViewHandler, IEffectControlProvider, MediaPlayer.IOnCompletionListener, MediaPlayer.IOnInfoListener, MediaPlayer.IOnPreparedListener, MediaPlayer.IOnErrorListener
 	{
 		bool _isDisposed;
 		int? _defaultLabelFor;
@@ -65,7 +65,7 @@ namespace Xamarin.Forms.Platform.Android
 			return new SizeRequest(new Size(MeasuredWidth, MeasuredHeight), new Size());
 		}
 
-		void IViewRenderer.MeasureExactly()
+		void IViewHandler.MeasureExactly()
 		{
 			ViewRenderer.MeasureExactly(this, Element, Context);
 		}

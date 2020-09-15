@@ -1,7 +1,7 @@
 ﻿using Android.Content.Res;
 using Xamarin.Forms;
 
-namespace Xamarin.Platform.Handlers
+namespace Xamarin.Platform
 {
 	public static class ViewExtensions
 	{
@@ -15,6 +15,7 @@ namespace Xamarin.Platform.Handlers
 			else
 				button.SetTextColor(color.ToNative());
 		}
+
 		static Color Cleanse(this Color color, Color defaultColor) => color.IsDefault ? defaultColor : color;
 
 		public static void SetText(this AndroidX.AppCompat.Widget.AppCompatButton button, string text)

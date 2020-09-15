@@ -17,7 +17,7 @@ using Android.Support.V7.App;
 #endif
 using Xamarin.Forms;
 
-namespace Xamarin.Platform.Handlers
+namespace Xamarin.Platform
 {
 	public static class ContextExtensions
 	{

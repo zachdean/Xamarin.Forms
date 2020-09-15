@@ -1,7 +1,7 @@
 ﻿using Android.Views;
 using static Android.Views.View;
 
-namespace Xamarin.Platform.Handlers
+namespace Xamarin.Platform
 {
 	public static class MeasureSpecExtensions
 	{

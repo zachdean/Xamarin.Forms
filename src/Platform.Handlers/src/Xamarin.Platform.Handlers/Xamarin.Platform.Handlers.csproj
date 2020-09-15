@@ -1,25 +1,55 @@
 ﻿<Project Sdk="MSBuild.Sdk.Extras">
   <PropertyGroup>
-    <TargetFrameworks>$(TargetFrameworks);netstandard2.0;MonoAndroid10.0</TargetFrameworks>
-    <!--<TargetFrameworks Condition=" '$(OS)' == 'Windows_NT' ">$(TargetFrameworks);netstandard2.0;Xamarin.iOS10;MonoAndroid10.0;Xamarin.Mac20;netcoreapp3.1</TargetFrameworks>
-    <TargetFrameworks Condition=" '$(OS)' != 'Windows_NT' ">$(TargetFrameworks);netstandard2.0;Xamarin.iOS10;MonoAndroid10.0;Xamarin.Mac20</TargetFrameworks>-->
-    <RootNamespace>Xamarin.Platform.Handlers</RootNamespace>
-    <MultiTargetedProject>true</MultiTargetedProject>
-    <!--<Nullable>enable</Nullable>-->
+    <TargetFrameworks>$(TargetFrameworks);netstandard2.0;Xamarin.iOS10;MonoAndroid10.0;Xamarin.Mac20</TargetFrameworks>
+    <RootNamespace>Xamarin.Platform</RootNamespace>
+    <AssemblyName>Xamarin.Platform</AssemblyName>
   </PropertyGroup>
-
-  <Import Project="..\..\..\..\.nuspec\Xamarin.Forms.MulitTargeting.targets" />
   <PropertyGroup>
-    <PackageId>Xamarin.Platform.Handlers</PackageId>
-    <Product>Maui</Product>
+    <PackageId>Xamarin.Platform</PackageId>
+    <Product>Xamarin</Product>
+  </PropertyGroup> 
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <LangVersion>8.0</LangVersion>
   </PropertyGroup>
-  <ItemGroup Condition="'$(TargetFramework)' == 'MonoAndroid10.0'">
-    <PackageReference Include="Xamarin.AndroidX.Lifecycle.LiveData" Version="2.1.0" />
-    <PackageReference Include="Xamarin.Google.Android.Material" Version="1.0.0" />
-    <PackageReference Include="Xamarin.AndroidX.Legacy.Support.V4" Version="1.0.0" />
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <LangVersion>8.0</LangVersion>
+  </PropertyGroup>
+  <ItemGroup Condition="$(TargetFramework.StartsWith('Xamarin.iOS')) != true ">
+    <Compile Remove="**\*.iOS.cs" />
+    <None Include="**\*.iOS.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Internals\" />
-    <Folder Include="Platform\iOS\" />
+  <ItemGroup Condition="$(TargetFramework.StartsWith('Xamarin.Mac')) != true ">
+    <Compile Remove="**\*.Mac.cs" />
+    <None Include="**\*.Mac.cs" />
   </ItemGroup>
+  <ItemGroup Condition="$(TargetFramework.StartsWith('Xamarin.Mac')) != true And $(TargetFramework.StartsWith('Xamarin.iOS')) != true ">
+    <Compile Remove="**\*.MaciOS.cs" />  
+    <None Include="**\*.MaciOS.cs" />
+  </ItemGroup>  
+  <ItemGroup Condition="$(TargetFramework.StartsWith('MonoAndroid')) != true ">
+    <Compile Remove="**\*.Android.cs" />
+    <None Include="**\*.Android.cs" />
+  </ItemGroup>
+  <ItemGroup Condition="$(TargetFramework.StartsWith('netstandard')) != true ">
+    <Compile Remove="**\*.Standard.cs" />
+    <None Include="**\*.Standard.cs" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)' == 'MonoAndroid90'">
+    <PackageReference Include="Xamarin.Android.Support.Design" Version="28.0.0.3" />
+    <PackageReference Include="Xamarin.Android.Support.v4" Version="28.0.0.3" />
+    <PackageReference Include="Xamarin.Android.Support.v7.AppCompat" Version="28.0.0.3" />
+  </ItemGroup>
+    <ItemGroup Condition="'$(TargetFramework)' == 'MonoAndroid10.0'">
+    <PackageReference Include="Xamarin.AndroidX.Lifecycle.LiveData" Version="2.1.0-rc1" />
+    <PackageReference Include="Xamarin.Google.Android.Material" Version="1.0.0-rc1" />
+    <PackageReference Include="Xamarin.AndroidX.Legacy.Support.V4" Version="1.0.0-rc1" />
+  </ItemGroup> 
+    <ItemGroup>
+      <Compile Update="Primitives\LineBreakMode.cs">
+        <SubType></SubType>
+      </Compile>
+      <Compile Update="Primitives\TextDecorations.cs">
+        <SubType></SubType>
+      </Compile>
+    </ItemGroup>
 </Project>

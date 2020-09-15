@@ -1,73 +1,49 @@
-﻿using System;
-using Android.App;
+﻿using Android.App;
 using Android.OS;
 using Android.Runtime;
 using Android.Views;
-using Android.Widget;
 using AndroidX.AppCompat.App;
-using Google.Android.Material.Snackbar;
-using AndroidX.CoordinatorLayout.Widget;
+using Xamarin.Forms;
 using AndroidX.Core.Widget;
-using Xamarin.Platform.Handlers;
 using Xamarin.Platform;
 
-namespace Sample.Droid {
-	[Activity (Label = "@string/app_name", Theme = "@style/AppTheme.NoActionBar", MainLauncher = true)]
-	public class MainActivity : AppCompatActivity {
-		//NestedScrollView page;
-		protected override void OnCreate (Bundle savedInstanceState)
+namespace Sample.Droid
+{
+	[Activity(Label = "@string/app_name", Theme = "@style/AppTheme.NoActionBar", MainLauncher = true)]
+	public class MainActivity : AppCompatActivity
+	{
+		NestedScrollView _page;
+
+		protected override void OnCreate(Bundle savedInstanceState)
 		{
-			base.OnCreate (savedInstanceState);
-			Xamarin.Essentials.Platform.Init (this, savedInstanceState);
-			SetContentView (Resource.Layout.activity_main);
+			base.OnCreate(savedInstanceState);
 
-			AndroidX.AppCompat.Widget.Toolbar toolbar = FindViewById<AndroidX.AppCompat.Widget.Toolbar> (Resource.Id.toolbar);
-			SetSupportActionBar (toolbar);
+			Xamarin.Essentials.Platform.Init(this, savedInstanceState);
 
-			var rootView = FindViewById<ViewGroup>(Resource.Id.rootLayout);
+			SetContentView(Resource.Layout.activity_main);
 
-			//page = FindViewById<NestedScrollView> (Resource.Id.Page);
-			//FloatingActionButton fab = FindViewById<FloatingActionButton> (Resource.Id.fab);
-			//fab.Click += FabOnClick;
-			//var app = new MyApp ();
+			AndroidX.AppCompat.Widget.Toolbar toolbar = FindViewById<AndroidX.AppCompat.Widget.Toolbar>(Resource.Id.toolbar);
+			SetSupportActionBar(toolbar);
 
-			Registrar.Handlers.Register<Xamarin.Forms.Button, ButtonRenderer>();
-			var nativeView = new Xamarin.Forms.Button().ToNative(this);
-			rootView.AddView(nativeView);
-			//Add ((app.MainPage as ContentPage).Content);
+			_page = FindViewById<NestedScrollView>(Resource.Id.Page);
+
+			var app = new MyApp();
+			Add((app.MainPage as ContentPage).Content);
 		}
 
-		//void Add(params IView[] views)
-		//{
-		//	foreach (var v in views)
-		//	{
-		//		var view = v.ToNative(this);
-		//		page.AddView(view, new ViewGroup.LayoutParams(LinearLayout.LayoutParams.WrapContent, LinearLayout.LayoutParams.WrapContent));
-		//	}
-		//}
-
-		/*public override bool OnCreateOptionsMenu (IMenu menu)
+		void Add(params IView[] views)
 		{
-			MenuInflater.Inflate (Resource.Menu.menu_main, menu);
-			return true;
-		}
-
-		public override bool OnOptionsItemSelected (IMenuItem item)
-		{
-			int id = item.ItemId;
-			if (id == Resource.Id.action_settings) {
-				return true;
+			foreach (var view in views)
+			{
+				_page.AddView(view.ToNative(this), new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WrapContent, ViewGroup.LayoutParams.WrapContent));
 			}
+		}
 
-			return base.OnOptionsItemSelected (item);
-		}*/
-
-		public override void OnRequestPermissionsResult (int requestCode, string [] permissions, [GeneratedEnum] Android.Content.PM.Permission [] grantResults)
+		public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Android.Content.PM.Permission[] grantResults)
 		{
-			Xamarin.Essentials.Platform.OnRequestPermissionsResult (requestCode, permissions, grantResults);
+			Xamarin.Essentials.Platform.OnRequestPermissionsResult(requestCode, permissions, grantResults);
 
-			base.OnRequestPermissionsResult (requestCode, permissions, grantResults);
+			base.OnRequestPermissionsResult(requestCode, permissions, grantResults);
 		}
 	}
 }
-

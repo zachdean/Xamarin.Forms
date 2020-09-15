@@ -1,6 +1,6 @@
-﻿using System;
-using Xamarin.Forms;
-namespace Xamarin.Platform.Handlers
+﻿using Xamarin.Forms;
+
+namespace Xamarin.Platform
 {
 	internal static class ViewExtensions
 	{

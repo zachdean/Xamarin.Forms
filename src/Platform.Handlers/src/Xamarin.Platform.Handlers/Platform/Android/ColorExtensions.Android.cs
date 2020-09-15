@@ -11,7 +11,7 @@ using Android.Support.V4.Content;
 using Xamarin.Forms;
 using AColor = Android.Graphics.Color;
 
-namespace Xamarin.Platform.Handlers
+namespace Xamarin.Platform
 {
 	public static class ColorExtensions
 	{

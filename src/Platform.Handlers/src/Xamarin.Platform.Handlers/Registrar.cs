@@ -2,22 +2,21 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Diagnostics;
-using Xamarin.Platform.Core;
 
 namespace Xamarin.Platform
 {
 	public static class Registrar
 	{
-		public static Registrar<IFrameworkElement, IViewRenderer> Handlers { get; private set; }
+		public static Registrar<IFrameworkElement, IViewHandler> Handlers { get; private set; }
 		public static Registrar<Type, Type> Registered { get; private set; }
 		public static Dictionary<string, Type> Effects { get; } = new Dictionary<string, Type>();
-		//public static Dictionary<string, IList<StyleSheets.StylePropertyAttribute>> StyleProperties { get; } = new Dictionary<string, IList<StyleSheets.StylePropertyAttribute>>();
 
 		static Registrar()
 		{
-			Handlers = new Registrar<IFrameworkElement, IViewRenderer> ();
+			Handlers = new Registrar<IFrameworkElement, IViewHandler>();
 		}
 	}
+
 	public class Registrar<TType, TTypeRender>
 	{
 		internal Dictionary<Type, Type> Handler = new Dictionary<Type, Type>();
@@ -38,8 +37,8 @@ namespace Xamarin.Platform
 			return GetHandler(typeof(T));
 		}
 
-		internal List<KeyValuePair<Type,Type>> GetViewType(Type type) =>
-			Handler.Where(x => isType(x.Value,type)).ToList();
+		internal List<KeyValuePair<Type, Type>> GetViewType(Type type) =>
+			Handler.Where(x => isType(x.Value, type)).ToList();
 		bool isType(Type type, Type type2)
 		{
 			if (type == type2)
@@ -66,7 +65,7 @@ namespace Xamarin.Platform
 				if (renderer != null)
 					return renderer;
 			}
-			return default(TTypeRender);
+			return default;
 		}
 
 		public Type GetRendererType(Type type)
@@ -90,7 +89,7 @@ namespace Xamarin.Platform
 		TTypeRender getRenderer(Type t)
 		{
 			if (!Handler.TryGetValue(t, out var renderer))
-				return default(TTypeRender);
+				return default;
 			try
 			{
 				var newObject = Activator.CreateInstance(renderer);
