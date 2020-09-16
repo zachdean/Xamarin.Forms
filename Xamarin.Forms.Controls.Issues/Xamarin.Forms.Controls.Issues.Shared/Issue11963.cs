@@ -22,11 +22,17 @@ namespace Xamarin.Forms.Controls.Issues
 		{
 			var timePicker = new TimePicker();
 		
+			var timePickerCompact = new TimePicker();
+			var timePickerInline = new TimePicker();
+
+			timePickerCompact.On<iOS>().SetUIPickerStyle(UIDatePickerStyle.Compact);
+			timePickerInline.On<iOS>().SetUIPickerStyle(UIDatePickerStyle.Inline);
+
 			Content = new StackLayout
 			{
 				Spacing = 20,
 				VerticalOptions = LayoutOptions.Center,
-				Children = { timePicker }
+				Children = { timePicker, timePickerCompact, timePickerInline }
 			};
 		}
 	}
