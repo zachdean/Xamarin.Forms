@@ -95,21 +95,5 @@ namespace Xamarin.Platform
 			=> _mapper[key] = ((r, v) => action?.Invoke(r, (TVirtualView)v), ignoreOnStartup);
 
 		IEnumerator IEnumerable.GetEnumerator() => _mapper.GetEnumerator();
-
-		public class ActionMapper<TView>
-			where TView : TVirtualView, IFrameworkElement
-		{
-			public ActionMapper(PropertyMapper<TView> propertyMapper)
-			{
-				PropertyMapper = propertyMapper;
-			}
-
-			public PropertyMapper<TView> PropertyMapper { get; }
-
-			public Action<IViewHandler, TView> this[string key]
-			{
-				set => PropertyMapper._mapper[key] = ((r, v) => value?.Invoke(r, (TView)v), false);
-			}
-		}
 	}
 }
