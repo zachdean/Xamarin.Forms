@@ -2,7 +2,7 @@
 {
 	public partial class ViewHandler
 	{
-		public static void MapIsEnabled(IViewHandler renderer, IView view) { }
-		public static void MapBackgroundColor(IViewHandler renderer, IView view) { }
+		public static void MapIsEnabled(IViewHandler handler, IView view) { }
+		public static void MapBackgroundColor(IViewHandler handler, IView view) { }
 	}
 }

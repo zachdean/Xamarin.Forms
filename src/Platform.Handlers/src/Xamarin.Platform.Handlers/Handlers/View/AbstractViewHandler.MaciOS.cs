@@ -8,7 +8,7 @@ using NativeColor = AppKit.NSColor;
 
 namespace Xamarin.Platform.Handlers
 {
-	public partial class AbstractViewHandler<TVirtualView, TNativeView> : INativeViewRenderer
+	public partial class AbstractViewHandler<TVirtualView, TNativeView> : INativeViewHandler
 	{
 		public void SetFrame(Rectangle rect) => View.Frame = rect.ToCGRect();
 

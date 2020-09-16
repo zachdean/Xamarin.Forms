@@ -16,8 +16,8 @@ namespace Xamarin.Platform
 			{
 				handler = Registrar.Handlers.GetHandler(view.GetType());
 
-				if (handler is IAndroidViewRenderer arenderer)
-					arenderer.SetContext(context);
+				if (handler is IAndroidViewHandler ahandler)
+					ahandler.SetContext(context);
 
 				view.Handler = handler;
 			}

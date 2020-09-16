@@ -14,17 +14,17 @@ namespace Xamarin.Platform.Handlers
 {
 	public partial class ViewHandler
 	{
-		public static void MapPropertyIsEnabled(IViewHandler renderer, IView view)
+		public static void MapPropertyIsEnabled(IViewHandler handler, IView view)
 		{
-			if (!(renderer.NativeView is NativeControl uiControl))
+			if (!(handler.NativeView is NativeControl uiControl))
 				return;
 
 			uiControl.Enabled = view.IsEnabled;
 		}
 
-		public static void MapBackgroundColor(IViewHandler renderer, IView view)
+		public static void MapBackgroundColor(IViewHandler handler, IView view)
 		{
-			var nativeView = (NativeView)renderer.NativeView;
+			var nativeView = (NativeView)handler.NativeView;
 			var color = view.BackgroundColor;
 
 			if (color != null && !color.IsDefault)

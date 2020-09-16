@@ -5,15 +5,15 @@ namespace Xamarin.Platform.Handlers
 {
 	public partial class ViewHandler
 	{
-		public static void MapPropertyIsEnabled(IViewHandler renderer, IView view)
+		public static void MapPropertyIsEnabled(IViewHandler handler, IView view)
 		{
-			if (renderer.NativeView is AView nativeView)
+			if (handler.NativeView is AView nativeView)
 				nativeView.Enabled = view.IsEnabled;
 		}
 
-		public static void MapBackgroundColor(IViewHandler renderer, IView view)
+		public static void MapBackgroundColor(IViewHandler handler, IView view)
 		{
-			var aview = renderer.NativeView as AView;
+			var aview = handler.NativeView as AView;
 			var backgroundColor = view.BackgroundColor;
 			if (backgroundColor.IsDefault)
 				aview.Background = null;

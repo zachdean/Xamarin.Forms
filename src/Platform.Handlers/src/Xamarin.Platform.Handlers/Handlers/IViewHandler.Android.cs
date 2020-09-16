@@ -3,7 +3,7 @@ using AView = Android.Views.View;
 
 namespace Xamarin.Platform
 {
-	public interface IAndroidViewRenderer : IViewHandler
+	public interface IAndroidViewHandler : IViewHandler
 	{
 		void SetContext(Context context);
 

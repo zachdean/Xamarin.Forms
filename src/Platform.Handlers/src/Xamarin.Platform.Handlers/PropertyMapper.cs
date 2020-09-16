@@ -9,28 +9,28 @@ namespace Xamarin.Platform
 	{
 		internal Dictionary<string, (Action<IViewHandler, IFrameworkElement> Action, bool RunOnUpdateAll)> _mapper = new Dictionary<string, (Action<IViewHandler, IFrameworkElement> action, bool runOnUpdateAll)>();
 
-		protected virtual void UpdatePropertyCore(string key, IViewHandler viewRenderer, IFrameworkElement virtualView)
+		protected virtual void UpdatePropertyCore(string key, IViewHandler viewHandler, IFrameworkElement virtualView)
 		{
 			if (_mapper.TryGetValue(key, out var action))
 			{
-				action.Action?.Invoke(viewRenderer, virtualView);
+				action.Action?.Invoke(viewHandler, virtualView);
 			}
 		}
 
-		public void UpdateProperty(IViewHandler viewRenderer, IFrameworkElement virtualView, string property)
+		public void UpdateProperty(IViewHandler viewHandler, IFrameworkElement virtualView, string property)
 		{
 			if (virtualView == null)
 				return;
-			UpdatePropertyCore(property, viewRenderer, virtualView);
+			UpdatePropertyCore(property, viewHandler, virtualView);
 		}
 
-		public void UpdateProperties(IViewHandler viewRenderer, IFrameworkElement virtualView)
+		public void UpdateProperties(IViewHandler viewHandler, IFrameworkElement virtualView)
 		{
 			if (virtualView == null)
 				return;
 			foreach (var key in Keys)
 			{
-				UpdatePropertyCore(key, viewRenderer, virtualView);
+				UpdatePropertyCore(key, viewHandler, virtualView);
 			}
 		}
 
@@ -80,12 +80,12 @@ namespace Xamarin.Platform
 			get => actions ??= new ActionMapper<TVirtualView>(this);
 		}
 
-		protected override void UpdatePropertyCore(string key, IViewHandler viewRenderer, IFrameworkElement virtualView)
+		protected override void UpdatePropertyCore(string key, IViewHandler viewHandler, IFrameworkElement virtualView)
 		{
 			if (_mapper.TryGetValue(key, out var action))
-				action.Action?.Invoke(viewRenderer, virtualView);
+				action.Action?.Invoke(viewHandler, virtualView);
 			else
-				Chained?.UpdateProperty(viewRenderer, virtualView, key);
+				Chained?.UpdateProperty(viewHandler, virtualView, key);
 		}
 
 		public void Add(string key, Action<IViewHandler, TVirtualView> action)

@@ -8,7 +8,7 @@
 			[nameof(IView.Frame)] = MapPropertyFrame,
 		};
 
-		public static void MapPropertyFrame(IViewHandler renderer, IView view)
-			=> renderer?.SetFrame(view.Frame);
+		public static void MapPropertyFrame(IViewHandler handler, IView view)
+			=> handler?.SetFrame(view.Frame);
 	}
 }
