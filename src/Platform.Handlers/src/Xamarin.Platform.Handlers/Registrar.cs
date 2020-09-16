@@ -39,6 +39,7 @@ namespace Xamarin.Platform
 
 		internal List<KeyValuePair<Type, Type>> GetViewType(Type type) =>
 			Handler.Where(x => isType(x.Value, type)).ToList();
+
 		bool isType(Type type, Type type2)
 		{
 			if (type == type2)
@@ -61,14 +62,14 @@ namespace Xamarin.Platform
 
 			foreach (var t in types)
 			{
-				var renderer = getRenderer(t);
-				if (renderer != null)
-					return renderer;
+				var handler = getHandler(t);
+				if (handler != null)
+					return handler;
 			}
 			return default;
 		}
 
-		public Type GetRendererType(Type type)
+		public Type GetHandlerType(Type type)
 		{
 			List<Type> types = new List<Type> { type };
 			Type baseType = type.BaseType;
@@ -86,13 +87,13 @@ namespace Xamarin.Platform
 			return null;
 		}
 
-		TTypeRender getRenderer(Type t)
+		TTypeRender getHandler(Type t)
 		{
-			if (!Handler.TryGetValue(t, out var renderer))
+			if (!Handler.TryGetValue(t, out var handler))
 				return default;
 			try
 			{
-				var newObject = Activator.CreateInstance(renderer);
+				var newObject = Activator.CreateInstance(handler);
 				return (TTypeRender)newObject;
 			}
 			catch (Exception ex)
