@@ -28,7 +28,7 @@ namespace Xamarin.Forms.Material.Tizen
 		{
 			if (Control is MPicker mp)
 			{
-				mp.Placeholder = Element.SelectedDate.ToString(Element.Format);
+				mp.Placeholder = Element.SelectedDate?.ToString(Element.Format);
 			}
 		}
 
