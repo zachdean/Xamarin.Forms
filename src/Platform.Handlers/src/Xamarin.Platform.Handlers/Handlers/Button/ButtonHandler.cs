@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Xamarin.Platform.Handlers
+﻿namespace Xamarin.Platform.Handlers
 {
 	public partial class ButtonHandler
 	{
@@ -12,16 +10,17 @@ namespace Xamarin.Platform.Handlers
 			}
 		};
 
-		private static void DemoAction(IViewHandler arg1, IButton arg2)
-		{
-		}
-
 		public ButtonHandler() : base(ButtonMapper)
 		{
 
 		}
 
 		public ButtonHandler(PropertyMapper mapper) : base(mapper ?? ButtonMapper)
+		{
+
+		}
+
+		static void DemoAction(IViewHandler arg1, IButton arg2)
 		{
 
 		}
