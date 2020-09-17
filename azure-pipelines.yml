@@ -138,47 +138,47 @@ stages:
       #   steps:
       #     - template: build/steps/build-nuget.yml
 
-  - stage: android
-    displayName: Build Android
-    ${{ if eq(variables['System.TeamProject'], 'devdiv') }}:
-      dependsOn: windows
-    ${{ if eq(variables['System.TeamProject'], 'public') }}:
-      dependsOn: []
-    jobs:
-      - template: build/steps/build-android.yml
-        parameters:
-          vmPool: $[coalesce(variables.macAndroid2019VmPool, 'Azure Pipelines')]
-          vmImage: $[coalesce(variables.macAndroid2019VmImage, 'macOS-10.15')]
-          provisionatorPath : 'build/provisioning/provisioning.csx'
-          buildConfiguration: $(DefaultBuildConfiguration)
-          ${{ if ne(variables['MSBuildArguments_cg_android'], '') }}:
-            MSBuildArguments_cg_android: $(MSBuildArguments_cg_android)
+  # - stage: android
+  #   displayName: Build Android
+  #   ${{ if eq(variables['System.TeamProject'], 'devdiv') }}:
+  #     dependsOn: windows
+  #   ${{ if eq(variables['System.TeamProject'], 'public') }}:
+  #     dependsOn: []
+  #   jobs:
+  #     - template: build/steps/build-android.yml
+  #       parameters:
+  #         vmPool: $[coalesce(variables.macAndroid2019VmPool, 'Azure Pipelines')]
+  #         vmImage: $[coalesce(variables.macAndroid2019VmImage, 'macOS-10.15')]
+  #         provisionatorPath : 'build/provisioning/provisioning.csx'
+  #         buildConfiguration: $(DefaultBuildConfiguration)
+  #         ${{ if ne(variables['MSBuildArguments_cg_android'], '') }}:
+  #           MSBuildArguments_cg_android: $(MSBuildArguments_cg_android)
 
-  - stage: build_osx
-    displayName: Build OSX
-    ${{ if eq(variables['System.TeamProject'], 'devdiv') }}:
-      dependsOn: windows
-    ${{ if eq(variables['System.TeamProject'], 'public') }}:
-      dependsOn: []
-    jobs:
-      - job: osx
-        workspace:
-          clean: all
-        displayName: OSX Phase
-        timeoutInMinutes: 120
-        pool:
-          name:  $(osx2019VmPool)
-          vmImage: $(macOSXVmImage)
-          demands:
-            - sh
-            - Xamarin.iOS
-        variables:
-          provisionator.osxPath : 'build/provisioning/provisioning.csx'
-          buildConfiguration: $(DefaultBuildConfiguration)
-          iOSCertSecureFileName: 'Xamarin Forms iOS Certificate.p12'
-          iOSProvisioningSecureFileName: 'Xamarin Forms iOS Provisioning.mobileprovision'
-        steps:
-          - template: build/steps/build-osx.yml
+  # - stage: build_osx
+  #   displayName: Build OSX
+  #   ${{ if eq(variables['System.TeamProject'], 'devdiv') }}:
+  #     dependsOn: windows
+  #   ${{ if eq(variables['System.TeamProject'], 'public') }}:
+  #     dependsOn: []
+  #   jobs:
+  #     - job: osx
+  #       workspace:
+  #         clean: all
+  #       displayName: OSX Phase
+  #       timeoutInMinutes: 120
+  #       pool:
+  #         name:  $(osx2019VmPool)
+  #         vmImage: $(macOSXVmImage)
+  #         demands:
+  #           - sh
+  #           - Xamarin.iOS
+  #       variables:
+  #         provisionator.osxPath : 'build/provisioning/provisioning.csx'
+  #         buildConfiguration: $(DefaultBuildConfiguration)
+  #         iOSCertSecureFileName: 'Xamarin Forms iOS Certificate.p12'
+  #         iOSProvisioningSecureFileName: 'Xamarin Forms iOS Provisioning.mobileprovision'
+  #       steps:
+  #         - template: build/steps/build-osx.yml
 
   - stage: PoliCheck
     displayName: 'Code Analysis'
