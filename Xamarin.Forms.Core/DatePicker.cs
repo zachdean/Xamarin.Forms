@@ -49,7 +49,7 @@ namespace Xamarin.Forms
 			_platformConfigurationRegistry = new Lazy<PlatformConfigurationRegistry<DatePicker>>(() => new PlatformConfigurationRegistry<DatePicker>(this));
 		}
 
-		[Obsolete("Date is obsolete as of version x.x.x. Please use SelectedDate instead.")]
+		[Obsolete("Date is obsolete as of version 5.0.0. Please use SelectedDate instead.")]
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		public DateTime Date
 		{
