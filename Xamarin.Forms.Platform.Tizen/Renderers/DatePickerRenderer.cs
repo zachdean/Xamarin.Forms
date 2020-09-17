@@ -113,10 +113,10 @@ namespace Xamarin.Forms.Platform.Tizen
 			{
 				var dialog = _lazyDialog.Value;
 #pragma warning disable 0618
-				dialog.Picker.DateTime = Element.Date;
+				dialog.DateTime = Element.Date;
 #pragma warning restore
-				dialog.Picker.MaximumDateTime = Element.MaximumDate;
-				dialog.Picker.MinimumDateTime = Element.MinimumDate;
+				dialog.MaximumDateTime = Element.MaximumDate;
+				dialog.MinimumDateTime = Element.MinimumDate;
 				// You need to call Show() after ui thread occupation because of EFL problem.
 				// Otherwise, the content of the popup will not receive focus.
 				Device.BeginInvokeOnMainThread(() => dialog.Show());
