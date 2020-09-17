@@ -24,9 +24,7 @@ namespace Xamarin.Forms.Controls.Issues
 
 		public Issue11924()
 		{
-#if APP
-			Device.SetFlags(new List<string>(Device.Flags ?? new List<string>()) { ExperimentalFlags.BrushExperimental, ExperimentalFlags.ShapesExperimental });
-#endif
+
 		}
 
 		protected override void Init()
