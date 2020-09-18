@@ -210,7 +210,6 @@ namespace Xamarin.Forms
 
 		bool IFrameworkElement.IsArrangeValid => _isArrangeValid;
 
-
 		void IFrameworkElement.Arrange(Rectangle bounds)
 		{
 			if (_isArrangeValid)
@@ -222,7 +221,7 @@ namespace Xamarin.Forms
 		SizeRequest IFrameworkElement.Measure(double widthConstraint, double heightConstraint)
 		{
 			if (!_isMeasureValid)
-				_desiredSize = this.Handler.GetDesiredSize(widthConstraint, heightConstraint);// this.OnMeasure(widthConstraint, heightConstraint);
+				_desiredSize = Handler.GetDesiredSize(widthConstraint, heightConstraint);// this.OnMeasure(widthConstraint, heightConstraint);
 			_isMeasureValid = true;
 			return _desiredSize;
 		}

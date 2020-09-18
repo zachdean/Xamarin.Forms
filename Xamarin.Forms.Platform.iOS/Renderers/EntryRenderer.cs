@@ -6,6 +6,7 @@ using CoreGraphics;
 using Foundation;
 using UIKit;
 using Xamarin.Forms.PlatformConfiguration.iOSSpecific;
+using Xamarin.Platform;
 using Specifics = Xamarin.Forms.PlatformConfiguration.iOSSpecific.Entry;
 
 namespace Xamarin.Forms.Platform.iOS
@@ -255,11 +256,13 @@ namespace Xamarin.Forms.Platform.iOS
 			return false;
 		}
 
+		[PortHandler]
 		void UpdateHorizontalTextAlignment()
 		{
 			Control.TextAlignment = Element.HorizontalTextAlignment.ToNativeTextAlignment(((IVisualElementController)Element).EffectiveFlowDirection);
 		}
 
+		[PortHandler]
 		void UpdateVerticalTextAlignment()
 		{
 			Control.VerticalAlignment = Element.VerticalTextAlignment.ToNativeTextAlignment();
@@ -356,9 +359,11 @@ namespace Xamarin.Forms.Platform.iOS
 			UpdateAttributedPlaceholder(Control.AttributedPlaceholder.AddCharacterSpacing(Element.Placeholder, Element.CharacterSpacing));
 		}
 
+		[PortHandler]
 		protected virtual void UpdateAttributedPlaceholder(NSAttributedString nsAttributedString) =>
 			Control.AttributedPlaceholder = nsAttributedString;
 
+		[PortHandler]
 		void UpdateText()
 		{
 			var text = Element.UpdateFormsText(Element.Text, Element.TextTransform);
@@ -367,6 +372,7 @@ namespace Xamarin.Forms.Platform.iOS
 				Control.Text = text;
 		}
 
+		[PortHandler]
 		void UpdateCharacterSpacing()
 		{
 			var textAttr = Control.AttributedText.AddCharacterSpacing(Element.Text, Element.CharacterSpacing);
@@ -380,6 +386,7 @@ namespace Xamarin.Forms.Platform.iOS
 				UpdateAttributedPlaceholder(placeHolder);
 		}
 
+		[PortHandler]
 		void UpdateMaxLength()
 		{
 			var currentControlText = Control.Text;

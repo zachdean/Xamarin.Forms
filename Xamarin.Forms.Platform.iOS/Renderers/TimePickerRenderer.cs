@@ -2,6 +2,7 @@ using System;
 using System.ComponentModel;
 using Foundation;
 using UIKit;
+using Xamarin.Platform;
 using Xamarin.Forms.PlatformConfiguration.iOSSpecific;
 using RectangleF = CoreGraphics.CGRect;
 

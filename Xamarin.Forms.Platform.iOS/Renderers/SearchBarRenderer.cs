@@ -4,6 +4,7 @@ using System.Drawing;
 using CoreGraphics;
 using Foundation;
 using UIKit;
+using Xamarin.Platform;
 using Xamarin.Forms.PlatformConfiguration.iOSSpecific;
 
 namespace Xamarin.Forms.Platform.iOS

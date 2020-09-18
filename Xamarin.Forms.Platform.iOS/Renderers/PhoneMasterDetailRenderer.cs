@@ -4,6 +4,7 @@ using System.Linq;
 using UIKit;
 using Xamarin.Forms.Internals;
 using Xamarin.Forms.PlatformConfiguration.iOSSpecific;
+using Xamarin.Platform;
 using PointF = CoreGraphics.CGPoint;
 
 namespace Xamarin.Forms.Platform.iOS

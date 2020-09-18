@@ -2,10 +2,11 @@ using System;
 using System.ComponentModel;
 using Xamarin.Forms.Internals;
 using UIKit;
+using CoreGraphics;
+using Xamarin.Platform;
 using Xamarin.Forms.PlatformConfiguration.iOSSpecific;
 using PointF = CoreGraphics.CGPoint;
 using RectangleF = CoreGraphics.CGRect;
-using CoreGraphics;
 
 namespace Xamarin.Forms.Platform.iOS
 {
