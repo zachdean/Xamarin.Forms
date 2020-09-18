@@ -16,20 +16,32 @@ namespace Xamarin.Forms.Controls.Issues
 	[Issue(IssueTracker.Github, 11703, "Android textAllCaps no longer works", PlatformAffected.Android)]
 	public class Issue11703 : TestContentPage // or TestMasterDetailPage, etc ...
 	{
-		string buttonText = "Button text";
-		string buttonId = "btnIssue11703";
+		const string PageTitle = "Issue11703";
 
 		protected override void Init()
 		{
-			// Initialize ui here instead of ctor
+			Title = PageTitle;
 
-			// create stack layout and add label explaining how to test by adding tag to styles.xml and running again and looking for camelcase text
-
-			Content = new Button
-			{
-				AutomationId = buttonId,
-				Text = buttonText
-			};
+			Content =
+				new StackLayout
+				{
+					Children =
+					{
+						new Label()
+						{
+							AutomationId = "labelIssue11703",
+							Text = "This test requires manual review. Navigate to //Xamarin.Forms/Xamarin.Forms.ControlGallery" +
+							".Android/Resources/values/styles.xml and add the following item to the base theme: " +
+							"<item name=\"android:textAllCaps\">false</item>. Then, run Xamarin.Forms.ControlGallery.Android " +
+							"again, and confirm that the button text is now in CamelCase instead of ALL CAPS."
+						},
+						new Button()
+						{
+							AutomationId = "btnIssue11703",
+							Text = "Button text"
+						}
+					}
+				};
 		}
 	}
 }
