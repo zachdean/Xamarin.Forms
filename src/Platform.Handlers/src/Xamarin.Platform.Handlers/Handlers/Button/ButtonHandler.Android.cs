@@ -1,7 +1,4 @@
-﻿using System;
-using AndroidX.Core.View;
-using AndroidX.AppCompat.Widget;
-
+﻿using AndroidX.AppCompat.Widget;
 
 namespace Xamarin.Platform.Handlers
 {
