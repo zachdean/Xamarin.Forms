@@ -1,5 +1,4 @@
 ﻿using Xamarin.Platform;
-using Xamarin.Platform.Core;
 
 namespace Sample
 {
@@ -12,7 +11,7 @@ namespace Sample
 
 		public IView CreateView()
 		{
-			return new Button();
+			return new Entry { Text = "Text" };
 		}
 	}
 }

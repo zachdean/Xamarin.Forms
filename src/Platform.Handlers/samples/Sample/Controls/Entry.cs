@@ -62,6 +62,9 @@ namespace Sample
 
         public Action Completed { get; set; }
 
+        string IText.UpdateTransformedText(string source, TextTransform textTransform)
+            => TextTransformUtilites.GetTransformedText(source, textTransform);
+
         void IEntry.Completed()
         {
             if (IsEnabled)

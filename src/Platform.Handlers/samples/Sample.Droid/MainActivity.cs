@@ -3,7 +3,6 @@ using Android.OS;
 using Android.Runtime;
 using Android.Views;
 using AndroidX.AppCompat.App;
-using Xamarin.Forms;
 using AndroidX.Core.Widget;
 using Xamarin.Platform;
 
@@ -28,6 +27,7 @@ namespace Sample.Droid
 			_page = FindViewById<NestedScrollView>(Resource.Id.Page);
 
 			var app = new MyApp();
+
 			Add(app.CreateView());
 		}
 

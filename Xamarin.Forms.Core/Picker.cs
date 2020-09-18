@@ -7,6 +7,7 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using Xamarin.Forms.Internals;
 using Xamarin.Forms.Platform;
+using Xamarin.Platform;
 
 namespace Xamarin.Forms
 {

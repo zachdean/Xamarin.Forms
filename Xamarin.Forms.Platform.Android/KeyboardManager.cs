@@ -1,12 +1,12 @@
-using System;
-using Android.App;
-using Android.Content;
+﻿using System;
 using Android.OS;
 using Android.Views.InputMethods;
 using Android.Widget;
+using Xamarin.Forms;
+using Xamarin.Forms.Platform.Android;
 using AView = Android.Views.View;
 
-namespace Xamarin.Forms.Platform.Android
+namespace Xamarin.Platform
 {
 	internal static class KeyboardManager
 	{

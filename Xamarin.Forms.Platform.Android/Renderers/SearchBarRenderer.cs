@@ -37,7 +37,7 @@ namespace Xamarin.Forms.Platform.Android
 
 		bool SearchView.IOnQueryTextListener.OnQueryTextChange(string newText)
 		{
-			Internals.TextTransformUtilites.SetPlainText(Element, newText);
+			Internals.InputViewUtilites.SetPlainText(Element, newText);
 
 			return true;
 		}

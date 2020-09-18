@@ -5,6 +5,7 @@ using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using Xamarin.Forms.Internals;
 using Xamarin.Forms.Platform;
+using Xamarin.Platform;
 
 namespace Xamarin.Forms
 {

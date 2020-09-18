@@ -13,7 +13,7 @@ namespace Xamarin.Platform.Handlers
 
 		public static void MapPropertyText(IViewHandler handler, IEntry entry)
 		{
-
+			(handler as EntryHandler)?.UpdateText();
 		}
 
 		public static void MapPropertyColor(IViewHandler handler, IEntry entry)
@@ -114,6 +114,23 @@ namespace Xamarin.Platform.Handlers
 		public static void MapPropertyClearButtonVisibility(IViewHandler handler, IEntry entry)
 		{
 
+		}
+
+		void UpdateText()
+		{
+			var text = VirtualView.UpdateTransformedText(VirtualView.Text, VirtualView.TextTransform);
+
+			if (TypedNativeView.Text == text)
+				return;
+
+			TypedNativeView.Text = text;
+
+			if (TypedNativeView.IsFocused)
+			{
+				TypedNativeView.SetSelection(text.Length);
+				// TODO: Port KeyboardManager to Xamarin.Platform.
+				//TypedNativeView.ShowKeyboard();
+			}
 		}
 	}
 }

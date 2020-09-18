@@ -9,7 +9,7 @@
     <Product>Xamarin</Product>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Update="Core\IEntry.cs">
+    <Compile Update="Platform\TextTransformUtilites.cs">
       <SubType></SubType>
     </Compile>
   </ItemGroup>

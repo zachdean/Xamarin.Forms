@@ -1,4 +1,4 @@
-﻿namespace Xamarin.Platform.Core
+﻿namespace Xamarin.Platform
 {
 	public interface IApp
 	{

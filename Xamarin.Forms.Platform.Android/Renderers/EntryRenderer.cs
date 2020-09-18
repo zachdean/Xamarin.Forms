@@ -12,6 +12,7 @@ using Android.Views.InputMethods;
 using Android.Widget;
 using Java.Lang;
 using Xamarin.Forms.PlatformConfiguration.AndroidSpecific;
+using Xamarin.Platform;
 
 namespace Xamarin.Forms.Platform.Android
 {
@@ -528,6 +529,7 @@ namespace Xamarin.Forms.Platform.Android
 			EditText.Focusable = isReadOnly;
 		}
 
+		[PortHandler]
 		void UpdateText()
 		{
 			var text = Element.UpdateFormsText(Element.Text, Element.TextTransform);

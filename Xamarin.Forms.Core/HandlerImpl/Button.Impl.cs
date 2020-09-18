@@ -9,6 +9,11 @@ namespace Xamarin.Forms
 
 		public TextAlignment VerticalTextAlignment => throw new NotImplementedException();
 
+		string IText.UpdateTransformedText(string source, TextTransform textTransform)
+		{
+			throw new NotImplementedException();
+		}
+
 		void IButton.Clicked()
 		{
 			throw new NotImplementedException();

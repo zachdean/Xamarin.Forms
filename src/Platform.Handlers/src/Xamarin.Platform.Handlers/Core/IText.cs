@@ -13,5 +13,7 @@ namespace Xamarin.Platform
 		TextTransform TextTransform { get; }
 
 		double CharacterSpacing { get; }
+
+		string UpdateTransformedText(string source, TextTransform textTransform);
 	}
 }

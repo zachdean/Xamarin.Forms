@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows.Input;
 using Xamarin.Forms.Internals;
+using Xamarin.Platform;
 using static Xamarin.Forms.VisualElement;
 
 namespace Xamarin.Forms

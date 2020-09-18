@@ -41,5 +41,8 @@ namespace Sample
 		void IButton.Pressed() => Pressed?.Invoke();
 		void IButton.Released() => Released?.Invoke();
 		void IButton.Clicked() => Clicked?.Invoke();
+
+		string IText.UpdateTransformedText(string source, TextTransform textTransform)
+			=> TextTransformUtilites.GetTransformedText(source, textTransform);
 	}
 }

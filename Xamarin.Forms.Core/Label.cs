@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using Xamarin.Forms.Internals;
 using Xamarin.Forms.Platform;
+using Xamarin.Platform;
 
 namespace Xamarin.Forms
 {
