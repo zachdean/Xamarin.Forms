@@ -11,6 +11,7 @@ using Android.Views;
 using Java.Lang;
 using Android.Widget;
 using Android.Views.InputMethods;
+using Xamarin.Platform;
 
 namespace Xamarin.Forms.Platform.Android
 {
@@ -95,7 +96,7 @@ namespace Xamarin.Forms.Platform.Android
 
 		void ITextWatcher.OnTextChanged(ICharSequence s, int start, int before, int count)
 		{
-			Internals.TextTransformUtilites.SetPlainText(Element, s?.ToString());
+			Internals.InputViewUtilites.SetPlainText(Element, s?.ToString());
 		}
 
 		protected override void OnFocusChangeRequested(object sender, VisualElement.FocusRequestArgs e)

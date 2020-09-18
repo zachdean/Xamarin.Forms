@@ -11,7 +11,7 @@ namespace Sample
 
 		public IView CreateView()
 		{
-			return new Entry { Text = "Text" };
+			return new Entry { Placeholder = "Placeholder" };
 		}
 	}
 }

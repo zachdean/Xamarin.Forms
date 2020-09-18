@@ -10,6 +10,7 @@ using Xamarin.Forms.Internals;
 using Xamarin.Forms.PlatformConfiguration.AndroidSpecific;
 using AColor = Android.Graphics.Color;
 using AView = Android.Views.View;
+using Xamarin.Platform;
 
 namespace Xamarin.Forms.Platform.Android.FastRenderers
 {

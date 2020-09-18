@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using AView = global::Android.Views.View;
 using Java.Lang;
 using Android.Text.Style;
+using Xamarin.Platform;
 
 namespace Xamarin.Forms.Platform.Android
 {

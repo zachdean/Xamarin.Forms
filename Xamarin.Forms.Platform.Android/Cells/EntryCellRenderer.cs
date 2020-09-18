@@ -3,6 +3,7 @@ using Android.Content;
 using Android.Text;
 using Android.Text.Method;
 using Android.Views;
+using Xamarin.Platform;
 
 namespace Xamarin.Forms.Platform.Android
 {

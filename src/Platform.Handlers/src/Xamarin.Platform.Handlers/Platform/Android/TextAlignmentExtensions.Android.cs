@@ -1,12 +1,13 @@
 ﻿using Android.OS;
 using Android.Widget;
+using Xamarin.Forms;
 using AGravityFlags = Android.Views.GravityFlags;
 
-namespace Xamarin.Forms.Platform.Android
+namespace Xamarin.Platform
 {
-	internal static class TextAlignmentExtensions
+	public static class TextAlignmentExtensions
 	{
-		internal static void UpdateHorizontalAlignment(this EditText view, TextAlignment alignment, bool hasRtlSupport, AGravityFlags orMask = AGravityFlags.NoGravity)
+		public static void UpdateHorizontalAlignment(this EditText view, TextAlignment alignment, bool hasRtlSupport, AGravityFlags orMask = AGravityFlags.NoGravity)
 		{
 			if ((int)Build.VERSION.SdkInt < 17 || !hasRtlSupport)
 				view.Gravity = alignment.ToHorizontalGravityFlags() | orMask;
@@ -14,12 +15,12 @@ namespace Xamarin.Forms.Platform.Android
 				view.TextAlignment = alignment.ToTextAlignment();
 		}
 
-		internal static void UpdateVerticalAlignment(this EditText view, TextAlignment alignment, AGravityFlags orMask = AGravityFlags.NoGravity)
+		public static void UpdateVerticalAlignment(this EditText view, TextAlignment alignment, AGravityFlags orMask = AGravityFlags.NoGravity)
 		{
 			view.Gravity = alignment.ToVerticalGravityFlags() | orMask;
 		}
 
-		internal static void UpdateTextAlignment(this EditText view, TextAlignment horizontal, TextAlignment vertical)
+		public static void UpdateTextAlignment(this EditText view, TextAlignment horizontal, TextAlignment vertical)
 		{
 			if ((int)Build.VERSION.SdkInt < 17 || !view.Context.HasRtlSupport())
 			{

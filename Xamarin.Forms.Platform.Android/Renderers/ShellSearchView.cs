@@ -13,10 +13,12 @@ using System;
 using System.ComponentModel;
 using System.Threading.Tasks;
 using Xamarin.Forms.Platform.Android.FastRenderers;
+using Xamarin.Platform;
 using AColor = Android.Graphics.Color;
+using AImageButton = Android.Widget.ImageButton;
+using AOrientation = Android.Widget.Orientation;
 using AView = Android.Views.View;
 using LP = Android.Views.ViewGroup.LayoutParams;
-using AImageButton = Android.Widget.ImageButton;
 
 namespace Xamarin.Forms.Platform.Android
 {
@@ -180,7 +182,7 @@ namespace Xamarin.Forms.Platform.Android
 			var linearLayout = new LinearLayout(context);
 			using (lp = new LP(LP.MatchParent, LP.MatchParent))
 				linearLayout.LayoutParameters = lp;
-			linearLayout.Orientation = Orientation.Horizontal;
+			linearLayout.Orientation = AOrientation.Horizontal;
 
 			_cardView.AddView(linearLayout);
 

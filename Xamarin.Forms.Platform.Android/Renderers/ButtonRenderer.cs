@@ -12,6 +12,7 @@ using AMotionEvent = Android.Views.MotionEvent;
 using AMotionEventActions = Android.Views.MotionEventActions;
 using Object = Java.Lang.Object;
 using AColor = Android.Graphics.Color;
+using Xamarin.Platform;
 
 namespace Xamarin.Forms.Platform.Android
 {

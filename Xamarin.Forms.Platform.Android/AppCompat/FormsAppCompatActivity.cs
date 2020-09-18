@@ -16,6 +16,7 @@ using Xamarin.Forms.PlatformConfiguration.AndroidSpecific.AppCompat;
 using AColor = Android.Graphics.Color;
 using ARelativeLayout = Android.Widget.RelativeLayout;
 using Xamarin.Forms.Internals;
+using Xamarin.Platform;
 
 namespace Xamarin.Forms.Platform.Android
 {
@@ -105,12 +106,12 @@ namespace Xamarin.Forms.Platform.Android
 			Profile.FrameBegin();
 
 			Profile.FramePartition(target.Name);
-			Type current = Registrar.Registered.GetHandlerType(target);
+			Type current = Internals.Registrar.Registered.GetHandlerType(target);
 
 			if (current == filter)
 			{
 				Profile.FramePartition("Register");
-				Registrar.Registered.Register(target, handler);
+				Internals.Registrar.Registered.Register(target, handler);
 			}
 
 			Profile.FrameEnd();

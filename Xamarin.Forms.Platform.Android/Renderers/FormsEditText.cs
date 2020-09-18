@@ -4,6 +4,7 @@ using Android.Views;
 using Android.Widget;
 using System.ComponentModel;
 using AndroidX.Core.Graphics.Drawable;
+using Xamarin.Platform;
 using ARect = Android.Graphics.Rect;
 
 namespace Xamarin.Forms.Platform.Android

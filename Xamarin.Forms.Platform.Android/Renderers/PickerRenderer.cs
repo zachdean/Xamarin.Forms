@@ -11,6 +11,7 @@ using Android.Content;
 using AColor = Android.Graphics.Color;
 using Android.Text;
 using Android.Text.Style;
+using Xamarin.Platform;
 
 namespace Xamarin.Forms.Platform.Android
 {

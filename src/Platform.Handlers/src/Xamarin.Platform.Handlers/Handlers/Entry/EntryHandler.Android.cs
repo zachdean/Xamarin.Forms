@@ -1,4 +1,6 @@
-﻿using Android.Widget;
+﻿using System.Collections.Generic;
+using Android.Text;
+using Android.Widget;
 
 namespace Xamarin.Platform.Handlers
 {
@@ -28,27 +30,27 @@ namespace Xamarin.Platform.Handlers
 
 		public static void MapTextTransform(IViewHandler handler, IEntry entry)
 		{
-
+			(handler as EntryHandler)?.UpdateText();
 		}
 
 		public static void MapCharacterSpacing(IViewHandler handler, IEntry entry)
 		{
-
+			(handler as EntryHandler)?.UpdateCharacterSpacing();
 		}
 
 		public static void MapPlaceholder(IViewHandler handler, IEntry entry)
 		{
-
+			(handler as EntryHandler)?.UpdatePlaceholder();
 		}
 
 		public static void MapMaxLength(IViewHandler handler, IEntry entry)
 		{
-
+			(handler as EntryHandler)?.UpdateMaxLength();
 		}
 
 		public static void MapIsReadOnly(IViewHandler handler, IEntry entry)
 		{
-
+			(handler as EntryHandler)?.UpdateIsReadOnly();
 		}
 
 		public static void MapKeyboard(IViewHandler handler, IEntry entry)
@@ -68,12 +70,12 @@ namespace Xamarin.Platform.Handlers
 
 		public static void MapHorizontalTextAlignment(IViewHandler handler, IEntry entry)
 		{
-
+			(handler as EntryHandler)?.UpdateHorizontalTextAlignment();
 		}
 
 		public static void MapVerticalTextAlignment(IViewHandler handler, IEntry entry)
 		{
-
+			(handler as EntryHandler)?.UpdateVerticalTextAlignment();
 		}
 
 		public static void MapFontSize(IViewHandler handler, IEntry entry)
@@ -131,6 +133,68 @@ namespace Xamarin.Platform.Handlers
 				// TODO: Port KeyboardManager to Xamarin.Platform.
 				//TypedNativeView.ShowKeyboard();
 			}
+		}
+
+		void UpdatePlaceholder()
+		{
+			if (TypedNativeView.Hint == VirtualView.Placeholder)
+				return;
+
+			TypedNativeView.Hint = VirtualView.Placeholder;
+
+			if (TypedNativeView.IsFocused)
+			{
+				// TODO: Port KeyboardManager to Xamarin.Platform.
+				//TypedNativeView.ShowKeyboard();
+			}
+		}
+
+		void UpdateCharacterSpacing()
+		{
+			if (NativeVersion.IsAtLeast(21))
+			{
+				TypedNativeView.LetterSpacing = VirtualView.CharacterSpacing.ToEm();
+			}
+		}
+
+		void UpdateMaxLength()
+		{
+			var currentFilters = new List<IInputFilter>(TypedNativeView?.GetFilters() ?? new IInputFilter[0]);
+
+			for (var i = 0; i < currentFilters.Count; i++)
+			{
+				if (currentFilters[i] is InputFilterLengthFilter)
+				{
+					currentFilters.RemoveAt(i);
+					break;
+				}
+			}
+
+			currentFilters.Add(new InputFilterLengthFilter(VirtualView.MaxLength));
+
+			TypedNativeView?.SetFilters(currentFilters.ToArray());
+
+			var currentControlText = TypedNativeView?.Text;
+
+			if (currentControlText.Length > VirtualView.MaxLength)
+				TypedNativeView.Text = currentControlText.Substring(0, VirtualView.MaxLength);
+		}
+
+		void UpdateHorizontalTextAlignment()
+		{
+			TypedNativeView.UpdateTextAlignment(VirtualView.HorizontalTextAlignment, VirtualView.VerticalTextAlignment);
+		}
+
+		void UpdateVerticalTextAlignment()
+		{
+			TypedNativeView.UpdateTextAlignment(VirtualView.HorizontalTextAlignment, VirtualView.VerticalTextAlignment);
+		}
+
+		void UpdateIsReadOnly()
+		{
+			bool isReadOnly = !VirtualView.IsReadOnly;
+			TypedNativeView.FocusableInTouchMode = isReadOnly;
+			TypedNativeView.Focusable = isReadOnly;
 		}
 	}
 }

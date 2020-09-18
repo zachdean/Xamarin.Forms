@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
 using Android.App;
 using Android.Content;
 using Android.Graphics;
@@ -12,9 +11,10 @@ using Android.Text;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
+using Xamarin.Forms.Internals;
+using Xamarin.Platform;
 using AView = Android.Views.View;
 using AImageButton = Android.Widget.ImageButton;
-using Xamarin.Forms.Internals;
 
 namespace Xamarin.Forms.Platform.Android
 {
@@ -122,12 +122,12 @@ namespace Xamarin.Forms.Platform.Android
 
 		void UpdateHorizontalTextAlignment()
 		{
-			_editText.UpdateHorizontalAlignment(_searchHandler.HorizontalTextAlignment, _control.Context.HasRtlSupport(), Xamarin.Forms.TextAlignment.Center.ToVerticalGravityFlags());
+			_editText.UpdateHorizontalAlignment(_searchHandler.HorizontalTextAlignment, _control.Context.HasRtlSupport(), TextAlignment.Center.ToVerticalGravityFlags());
 		}
 
 		void UpdateVerticalTextAlignment()
 		{
-			_editText.UpdateVerticalAlignment(_searchHandler.VerticalTextAlignment, Xamarin.Forms.TextAlignment.Center.ToVerticalGravityFlags());
+			_editText.UpdateVerticalAlignment(_searchHandler.VerticalTextAlignment, TextAlignment.Center.ToVerticalGravityFlags());
 		}
 		
 		void UpdateTextTransform()

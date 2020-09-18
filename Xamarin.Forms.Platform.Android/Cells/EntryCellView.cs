@@ -6,6 +6,8 @@ using Android.Views;
 using Android.Views.InputMethods;
 using Android.Widget;
 using Java.Lang;
+using Xamarin.Platform;
+using AOrientation = Android.Widget.Orientation;
 
 namespace Xamarin.Forms.Platform.Android
 {
@@ -24,7 +26,7 @@ namespace Xamarin.Forms.Platform.Android
 			_cell = cell;
 			SetMinimumWidth((int)context.ToPixels(50));
 			SetMinimumHeight((int)context.ToPixels(85));
-			Orientation = Orientation.Horizontal;
+			Orientation = AOrientation.Horizontal;
 
 			var padding = (int)context.ToPixels(8);
 			SetPadding((int)context.ToPixels(15), padding, padding, padding);

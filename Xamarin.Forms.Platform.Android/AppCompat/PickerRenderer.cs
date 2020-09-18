@@ -8,6 +8,7 @@ using Android.Content;
 using Android.Widget;
 using Android.Text;
 using Android.Text.Style;
+using Xamarin.Platform;
 
 namespace Xamarin.Forms.Platform.Android.AppCompat
 {
