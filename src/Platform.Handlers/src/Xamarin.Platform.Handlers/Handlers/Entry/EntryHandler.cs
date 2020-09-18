@@ -4,31 +4,31 @@
 	{
 		public static PropertyMapper<IEntry> EntryMapper = new PropertyMapper<IEntry>(ViewHandler.ViewMapper)
 		{
-			[nameof(IText.Text)] = MapPropertyText,
-			[nameof(IText.TextColor)] = MapPropertyColor,
-			[nameof(IText.Font)] = MapPropertyFont,
-			[nameof(IText.TextTransform)] = MapPropertyTextTransform,
-			[nameof(IText.CharacterSpacing)] = MapPropertyCharacterSpacing,
+			[nameof(IText.Text)] = MapText,
+			[nameof(IText.TextColor)] = MapColor,
+			[nameof(IText.Font)] = MapFont,
+			[nameof(IText.TextTransform)] = MapTextTransform,
+			[nameof(IText.CharacterSpacing)] = MapCharacterSpacing,
 
-			[nameof(ITextInput.Placeholder)] = MapPropertyPlaceholder,
-			[nameof(ITextInput.PlaceholderColor)] = MapPropertyPlaceholderColor,
-			[nameof(ITextInput.MaxLength)] = MapPropertyMaxLength,
-			[nameof(ITextInput.IsReadOnly)] = MapPropertyIsReadOnly,
-			[nameof(ITextInput.Keyboard)] = MapPropertyKeyboard,
-			[nameof(ITextInput.IsSpellCheckEnabled)] = MapPropertyIsSpellCheckEnabled,
+			[nameof(ITextInput.Placeholder)] = MapPlaceholder,
+			[nameof(ITextInput.PlaceholderColor)] = MapPlaceholderColor,
+			[nameof(ITextInput.MaxLength)] = MapMaxLength,
+			[nameof(ITextInput.IsReadOnly)] = MapIsReadOnly,
+			[nameof(ITextInput.Keyboard)] = MapKeyboard,
+			[nameof(ITextInput.IsSpellCheckEnabled)] = MapIsSpellCheckEnabled,
 
-			[nameof(ITextAlignment.HorizontalTextAlignment)] = MapPropertyHorizontalTextAlignment,
-			[nameof(ITextAlignment.VerticalTextAlignment)] = MapPropertyVerticalTextAlignment,
+			[nameof(ITextAlignment.HorizontalTextAlignment)] = MapHorizontalTextAlignment,
+			[nameof(ITextAlignment.VerticalTextAlignment)] = MapVerticalTextAlignment,
 
-			[nameof(IFont.FontSize)] = MapPropertyFontSize,
-			[nameof(IFont.FontAttributes)] = MapPropertyFontAttributes,
+			[nameof(IFont.FontSize)] = MapFontSize,
+			[nameof(IFont.FontAttributes)] = MapFontAttributes,
 
-			[nameof(IEntry.IsPassword)] = MapPropertyIsPassword,
-			[nameof(IEntry.ReturnType)] = MapPropertyReturnType,
-			[nameof(IEntry.CursorPosition)] = MapPropertyCursorPosition,
-			[nameof(IEntry.SelectionLength)] = MapPropertySelectionLength,
-			[nameof(IEntry.IsTextPredictionEnabled)] = MapPropertyIsTextPredictionEnabled,
-			[nameof(IEntry.ClearButtonVisibility)] = MapPropertyClearButtonVisibility,
+			[nameof(IEntry.IsPassword)] = MapIsPassword,
+			[nameof(IEntry.ReturnType)] = MapReturnType,
+			[nameof(IEntry.CursorPosition)] = MapCursorPosition,
+			[nameof(IEntry.SelectionLength)] = MapSelectionLength,
+			[nameof(IEntry.IsTextPredictionEnabled)] = MapIsTextPredictionEnabled,
+			[nameof(IEntry.ClearButtonVisibility)] = MapClearButtonVisibility
 		};
 
 		public EntryHandler() : base(EntryMapper)
