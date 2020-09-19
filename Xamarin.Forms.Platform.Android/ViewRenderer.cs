@@ -6,13 +6,15 @@ using Android.OS;
 using Android.Views;
 using AView = Android.Views.View;
 using Xamarin.Forms.Platform.Android.FastRenderers;
+using Xamarin.Platform;
 
 namespace Xamarin.Forms.Platform.Android
 {
-	public interface IViewHandler
+	public interface IViewRenderer
 	{
 		void MeasureExactly();
 	}
+
 
 	public abstract class ViewRenderer : ViewRenderer<View, AView>
 	{
@@ -36,9 +38,9 @@ namespace Xamarin.Forms.Platform.Android
 
 		[Obsolete("This constructor is obsolete as of version 2.5. Please use ViewRenderer(Context) instead.")]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		protected ViewRenderer() 
+		protected ViewRenderer()
 		{
-			
+
 		}
 
 		protected virtual TNativeView CreateNativeControl()
@@ -62,10 +64,6 @@ namespace Xamarin.Forms.Platform.Android
 
 		AView ITabStop.TabStop => Control;
 
-		void IViewHandler.MeasureExactly()
-		{
-			MeasureExactly(Control, Element, Context);
-		}
 
 		// This is static so it's also available for use by the fast renderers
 		internal static void MeasureExactly(AView control, VisualElement element, Context context)
@@ -88,7 +86,7 @@ namespace Xamarin.Forms.Platform.Android
 
 			var widthMeasureSpec = MeasureSpecFactory.MakeMeasureSpec(realWidth, MeasureSpecMode.Exactly);
 			var heightMeasureSpec = MeasureSpecFactory.MakeMeasureSpec(realHeight, MeasureSpecMode.Exactly);
-			
+
 			control.Measure(widthMeasureSpec, heightMeasureSpec);
 		}
 
@@ -330,6 +328,115 @@ namespace Xamarin.Forms.Platform.Android
 		void UpdateFlowDirection()
 		{
 			Control.UpdateFlowDirection(Element);
+		}
+
+		object IViewHandler.NativeView => this;
+
+		bool IViewHandler.HasContainer
+		{
+			get => false;
+			set
+			{
+
+			}
+		}
+
+		void IViewHandler.SetView(IView view)
+		{
+			SetElement((TView)view);
+			(view as VisualElement).BatchCommitted += ViewRenderer_BatchCommitted;
+		}
+
+		private void ViewRenderer_BatchCommitted(object sender, Internals.EventArg<VisualElement> e)
+		{
+			(this as IViewHandler).SetFrame(Element.Bounds);
+		}
+
+		public virtual void UpdateValue(string property)
+		{
+			OnElementPropertyChanged(this, new PropertyChangedEventArgs(property));
+		}
+
+		void IViewHandler.Remove(IView view)
+		{
+			SetElement(null);
+		}
+
+		SizeRequest IViewHandler.GetDesiredSize(double widthConstraint, double heightConstraint)
+		{
+			if (Control == null)
+			{
+				return new SizeRequest(Size.Zero);
+			}
+
+			var deviceWidthConstraint = Context.ToPixels(widthConstraint);
+			var deviceHeightConstraint = Context.ToPixels(heightConstraint);
+
+			var widthSpec = MeasureSpecMode.AtMost.MakeMeasureSpec((int)deviceWidthConstraint);
+			var heightSpec = MeasureSpecMode.AtMost.MakeMeasureSpec((int)deviceHeightConstraint);
+
+			Control.Measure(widthSpec, heightSpec);
+
+			var deviceIndependentSize = Context.FromPixels(Control.MeasuredWidth, Control.MeasuredHeight);
+
+			return new SizeRequest(deviceIndependentSize);
+		}
+
+
+		protected override void OnMeasure(int widthMeasureSpec, int heightMeasureSpec)
+		{
+			base.OnMeasure(widthMeasureSpec, heightMeasureSpec);
+
+			(this as IViewHandler).SetFrame(new Rectangle(
+				Context.FromPixels(this.GetX()),
+				Context.FromPixels(this.GetY()),
+				Context.FromPixels(this.MeasuredWidth),
+				Context.FromPixels(this.MeasuredHeight)
+				));
+		}
+
+		void IViewHandler.SetFrame(Rectangle frame)
+		{
+			var nativeView = this.Control;
+
+			if (nativeView == null)
+				return;
+
+			if (frame.Width < 0 || frame.Height < 0)
+			{
+				// This is just some initial Forms value nonsense, nothing is actually laying out yet
+				return;
+			}
+
+			var left = Context.ToPixels(frame.Left);
+			var top = Context.ToPixels(frame.Top);
+			var bottom = Context.ToPixels(frame.Bottom);
+			var right = Context.ToPixels(frame.Right);
+			var width = Context.ToPixels(frame.Width);
+			var height = Context.ToPixels(frame.Height);
+
+			if (nativeView.LayoutParameters == null)
+			{
+				nativeView.LayoutParameters = new ViewGroup.LayoutParams((int)width, (int)height);
+			}
+			else
+			{
+				nativeView.LayoutParameters.Width = (int)width;
+				nativeView.LayoutParameters.Height = (int)height;
+			}
+
+			if (this.LayoutParameters == null)
+			{
+				this.LayoutParameters = new ViewGroup.LayoutParams((int)width, (int)height);
+			}
+			else
+			{
+				this.LayoutParameters.Width = (int)width;
+				this.LayoutParameters.Height = (int)height;
+			}
+
+			//this.Layout((int)left, (int)top, (int)right, (int)bottom);
+		//	nativeView.Layout((int)left, (int)top, (int)right, (int)bottom);
 		}
 	}
 }

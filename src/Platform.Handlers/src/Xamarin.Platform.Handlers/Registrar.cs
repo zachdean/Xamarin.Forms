@@ -23,7 +23,7 @@ namespace Xamarin.Platform
 
 		public void Register<TView, TRender>()
 			where TView : TType
-				where TRender : TTypeRender
+			where TRender : TTypeRender
 		{
 			Register(typeof(TView), typeof(TRender));
 		}

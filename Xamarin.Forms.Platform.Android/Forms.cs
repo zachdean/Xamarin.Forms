@@ -63,7 +63,7 @@ namespace Xamarin.Forms
 
 		[Obsolete("Context is obsolete as of version 2.5. Please use a local context instead.")]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public static Context Context { get; internal set; }
+		public static Context Context { get; set; }
 
 		// One per process; does not change, suitable for loading resources (e.g., ResourceProvider)
 		internal static Context ApplicationContext { get; private set; }

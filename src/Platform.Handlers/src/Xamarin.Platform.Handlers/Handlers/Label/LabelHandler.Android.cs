@@ -13,7 +13,7 @@ namespace Xamarin.Platform.Handlers
 
 		public static void MapPropertyText(IViewHandler handler, ILabel view)
 		{
-		
+			(handler.NativeView as TextView).Text = view.Text;
 		}
 
 		public static void MapPropertyTextColor(IViewHandler handler, ILabel view)

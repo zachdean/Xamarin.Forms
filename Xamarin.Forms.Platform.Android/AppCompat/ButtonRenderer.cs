@@ -51,6 +51,11 @@ namespace Xamarin.Forms.Platform.Android.AppCompat
 			return _buttonLayoutManager.GetDesiredSize(widthConstraint, heightConstraint);
 		}
 
+		protected override void OnMeasure(int widthMeasureSpec, int heightMeasureSpec)
+		{
+			base.OnMeasure(widthMeasureSpec, heightMeasureSpec);
+		}
+
 		void AView.IOnAttachStateChangeListener.OnViewAttachedToWindow(AView attachedView) =>
 			_buttonLayoutManager?.OnViewAttachedToWindow(attachedView);
 
