@@ -96,6 +96,9 @@ namespace Xamarin.Forms.Platform.iOS
 			if (_pageController.RealParent is IPageContainer<Page> multipage)
 				return multipage.CurrentPage == _pageController;
 
+			if (_pageController.RealParent is ShellContent sc && sc.Parent is IPageContainer<Page> shellSection)
+				return shellSection.CurrentPage == _pageController;
+
 			return true;
 		}
 	}

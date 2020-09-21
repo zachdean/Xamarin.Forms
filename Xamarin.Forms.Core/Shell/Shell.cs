@@ -13,8 +13,10 @@ using Xamarin.Forms.StyleSheets;
 namespace Xamarin.Forms
 {
 	[ContentProperty(nameof(Items))]
-	public class Shell : Page, IShellController, IPropertyPropagationController
+	public class Shell : Page, IShellController, IPropertyPropagationController, IPageContainer<Page>
 	{
+		Page IPageContainer<Page>.CurrentPage => (CurrentSection as IShellSectionController)?.PresentedPage;
+
 		public static readonly BindableProperty BackButtonBehaviorProperty =
 			BindableProperty.CreateAttached("BackButtonBehavior", typeof(BackButtonBehavior), typeof(Shell), null, BindingMode.OneTime,
 				propertyChanged: OnBackButonBehaviorPropertyChanged);
