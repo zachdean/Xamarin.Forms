@@ -9,7 +9,6 @@ namespace Xamarin.Forms.Platform.iOS
 		NSObject _activateObserver;
 		NSObject _resignObserver;
 		bool _disposed;
-		bool _appeared;
 		IPageController _pageController;
 
 		public PageLifecycleManager(IPageController pageController)
@@ -69,24 +68,16 @@ namespace Xamarin.Forms.Platform.iOS
 
 		public void HandlePageAppearing()
 		{
-			if (_appeared)
-				return;
-
-			_appeared = true;
 			_pageController?.SendAppearing();
-
 		}
 
 		public void HandlePageDisappearing()
 		{
-			if (!_appeared || _pageController == null)
+			if (_pageController == null)
 				return;
 
-			_appeared = false;
 			_pageController.SendDisappearing();
 		}
-
-		public bool Appeared => _appeared;
 
 		bool CheckIfWeAreTheCurrentPage()
 		{
