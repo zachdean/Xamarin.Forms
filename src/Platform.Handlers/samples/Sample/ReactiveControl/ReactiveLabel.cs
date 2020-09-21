@@ -6,14 +6,27 @@ using Xamarin.Platform;
 
 namespace Sample.ReactiveControl
 {
-	public class ReactiveButton : ReactiveView, IButton
+	public class ReactiveLabel : ReactiveView, ILabel
 	{
 		private string _text;
 		private Color _textColor;
 
+		public TextType TextType => throw new NotImplementedException();
+
+		public double LineHeight => throw new NotImplementedException();
+
+		public int MaxLines => throw new NotImplementedException();
+
+		public TextDecorations TextDecorations => throw new NotImplementedException();
+
+		public LineBreakMode LineBreakMode => throw new NotImplementedException();
+
 		public string Text
 		{
-			get => _text;
+			get
+			{
+				return _text;
+			}
 			set
 			{
 				_text = value;
@@ -23,7 +36,10 @@ namespace Sample.ReactiveControl
 
 		public Color TextColor
 		{
-			get => _textColor;
+			get
+			{
+				return _textColor;
+			}
 			set
 			{
 				_textColor = value;
@@ -47,20 +63,7 @@ namespace Sample.ReactiveControl
 
 		public TextAlignment VerticalTextAlignment => throw new NotImplementedException();
 
-		public void Clicked()
-		{
-			throw new NotImplementedException();
-		}
-
-		public void Pressed()
-		{
-			throw new NotImplementedException();
-		}
-
-		public void Released()
-		{
-			throw new NotImplementedException();
-		}
+		public Thickness Padding => throw new NotImplementedException();
 
 		public string UpdateTransformedText(string source, TextTransform textTransform)
 		{

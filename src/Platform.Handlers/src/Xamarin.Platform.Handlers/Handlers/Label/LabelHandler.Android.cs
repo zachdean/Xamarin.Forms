@@ -7,18 +7,18 @@ namespace Xamarin.Platform.Handlers
 		protected override TextView CreateView()
 		{
 			var text = new TextView(Context);
-
 			return text;
 		}
 
 		public static void MapPropertyText(IViewHandler handler, ILabel view)
 		{
-			(handler.NativeView as TextView).Text = view.Text;
+			(handler as LabelHandler).TypedNativeView.UpdateText(view);
 		}
 
 		public static void MapPropertyTextColor(IViewHandler handler, ILabel view)
 		{
-		
+			(handler as LabelHandler).TypedNativeView.UpdateTextColor(view);
+
 		}
 
 		public static void MapPropertyLineHeight(IViewHandler handler, ILabel view)

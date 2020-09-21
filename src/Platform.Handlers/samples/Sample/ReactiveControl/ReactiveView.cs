@@ -12,6 +12,8 @@ namespace Sample.ReactiveControl
 	public class ReactiveView : ReactiveObject, IObservable<string>, IView
 	{
 		Subject<string> propertyChanged;
+		private Rectangle _frame;
+		private Color _backgroundCOlor;
 
 		public ReactiveView()
 		{
@@ -19,7 +21,7 @@ namespace Sample.ReactiveControl
 
 			propertyChanged.Subscribe(result =>
 			{
-				Handler.UpdateValue(result);
+				Handler?.UpdateValue(result);
 			});
 		}
 
@@ -28,9 +30,31 @@ namespace Sample.ReactiveControl
 
 		public bool IsEnabled => throw new NotImplementedException();
 
-		public Color BackgroundColor => throw new NotImplementedException();
+		public Color BackgroundColor
+		{
+			get
+			{
+				return _backgroundCOlor;
+			}
+			set
+			{
+				_backgroundCOlor = value;
+				OnPropertyChanged();
+			}
+		}
 
-		public Rectangle Frame => throw new NotImplementedException();
+		public Rectangle Frame
+		{
+			get
+			{
+				return _frame;
+			}
+			set
+			{
+				_frame = value;
+				OnPropertyChanged();
+			}
+		}
 
 		public IViewHandler Handler { get; set; }
 
@@ -44,27 +68,26 @@ namespace Sample.ReactiveControl
 
 		public void Arrange(Rectangle bounds)
 		{
-			throw new NotImplementedException();
+			Frame = bounds;
+			Handler.SetFrame(Frame);
 		}
 
 		public void InvalidateArrange()
 		{
-			throw new NotImplementedException();
 		}
 
 		public void InvalidateMeasure()
 		{
-			throw new NotImplementedException();
 		}
 
 		public SizeRequest Measure(double widthConstraint, double heightConstraint)
 		{
-			throw new NotImplementedException();
+			return Handler.GetDesiredSize(widthConstraint, heightConstraint);
 		}
 
 		public IDisposable Subscribe(IObserver<string> observer)
 		{
-			throw new NotImplementedException();
+			return propertyChanged.Subscribe(observer);
 		}
 	}
 }

@@ -37,17 +37,10 @@ namespace Sample.Droid
 			Xamarin.Forms.Forms.Context = this;
 #pragma warning restore CS0618 // Type or member is obsolete
 			var app = new MyApp();
-			Add(
-				new Xamarin.Forms.Label() { Text = "Forms Button" },
-				new Entry(),
-				new Entry(),
-				new Entry(),
-				new Entry(),
-				new Entry(),
-				new Xamarin.Forms.Button() { Text = "Forms Button" }
-			);
+			//Add(app.CreateViews());
+			Randomize();
 
-			//Randomize();
+
 		}
 				
 		void Add(params IView[] views)
@@ -91,7 +84,7 @@ namespace Sample.Droid
 
 
 			var views = Enumerable.Range(0, 100)
-				.Select(_ => new Xamarin.Forms.Label() { Text = "Message" })
+				.Select(_ => new Xamarin.Forms.Label() { Text = "MAUI" })
 				.ToList();
 
 			var random = new Random();
@@ -113,25 +106,40 @@ namespace Sample.Droid
 				view.Handler.SetFrame(rect);
 			}
 
-
+			int max = views.Count;
+			int i = 0;
 			while (true)
 			{
-				await Task.Delay(1);
-
-				foreach (IView view in views)
+				var now = stopwatch.ElapsedMilliseconds;
+				while (stopwatch.ElapsedMilliseconds - now < 16)
 				{
-					var rect = new Xamarin.Forms.Rectangle(random.Next(0, x), random.Next(0, y), 60, 25);
+					var caputeredi = i;
 
-					var layoutParams = (view.Handler.NativeView as View).LayoutParameters as FrameLayout.LayoutParams;
+					this.RunOnUiThread(() =>
+					{
+						var view = (IView)views[i];
+						if (view is Xamarin.Forms.Label label)
+							label.TextColor = new Xamarin.Forms.Color(random.Next(128, 255) / 255d, random.Next(128, 255) / 255d, random.Next(128, 255) / 255d);
+						var rect = new Xamarin.Forms.Rectangle(random.Next(0, x), random.Next(0, y), 60, 25);
 
-					layoutParams.LeftMargin = (int)this.ToPixels(rect.X);
-					layoutParams.TopMargin = (int)this.ToPixels(rect.Y);
+						var layoutParams = (view.Handler.NativeView as View).LayoutParameters as FrameLayout.LayoutParams;
 
-					view.InvalidateArrange();
-					view.Arrange(rect);
-					view.Handler.SetFrame(rect);
-					changesProcessed++;
+						layoutParams.LeftMargin = (int)this.ToPixels(rect.X);
+						layoutParams.TopMargin = (int)this.ToPixels(rect.Y);
+
+						(view.Handler.NativeView as Android.Views.View).Rotation = random.Next(0, 360);
+						view.InvalidateArrange();
+						view.Arrange(rect);
+						view.Handler.SetFrame(rect);
+						changesProcessed++;
+
+					});
+					i++;
+					if (i >= max)
+						i = 0;
 				}
+
+				await Task.Delay(1);
 			}
 
 			void ProcessTextChanges()
