@@ -285,7 +285,7 @@ namespace Xamarin.Forms
 
 		protected virtual bool OnBackButtonPressed()
 		{
-			if (RealParent is BaseShellItem || RealParent is Shell)
+			if (IsShell)
 				return false;
 
 			var application = RealParent as Application;
@@ -421,6 +421,9 @@ namespace Xamarin.Forms
 			if (_hasAppeared)
 				return;
 
+			if (RealParent is ShellContent sc && !sc.IsVisibleContent)
+				return;
+
 			_hasAppeared = true;
 
 			if (IsBusy)
@@ -542,6 +545,8 @@ namespace Xamarin.Forms
 			}
 			return !any;
 		}
+
+		bool IsShell => RealParent is BaseShellItem || RealParent is Shell;
 
 		public IPlatformElementConfiguration<T, Page> On<T>() where T : IConfigPlatform
 		{
