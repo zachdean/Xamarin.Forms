@@ -8,7 +8,7 @@ namespace Xamarin.Platform.Handlers
 {
 	public partial class SliderHandler : AbstractViewHandler<ISlider, SeekBar>
 	{
-		double _max, _min;
+		int _max, _min;
 		ColorStateList _defaultProgressTintList;
 		ColorStateList _defaultProgressBackgroundTintList;
 		PorterDuff.Mode _defaultProgressTintMode;
@@ -82,11 +82,15 @@ namespace Xamarin.Platform.Handlers
 		void UpdateMinimum()
 		{
 			_min = (int)VirtualView.Minimum;
+
+			TypedNativeView.Min = _min;
 		}
 
 		void UpdateMaximum()
 		{
 			_max = (int)VirtualView.Maximum;
+
+			TypedNativeView.Max = _max;
 		}
 
 		void UpdateValue()
