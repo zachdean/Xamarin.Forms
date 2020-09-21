@@ -30,6 +30,7 @@ namespace Xamarin.Forms.Platform.Android
 			AutoPackage = false;
 		}
 
+		[PortHandler]
 		double Value
 		{
 			get { return _min + (_max - _min) * (Control.Progress / 1000.0); }
@@ -57,6 +58,7 @@ namespace Xamarin.Forms.Platform.Android
 			return new FormsSeekBar(Context);
 		}
 
+		[PortHandler]
 		protected override void OnElementChanged(ElementChangedEventArgs<Slider> e)
 		{
 			base.OnElementChanged(e);
@@ -95,6 +97,7 @@ namespace Xamarin.Forms.Platform.Android
 			get { return Control; }
 		}
 
+		[PortHandler("Mapped Minimum, Maximum and Value properties")]
 		protected override void OnElementPropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
 			if (this.IsDisposed())
@@ -147,6 +150,7 @@ namespace Xamarin.Forms.Platform.Android
 			}
 		}
 
+		[PortHandler]
 		private void UpdateMinimumTrackColor()
 		{
 			if (Element != null)
@@ -164,6 +168,7 @@ namespace Xamarin.Forms.Platform.Android
 			}
 		}
 
+		[PortHandler]
 		private void UpdateMaximumTrackColor()
 		{
 			if (Element != null)
@@ -181,6 +186,7 @@ namespace Xamarin.Forms.Platform.Android
 			}
 		}
 
+		[PortHandler]
 		void UpdateThumbColor()
 		{
 			Control.Thumb.SetColorFilter(Element.ThumbColor, defaultthumbcolorfilter, FilterMode.SrcIn);

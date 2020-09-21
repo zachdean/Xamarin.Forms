@@ -4,6 +4,7 @@ using UIKit;
 using SizeF = CoreGraphics.CGSize;
 using Xamarin.Forms.PlatformConfiguration.iOSSpecific;
 using Specifics = Xamarin.Forms.PlatformConfiguration.iOSSpecific.Slider;
+using Xamarin.Platform;
 
 namespace Xamarin.Forms.Platform.iOS
 {
@@ -104,6 +105,7 @@ namespace Xamarin.Forms.Platform.iOS
 			}
 		}
 
+		[PortHandler]
 		private void UpdateMinimumTrackColor()
 		{
 			if (Element != null)
@@ -115,6 +117,7 @@ namespace Xamarin.Forms.Platform.iOS
 			}
 		}
 
+		[PortHandler]
 		private void UpdateMaximumTrackColor()
 		{
 			if (Element != null)
@@ -126,6 +129,7 @@ namespace Xamarin.Forms.Platform.iOS
 			}
 		}
 
+		[PortHandler]
 		private void UpdateThumbColor()
 		{
 			if (Element != null)
@@ -220,16 +224,19 @@ namespace Xamarin.Forms.Platform.iOS
 
 		}
 
+		[PortHandler]
 		void UpdateMaximum()
 		{
 			Control.MaxValue = (float)Element.Maximum;
 		}
 
+		[PortHandler]
 		void UpdateMinimum()
 		{
 			Control.MinValue = (float)Element.Minimum;
 		}
 
+		[PortHandler]
 		void UpdateValue()
 		{
 			if ((float)Element.Value != Control.Value)

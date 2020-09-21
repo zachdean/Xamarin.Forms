@@ -8,11 +8,18 @@ namespace Xamarin.Platform.Handlers
 {
 	public partial class SliderHandler : AbstractViewHandler<ISlider, SeekBar>
 	{
+		double _max, _min;
 		ColorStateList _defaultProgressTintList;
 		ColorStateList _defaultProgressBackgroundTintList;
 		PorterDuff.Mode _defaultProgressTintMode;
 		PorterDuff.Mode _defaultProgressBackgroundTintMode;
 		ColorFilter _defaultThumbColorFilter;
+
+		double Value
+		{
+			get { return _min + (_max - _min) * (TypedNativeView.Progress / 1000.0); }
+			set { TypedNativeView.Progress = (int)((value - _min) / (_max - _min) * 1000.0); }
+		}
 
 		protected override SeekBar CreateView()
 		{
@@ -44,70 +51,89 @@ namespace Xamarin.Platform.Handlers
 
 		public static void MapMinimum(IViewHandler handler, ISlider slider)
 		{
-			if (!(handler.NativeView is SeekBar NativeSlider))
-				return;
-
-			NativeSlider.Min = (int)slider.Minimum;
+			(handler as SliderHandler)?.UpdateMinimum();
 		}
 
 		public static void MapMaximum(IViewHandler handler, ISlider slider)
 		{
-			if (!(handler.NativeView is SeekBar NativeSlider))
-				return;
-
-			NativeSlider.Max = (int)slider.Maximum;
+			(handler as SliderHandler)?.UpdateMaximum();
 		}
 
 		public static void MapValue(IViewHandler handler, ISlider slider)
 		{
-			if (!(handler.NativeView is SeekBar NativeSlider))
-				return;
-
-			NativeSlider.Progress = (int)slider.Value;
+			(handler as SliderHandler)?.UpdateValue();
 		}
 
 		public static void MapMinimumTrackColor(IViewHandler handler, ISlider slider)
 		{
-			if (!(handler is SliderHandler sliderHandler) || !(handler.NativeView is SeekBar NativeSlider))
-				return;
-
-			if (slider.MinimumTrackColor == Forms.Color.Default)
-			{
-				NativeSlider.ProgressTintList = sliderHandler._defaultProgressTintList;
-				NativeSlider.ProgressTintMode = sliderHandler._defaultProgressTintMode;
-			}
-			else
-			{
-				NativeSlider.ProgressTintList = ColorStateList.ValueOf(slider.MinimumTrackColor.ToNative());
-				NativeSlider.ProgressTintMode = PorterDuff.Mode.SrcIn;
-			}
+			(handler as SliderHandler)?.UpdateMinimumTrackColor();
 		}
 
 		public static void MapMaximumTrackColor(IViewHandler handler, ISlider slider)
 		{
-			if (!(handler is SliderHandler sliderHandler) || !(handler.NativeView is SeekBar NativeSlider))
-				return;
-
-				if (slider.MaximumTrackColor == Forms.Color.Default)
-				{
-					NativeSlider.ProgressBackgroundTintList = sliderHandler._defaultProgressBackgroundTintList;
-					NativeSlider.ProgressBackgroundTintMode = sliderHandler._defaultProgressBackgroundTintMode;
-				}
-				else
-				{
-					NativeSlider.ProgressBackgroundTintList = ColorStateList.ValueOf(slider.MaximumTrackColor.ToNative());
-					NativeSlider.ProgressBackgroundTintMode = PorterDuff.Mode.SrcIn;
-				}
+			(handler as SliderHandler)?.UpdateMaximumTrackColor();
 		}
 
 		public static void MapThumbColor(IViewHandler handler, ISlider slider)
 		{
-			if (!(handler is SliderHandler sliderHandler) || !(handler.NativeView is SeekBar NativeSlider))
-				return;
-
-			NativeSlider.Thumb.SetColorFilter(slider.ThumbColor, sliderHandler._defaultThumbColorFilter, FilterMode.SrcIn);
+			(handler as SliderHandler)?.UpdateThumbColor();
 		}
-		
+
+		void UpdateMinimum()
+		{
+			_min = (int)VirtualView.Minimum;
+		}
+
+		void UpdateMaximum()
+		{
+			_max = (int)VirtualView.Maximum;
+		}
+
+		void UpdateValue()
+		{
+			if (Value != VirtualView.Value)
+				Value = VirtualView.Value;
+		}
+
+		void UpdateMinimumTrackColor()
+		{
+			if (VirtualView != null)
+			{
+				if (VirtualView.MinimumTrackColor == Forms.Color.Default)
+				{
+					TypedNativeView.ProgressTintList = _defaultProgressTintList;
+					TypedNativeView.ProgressTintMode = _defaultProgressTintMode;
+				}
+				else
+				{
+					TypedNativeView.ProgressTintList = ColorStateList.ValueOf(VirtualView.MinimumTrackColor.ToNative());
+					TypedNativeView.ProgressTintMode = PorterDuff.Mode.SrcIn;
+				}
+			}
+		}
+
+		private void UpdateMaximumTrackColor()
+		{
+			if (VirtualView != null)
+			{
+				if (VirtualView.MaximumTrackColor == Forms.Color.Default)
+				{
+					TypedNativeView.ProgressBackgroundTintList = _defaultProgressBackgroundTintList;
+					TypedNativeView.ProgressBackgroundTintMode = _defaultProgressBackgroundTintMode;
+				}
+				else
+				{
+					TypedNativeView.ProgressBackgroundTintList = ColorStateList.ValueOf(VirtualView.MaximumTrackColor.ToNative());
+					TypedNativeView.ProgressBackgroundTintMode = PorterDuff.Mode.SrcIn;
+				}
+			}
+		}
+
+		void UpdateThumbColor()
+		{
+			TypedNativeView.Thumb.SetColorFilter(VirtualView.ThumbColor, _defaultThumbColorFilter, FilterMode.SrcIn);
+		}
+
 		internal class MauiSeekBarListener : Java.Lang.Object, SeekBar.IOnSeekBarChangeListener
 		{
 			readonly ISlider _virtualView;

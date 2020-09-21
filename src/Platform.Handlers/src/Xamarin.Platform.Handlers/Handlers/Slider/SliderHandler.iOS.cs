@@ -35,60 +35,81 @@ namespace Xamarin.Platform.Handlers
 
 		public static void MapMinimum(IViewHandler handler, ISlider slider)
 		{
-			if (!(handler.NativeView is UISlider uISlider))
-				return;
-
-			uISlider.MinValue = (float)slider.Minimum;
+			(handler as SliderHandler)?.UpdateMinimum();
 		}
 
 		public static void MapMaximum(IViewHandler handler, ISlider slider)
 		{
-			if (!(handler.NativeView is UISlider uISlider))
-				return;
-
-			uISlider.MaxValue = (float)slider.Maximum;
+			(handler as SliderHandler)?.UpdateMaximum();
 		}
 
 		public static void MapValue(IViewHandler handler, ISlider slider)
 		{
-			if (!(handler.NativeView is UISlider uISlider))
-				return;
-
-			if ((float)slider.Value != uISlider.Value)
-				uISlider.Value = (float)slider.Value;
+			(handler as SliderHandler)?.UpdateValue();
 		}
 
 		public static void MapMinimumTrackColor(IViewHandler handler, ISlider slider)
 		{
-			if (!(handler is SliderHandler sliderHandler) || !(handler.NativeView is UISlider uISlider))
-				return;
-
-			if (slider.MinimumTrackColor == Color.Default)
-				uISlider.MinimumTrackTintColor = sliderHandler._defaultMinTrackColor;
-			else
-				uISlider.MinimumTrackTintColor = slider.MinimumTrackColor.ToNative();
+			(handler as SliderHandler)?.UpdateMinimumTrackColor();
 		}
 
 		public static void MapMaximumTrackColor(IViewHandler handler, ISlider slider)
 		{
-			if (!(handler is SliderHandler sliderHandler) || !(handler.NativeView is UISlider uISlider))
-				return;
-
-			if (slider.MaximumTrackColor == Color.Default)
-				uISlider.MaximumTrackTintColor = sliderHandler._defaultMaxTrackColor;
-			else
-				uISlider.MaximumTrackTintColor = slider.MaximumTrackColor.ToNative();
+			(handler as SliderHandler)?.UpdateMaximumTrackColor();
 		}
 
 		public static void MapThumbColor(IViewHandler handler, ISlider slider)
 		{
-			if (!(handler is SliderHandler sliderHandler) || !(handler.NativeView is UISlider uISlider))
-				return;
+			(handler as SliderHandler)?.UpdateThumbColor();
+		}
 
-			if (slider.ThumbColor == Color.Default)
-				uISlider.ThumbTintColor = sliderHandler._defaultThumbColor;
-			else
-				uISlider.ThumbTintColor = slider.ThumbColor.ToNative();
+		void UpdateMaximum()
+		{
+			TypedNativeView.MaxValue = (float)VirtualView.Maximum;
+		}
+
+		void UpdateMinimum()
+		{
+			TypedNativeView.MinValue = (float)VirtualView.Minimum;
+		}
+
+		void UpdateValue()
+		{
+			if ((float)VirtualView.Value != TypedNativeView.Value)
+				TypedNativeView.Value = (float)VirtualView.Value;
+		}
+
+		void UpdateMinimumTrackColor()
+		{
+			if (VirtualView != null)
+			{
+				if (VirtualView.MinimumTrackColor == Color.Default)
+					TypedNativeView.MinimumTrackTintColor = _defaultMinTrackColor;
+				else
+					TypedNativeView.MinimumTrackTintColor = VirtualView.MinimumTrackColor.ToNative();
+			}
+		}
+
+		void UpdateMaximumTrackColor()
+		{
+			if (VirtualView != null)
+			{
+				if (VirtualView.MaximumTrackColor == Color.Default)
+					TypedNativeView.MaximumTrackTintColor = _defaultMaxTrackColor;
+				else
+					TypedNativeView.MaximumTrackTintColor = VirtualView.MaximumTrackColor.ToNative();
+			}
+		}
+
+		void UpdateThumbColor()
+		{
+			if (VirtualView != null)
+			{
+				if (VirtualView.ThumbColor == Color.Default)
+					TypedNativeView.ThumbTintColor = _defaultThumbColor;
+				else
+					TypedNativeView.ThumbTintColor = VirtualView.ThumbColor.ToNative();
+			}
 		}
 
 		void UpdateDefaultColors(UISlider uISlider)
