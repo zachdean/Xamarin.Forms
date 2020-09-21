@@ -1,19 +1,18 @@
 using System;
 using System.ComponentModel;
 using Android.Content;
+using Android.Graphics;
 using Android.Graphics.Drawables;
-using AndroidX.AppCompat.Widget;
+using Android.OS;
 using Android.Widget;
 using Xamarin.Platform;
-using Xamarin.Forms.Platform.Android.FastRenderers;
+using ASwitch = Android.Widget.Switch;
 
-namespace Xamarin.Forms.Platform.Android.AppCompat
+namespace Xamarin.Forms.Platform.Android
 {
-	public class SwitchRenderer : ViewRenderer<Switch, SwitchCompat>, CompoundButton.IOnCheckedChangeListener
+	public class SwitchRenderer : ViewRenderer<Switch, ASwitch>, CompoundButton.IOnCheckedChangeListener
 	{
-		bool _disposed;
 		Drawable _defaultTrackDrawable;
-		string _defaultContentDescription;
 		bool _changedThumbColor;
 
 		public SwitchRenderer(Context context) : base(context)
@@ -27,9 +26,6 @@ namespace Xamarin.Forms.Platform.Android.AppCompat
 		{
 			AutoPackage = false;
 		}
-
-		protected override void SetContentDescription()
-			=> AutomationPropertiesProvider.SetBasicContentDescription(this, Element, ref _defaultContentDescription);
 
 		void CompoundButton.IOnCheckedChangeListener.OnCheckedChanged(CompoundButton buttonView, bool isChecked)
 		{
@@ -53,27 +49,25 @@ namespace Xamarin.Forms.Platform.Android.AppCompat
 			return sizeConstraint;
 		}
 
-		protected override SwitchCompat CreateNativeControl()
-		{
-			return new SwitchCompat(Context);
-		}
-
 		protected override void Dispose(bool disposing)
 		{
-			if (disposing && !_disposed)
+			if (disposing && Control != null)
 			{
-				_disposed = true;
-
 				if (Element != null)
 					Element.Toggled -= HandleToggled;
 
-				Control?.SetOnCheckedChangeListener(null);
+				Control.SetOnCheckedChangeListener(null);
 
 				_defaultTrackDrawable?.Dispose();
 				_defaultTrackDrawable = null;
 			}
 
 			base.Dispose(disposing);
+		}
+
+		protected override ASwitch CreateNativeControl()
+		{
+			return new ASwitch(Context);
 		}
 
 		protected override void OnElementChanged(ElementChangedEventArgs<Switch> e)
@@ -87,13 +81,15 @@ namespace Xamarin.Forms.Platform.Android.AppCompat
 			{
 				if (Control == null)
 				{
-					SwitchCompat aswitch = CreateNativeControl();
+					var aswitch = CreateNativeControl();
 					aswitch.SetOnCheckedChangeListener(this);
 					SetNativeControl(aswitch);
-					_defaultTrackDrawable = aswitch.TrackDrawable;
+					_defaultTrackDrawable = Control.TrackDrawable;
 				}
 				else
+				{
 					UpdateEnabled(); // Normally set by SetNativeControl, but not when the Control is reused.
+				}
 
 				e.NewElement.Toggled += HandleToggled;
 				Control.Checked = e.NewElement.IsToggled;
@@ -104,38 +100,36 @@ namespace Xamarin.Forms.Platform.Android.AppCompat
 
 		protected override void OnElementPropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
-			if (this.IsDisposed())
-			{
-				return;
-			}
-
 			base.OnElementPropertyChanged(sender, e);
 
 			if (e.PropertyName == Switch.OnColorProperty.PropertyName)
 				UpdateOnColor();
-			else if (e.PropertyName == Slider.ThumbColorProperty.PropertyName)
+			else if (e.PropertyName == Switch.ThumbColorProperty.PropertyName)
 				UpdateThumbColor();
 		}
 
 		void UpdateOnColor()
 		{
-			if (Element == null || Control == null)
-				return;
-
-			if (Control.Checked)
+			if (Element != null)
 			{
-				if (Element.OnColor == Color.Default)
+				if (Control.Checked)
 				{
-					Control.TrackDrawable = _defaultTrackDrawable;
+					if (Element.OnColor == Color.Default)
+					{
+						Control.TrackDrawable = _defaultTrackDrawable;
+					}
+					else
+					{
+						if (Forms.SdkInt >= BuildVersionCodes.JellyBean)
+						{
+							Control.TrackDrawable?.SetColorFilter(Element.OnColor.ToAndroid(), FilterMode.SrcAtop);
+						}
+					}
 				}
 				else
 				{
-					Control.TrackDrawable?.SetColorFilter(Element.OnColor, FilterMode.SrcAtop);
+					Control.TrackDrawable?.ClearColorFilter();
 				}
-			}
-			else
-			{
-				Control.TrackDrawable?.ClearColorFilter();
 			}
 		}
 
@@ -146,7 +140,7 @@ namespace Xamarin.Forms.Platform.Android.AppCompat
 
 			if (Element.ThumbColor != Color.Default)
 			{
-				Control.ThumbDrawable?.SetColorFilter(Element.ThumbColor, FilterMode.SrcAtop);
+				Control.ThumbDrawable.SetColorFilter(Element.ThumbColor, FilterMode.SrcAtop);
 				_changedThumbColor = true;
 			}
 			else
@@ -157,6 +151,8 @@ namespace Xamarin.Forms.Platform.Android.AppCompat
 					_changedThumbColor = false;
 				}
 			}
+
+			Control.ThumbDrawable.SetColorFilter(Element.ThumbColor, FilterMode.SrcAtop);
 		}
 
 		void HandleToggled(object sender, EventArgs e)

@@ -10,23 +10,24 @@ using Android.Content.Res;
 using Android.Graphics;
 using Android.Graphics.Drawables;
 using Android.Runtime;
-using Android.Util;
-using Android.Views;
-using Android.Widget;
-using AndroidX.AppCompat.App;
-using AndroidX.AppCompat.Graphics.Drawable;
-using AndroidX.DrawerLayout.Widget;
-using Xamarin.Forms.Internals;
-using static Android.Views.View;
-using static Xamarin.Forms.PlatformConfiguration.AndroidSpecific.AppCompat.NavigationPage;
-using ActionBarDrawerToggle = AndroidX.AppCompat.App.ActionBarDrawerToggle;
-using AToolbar = AndroidX.AppCompat.Widget.Toolbar;
-using AView = Android.Views.View;
 using Fragment = AndroidX.Fragment.App.Fragment;
 using FragmentManager = AndroidX.Fragment.App.FragmentManager;
 using FragmentTransaction = AndroidX.Fragment.App.FragmentTransaction;
+using AToolbar = AndroidX.AppCompat.Widget.Toolbar;
+using ActionBarDrawerToggle = AndroidX.AppCompat.App.ActionBarDrawerToggle;
+using AndroidX.AppCompat.Graphics.Drawable;
+using AndroidX.DrawerLayout.Widget;
+using AndroidX.AppCompat.App;
+using Android.Util;
+using Android.Views;
+using Xamarin.Forms.Internals;
+using Xamarin.Platform;
+using AView = Android.Views.View;
+
 using Object = Java.Lang.Object;
-using APlatform = Xamarin.Forms.Platform.Android.AppCompat.Platform;
+using static Xamarin.Forms.PlatformConfiguration.AndroidSpecific.AppCompat.NavigationPage;
+using static Android.Views.View;
+using Android.Widget;
 
 namespace Xamarin.Forms.Platform.Android.AppCompat
 {
@@ -198,14 +199,14 @@ namespace Xamarin.Forms.Platform.Android.AppCompat
 					trans.CommitAllowingStateLossEx();
 					fm.ExecutePendingTransactionsEx();
 				}
-
+				
 				_toolbar.RemoveView(_titleView);
 				_titleView?.Dispose();
 				_titleView = null;
 
 				if (_titleViewRenderer != null)
 				{
-					Platform.ClearRenderer(_titleViewRenderer.View);
+					Android.Platform.ClearRenderer(_titleViewRenderer.View);
 					_titleViewRenderer.Dispose();
 					_titleViewRenderer = null;
 				}
@@ -244,7 +245,7 @@ namespace Xamarin.Forms.Platform.Android.AppCompat
 					_toolbar.Menu.Clear();
 
 					RemoveView(_toolbar);
-
+				
 					_toolbar.Dispose();
 					_toolbar = null;
 				}
@@ -287,7 +288,7 @@ namespace Xamarin.Forms.Platform.Android.AppCompat
 						if (child == null)
 							continue;
 
-						IVisualElementRenderer renderer = Platform.GetRenderer(child);
+						IVisualElementRenderer renderer = Android.Platform.GetRenderer(child);
 						renderer?.Dispose();
 					}
 				}
@@ -400,7 +401,7 @@ namespace Xamarin.Forms.Platform.Android.AppCompat
 			AToolbar bar = _toolbar;
 			// make sure bar stays on top of everything
 			bar.BringToFront();
-
+			
 			int barHeight = ActionBarHeight();
 
 			if (Element.IsSet(BarHeightProperty))
@@ -663,7 +664,7 @@ namespace Xamarin.Forms.Platform.Android.AppCompat
 			if (((IFlyoutPageController)_flyoutPage).ShouldShowSplitMode)
 				return;
 
-			var renderer = APlatform.GetRenderer(_flyoutPage) as FlyoutPageRenderer;
+			var renderer = Android.Platform.GetRenderer(_flyoutPage) as FlyoutPageRenderer;
 			if (renderer == null)
 				return;
 
@@ -751,7 +752,7 @@ namespace Xamarin.Forms.Platform.Android.AppCompat
 
 			if (_titleViewRenderer != null)
 			{
-				Platform.ClearRenderer(_titleViewRenderer.View);
+				Android.Platform.ClearRenderer(_titleViewRenderer.View);
 				_titleViewRenderer.Dispose();
 				_titleViewRenderer = null;
 			}
@@ -1085,11 +1086,11 @@ namespace Xamarin.Forms.Platform.Android.AppCompat
 			{
 				var reflectableType = _titleViewRenderer as System.Reflection.IReflectableType;
 				var rendererType = reflectableType != null ? reflectableType.GetTypeInfo().AsType() : _titleViewRenderer.GetType();
-				if (titleView == null || Registrar.Registered.GetHandlerTypeForObject(titleView) != rendererType)
+				if (titleView == null || Internals.Registrar.Registered.GetHandlerTypeForObject(titleView) != rendererType)
 				{
 					if (_titleView != null)
 						_titleView.Child = null;
-					Platform.ClearRenderer(_titleViewRenderer.View);
+					Android.Platform.ClearRenderer(_titleViewRenderer.View);
 					_titleViewRenderer.Dispose();
 					_titleViewRenderer = null;
 				}
@@ -1102,7 +1103,7 @@ namespace Xamarin.Forms.Platform.Android.AppCompat
 				_titleViewRenderer.SetElement(titleView);
 			else
 			{
-				_titleViewRenderer = Platform.CreateRenderer(titleView, Context);
+				_titleViewRenderer = Android.Platform.CreateRenderer(titleView, Context);
 
 				if (_titleView == null)
 				{
@@ -1113,7 +1114,7 @@ namespace Xamarin.Forms.Platform.Android.AppCompat
 				_titleView.Child = _titleViewRenderer;
 			}
 
-			Platform.SetRenderer(titleView, _titleViewRenderer);
+			Android.Platform.SetRenderer(titleView, _titleViewRenderer);
 		}
 
 		void AddTransitionTimer(TaskCompletionSource<bool> tcs, Fragment fragment, FragmentManager fragmentManager, IReadOnlyCollection<Fragment> fragmentsToRemove, int duration, bool shouldUpdateToolbar)

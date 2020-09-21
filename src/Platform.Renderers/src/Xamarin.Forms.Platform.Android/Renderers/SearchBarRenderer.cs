@@ -9,8 +9,9 @@ using Android.OS;
 using Android.Text;
 using Android.Text.Method;
 using Android.Util;
-using Android.Views;
 using Android.Widget;
+using Android.Views;
+using Xamarin.Platform;
 using AView = Android.Views.View;
 
 namespace Xamarin.Forms.Platform.Android
@@ -170,9 +171,9 @@ namespace Xamarin.Forms.Platform.Android
 				UpdateHorizontalTextAlignment();
 			else if (e.PropertyName == InputView.MaxLengthProperty.PropertyName)
 				UpdateMaxLength();
-			else if (e.PropertyName == InputView.KeyboardProperty.PropertyName)
+			else if(e.PropertyName == InputView.KeyboardProperty.PropertyName)
 				UpdateInputType();
-			else if (e.PropertyName == InputView.IsSpellCheckEnabledProperty.PropertyName)
+			else if(e.PropertyName == InputView.IsSpellCheckEnabledProperty.PropertyName)
 				UpdateInputType();
 		}
 
@@ -273,7 +274,7 @@ namespace Xamarin.Forms.Platform.Android
 
 		void UpdateCharacterSpacing()
 		{
-			if (!Forms.IsLollipopOrNewer)
+			if(!Forms.IsLollipopOrNewer)
 				return;
 
 			_editText = _editText ?? Control.GetChildrenOfType<EditText>().FirstOrDefault();
@@ -336,7 +337,7 @@ namespace Xamarin.Forms.Platform.Android
 			if (keyboard == Keyboard.Numeric)
 			{
 				_editText = _editText ?? Control.GetChildrenOfType<EditText>().FirstOrDefault();
-				if (_editText != null)
+				if(_editText != null)
 					_editText.KeyListener = GetDigitsKeyListener(_inputType);
 			}
 		}
