@@ -10,9 +10,12 @@ using NUnit.Framework;
 
 namespace Xamarin.Forms.Controls.Issues
 {
+#if UITEST
+	[NUnit.Framework.Category(Core.UITests.UITestCategories.Bugzilla)]
+#endif
 	[Preserve(AllMembers = true)]
 	[Issue(IssueTracker.Bugzilla, 45027, "App crashes when double tapping on ToolbarItem or MenuItem very quickly", PlatformAffected.Android)]
-	public class Bugzilla45027 : TestContentPage // or TestMasterDetailPage, etc ...
+	public class Bugzilla45027 : TestContentPage // or TestFlyoutPage, etc ...
 	{
 		const string BUTTON_ACTION_TEXT = "Action";
 		const string BUTTON_DELETE_TEXT = "Delete";
@@ -20,7 +23,7 @@ namespace Xamarin.Forms.Controls.Issues
 		List<int> _list;
 		public List<int> List
 		{
-			get 
+			get
 			{
 				if (_list == null)
 				{

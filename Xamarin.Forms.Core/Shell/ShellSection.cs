@@ -179,7 +179,9 @@ namespace Xamarin.Forms
 			SendUpdateCurrentState(ShellNavigationSource.Pop);
 		}
 
-		ReadOnlyCollection<ShellContent> IShellSectionController.GetItems() => ((ShellContentCollection)Items).VisibleItems;
+		// we want the list returned from here to remain point in time accurate
+		ReadOnlyCollection<ShellContent> IShellSectionController.GetItems() 
+			=> new ReadOnlyCollection<ShellContent>(((ShellContentCollection)Items).VisibleItemsReadOnly.ToList());
 
 		[Obsolete]
 		[EditorBrowsable(EditorBrowsableState.Never)]
@@ -236,7 +238,29 @@ namespace Xamarin.Forms
 
 		public ShellSection()
 		{
+			((ShellElementCollection)Items).VisibleItemsChangedInternal += (_, args) =>
+			{
+				if (args.OldItems != null)
+				{
+					foreach (Element item in args.OldItems)
+					{
+						OnVisibleChildRemoved(item);
+					}
+				}
+
+				if(args.NewItems != null)
+				{
+					foreach (Element item in args.NewItems)
+					{
+						OnVisibleChildAdded(item);
+					}
+				}
+
+				SendStructureChanged();
+			};
+
 			(Items as INotifyCollectionChanged).CollectionChanged += ItemsCollectionChanged;
+
 			Navigation = new NavigationImpl(this);
 		}
 				
@@ -247,12 +271,13 @@ namespace Xamarin.Forms
 		}
 
 		public IList<ShellContent> Items => (IList<ShellContent>)GetValue(ItemsProperty);
+		internal override ShellElementCollection ShellElementCollection => (ShellElementCollection)Items;
 
 		public IReadOnlyList<Page> Stack => _navStack;
 
 		internal override ReadOnlyCollection<Element> LogicalChildrenInternal => _logicalChildrenReadOnly ?? (_logicalChildrenReadOnly = new ReadOnlyCollection<Element>(_logicalChildren));
 
-		Page DisplayedPage
+		internal Page DisplayedPage
 		{
 			get { return _displayedPage; }
 			set
@@ -272,6 +297,11 @@ namespace Xamarin.Forms
 
 		internal static ShellSection CreateFromShellContent(ShellContent shellContent)
 		{
+			if(shellContent.Parent != null)
+			{
+				return (ShellSection)shellContent.Parent;
+			}
+
 			var shellSection = new ShellSection();
 
 			var contentRoute = shellContent.Route;
@@ -292,17 +322,11 @@ namespace Xamarin.Forms
 			return CreateFromShellContent((ShellContent)page);
 		}
 
-#if DEBUG
-		[Obsolete("Please dont use this in core code... its SUPER hard to debug when this happens", true)]
-#endif
 		public static implicit operator ShellSection(ShellContent shellContent)
 		{
 			return CreateFromShellContent(shellContent);
 		}
 
-#if DEBUG
-		[Obsolete("Please dont use this in core code... its SUPER hard to debug when this happens", true)]
-#endif
 		public static implicit operator ShellSection(TemplatedPage page)
 		{
 			return (ShellSection)(ShellContent)page;
@@ -316,7 +340,11 @@ namespace Xamarin.Forms
 
 			if (globalRoutes == null || globalRoutes.Count == 0)
 			{
-				await Navigation.PopToRootAsync(animate ?? false);
+				if(_navStack.Count == 2)
+					await OnPopAsync(animate ?? false);
+				else
+					await OnPopToRootAsync(animate ?? false);
+				
 				return;
 			}
 
@@ -361,17 +389,18 @@ namespace Xamarin.Forms
 						IsPoppingModalStack = true;
 						while (navStack.Count > popCount)
 						{
+							bool isAnimated = animate ?? IsNavigationAnimated(navStack[navStack.Count - 1]);
 							if (Navigation.ModalStack.Contains(navStack[navStack.Count - 1]))
 							{
-								await Navigation.PopModalAsync(false);
+								await Navigation.PopModalAsync(isAnimated);
 							}
 							else if (Navigation.ModalStack.Count > 0)
 							{
-								await Navigation.ModalStack[Navigation.ModalStack.Count - 1].Navigation.PopAsync(false);
+								await Navigation.ModalStack[Navigation.ModalStack.Count - 1].Navigation.PopAsync(isAnimated);
 							}
 							else
 							{
-								await OnPopAsync(false);
+								await OnPopAsync(isAnimated);
 							}
 							
 							navStack = BuildFlattenedNavigationStack(new List<Page>(_navStack), Navigation?.ModalStack);
@@ -402,7 +431,9 @@ namespace Xamarin.Forms
 				route = globalRoutes[i];
 				var content = Routing.GetOrCreateContent(route) as Page;
 				if (content == null)
+				{
 					break;
+				}
 
 				var isModal = (Shell.GetPresentationMode(content) & PresentationMode.Modal) == PresentationMode.Modal;
 
@@ -414,7 +445,7 @@ namespace Xamarin.Forms
 				else if (modalPageStacks.Count > 0)
 				{
 					if (modalPageStacks[modalPageStacks.Count - 1] is NavigationPage navigationPage)
-						await navigationPage.Navigation.PushAsync(content);
+						await navigationPage.Navigation.PushAsync(content, animate ?? IsNavigationAnimated(content));
 					else
 						throw new InvalidOperationException($"Shell cannot push a page to the following type: {modalPageStacks[modalPageStacks.Count - 1]}. The visible modal page needs to be a NavigationPage");
 				}
@@ -427,7 +458,7 @@ namespace Xamarin.Forms
 			for (int i = Navigation.ModalStack.Count; i < modalPageStacks.Count; i++)
 			{
 				bool isLast = i == modalPageStacks.Count - 1;
-				bool isAnimated = animate ?? (Shell.GetPresentationMode(modalPageStacks[i]) & PresentationMode.NotAnimated) != PresentationMode.NotAnimated;
+				bool isAnimated = animate ?? IsNavigationAnimated(modalPageStacks[i]);
 				IsPushingModalStack = !isLast;
 				await ((NavigationImpl)Navigation).PushModalAsync(modalPageStacks[i], isAnimated);
 			}
@@ -438,7 +469,7 @@ namespace Xamarin.Forms
 					
 				if(isLast)
 				{
-					bool isAnimated = animate ?? (Shell.GetPresentationMode(nonModalPageStacks[i]) & PresentationMode.NotAnimated) != PresentationMode.NotAnimated;
+					bool isAnimated = animate ?? IsNavigationAnimated(nonModalPageStacks[i]);
 					await OnPushAsync(nonModalPageStacks[i], isAnimated);
 				}
 				else
@@ -448,6 +479,11 @@ namespace Xamarin.Forms
 			if (Parent?.Parent is IShellController shell)
 			{
 				shell.UpdateCurrentState(ShellNavigationSource.ShellSectionChanged);
+			}
+
+			bool IsNavigationAnimated(BindableObject bo)
+			{
+				return (Shell.GetPresentationMode(bo) & PresentationMode.NotAnimated) != PresentationMode.NotAnimated;
 			}
 
 			List<Page> BuildFlattenedNavigationStack(List<Page> startingList, IReadOnlyList<Page> modalStack)
@@ -470,7 +506,7 @@ namespace Xamarin.Forms
 
 		internal void SendStructureChanged()
 		{
-			if (Parent?.Parent is Shell shell)
+			if (Parent?.Parent is Shell shell && IsVisibleSection)
 			{
 				shell.SendStructureChanged();
 			}
@@ -503,29 +539,52 @@ namespace Xamarin.Forms
 		protected override void OnChildAdded(Element child)
 		{
 			base.OnChildAdded(child);
+			OnVisibleChildAdded(child);
+		}
+
+		[Obsolete("OnChildRemoved(Element) is obsolete as of version 4.8.0. Please use OnChildRemoved(Element, int) instead.")]
+		protected override void OnChildRemoved(Element child) => OnChildRemoved(child, -1);
+
+		protected override void OnChildRemoved(Element child, int oldLogicalIndex)
+		{
+			if(child is IShellContentController sc && sc.Page.IsPlatformEnabled)
+			{
+				sc.Page.PlatformEnabledChanged += WaitForRendererToGetRemoved;
+				void WaitForRendererToGetRemoved(object s, EventArgs p)
+				{
+					sc.Page.PlatformEnabledChanged -= WaitForRendererToGetRemoved;
+					base.OnChildRemoved(child, oldLogicalIndex);
+				};
+			}
+			else
+			{
+				base.OnChildRemoved(child, oldLogicalIndex);
+			}
+
+			OnVisibleChildRemoved(child);
+		}
+
+		void OnVisibleChildAdded(Element child)
+		{
 			if (CurrentItem == null && ((IShellSectionController)this).GetItems().Contains(child))
 				SetValueFromRenderer(CurrentItemProperty, child);
 
-			if(CurrentItem != null)
+			if (CurrentItem != null)
 				UpdateDisplayedPage();
 		}
 
-		protected override void OnChildRemoved(Element child)
+		void OnVisibleChildRemoved(Element child)
 		{
-			base.OnChildRemoved(child);
 			if (CurrentItem == child)
 			{
-				var items = ShellSectionController.GetItems();
-				if (items.Count == 0)
+				var contentItems = ShellSectionController.GetItems();
+				if (contentItems.Count == 0)
+				{
 					ClearValue(CurrentItemProperty);
+				}
 				else
 				{
-					// We want to delay invoke this because the renderer may handle this instead
-					Device.BeginInvokeOnMainThread(() =>
-					{
-						if (CurrentItem == null)
-							SetValueFromRenderer(CurrentItemProperty, items[0]);
-					});
+					SetValueFromRenderer(CurrentItemProperty, contentItems[0]);
 				}
 			}
 
@@ -724,20 +783,22 @@ namespace Xamarin.Forms
 			bool currentPage = (((IShellSectionController)this).PresentedPage) == page;
 			var stack = _navStack.ToList();
 			stack.Remove(page);
-			var allow = ((IShellController)Shell).ProposeNavigation(
-				ShellNavigationSource.Remove,
-				ShellItem,
-				this,
-				CurrentItem,
-				stack,
-				true
-			);
+			var allow = (!currentPage) ? true : 
+				((IShellController)Shell).ProposeNavigation(
+					ShellNavigationSource.Remove,
+					ShellItem,
+					this,
+					CurrentItem,
+					stack,
+					true
+				);
 
 			if (!allow)
 				return;
 
 			if(currentPage)
 				PresentedPageDisappearing();
+
 			_navStack.Remove(page);
 
 			if(currentPage)
@@ -798,15 +859,20 @@ namespace Xamarin.Forms
 			if (oldValue is ShellContent oldShellItem)
 				oldShellItem.SendDisappearing();
 
+			if (newValue == null)
+				return;
+
 			shellSection.PresentedPageAppearing();
 
-			if (shellSection.Parent?.Parent is IShellController shell)
+			if (shellSection.Parent?.Parent is IShellController shell && shellSection.IsVisibleSection)
 			{
 				shell.UpdateCurrentState(ShellNavigationSource.ShellSectionChanged);
 			}
 
 			shellSection.SendStructureChanged();
-			((IShellController)shellSection?.Parent?.Parent)?.AppearanceChanged(shellSection, false);
+
+			if(shellSection.IsVisibleSection)
+				((IShellController)shellSection?.Parent?.Parent)?.AppearanceChanged(shellSection, false);
 
 			shellSection.UpdateDisplayedPage();
 		}
@@ -827,17 +893,21 @@ namespace Xamarin.Forms
 
 			if (e.OldItems != null)
 			{
-				foreach (Element element in e.OldItems)
-					OnChildRemoved(element);
+				for (var i = 0; i < e.OldItems.Count; i++)
+				{
+					var element = (Element)e.OldItems[i];
+					OnChildRemoved(element, e.OldStartingIndex + i);
+				}
 			}
-
-			SendStructureChanged();
 		}
 
 		void RemovePage(Page page)
 		{
-			if (_logicalChildren.Remove(page))
-				OnChildRemoved(page);
+			if (!_logicalChildren.Contains(page))
+				return;
+			var index = _logicalChildren.IndexOf(page);
+			_logicalChildren.Remove(page);
+			OnChildRemoved(page, index);
 		}
 
 		void SendAppearanceChanged() => ((IShellController)Parent?.Parent)?.AppearanceChanged(this, false);
@@ -882,33 +952,70 @@ namespace Xamarin.Forms
 
 			protected override void OnInsertPageBefore(Page page, Page before) => _owner.OnInsertPageBefore(page, before);
 
-			protected override Task<Page> OnPopAsync(bool animated) => _owner.OnPopAsync(animated);
+			protected override async Task<Page> OnPopAsync(bool animated)
+			{
+				if (!_owner.IsVisibleSection)
+				{
+					return (await _owner.OnPopAsync(animated));
+				}
 
-			protected override Task OnPopToRootAsync(bool animated) => _owner.OnPopToRootAsync(animated);
+				var navigationParameters = new ShellNavigationParameters()
+				{
+					Animated = animated,
+					TargetState = ".."
+				};
 
-			protected override Task OnPushAsync(Page page, bool animated) => _owner.OnPushAsync(page, animated);
+				var returnedPage = (_owner as IShellSectionController).PresentedPage;
+				await _owner.Shell.GoToAsync(navigationParameters);
+
+				// This means the page wasn't popped and navigation was cancelled
+				if ((_owner as IShellSectionController).PresentedPage == returnedPage)
+					return null;
+
+				return returnedPage;
+			}
+
+			protected override Task OnPopToRootAsync(bool animated)
+			{
+				if (!_owner.IsVisibleSection)
+				{
+					return _owner.OnPopToRootAsync(animated);
+				}
+
+				var shell = _owner.Shell;
+				var targetState = 
+					Shell.GetNavigationState(
+						shell.CurrentItem,
+						_owner,
+						_owner.CurrentItem,
+						null,
+						null);
+
+				var navigationParameters = new ShellNavigationParameters()
+				{
+					Animated = animated,
+					TargetState = targetState,
+					PopAllPagesNotSpecifiedOnTargetState = true
+				};
+
+				return _owner.Shell.GoToAsync(navigationParameters);
+			}
+
+			protected override Task OnPushAsync(Page page, bool animated)
+			{
+				if (!_owner.IsVisibleSection)
+					return _owner.OnPushAsync(page, animated);
+
+				var navigationParameters = new ShellNavigationParameters()
+				{
+					Animated = animated,
+					PagePushing = page
+				};
+
+				return (_owner.Shell).GoToAsync(navigationParameters);
+			}
 
 			protected override void OnRemovePage(Page page) => _owner.OnRemovePage(page);
-
-			protected override Task<Page> OnPopModal(bool animated)
-			{
-				if(ModalStack.Count == 1)
-				{
-					_owner.PresentedPageAppearing();
-				}
-
-				return base.OnPopModal(animated);
-			}
-
-			protected override Task OnPushModal(Page modal, bool animated)
-			{
-				if (ModalStack.Count == 0)
-				{
-					_owner.PresentedPageDisappearing();
-				}
-
-				return base.OnPushModal(modal, animated);
-			}
 		}
 	}
 }

@@ -319,6 +319,8 @@ namespace Xamarin.Forms.Core.UnitTests
 			Assert.AreEqual(Color.Blue, converter.ConvertFromInvariantString("hsl(240,110%, 50%)"));
 			Assert.AreEqual(Color.Blue.MultiplyAlpha(.8), converter.ConvertFromInvariantString("hsla(240,100%, 50%, .8)"));
 			Assert.AreEqual(Color.FromHsla(0.66916666666666669, 1, 0.5), converter.ConvertFromInvariantString("hsl(240.9,100%, 50%)"));
+			Assert.AreEqual(Color.FromHsva(0.89166666666666669, .71, 1, .8), converter.ConvertFromInvariantString("hsva(321,71%, 100%, .8)"));
+			Assert.AreEqual(Color.FromHsv(0.89166666666666669, .71, 1), converter.ConvertFromInvariantString("hsv(321,71%, 100%)"));
 			Assert.AreEqual(Color.Default, converter.ConvertFromInvariantString("Color.Default"));
 			Assert.AreEqual(Color.Accent, converter.ConvertFromInvariantString("Accent"));
 			var hotpink = Color.FromHex("#FF69B4");
@@ -328,7 +330,13 @@ namespace Xamarin.Forms.Core.UnitTests
 			Assert.Throws<InvalidOperationException>(() => converter.ConvertFromInvariantString(""));
 			Assert.Throws<InvalidOperationException>(() => converter.ConvertFromInvariantString("rgb(0,0,255"));
 			Assert.Throws<InvalidOperationException>(() => converter.ConvertFromInvariantString("hsl(12, 100%)"));
+			Assert.Throws<InvalidOperationException>(() => converter.ConvertFromInvariantString("hsv(12, 100%)"));
+			Assert.Throws<InvalidOperationException>(() => converter.ConvertFromInvariantString("hsva(12, 100%)"));
 			Assert.Throws<InvalidOperationException>(() => converter.ConvertFromInvariantString("rgba(0,0,255)"));
+			Assert.AreEqual(Color.FromRgb(0, 122, 255), converter.ConvertFromInvariantString("SystemBlue"));
+			Assert.AreEqual(Color.FromHex("#FF767676"), converter.ConvertFromInvariantString("SystemChromeHighColor"));
+			Assert.AreEqual(Color.FromHex("#ff00ddff"), converter.ConvertFromInvariantString("HoloBlueBright"));
+			Assert.Throws<InvalidOperationException>(() => converter.ConvertFromInvariantString("NonExistentNamedColor"));
 		}
 
 		[Test]

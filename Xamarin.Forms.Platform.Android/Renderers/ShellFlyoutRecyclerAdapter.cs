@@ -1,10 +1,5 @@
 ﻿using Android.Runtime;
-#if __ANDROID_29__
-using AndroidX.AppCompat.Widget;
 using AndroidX.RecyclerView.Widget;
-#else
-using Android.Support.V7.Widget;
-#endif
 using Android.Views;
 using Android.Widget;
 using System;
@@ -19,26 +14,17 @@ namespace Xamarin.Forms.Platform.Android
 	public class ShellFlyoutRecyclerAdapter : RecyclerView.Adapter
 	{
 		readonly IShellContext _shellContext;
-
-		DataTemplate _defaultItemTemplate;
-
-		DataTemplate _defaultMenuItemTemplate;
-
 		List<AdapterListItem> _listItems;
-
 		Dictionary<int, DataTemplate> _templateMap = new Dictionary<int, DataTemplate>();
-
 		Action<Element> _selectedCallback;
-
 		bool _disposed;
-
 		ElementViewHolder _elementViewHolder;
 
 		public ShellFlyoutRecyclerAdapter(IShellContext shellContext, Action<Element> selectedCallback)
 		{
 			_shellContext = shellContext;
 
-			((IShellController)Shell).StructureChanged += OnShellStructureChanged;
+			ShellController.StructureChanged += OnShellStructureChanged;
 
 			_listItems = GenerateItemList();
 			_selectedCallback = selectedCallback;
@@ -48,23 +34,25 @@ namespace Xamarin.Forms.Platform.Android
 
 		protected Shell Shell => _shellContext.Shell;
 
-		protected virtual DataTemplate DefaultItemTemplate =>
-			_defaultItemTemplate ?? (_defaultItemTemplate = new DataTemplate(() => GenerateDefaultCell("Title", "FlyoutIcon")));
+		IShellController ShellController => (IShellController)Shell;
 
-		protected virtual DataTemplate DefaultMenuItemTemplate =>
-			_defaultMenuItemTemplate ?? (_defaultMenuItemTemplate = new DataTemplate(() => GenerateDefaultCell("Text", "Icon")));
+		protected virtual DataTemplate DefaultItemTemplate => null;
+
+		protected virtual DataTemplate DefaultMenuItemTemplate => null;
 
 		public override int GetItemViewType(int position)
 		{
 			var item = _listItems[position];
-			DataTemplate dataTemplate = null;
+			DataTemplate dataTemplate = ShellController.GetFlyoutItemDataTemplate(item.Element);
 			if (item.Element is IMenuItemController)
 			{
-				dataTemplate = Shell.GetMenuItemTemplate(item.Element) ?? Shell.MenuItemTemplate ?? DefaultMenuItemTemplate;
+				if (DefaultMenuItemTemplate != null && Shell.MenuItemTemplate == dataTemplate)
+					dataTemplate = DefaultMenuItemTemplate;
 			}
 			else
 			{
-				dataTemplate = Shell.GetItemTemplate(item.Element) ?? Shell.ItemTemplate ?? DefaultItemTemplate;
+				if (DefaultItemTemplate != null && Shell.ItemTemplate == dataTemplate)
+					dataTemplate = DefaultItemTemplate;
 			}
 
 			var template = dataTemplate.SelectDataTemplate(item.Element, Shell);
@@ -158,7 +146,6 @@ namespace Xamarin.Forms.Platform.Android
 			var template = _templateMap[viewType];
 
 			var content = (View)template.CreateContent();
-			content.Parent = _shellContext.Shell;
 
 			var linearLayout = new LinearLayoutWithFocus(parent.Context)
 			{
@@ -177,7 +164,7 @@ namespace Xamarin.Forms.Platform.Android
 			container.LayoutParameters = new LP(LP.MatchParent, LP.WrapContent);
 			linearLayout.AddView(container);
 
-			_elementViewHolder = new ElementViewHolder(content, linearLayout, bar, _selectedCallback);
+			_elementViewHolder = new ElementViewHolder(content, linearLayout, bar, _selectedCallback, _shellContext.Shell);
 
 			return _elementViewHolder;
 		}
@@ -208,54 +195,6 @@ namespace Xamarin.Forms.Platform.Android
 		{
 			_listItems = GenerateItemList();
 			NotifyDataSetChanged();
-		}
-
-		View GenerateDefaultCell(string textBinding, string iconBinding)
-		{
-			var grid = new Grid();
-			var groups = new VisualStateGroupList();
-
-			var commonGroup = new VisualStateGroup();
-			commonGroup.Name = "CommonStates";
-			groups.Add(commonGroup);
-
-			var normalState = new VisualState();
-			normalState.Name = "Normal";
-			commonGroup.States.Add(normalState);
-
-			var selectedState = new VisualState();
-			selectedState.Name = "Selected";
-			selectedState.Setters.Add(new Setter
-			{
-				Property = VisualElement.BackgroundColorProperty,
-				Value = new Color(0.95)
-			});
-
-			commonGroup.States.Add(selectedState);
-
-			VisualStateManager.SetVisualStateGroups(grid, groups);
-
-			grid.HeightRequest = 50;
-			grid.ColumnDefinitions.Add(new ColumnDefinition { Width = 54 });
-			grid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Star });
-
-			var image = new Image();
-			image.VerticalOptions = image.HorizontalOptions = LayoutOptions.Center;
-			image.HeightRequest = image.WidthRequest = 24;
-			image.SetBinding(Image.SourceProperty, iconBinding);
-			grid.Children.Add(image);
-
-			var label = new Label();
-			label.Margin = new Thickness(20, 0, 0, 0);
-			label.VerticalTextAlignment = TextAlignment.Center;
-			label.SetBinding(Label.TextProperty, textBinding);
-			grid.Children.Add(label, 1, 0);
-
-			label.FontSize = 14;
-			label.TextColor = Color.Black.MultiplyAlpha(0.87);
-			label.FontFamily = "sans-serif-medium";
-
-			return grid;
 		}
 
 		protected override void Dispose(bool disposing)
@@ -297,14 +236,26 @@ namespace Xamarin.Forms.Platform.Android
 			Element _element;
 			AView _itemView;
 			bool _disposed;
+			Shell _shell;
 
-			public ElementViewHolder(View view, AView itemView, AView bar, Action<Element> selectedCallback) : base(itemView)
+			[Obsolete]
+			public ElementViewHolder(View view, AView itemView, AView bar, Action<Element> selectedCallback) : this(view, itemView, bar, selectedCallback, null)
 			{
 				_itemView = itemView;
 				itemView.Click += OnClicked;
 				View = view;
 				Bar = bar;
 				_selectedCallback = selectedCallback;
+			}
+
+			public ElementViewHolder(View view, AView itemView, AView bar, Action<Element> selectedCallback, Shell shell) : base(itemView)
+			{
+				_itemView = itemView;
+				itemView.Click += OnClicked;
+				View = view;
+				Bar = bar;
+				_selectedCallback = selectedCallback;
+				_shell = shell;
 			}
 
 			public View View { get; }
@@ -324,10 +275,14 @@ namespace Xamarin.Forms.Platform.Android
 					}
 
 					_element = value;
+					
+					// Set Parent after binding context so parent binding context doesn't propagate to view
 					View.BindingContext = value;
+					View.Parent = _shell;
 
 					if (_element != null)
 					{
+						FastRenderers.AutomationPropertiesProvider.AccessibilitySettingsChanged(_itemView, value);
 						_element.SetValue(Platform.RendererProperty, _itemView);
 						_element.PropertyChanged += OnElementPropertyChanged;
 						UpdateVisualState();

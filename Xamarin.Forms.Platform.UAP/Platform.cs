@@ -6,12 +6,9 @@ using Windows.ApplicationModel.Core;
 using Windows.Foundation.Metadata;
 using Windows.UI;
 using Windows.UI.Core;
-using Windows.UI.Popups;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Media.Imaging;
 using Xamarin.Forms.Internals;
 using NativeAutomationProperties = Windows.UI.Xaml.Automation.AutomationProperties;
 using WImage = Windows.UI.Xaml.Controls.Image;
@@ -45,8 +42,19 @@ namespace Xamarin.Forms.Platform.UWP
 			if (element == null)
 				throw new ArgumentNullException(nameof(element));
 
-			IVisualElementRenderer renderer = Registrar.Registered.GetHandlerForObject<IVisualElementRenderer>(element) ??
-			                                  new DefaultRenderer();
+			IVisualElementRenderer renderer = null;
+
+			if (element is TemplatedView tv && tv.ResolveControlTemplate() != null)
+			{
+				renderer = new DefaultRenderer();
+			}
+
+			if (renderer == null)
+			{
+				renderer = Registrar.Registered.GetHandlerForObject<IVisualElementRenderer>(element) ??
+												  new DefaultRenderer();
+			}
+
 			renderer.SetElement(element);
 			return renderer;
 		}
@@ -75,7 +83,7 @@ namespace Xamarin.Forms.Platform.UWP
 				Windows.UI.Xaml.Application.Current.Resources.MergedDictionaries.Add(Forms.GetTabletResources());
 			}
 
-#if !UWP_14393
+#if UWP_16299
 			if (!current.Resources.ContainsKey(ShellRenderer.ShellStyle))
 			{
 				var myResourceDictionary = new Windows.UI.Xaml.ResourceDictionary();
@@ -106,6 +114,21 @@ namespace Xamarin.Forms.Platform.UWP
 			InitializeStatusBar();
 
 			SystemNavigationManager.GetForCurrentView().BackRequested += OnBackRequested;
+			Windows.UI.Xaml.Application.Current.Resuming += OnResumingAsync;
+		}
+
+		async void OnResumingAsync(object sender, object e)
+		{
+			try
+			{
+				await UpdateToolbarItems();
+			}
+			catch (Exception exception)
+			{
+				Log.Warning("Update toolbar items after app resume", 
+					$"UpdateToolbarItems failed after app resume: {exception.Message}");
+
+			}
 		}
 
 		internal void SetPage(Page newRoot)
@@ -189,7 +212,7 @@ namespace Xamarin.Forms.Platform.UWP
 
 			var tcs = new TaskCompletionSource<bool>();
 			_navModel.PushModal(page);
-			SetCurrent(page, completedCallback: () => tcs.SetResult(true));
+			SetCurrent(page, false, true, () => tcs.SetResult(true));
 			return tcs.Task;
 		}
 
@@ -197,14 +220,14 @@ namespace Xamarin.Forms.Platform.UWP
 		{
 			var tcs = new TaskCompletionSource<Page>();
 			Page result = _navModel.PopModal();
-			SetCurrent(_navModel.CurrentPage, true, () => tcs.SetResult(result));
+			SetCurrent(_navModel.CurrentPage, true, true, () => tcs.SetResult(result));
 			return tcs.Task;
 		}
 
 		SizeRequest IPlatform.GetNativeSize(VisualElement element, double widthConstraint, double heightConstraint)
 		{
 			return Platform.GetNativeSize(element, widthConstraint, heightConstraint);
-		} 
+		}
 
 		public static SizeRequest GetNativeSize(VisualElement element, double widthConstraint, double heightConstraint)
 		{
@@ -248,10 +271,12 @@ namespace Xamarin.Forms.Platform.UWP
 		readonly Windows.UI.Xaml.Controls.Page _page;
 		Windows.UI.Xaml.Controls.ProgressBar _busyIndicator;
 		Page _currentPage;
+		Page _modalBackgroundPage;
 		readonly NavigationModel _navModel = new NavigationModel();
 		readonly ToolbarTracker _toolbarTracker = new ToolbarTracker();
 		readonly ImageConverter _imageConverter = new ImageConverter();
 		readonly ImageSourceIconElementConverter _imageSourceIconElementConverter = new ImageSourceIconElementConverter();
+
 		Windows.UI.Xaml.Controls.ProgressBar GetBusyIndicator()
 		{
 			if (_busyIndicator == null)
@@ -284,7 +309,7 @@ namespace Xamarin.Forms.Platform.UWP
 				Page removed = _navModel.PopModal();
 				if (removed != null)
 				{
-					SetCurrent(_navModel.CurrentPage, true);
+					SetCurrent(_navModel.CurrentPage, true, true);
 					handled = true;
 				}
 			}
@@ -298,7 +323,7 @@ namespace Xamarin.Forms.Platform.UWP
 			UpdatePageSizes();
 		}
 
-		async void SetCurrent(Page newPage, bool popping = false, Action completedCallback = null)
+		async void SetCurrent(Page newPage, bool popping = false, bool modal = false, Action completedCallback = null)
 		{
 			try
 			{
@@ -306,16 +331,30 @@ namespace Xamarin.Forms.Platform.UWP
 					return;
 
 #pragma warning disable CS0618 // Type or member is obsolete
-			// The Platform property is no longer necessary, but we have to set it because some third-party
-			// library might still be retrieving it and using it
-			newPage.Platform = this;
+				// The Platform property is no longer necessary, but we have to set it because some third-party
+				// library might still be retrieving it and using it
+				newPage.Platform = this;
 #pragma warning restore CS0618 // Type or member is obsolete
 
-			if (_currentPage != null)
-			{
-				Page previousPage = _currentPage;
-				IVisualElementRenderer previousRenderer = GetRenderer(previousPage);
-				_container.Children.Remove(previousRenderer.ContainerElement);
+				if (_currentPage != null)
+				{
+					Page previousPage = _currentPage;
+
+					if (modal && !popping && !newPage.BackgroundColor.IsDefault)
+						_modalBackgroundPage = previousPage;
+					else
+					{
+						RemovePage(previousPage);
+
+						if(!modal && _modalBackgroundPage != null)
+						{
+							RemovePage(_modalBackgroundPage);
+							_modalBackgroundPage.Cleanup();
+							_modalBackgroundPage.Parent = null;
+						}
+						
+						_modalBackgroundPage = null;
+					}
 
 					if (popping)
 					{
@@ -327,13 +366,9 @@ namespace Xamarin.Forms.Platform.UWP
 				}
 
 				newPage.Layout(ContainerBounds);
-
-				IVisualElementRenderer pageRenderer = newPage.GetOrCreateRenderer();
-				_container.Children.Add(pageRenderer.ContainerElement);
-
-				pageRenderer.ContainerElement.Width = _container.ActualWidth;
-				pageRenderer.ContainerElement.Height = _container.ActualHeight;
-
+											
+				AddPage(newPage);
+								
 				completedCallback?.Invoke();
 
 				_currentPage = newPage;
@@ -352,6 +387,37 @@ namespace Xamarin.Forms.Platform.UWP
 						"Please ensure that the new page is in the same UI thread as the current page.");
 				throw error;
 			}
+		}
+
+		void RemovePage(Page page)
+		{
+			if (_container == null || page == null)
+				return;
+
+			if (_modalBackgroundPage != null)
+				_modalBackgroundPage.GetCurrentPage()?.SendAppearing();
+
+			IVisualElementRenderer pageRenderer = GetRenderer(page);
+
+			if (_container.Children.Contains(pageRenderer.ContainerElement))
+				_container.Children.Remove(pageRenderer.ContainerElement);
+		}
+
+		void AddPage(Page page)
+		{
+			if (_container == null || page == null)
+				return;
+
+			if (_modalBackgroundPage != null)
+				_modalBackgroundPage.GetCurrentPage()?.SendDisappearing();
+
+			IVisualElementRenderer pageRenderer = page.GetOrCreateRenderer();
+
+			if (!_container.Children.Contains(pageRenderer.ContainerElement))
+				_container.Children.Add(pageRenderer.ContainerElement);
+
+			pageRenderer.ContainerElement.Width = _container.ActualWidth;
+			pageRenderer.ContainerElement.Height = _container.ActualHeight;
 		}
 
 		async void OnToolbarItemsChanged(object sender, EventArgs e)
@@ -625,7 +691,5 @@ namespace Xamarin.Forms.Platform.UWP
 				return;
 			e.Handled = BackButtonPressed();
 		}
-
-
 	}
 }

@@ -13,13 +13,14 @@ using Xamarin.UITest.iOS;
 namespace Xamarin.Forms.Controls.Issues
 {
 #if UITEST
+	[NUnit.Framework.Category(Core.UITests.UITestCategories.Github5000)]
 	[Ignore("This test is looking for an invalid behavior; the second tap *should* keep the drawer open.")] 
 #endif
 	[Preserve (AllMembers = true)]
 	[Issue (IssueTracker.Github, 2961, "MasterDetail NavigationDrawer Does Not Hide On DoubleTap of Item", PlatformAffected.Android)]
-	public class Issue2961 : TestMasterDetailPage
+	public class Issue2961 : TestFlyoutPage
 	{
-		static MasterDetailPage s_mdp;
+		static FlyoutPage s_mdp;
 
 		SliderMenuItem _selectedMenuItem;
 		SliderMenuPage _slidingPage;
@@ -36,7 +37,7 @@ namespace Xamarin.Forms.Controls.Issues
 			_slidingPage.MenuListView.ItemTapped += (sender, e) => OnMenuSelected (e.Item as SliderMenuItem);
 			Padding = new Thickness (0);
 
-			Master = _slidingPage;
+			Flyout = _slidingPage;
 			OnMenuSelected (_slidingPage.MenuListView.SelectedItem as SliderMenuItem);
 		}
 
@@ -177,7 +178,7 @@ namespace Xamarin.Forms.Controls.Issues
 			{
 				var showMasterButton = new Button {
 					AutomationId = "ShowMasterBtnHome",
-					Text = "Show Master"
+					Text = "Show Flyout"
 				};
 				showMasterButton.Clicked += (sender, e) => {
 					s_mdp.IsPresented = true;
@@ -212,7 +213,7 @@ namespace Xamarin.Forms.Controls.Issues
 			{
 				var showMasterButton = new Button {
 					AutomationId = "ShowMasterBtnAbout",
-					Text = "Show Master"
+					Text = "Show Flyout"
 				};
 				showMasterButton.Clicked += (sender, e) => {
 					s_mdp.IsPresented = true;

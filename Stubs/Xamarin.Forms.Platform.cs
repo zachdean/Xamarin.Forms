@@ -54,12 +54,10 @@ namespace Xamarin.Forms.Platform
 	[RenderWith(typeof(ImageButtonRenderer))]
 	internal class _ImageButtonRenderer { }
 
-#if __ANDROID__
+#if !__IOS__
 	[RenderWith(typeof(RadioButtonRenderer))]
-#elif !TIZEN4_0
-	[RenderWith(typeof(RadioButtonRenderer))]
-#endif
 	internal class _RadioButtonRenderer { }
+#endif
 
 	[RenderWith (typeof (TableViewRenderer))]
 	internal class _TableViewRenderer { }
@@ -124,9 +122,7 @@ namespace Xamarin.Forms.Platform
 	internal class _CheckBoxRenderer { }
 #endif
 
-#if !TIZEN4_0
 	[RenderWith(typeof(IndicatorViewRenderer))]
-#endif
 	internal class _IndicatorViewRenderer { }
 
 #if __IOS__
@@ -163,23 +159,59 @@ namespace Xamarin.Forms.Platform
 	[RenderWith (typeof (PageRenderer))]
 	internal class _PageRenderer { }
 
+
+
+
+
 #if !__IOS__ && !TIZEN4_0
-	[RenderWith (typeof (MasterDetailRenderer))]
+	[RenderWith(typeof(FlyoutPageRenderer))]
 #elif TIZEN4_0
+#pragma warning disable CS0618 // Type or member is obsolete
 	[RenderWith (typeof(MasterDetailPageRenderer))]
+#pragma warning restore CS0618 // Type or member is obsolete
+#else
+	[RenderWith (typeof (PhoneFlyoutPageRenderer))]
+#endif
+	internal class _FlyoutPageRenderer { }
+
+#if !__IOS__ && !TIZEN4_0
+#pragma warning disable CS0618 // Type or member is obsolete
+	[RenderWith(typeof(MasterDetailRenderer))]
+#pragma warning restore CS0618 // Type or member is obsolete
+#elif TIZEN4_0
+#pragma warning disable CS0618 // Type or member is obsolete
+	[RenderWith (typeof(MasterDetailPageRenderer))]
+#pragma warning restore CS0618 // Type or member is obsolete
 #else
 	[RenderWith (typeof (PhoneMasterDetailRenderer))]
 #endif
 	internal class _MasterDetailPageRenderer { }
-
-	[RenderWith (typeof(MediaElementRenderer))]
-	internal class _MediaElementRenderer { }
 
 	[RenderWith(typeof(RefreshViewRenderer))]
 	internal class _RefreshViewRenderer { }
 
 	[RenderWith(typeof(SwipeViewRenderer))]
 	internal class _SwipeViewRenderer { }
+
+#if !TIZEN4_0
+	[RenderWith(typeof(PathRenderer))]
+	internal class _PathRenderer { }
+	
+	[RenderWith(typeof(EllipseRenderer))]
+	internal class _EllipseRenderer { }
+
+	[RenderWith(typeof(LineRenderer))]
+	internal class _LineRenderer { }
+
+	[RenderWith(typeof(PolylineRenderer))]
+	internal class _PolylineRenderer { }
+
+	[RenderWith(typeof(PolygonRenderer))]
+	internal class _PolygonRenderer { }
+
+	[RenderWith(typeof(RectangleRenderer))]
+	internal class _RectangleRenderer { }
+#endif
 }
 
 

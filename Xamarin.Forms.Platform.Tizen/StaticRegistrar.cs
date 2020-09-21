@@ -74,9 +74,10 @@ namespace Xamarin.Forms.Platform.Tizen
 			Registered.Register(typeof(CarouselPage), () => new CarouselPageRenderer());
 			Registered.Register(typeof(Page), () => new PageRenderer());
 			Registered.Register(typeof(NavigationPage), () => new NavigationPageRenderer());
+#pragma warning disable CS0618 // Type or member is obsolete
 			Registered.Register(typeof(MasterDetailPage), () => new MasterDetailPageRenderer());
+#pragma warning restore CS0618 // Type or member is obsolete
 			Registered.Register(typeof(TabbedPage), () => new TabbedPageRenderer());
-			Registered.Register(typeof(Shell), () => new ShellRenderer());
 			Registered.Register(typeof(Label), () => new LabelRenderer());
 			Registered.Register(typeof(Button), () => new ButtonRenderer());
 			Registered.Register(typeof(Image), () => new ImageRenderer());
@@ -103,7 +104,17 @@ namespace Xamarin.Forms.Platform.Tizen
 			Registered.Register(typeof(CarouselView), () => new CarouselViewRenderer());
 			Registered.Register(typeof(SwipeView), () => new SwipeViewRenderer());
 			Registered.Register(typeof(RefreshView), () => new RefreshViewRenderer());
-			Registered.Register(typeof(MediaElement), () => new MediaElementRenderer());
+			Registered.Register(typeof(IndicatorView), () => new IndicatorViewRenderer());
+			Registered.Register(typeof(RadioButton), () => new RadioButtonRenderer());
+
+			if (Device.Idiom == TargetIdiom.Watch)
+			{
+				Registered.Register(typeof(Shell), () => new Watch.ShellRenderer());
+			}
+			else
+			{
+				Registered.Register(typeof(Shell), () => new ShellRenderer());
+			}
 
 			//ImageSourceHandlers
 			Registered.Register(typeof(FileImageSource), () => new FileImageSourceHandler());
@@ -125,7 +136,6 @@ namespace Xamarin.Forms.Platform.Tizen
 			DependencyService.Register<IDeserializer, Deserializer>();
 			DependencyService.Register<INativeBindingService, NativeBindingService>();
 			DependencyService.Register<INativeValueConverterService, NativeValueConverterService>();
-			DependencyService.Register<IPlatformMediaPlayer, MediaPlayerImpl>();
 
 			//Custom Handlers
 			if (customHandlers != null)

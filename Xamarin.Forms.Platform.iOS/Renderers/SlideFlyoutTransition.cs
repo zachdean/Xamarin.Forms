@@ -11,7 +11,13 @@ namespace Xamarin.Forms.Platform.iOS
 			if (behavior == FlyoutBehavior.Locked)
 				openPercent = 1;
 
-			nfloat flyoutWidth = (nfloat)(Math.Min(bounds.Width, bounds.Height) * 0.8);
+			nfloat flyoutWidth;
+
+			if (UIDevice.CurrentDevice.UserInterfaceIdiom == UIUserInterfaceIdiom.Pad)
+				flyoutWidth = 320;
+			else
+				flyoutWidth = (nfloat)(Math.Min(bounds.Width, bounds.Height) * 0.8);
+
 			nfloat openLimit = flyoutWidth;
 			nfloat openPixels = openLimit * openPercent;
 
@@ -20,12 +26,16 @@ namespace Xamarin.Forms.Platform.iOS
 			else
 				shell.Frame = bounds;
 
-			flyout.Frame = new CGRect(-openLimit + openPixels, 0, flyoutWidth, bounds.Height);
+			var shellWidth = shell.Frame.Width;
 
-			if (behavior != FlyoutBehavior.Locked)
+			if(shell.SemanticContentAttribute == UISemanticContentAttribute.ForceRightToLeft)
 			{
-				var shellOpacity = (nfloat)(0.5 + (0.5 * (1 - openPercent)));
-				shell.Layer.Opacity = (float)shellOpacity;
+				var positionY = shellWidth - openPixels;
+				flyout.Frame = new CGRect(positionY, 0, flyoutWidth, bounds.Height);
+			}
+			else
+			{
+				flyout.Frame = new CGRect(-openLimit + openPixels, 0, flyoutWidth, bounds.Height);
 			}
 		}
 	}

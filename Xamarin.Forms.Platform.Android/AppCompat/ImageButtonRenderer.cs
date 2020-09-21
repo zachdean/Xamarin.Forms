@@ -1,11 +1,7 @@
 using System;
 using System.ComponentModel;
 using Android.Content;
-#if __ANDROID_29__
 using AndroidX.AppCompat.Widget;
-#else
-using Android.Support.V7.Widget;
-#endif
 using AView = Android.Views.View;
 using Android.Views;
 using Xamarin.Forms.Internals;
@@ -14,7 +10,6 @@ using Xamarin.Forms.PlatformConfiguration.AndroidSpecific;
 using Android.Graphics.Drawables;
 using Android.Graphics;
 using Xamarin.Forms.Platform.Android.FastRenderers;
-using Android.OS;
 
 namespace Xamarin.Forms.Platform.Android
 {
@@ -29,6 +24,7 @@ namespace Xamarin.Forms.Platform.Android
 		ILayoutChanges,
 		IDisposedState
 	{
+		bool _hasLayoutOccurred;
 		bool _inputTransparent;
 		bool _disposed;
 		bool _skipInvalidate;
@@ -76,6 +72,12 @@ namespace Xamarin.Forms.Platform.Android
 			// Tag = this;
 
 			_backgroundTracker = new BorderBackgroundManager(this, false);
+		}
+
+		protected override void OnLayout(bool changed, int left, int top, int right, int bottom)
+		{
+			base.OnLayout(changed, left, top, right, bottom);
+			_hasLayoutOccurred = true;
 		}
 
 		protected override void Dispose(bool disposing)
@@ -322,6 +324,8 @@ namespace Xamarin.Forms.Platform.Android
 		bool IBorderVisualElementRenderer.UseDefaultShadow() => false;
 		VisualElement IBorderVisualElementRenderer.Element => Element;
 		AView IBorderVisualElementRenderer.View => this;
+
+		bool ILayoutChanges.HasLayoutOccurred => _hasLayoutOccurred;
 
 		IPlatformElementConfiguration<PlatformConfiguration.Android, ImageButton> OnThisPlatform()
 		{

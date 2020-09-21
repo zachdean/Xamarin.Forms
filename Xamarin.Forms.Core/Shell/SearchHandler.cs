@@ -50,7 +50,7 @@ namespace Xamarin.Forms
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		public void SetIsFocused(bool value)
 		{
-			SetValueCore(IsFocusedPropertyKey.BindableProperty, value);
+			SetValueCore(IsFocusedPropertyKey, value);
 		}
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		public event EventHandler<FocusRequestArgs> FocusChangeRequested;
@@ -135,6 +135,21 @@ namespace Xamarin.Forms
 		public static readonly BindableProperty PlaceholderProperty = PlaceholderElement.PlaceholderProperty;
 
 		public static readonly BindableProperty PlaceholderColorProperty = PlaceholderElement.PlaceholderColorProperty;
+
+		public static readonly BindableProperty TextTransformProperty = TextElement.TextTransformProperty;
+
+		public TextTransform TextTransform
+		{
+			get => (TextTransform)GetValue(TextTransformProperty);
+			set => SetValue(TextTransformProperty, value);
+		}
+
+		void ITextElement.OnTextTransformChanged(TextTransform oldValue, TextTransform newValue)
+		{
+		}
+
+		public virtual string UpdateFormsText(string source, TextTransform textTransform)
+			=> TextTransformUtilites.GetTransformedText(source, textTransform);
 
 		public Color CancelButtonColor
 		{

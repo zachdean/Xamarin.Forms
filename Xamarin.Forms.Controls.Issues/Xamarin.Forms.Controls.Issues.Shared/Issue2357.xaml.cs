@@ -22,10 +22,11 @@ namespace Xamarin.Forms.Controls.Issues
 	[Preserve (AllMembers = true)]
 	[Issue (IssueTracker.Github, 2357, "Webview waits to load the content until webviews on previous pages are loaded", PlatformAffected.iOS | PlatformAffected.Android)]
 #if UITEST
+	[NUnit.Framework.Category(Core.UITests.UITestCategories.Github5000)]
 	// this doesn't fail on Uwp but it leaves a browser window open and breaks later tests
 	[Category(UITestCategories.UwpIgnore)]
 #endif
-	public partial class Issue2357 : MasterDetailPage
+	public partial class Issue2357 : FlyoutPage
 	{
 		public Issue2357 ()
 		{

@@ -258,6 +258,7 @@ namespace Xamarin.Forms.CustomAttributes
 			IsVisible,
 			Opacity,
 			BackgroundColor,
+			Background,
 			IsFocused,
 			Focus,
 			Unfocus,
@@ -655,7 +656,7 @@ namespace Xamarin.Forms.CustomAttributes
 			Detail,
 			IsGestureEnabled,
 			IsPresented,
-			MasterBehavior
+			FlyoutLayoutBehavior
 		}
 
 		public enum OpenGlView
@@ -830,6 +831,8 @@ namespace Xamarin.Forms.CustomAttributes
 			Items,
 			SelectedIndex,
 			Focus,
+			HorizontalTextAlignment,
+			VerticalTextAlignment,
 			TextColor,
 			FontAttributes,
 			FontFamily,

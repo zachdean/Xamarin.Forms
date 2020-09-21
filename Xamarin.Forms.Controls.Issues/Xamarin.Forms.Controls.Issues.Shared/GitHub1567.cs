@@ -13,9 +13,12 @@ using NUnit.Framework;
 
 namespace Xamarin.Forms.Controls.Issues
 {
+#if UITEST
+	[NUnit.Framework.Category(Core.UITests.UITestCategories.Github5000)]
+#endif
 	[Preserve(AllMembers = true)]
 	[Issue(IssueTracker.Github, 1567, "NRE using TapGestureRecognizer on cell with HasUnevenRows", PlatformAffected.iOS, issueTestNumber: 1)]
-	public class GitHub1567 : TestContentPage // or TestMasterDetailPage, etc ...
+	public class GitHub1567 : TestContentPage // or TestFlyoutPage, etc ...
 	{
 		ICommand SomeCommand;
 		ObservableCollection<LocalIem> LocalList { get; set; } = new ObservableCollection<LocalIem>();

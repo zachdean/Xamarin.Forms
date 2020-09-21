@@ -11,6 +11,7 @@ using Tizen.Applications;
 using TSystemInfo = Tizen.System.Information;
 using ELayout = ElmSharp.Layout;
 using DeviceOrientation = Xamarin.Forms.Internals.DeviceOrientation;
+using ElmSharp.Wearable;
 
 namespace Xamarin.Forms
 {
@@ -39,6 +40,8 @@ namespace Xamarin.Forms
 		public StaticRegistrarStrategy StaticRegistarStrategy { get; set; }
 		public PlatformType PlatformType { get; set; }
 		public bool UseMessagingCenter { get; set; } = true;
+
+		public DisplayResolutionUnit DisplayResolutionUnit { get; set; }
 
 		public struct EffectScope
 		{
@@ -96,8 +99,39 @@ namespace Xamarin.Forms
 
 		static Lazy<double> s_elmScale = new Lazy<double>(() =>
 		{
-			// 72.0 is from EFL which is using fixed DPI value (72.0) to determine font size internally. Thus, we are restoring the size by deviding the DPI by 72.0 here.
-			return s_dpi.Value / 72.0 / Elementary.GetScale();
+			return s_deviceScale.Value / Elementary.GetScale();
+		});
+
+		static Lazy<string> s_deviceType = new Lazy<string>(() =>
+		{
+			if (!TSystemInfo.TryGetValue("http://tizen.org/system/device_type", out string deviceType))
+			{
+				// Since, above key("http://tizen.org/system/device_type") is not available on Tizen 4.0, we uses profile to decide the type of device on 4.0.
+				var profile = GetProfile();
+				if (profile == "mobile")
+				{
+					deviceType = "Mobile";
+				}
+				else if (profile == "tv")
+				{
+					deviceType = "TV";
+				}
+				else if (profile == "wearable")
+				{
+					deviceType = "Wearable";
+				}
+				else
+				{
+					deviceType = "Unknown";
+				}
+			}
+			return deviceType;
+		});
+
+		static Lazy<double> s_deviceScale = new Lazy<double>(() =>
+		{
+			// This is the base scale value and varies from profile
+			return ThemeManager.GetBaseScale(s_deviceType.Value);
 		});
 
 		class TizenDeviceInfo : DeviceInfo
@@ -126,6 +160,8 @@ namespace Xamarin.Forms
 				}
 			}
 
+			public Size PhysicalScreenSize { get; }
+
 			public override double ScalingFactor
 			{
 				get
@@ -150,10 +186,33 @@ namespace Xamarin.Forms
 				TSystemInfo.TryGetValue("http://tizen.org/feature/screen.width", out width);
 				TSystemInfo.TryGetValue("http://tizen.org/feature/screen.height", out height);
 
+				var physicalScale = s_dpi.Value / 160.0;
+				PhysicalScreenSize = new Size(width / physicalScale, height / physicalScale);
+
 				scalingFactor = 1.0;  // scaling is disabled, we're using pixels as Xamarin's geometry units
-				if (s_useDeviceIndependentPixel)
+				if (DisplayResolutionUnit.UseVP && DisplayResolutionUnit.ViewportWidth > 0)
 				{
-					scalingFactor = s_dpi.Value / 160.0;
+					scalingFactor = width / DisplayResolutionUnit.ViewportWidth;
+				}
+				else
+				{
+					if (DisplayResolutionUnit.UseDP)
+					{
+						scalingFactor = s_dpi.Value / 160.0;
+					}
+
+					if (DisplayResolutionUnit.UseDeviceScale)
+					{
+						var portraitSize = Math.Min(PhysicalScreenSize.Width, PhysicalScreenSize.Height);
+						if (portraitSize > 2000)
+						{
+							scalingFactor *= 4;
+						}
+						else if (portraitSize > 1000)
+						{
+							scalingFactor *= 2.5;
+						}
+					}
 				}
 
 				pixelScreenSize = new Size(width, height);
@@ -161,8 +220,6 @@ namespace Xamarin.Forms
 				profile = s_profile.Value;
 			}
 		}
-
-		static bool s_useDeviceIndependentPixel = false;
 
 		static StaticRegistrarStrategy s_staticRegistrarStrategy = StaticRegistrarStrategy.None;
 
@@ -185,6 +242,17 @@ namespace Xamarin.Forms
 
 		public static ELayout BaseLayout => NativeParent as ELayout;
 
+		public static CircleSurface CircleSurface
+		{
+			get; internal set;
+		}
+
+		[EditorBrowsable(EditorBrowsableState.Never)]
+		public static Element RotaryFocusObject
+		{
+			get; internal set;
+		}
+
 		public static bool IsInitialized
 		{
 			get;
@@ -198,6 +266,12 @@ namespace Xamarin.Forms
 		public static PlatformType PlatformType => s_platformType;
 
 		public static bool UseMessagingCenter => s_useMessagingCenter;
+
+		public static DisplayResolutionUnit DisplayResolutionUnit { get; private set; }
+
+		public static int ScreenDPI => s_dpi.Value;
+
+		public static Size PhysicalScreenSize => (Device.info as TizenDeviceInfo).PhysicalScreenSize;
 
 		internal static TizenTitleBarVisibility TitleBarVisibility
 		{
@@ -236,7 +310,7 @@ namespace Xamarin.Forms
 		}
 
 		static IReadOnlyList<string> s_flags;
-		public static IReadOnlyList<string> Flags => s_flags ?? (s_flags = new List<string>().AsReadOnly());
+		public static IReadOnlyList<string> Flags => s_flags ?? (s_flags = new string[0]);
 
 		public static void SetFlags(params string[] flags)
 		{
@@ -245,7 +319,9 @@ namespace Xamarin.Forms
 				throw new InvalidOperationException($"{nameof(SetFlags)} must be called before {nameof(Init)}");
 			}
 
-			s_flags = flags.ToList().AsReadOnly();
+			s_flags = (string[])flags.Clone();
+			if (s_flags.Contains ("Profile"))
+				Profile.Enable();
 		}
 
 		public static void SetTitleBarVisibility(TizenTitleBarVisibility visibility)
@@ -323,12 +399,24 @@ namespace Xamarin.Forms
 
 		public static void Init(CoreApplication application, bool useDeviceIndependentPixel)
 		{
-			s_useDeviceIndependentPixel = useDeviceIndependentPixel;
+			DisplayResolutionUnit = DisplayResolutionUnit.FromInit(useDeviceIndependentPixel);
+			SetupInit(application);
+		}
+
+		public static void Init(CoreApplication application, DisplayResolutionUnit unit)
+		{
+			DisplayResolutionUnit = unit ?? DisplayResolutionUnit.Pixel();
 			SetupInit(application);
 		}
 
 		public static void Init(InitializationOptions options)
 		{
+			if (options == null)
+			{
+				throw new ArgumentException("Must be set options", nameof(options));
+			}
+
+			DisplayResolutionUnit = options.DisplayResolutionUnit ?? DisplayResolutionUnit.FromInit(options.UseDeviceIndependentPixel);
 			SetupInit(options.Context, options);
 		}
 
@@ -359,11 +447,32 @@ namespace Xamarin.Forms
 			Device.Info = new Forms.TizenDeviceInfo();
 			Device.SetFlags(s_flags);
 
+			string profile = ((TizenDeviceInfo)Device.Info).Profile;
+			if (profile == "mobile")
+			{
+				Device.SetIdiom(TargetIdiom.Phone);
+			}
+			else if (profile == "tv")
+			{
+				Device.SetIdiom(TargetIdiom.TV);
+			}
+			else if (profile == "desktop")
+			{
+				Device.SetIdiom(TargetIdiom.Desktop);
+			}
+			else if (profile == "wearable")
+			{
+				Device.SetIdiom(TargetIdiom.Watch);
+			}
+			else
+			{
+				Device.SetIdiom(TargetIdiom.Unsupported);
+			}
+
 			if (!Forms.IsInitialized)
 			{
 				if (options != null)
 				{
-					s_useDeviceIndependentPixel = options.UseDeviceIndependentPixel;
 					s_platformType = options.PlatformType;
 					s_useMessagingCenter = options.UseMessagingCenter;
 
@@ -402,6 +511,8 @@ namespace Xamarin.Forms
 						}
 						else
 						{
+							// The assembly of the executing application and referenced assemblies of it are added into the list here.
+							TizenPlatformServices.AppDomain.CurrentDomain.RegisterAssemblyRecursively(application.GetType().GetTypeInfo().Assembly);
 							Registrar.RegisterAll(new Type[]
 							{
 								typeof(ExportRendererAttribute),
@@ -425,10 +536,7 @@ namespace Xamarin.Forms
 					}
 
 					// css
-					var flags = options.Flags;
-					var noCss = (flags & InitializationFlags.DisableCss) != 0;
-					if (!noCss)
-						Registrar.RegisterStylesheets();
+					Registrar.RegisterStylesheets(options.Flags);
 				}
 				else
 				{
@@ -448,29 +556,12 @@ namespace Xamarin.Forms
 				}
 			}
 
-			string profile = ((TizenDeviceInfo)Device.Info).Profile;
-			if (profile == "mobile")
-			{
-				Device.SetIdiom(TargetIdiom.Phone);
-			}
-			else if (profile == "tv")
-			{
-				Device.SetIdiom(TargetIdiom.TV);
-			}
-			else if (profile == "desktop")
-			{
-				Device.SetIdiom(TargetIdiom.Desktop);
-			}
-			else if (profile == "wearable")
-			{
-				Device.SetIdiom(TargetIdiom.Watch);
-			}
-			else
-			{
-				Device.SetIdiom(TargetIdiom.Unsupported);
-			}
 			Color.SetAccent(GetAccentColor(profile));
 			ExpressionSearch.Default = new TizenExpressionSearch();
+
+			if (application is WatchApplication)
+				s_platformType = PlatformType.Lightweight;
+
 			IsInitialized = true;
 		}
 
@@ -556,7 +647,7 @@ namespace Xamarin.Forms
 		/// <returns></returns>
 		public static int ConvertToEflFontPoint(double sp)
 		{
-			return (int)Math.Round(sp * s_elmScale.Value);
+			return (int)Math.Round(ConvertToScaledPixel(sp) * s_elmScale.Value);
 		}
 
 		/// <summary>
@@ -566,7 +657,7 @@ namespace Xamarin.Forms
 		/// <returns></returns>
 		public static double ConvertToDPFont(int eflPt)
 		{
-			return eflPt / s_elmScale.Value;
+			return ConvertToScaledDP(eflPt / s_elmScale.Value);
 		}
 
 		/// <summary>
@@ -576,6 +667,11 @@ namespace Xamarin.Forms
 		public static string GetProfile()
 		{
 			return s_profile.Value;
+		}
+
+		public static string GetDeviceType()
+		{
+			return s_deviceType.Value;
 		}
 
 		// for internal use only

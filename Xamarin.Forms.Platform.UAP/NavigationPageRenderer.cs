@@ -8,15 +8,13 @@ using Windows.UI.Input;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Animation;
-using Xamarin.Forms.Internals;
-using static Xamarin.Forms.PlatformConfiguration.WindowsSpecific.Page;
-using WImageSource = Windows.UI.Xaml.Media.ImageSource;
-
-
 using Windows.UI.Core;
 using Windows.UI.Xaml.Data;
+using Xamarin.Forms.Internals;
+using static Xamarin.Forms.PlatformConfiguration.WindowsSpecific.Page;
+using WBrush = Windows.UI.Xaml.Media.Brush;
+using WImageSource = Windows.UI.Xaml.Media.ImageSource;
 
 namespace Xamarin.Forms.Platform.UWP
 {
@@ -29,7 +27,7 @@ namespace Xamarin.Forms.Platform.UWP
 
 		bool _disposed;
 
-		MasterDetailPage _parentMasterDetailPage;
+		FlyoutPage _parentFlyoutPage;
 		TabbedPage _parentTabbedPage;
 		bool _showTitle = true;
 		WImageSource _titleIcon;
@@ -62,7 +60,7 @@ namespace Xamarin.Forms.Platform.UWP
 			Dispose(true);
 		}
 
-		Brush ITitleProvider.BarBackgroundBrush
+		WBrush ITitleProvider.BarBackgroundBrush
 		{
 			set
 			{
@@ -71,7 +69,7 @@ namespace Xamarin.Forms.Platform.UWP
 			}
 		}
 
-		Brush ITitleProvider.BarForegroundBrush
+		WBrush ITitleProvider.BarForegroundBrush
 		{
 			set
 			{
@@ -204,14 +202,19 @@ namespace Xamarin.Forms.Platform.UWP
 				UpdatePadding();
 				LookupRelevantParents();
 				UpdateTitleColor();
-				UpdateNavigationBarBackground();
+
+				if (Brush.IsNullOrEmpty(Element.BarBackground))
+					UpdateNavigationBarBackgroundColor();
+				else
+					UpdateNavigationBarBackground();
+
 				UpdateToolbarPlacement();
 				UpdateToolbarDynamicOverflowEnabled();
 				UpdateTitleIcon();
 				UpdateTitleView();
 
 				// Enforce consistency rules on toolbar (show toolbar if top-level page is Navigation Page)
-				_container.ShouldShowToolbar = _parentMasterDetailPage == null && _parentTabbedPage == null;
+				_container.ShouldShowToolbar = _parentFlyoutPage == null && _parentTabbedPage == null;
 				if (_parentTabbedPage != null)
 					Element.Appearing += OnElementAppearing;
 
@@ -255,8 +258,8 @@ namespace Xamarin.Forms.Platform.UWP
 			if (_parentTabbedPage != null)
 				_parentTabbedPage.PropertyChanged -= MultiPagePropertyChanged;
 
-			if (_parentMasterDetailPage != null)
-				_parentMasterDetailPage.PropertyChanged -= MultiPagePropertyChanged;
+			if (_parentFlyoutPage != null)
+				_parentFlyoutPage.PropertyChanged -= MultiPagePropertyChanged;
 
 			if (_navManager != null)
 			{
@@ -271,20 +274,34 @@ namespace Xamarin.Forms.Platform.UWP
 				changed(this, e);
 		}
 
-		Brush GetBarBackgroundBrush()
+		WBrush GetBarBackgroundColorBrush()
 		{
 			object defaultColor = GetDefaultColor();
 
 			if (Element.BarBackgroundColor.IsDefault && defaultColor != null)
-				return (Brush)defaultColor;
+				return (WBrush)defaultColor;
 			return Element.BarBackgroundColor.ToBrush();
 		}
 
-		Brush GetBarForegroundBrush()
+		WBrush GetBarBackgroundBrush()
+		{
+			var barBackground = Element.BarBackground;
+			object defaultColor = GetDefaultColor();
+
+			if (!Brush.IsNullOrEmpty(barBackground))
+				return barBackground.ToBrush();
+
+			if (defaultColor != null)
+				return (WBrush)defaultColor;
+
+			return null;
+		}
+
+		WBrush GetBarForegroundBrush()
 		{
 			object defaultColor = Windows.UI.Xaml.Application.Current.Resources["ApplicationForegroundThemeBrush"];
 			if (Element.BarTextColor.IsDefault)
-				return (Brush)defaultColor;
+				return (WBrush)defaultColor;
 			return Element.BarTextColor.ToBrush();
 		}
 
@@ -299,19 +316,19 @@ namespace Xamarin.Forms.Platform.UWP
 
 			if (_parentTabbedPage != null)
 				_parentTabbedPage.PropertyChanged -= MultiPagePropertyChanged;
-			if (_parentMasterDetailPage != null)
-				_parentMasterDetailPage.PropertyChanged -= MultiPagePropertyChanged;
+			if (_parentFlyoutPage != null)
+				_parentFlyoutPage.PropertyChanged -= MultiPagePropertyChanged;
 
 			foreach (Page parentPage in parentPages)
 			{
 				_parentTabbedPage = parentPage as TabbedPage;
-				_parentMasterDetailPage = parentPage as MasterDetailPage;
+				_parentFlyoutPage = parentPage as FlyoutPage;
 			}
 
 			if (_parentTabbedPage != null)
 				_parentTabbedPage.PropertyChanged += MultiPagePropertyChanged;
-			if (_parentMasterDetailPage != null)
-				_parentMasterDetailPage.PropertyChanged += MultiPagePropertyChanged;
+			if (_parentFlyoutPage != null)
+				_parentFlyoutPage.PropertyChanged += MultiPagePropertyChanged;
 
 			UpdateShowTitle();
 			UpdateTitleOnParents();
@@ -328,9 +345,9 @@ namespace Xamarin.Forms.Platform.UWP
 			}
 		}
 
-		async void OnBackClicked(object sender, RoutedEventArgs e)
+		void OnBackClicked(object sender, RoutedEventArgs e)
 		{
-			await Element.PopAsync();
+			Element?.SendBackButtonPressed();
 		}
 
 		void OnChildrenChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -365,6 +382,8 @@ namespace Xamarin.Forms.Platform.UWP
 			if (e.PropertyName == NavigationPage.BarTextColorProperty.PropertyName)
 				UpdateTitleColor();
 			else if (e.PropertyName == NavigationPage.BarBackgroundColorProperty.PropertyName)
+				UpdateNavigationBarBackgroundColor();
+			else if (e.PropertyName == NavigationPage.BarBackgroundProperty.PropertyName)
 				UpdateNavigationBarBackground();
 			else if (e.PropertyName == Page.PaddingProperty.PropertyName)
 				UpdatePadding();
@@ -388,7 +407,7 @@ namespace Xamarin.Forms.Platform.UWP
 			UpdateBackButton();
 			UpdateTitleOnParents();
 
-			if (_parentMasterDetailPage != null)
+			if (_parentFlyoutPage != null)
 			{
 				UpdateTitleView();
 				UpdateTitleIcon();
@@ -453,7 +472,10 @@ namespace Xamarin.Forms.Platform.UWP
 			if (_currentPage != null)
 			{
 				if (isPopping)
+				{
 					_currentPage.Cleanup();
+					_container.TitleView?.Cleanup();
+				}
 
 				_container.Content = null;
 				_currentPage.PropertyChanged -= OnCurrentPagePropertyChanged;
@@ -507,6 +529,11 @@ namespace Xamarin.Forms.Platform.UWP
 			Element.ContainerArea = new Rectangle(0, 0, _container.ContentWidth, _container.ContentHeight);
 		}
 
+		void UpdateNavigationBarBackgroundColor()
+		{
+			(this as ITitleProvider).BarBackgroundBrush = GetBarBackgroundColorBrush();
+		}
+
 		void UpdateNavigationBarBackground()
 		{
 			(this as ITitleProvider).BarBackgroundBrush = GetBarBackgroundBrush();
@@ -549,7 +576,7 @@ namespace Xamarin.Forms.Platform.UWP
 
 			_container.TitleIcon = _titleIcon;
 
-			if (_parentMasterDetailPage != null && Platform.GetRenderer(_parentMasterDetailPage) is ITitleIconProvider parent)
+			if (_parentFlyoutPage != null && Platform.GetRenderer(_parentFlyoutPage) is ITitleIconProvider parent)
 				parent.TitleIcon = _titleIcon;
 
 			_container.UpdateLayout();
@@ -558,19 +585,19 @@ namespace Xamarin.Forms.Platform.UWP
 
 		void UpdateTitleView()
 		{
-			// if the life cycle hasn't reached the point where _parentMasterDetailPage gets wired up then 
+			// if the life cycle hasn't reached the point where _parentFlyoutPage gets wired up then 
 			// don't update the title view
 			if (_currentPage == null || !_parentsLookedUp)
 				return;
 
-			// If the container TitleView gets initialized before the MDP TitleView it causes the 
-			// MDP TitleView to not render correctly
-			if (_parentMasterDetailPage != null)
+			// If the container TitleView gets initialized before the FP TitleView it causes the 
+			// FP TitleView to not render correctly
+			if (_parentFlyoutPage != null)
 			{
-				if (Platform.GetRenderer(_parentMasterDetailPage) is ITitleViewProvider parent)
+				if (Platform.GetRenderer(_parentFlyoutPage) is ITitleViewProvider parent)
 					parent.TitleView = TitleView;
 			}
-			else if (_parentMasterDetailPage == null)
+			else if (_parentFlyoutPage == null)
 				_container.TitleView = TitleView;
 
 		}
@@ -616,7 +643,7 @@ namespace Xamarin.Forms.Platform.UWP
 
 		void UpdateShowTitle()
 		{
-			((ITitleProvider)this).ShowTitle = _parentTabbedPage == null && _parentMasterDetailPage == null;
+			((ITitleProvider)this).ShowTitle = _parentTabbedPage == null && _parentFlyoutPage == null;
 		}
 
 		static object GetDefaultColor()
@@ -649,17 +676,22 @@ namespace Xamarin.Forms.Platform.UWP
 					render.ShowTitle = (_parentTabbedPage.CurrentPage == Element) && NavigationPage.GetHasNavigationBar(_currentPage);
 			}
 
-			if (_parentMasterDetailPage != null)
+			if (_parentFlyoutPage != null)
 			{
-				render = Platform.GetRenderer(_parentMasterDetailPage) as ITitleProvider;
+				render = Platform.GetRenderer(_parentFlyoutPage) as ITitleProvider;
 				if (render != null)
-					render.ShowTitle = (_parentMasterDetailPage.Detail == Element) && NavigationPage.GetHasNavigationBar(_currentPage);
+					render.ShowTitle = (_parentFlyoutPage.Detail == Element) && NavigationPage.GetHasNavigationBar(_currentPage);
 			}
 
 			if (render != null && render.ShowTitle)
 			{
 				render.Title = _currentPage.Title;
-				render.BarBackgroundBrush = GetBarBackgroundBrush();
+
+				if (!Brush.IsNullOrEmpty(Element.BarBackground))
+					render.BarBackgroundBrush = GetBarBackgroundBrush();
+				else
+					render.BarBackgroundBrush = GetBarBackgroundColorBrush();
+
 				render.BarForegroundBrush = GetBarForegroundBrush();
 			}
 

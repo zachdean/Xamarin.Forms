@@ -1,20 +1,25 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System.Collections.Generic;
+using System.Runtime.CompilerServices;
+using Xamarin.Forms.StyleSheets;
 
 namespace Xamarin.Forms
 {
-	internal class MenuShellItem : ShellItem, IMenuItemController
+	internal class MenuShellItem : ShellItem, IMenuItemController, IStyleSelectable
 	{
 		internal MenuShellItem(MenuItem menuItem)
 		{
 			MenuItem = menuItem;
+			MenuItem.Parent = this;
 
 			SetBinding(TitleProperty, new Binding(nameof(MenuItem.Text), BindingMode.OneWay, source: menuItem));
 			SetBinding(IconProperty, new Binding(nameof(MenuItem.IconImageSource), BindingMode.OneWay, source: menuItem));
 			SetBinding(FlyoutIconProperty, new Binding(nameof(MenuItem.IconImageSource), BindingMode.OneWay, source: menuItem));
-
-			Shell.SetMenuItemTemplate(this, Shell.GetMenuItemTemplate(MenuItem));
+			SetBinding(AutomationIdProperty, new Binding(nameof(MenuItem.AutomationId), BindingMode.OneWay, source: menuItem));
+			
 			MenuItem.PropertyChanged += OnMenuItemPropertyChanged;
 		}
+
+		IList<string> IStyleSelectable.Classes => ((IStyleSelectable)MenuItem).Classes;
 
 		public string Text => Title;
 
@@ -24,6 +29,13 @@ namespace Xamarin.Forms
 				Shell.SetMenuItemTemplate(this, Shell.GetMenuItemTemplate(MenuItem));
 			else if (e.PropertyName == TitleProperty.PropertyName)
 				OnPropertyChanged(MenuItem.TextProperty.PropertyName);
+		}
+
+		protected override void OnPropertyChanged([CallerMemberName] string propertyName = null)
+		{
+			base.OnPropertyChanged(propertyName);
+			if (propertyName == nameof(Title))
+				OnPropertyChanged(nameof(Text));
 		}
 
 		public MenuItem MenuItem { get; }

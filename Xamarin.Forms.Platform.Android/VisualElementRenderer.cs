@@ -7,11 +7,9 @@ using Xamarin.Forms.Internals;
 using AView = Android.Views.View;
 using Xamarin.Forms.Platform.Android.FastRenderers;
 using Android.Runtime;
-#if __ANDROID_29__
+using Android.Content.Res;
+using Android.Graphics;
 using AndroidX.Core.View;
-#else
-using Android.Support.V4.View;
-#endif
 
 
 namespace Xamarin.Forms.Platform.Android
@@ -58,7 +56,7 @@ namespace Xamarin.Forms.Platform.Android
 
 		public override bool DispatchTouchEvent(MotionEvent e)
 		{
-			if (InputTransparent && _cascadeInputTransparent)
+			if (Element == null || (InputTransparent && _cascadeInputTransparent))
 			{
 				// If the Element is InputTransparent, this ViewGroup will be marked InputTransparent
 				// If we're InputTransparent and our transparency should be applied to our child controls,
@@ -227,6 +225,9 @@ namespace Xamarin.Forms.Platform.Android
 			if (element.BackgroundColor != currentColor)
 				UpdateBackgroundColor();
 
+			if (element.Background != null)
+				UpdateBackground();
+
 			if (_propertyChangeHandler == null)
 				_propertyChangeHandler = OnElementPropertyChanged;
 
@@ -334,6 +335,13 @@ namespace Xamarin.Forms.Platform.Android
 			base.Dispose(disposing);
 		}
 
+		protected override void OnConfigurationChanged(Configuration newConfig)
+		{
+			base.OnConfigurationChanged(newConfig);
+
+			Invalidate();
+		}
+
 		protected virtual Size MinimumSize()
 		{
 			return new Size();
@@ -358,6 +366,8 @@ namespace Xamarin.Forms.Platform.Android
 		{
 			if (e.PropertyName == VisualElement.BackgroundColorProperty.PropertyName)
 				UpdateBackgroundColor();
+			else if (e.PropertyName == VisualElement.BackgroundProperty.PropertyName)
+				UpdateBackground();
 			else if (e.PropertyName == AutomationProperties.HelpTextProperty.PropertyName)
 				SetContentDescription();
 			else if (e.PropertyName == AutomationProperties.NameProperty.PropertyName)
@@ -384,6 +394,13 @@ namespace Xamarin.Forms.Platform.Android
 				return;
 
 			UpdateLayout(((IElementController)Element).LogicalChildren);
+		}
+
+		public override void Draw(Canvas canvas)
+		{
+			canvas.ClipShape(Context, Element);
+
+			base.Draw(canvas);
 		}
 
 		static void UpdateLayout(IEnumerable<Element> children)
@@ -457,6 +474,13 @@ namespace Xamarin.Forms.Platform.Android
 		protected virtual void UpdateBackgroundColor()
 		{
 			SetBackgroundColor(Element.BackgroundColor.ToAndroid());
+		}
+
+		protected virtual void UpdateBackground()
+		{
+			Brush background = Element.Background;
+
+			this.UpdateBackground(background);
 		}
 
 		internal virtual void SendVisualElementInitialized(VisualElement element, AView nativeView)

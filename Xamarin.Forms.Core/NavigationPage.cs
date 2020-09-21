@@ -14,7 +14,8 @@ namespace Xamarin.Forms
 	{
 		public static readonly BindableProperty BackButtonTitleProperty = BindableProperty.CreateAttached("BackButtonTitle", typeof(string), typeof(Page), null);
 
-		public static readonly BindableProperty HasNavigationBarProperty = BindableProperty.CreateAttached("HasNavigationBar", typeof(bool), typeof(Page), true);
+		public static readonly BindableProperty HasNavigationBarProperty = 
+			BindableProperty.CreateAttached("HasNavigationBar", typeof(bool), typeof(Page), true);
 
 		public static readonly BindableProperty HasBackButtonProperty = BindableProperty.CreateAttached("HasBackButton", typeof(bool), typeof(NavigationPage), true);
 
@@ -23,6 +24,8 @@ namespace Xamarin.Forms
 		public static readonly BindableProperty TintProperty = BindableProperty.Create("Tint", typeof(Color), typeof(NavigationPage), Color.Default);
 
 		public static readonly BindableProperty BarBackgroundColorProperty = BarElement.BarBackgroundColorProperty;
+
+		public static readonly BindableProperty BarBackgroundProperty = BarElement.BarBackgroundProperty;
 
 		public static readonly BindableProperty BarTextColorProperty = BarElement.BarTextColorProperty;
 
@@ -57,6 +60,12 @@ namespace Xamarin.Forms
 		public Color BarBackgroundColor {
 			get => (Color)GetValue(BarElement.BarBackgroundColorProperty);
 			set => SetValue(BarElement.BarBackgroundColorProperty, value);
+		}
+
+		public Brush BarBackground
+		{
+			get => (Brush)GetValue(BarElement.BarBackgroundProperty);
+			set => SetValue(BarElement.BarBackgroundProperty, value);
 		}
 
 		public Color BarTextColor {
