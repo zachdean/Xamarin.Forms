@@ -173,16 +173,19 @@ namespace Xamarin.Forms.Platform.iOS
 				UpdateTapRecognizer();
 		}
 
+		[PortHandler]
 		void OnControlValueChanged(object sender, EventArgs eventArgs)
 		{
 			((IElementController)Element).SetValueFromRenderer(Slider.ValueProperty, Control.Value);
 		}
 
+		[PortHandler]
 		void OnTouchDownControlEvent(object sender, EventArgs e)
 		{
 			((ISliderController)Element)?.SendDragStarted();
 		}
 
+		[PortHandler]
 		void OnTouchUpControlEvent(object sender, EventArgs e)
 		{
 			((ISliderController)Element)?.SendDragCompleted();

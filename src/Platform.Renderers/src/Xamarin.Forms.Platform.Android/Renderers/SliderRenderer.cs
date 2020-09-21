@@ -37,17 +37,20 @@ namespace Xamarin.Forms.Platform.Android
 			set { Control.Progress = (int)((value - _min) / (_max - _min) * 1000.0); }
 		}
 
+		[PortHandler]
 		void SeekBar.IOnSeekBarChangeListener.OnProgressChanged(SeekBar seekBar, int progress, bool fromUser)
 		{
 			if (fromUser)
 				((IElementController)Element).SetValueFromRenderer(Slider.ValueProperty, Value);
 		}
 
+		[PortHandler]
 		void SeekBar.IOnSeekBarChangeListener.OnStartTrackingTouch(SeekBar seekBar)
 		{
 			((ISliderController)Element)?.SendDragStarted();
 		}
 
+		[PortHandler]
 		void SeekBar.IOnSeekBarChangeListener.OnStopTrackingTouch(SeekBar seekBar)
 		{
 			((ISliderController)Element)?.SendDragCompleted();
