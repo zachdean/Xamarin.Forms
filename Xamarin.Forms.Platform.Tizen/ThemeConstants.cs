@@ -19,6 +19,30 @@ namespace Xamarin.Forms.Platform.Tizen
 				public const string BackGround = "bg";
 				public const string Opacity = "opacity";
 			}
+
+			public class Resource
+			{
+				public class Mobile
+				{
+					public const double BaseScale = 2.6;
+				}
+				public class TV
+				{
+					public const double BaseScale = 2.0;
+				}
+				public class Watch
+				{
+					public const double BaseScale = 1.3;
+				}
+				public class Refrigerator
+				{
+					public const double BaseScale = 1.0;
+				}
+				public class Iot
+				{
+					public const double BaseScale = 1.8;
+				}
+			}
 		}
 		#endregion
 
@@ -214,6 +238,8 @@ namespace Xamarin.Forms.Platform.Tizen
 			public class ColorClass
 			{
 				public const string Title = "text_maintitle";
+				public const string TitleBackground = "bg_title";
+				public const string ContentBackground = "bg_content";
 
 				public class TV
 				{
@@ -523,9 +549,9 @@ namespace Xamarin.Forms.Platform.Tizen
 			public class Resources
 			{
 				// The source of icon resources is https://materialdesignicons.com/
-				public const string MenuIcon = "Xamarin.Forms.Platform.Tizen.Resource.menu.png";
-				public const string BackIcon = "Xamarin.Forms.Platform.Tizen.Resource.arrow_left.png";
-				public const string DotsIcon = "Xamarin.Forms.Platform.Tizen.Resource.dots_horizontal.png";
+				public const string MenuIcon = "Resource.menu.png";
+				public const string BackIcon = "Resource.arrow_left.png";
+				public const string DotsIcon = "Resource.dots_horizontal.png";
 
 				public class Watch
 				{

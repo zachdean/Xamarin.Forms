@@ -19,13 +19,8 @@ namespace Xamarin.Forms
 			_platformConfigurationRegistry = new Lazy<PlatformConfigurationRegistry<SwipeView>>(() => new PlatformConfigurationRegistry<SwipeView>(this));
 		}
 
-		[EditorBrowsable(EditorBrowsableState.Never)]
-		public static void VerifySwipeViewFlagEnabled(
-			string constructorHint = null,
-			[CallerMemberName] string memberName = "")
-		{
-			ExperimentalFlags.VerifyFlagEnabled(nameof(SwipeView), ExperimentalFlags.SwipeViewExperimental, memberName: memberName);
-		}
+		public static readonly BindableProperty ThresholdProperty =
+			BindableProperty.Create(nameof(Threshold), typeof(double), typeof(SwipeView), default(double));
 
 		public static readonly BindableProperty LeftItemsProperty =
 			BindableProperty.Create(nameof(LeftItems), typeof(SwipeItems), typeof(SwipeView), null, BindingMode.OneWay, null, defaultValueCreator: SwipeItemsDefaultValueCreator,
@@ -45,6 +40,12 @@ namespace Xamarin.Forms
 
 		public static readonly BindableProperty AutoCloseProperty =
 			BindableProperty.Create(nameof(AutoClose), typeof(bool), typeof(SwipeView), true);
+
+		public double Threshold
+		{
+			get { return (double)GetValue(ThresholdProperty); }
+			set { SetValue(ThresholdProperty, value); }
+		}
 
 		public SwipeItems LeftItems
 		{
@@ -126,7 +127,7 @@ namespace Xamarin.Forms
 			if (BottomItems != null)
 				SetInheritedBindingContext(BottomItems, bc);
 		}
-  
+
 		SwipeItems SwipeItemsDefaultValueCreator() => new SwipeItems();
 
 		static object SwipeItemsDefaultValueCreator(BindableObject bindable)

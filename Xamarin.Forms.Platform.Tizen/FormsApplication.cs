@@ -11,6 +11,7 @@ using DeviceOrientation = Xamarin.Forms.Internals.DeviceOrientation;
 using ElmSharp.Wearable;
 using Specific = Xamarin.Forms.PlatformConfiguration.TizenSpecific.Application;
 using Xamarin.Forms.Platform.Tizen.Native;
+using Tizen.Common;
 
 namespace Xamarin.Forms.Platform.Tizen
 {
@@ -19,13 +20,11 @@ namespace Xamarin.Forms.Platform.Tizen
 	{
 		ITizenPlatform _platform;
 		Application _application;
-		bool _isInitialStart;
 		Window _window;
 		bool _useBezelInteration;
 
 		protected FormsApplication()
 		{
-			_isInitialStart = true;
 		}
 
 		/// <summary>
@@ -62,6 +61,12 @@ namespace Xamarin.Forms.Platform.Tizen
 			base.OnPreCreate();
 			Application.ClearCurrent();
 
+			if (DotnetUtil.TizenAPIVersion < 5)
+			{
+				// We should set the env variable to support IsolatedStorageFile on tizen 4.0 or lower version.
+				Environment.SetEnvironmentVariable("XDG_DATA_HOME", Current.DirectoryInfo.Data);
+			}
+
 			var type = typeof(Window);
 			// Use reflection to avoid breaking compatibility. ElmSharp.Window.CreateWindow() is has been added since API6.
 			var methodInfo = type.GetMethod("CreateWindow", BindingFlags.NonPublic | BindingFlags.Static);
@@ -91,17 +96,6 @@ namespace Xamarin.Forms.Platform.Tizen
 			{
 				_platform.Dispose();
 			}
-		}
-
-		protected override void OnAppControlReceived(AppControlReceivedEventArgs e)
-		{
-			base.OnAppControlReceived(e);
-
-			if (!_isInitialStart && _application != null)
-			{
-				_application.SendResume();
-			}
-			_isInitialStart = false;
 		}
 
 		protected override void OnPause()
