@@ -81,6 +81,27 @@ namespace Xamarin.Forms.Controls.Issues
 #endif
 	}
 
+#if UITEST
+	[NUnit.Framework.Category(Core.UITests.UITestCategories.Bugzilla)]
+#endif
+	[Preserve(AllMembers = true)]
+	[Issue(IssueTracker.Bugzilla, 52318, "Shell OnAppearing/Disappearing triggers for all pages in navigationstack backgrounding/foregrounding app", PlatformAffected.Android, issueTestNumber: 3)]
+	public class ShellPage52318 : TestShell
+	{
+		protected override void Init()
+		{
+			AddFlyoutItem(new ContentPage52318(), "Flyout Item");
+		}
+
+#if UITEST && __IOS__
+		[Test]
+		public void CorrectOnAppearingEventsFire()
+		{
+			ContentPage52318.CorrectOnAppearingEventsFire(RunningApp);
+		}
+#endif
+	}
+
 	public class ContentPage52318 : ContentPage
 	{
 
@@ -128,11 +149,10 @@ namespace Xamarin.Forms.Controls.Issues
 
 		protected override void OnAppearing()
 		{
-			int count = (Parent as NavigationPage).Navigation.NavigationStack.Count;
+			int count = (Parent as NavigableElement).Navigation.NavigationStack.Count;
 			Title = $"Page: {count}";
-			DisplayAlert("", Title + " appearing.", "OK");
+			Device.BeginInvokeOnMainThread(() => DisplayAlert("", Title + " appearing.", "OK"));
 			base.OnAppearing();
 		}
-
 	}
 }

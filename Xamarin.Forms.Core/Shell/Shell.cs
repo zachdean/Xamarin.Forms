@@ -1115,6 +1115,12 @@ namespace Xamarin.Forms
 			}
 		}
 
+		protected override void OnParentSet()
+		{
+			base.OnParentSet();
+			SendAppearing();
+		}
+
 		internal void ProcessNavigated(ShellNavigatedEventArgs args)
 		{
 			if (_accumulateNavigatedEvents)
