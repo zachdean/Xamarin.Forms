@@ -324,11 +324,13 @@ namespace Xamarin.Forms
 		{
 			Current = this;
 			OnResume();
+			MainPage?.SendAppearing();
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		public void SendSleep()
 		{
+			MainPage?.SendDisappearing();
 			OnSleep();
 			SavePropertiesAsFireAndForget();
 		}
