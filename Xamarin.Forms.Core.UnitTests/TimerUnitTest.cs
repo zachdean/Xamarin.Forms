@@ -30,7 +30,7 @@ namespace Xamarin.Forms.Core.UnitTests
 				return count < 10;
 			});
 
-			Assert.AreEqual(11, count);
+			Assert.AreEqual(10, count);
 		}
 	}
 }
