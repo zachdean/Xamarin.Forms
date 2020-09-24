@@ -232,6 +232,12 @@ namespace Xamarin.Forms
 
 		public static void StartTimer(TimeSpan interval, Func<bool> callback)
 		{
+			if (interval.TotalMilliseconds == 0)
+			{
+				while (callback())
+					;
+				return;
+			}
 			PlatformServices.StartTimer(interval, callback);
 		}
 
