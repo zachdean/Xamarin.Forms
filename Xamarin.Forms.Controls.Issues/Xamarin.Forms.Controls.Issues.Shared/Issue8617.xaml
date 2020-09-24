@@ -1,0 +1,53 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<controls:TestContentPage		 
+    xmlns:controls="clr-namespace:Xamarin.Forms.Controls"
+	xmlns="http://xamarin.com/schemas/2014/forms"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    x:Class="Xamarin.Forms.Controls.Issues.Issue8617"
+    Title="Issue 8617">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="100"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="100"/>
+        </Grid.RowDefinitions>
+        <Grid 
+            BackgroundColor="Black">
+            <Label
+                TextColor="White"
+                Text="If you can Pull to Refresh in the content below, the test has passed."/>
+        </Grid>
+        <RefreshView 
+            Grid.Row="1"
+            x:Name="RefreshViewTest"
+            BackgroundColor="LightGray">
+            <ScrollView 
+                HorizontalOptions="FillAndExpand"
+                VerticalOptions="FillAndExpand"
+                BackgroundColor="Gray">
+                <ContentView
+                    HorizontalOptions="FillAndExpand"
+                    VerticalOptions="FillAndExpand" 
+                    HeightRequest="1000">
+                    <StackLayout 
+                        HorizontalOptions="FillAndExpand"
+                        VerticalOptions="FillAndExpand">
+                        <BoxView 
+                            HeightRequest="100"
+                            WidthRequest="100"
+                            BackgroundColor="Pink"/>
+                        <BoxView 
+                            HeightRequest="100"
+                            WidthRequest="100"
+                            BackgroundColor="Pink"/>
+                    </StackLayout>
+                </ContentView>
+            </ScrollView>
+        </RefreshView>
+        <BoxView 
+            BackgroundColor="Red"
+            Grid.Row="2"
+            HorizontalOptions="FillAndExpand"
+            VerticalOptions="FillAndExpand"/>
+    </Grid>
+</controls:TestContentPage>

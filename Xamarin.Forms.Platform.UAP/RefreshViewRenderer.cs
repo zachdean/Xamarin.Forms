@@ -13,6 +13,7 @@ namespace Xamarin.Forms.Platform.UWP
 {
 	public class RefreshViewRenderer : ViewRenderer<RefreshView, RefreshContainer>
 	{
+		bool _isLoaded = false;
 		bool _isDisposed;
 		Deferral _refreshCompletionDeferral;
 
@@ -36,6 +37,9 @@ namespace Xamarin.Forms.Platform.UWP
 					_refreshCompletionDeferral.Dispose();
 					_refreshCompletionDeferral = null;
 				}
+
+				if (Control.Content is FrameworkElement control)
+					control.SizeChanged -= OnContentSizeChanged;
 			}
 
 			_isDisposed = true;
@@ -43,7 +47,6 @@ namespace Xamarin.Forms.Platform.UWP
 			base.Dispose(disposing);
 		}
 
-		bool _isLoaded = false;
 		protected override void OnElementChanged(ElementChangedEventArgs<RefreshView> e)
 		{
 			if (e.NewElement != null)
@@ -94,9 +97,7 @@ namespace Xamarin.Forms.Platform.UWP
 
 			base.OnElementChanged(e);
 		}
-
-
-
+				
 		protected override void OnElementPropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
 			base.OnElementPropertyChanged(sender, e);
@@ -131,6 +132,38 @@ namespace Xamarin.Forms.Platform.UWP
 
 			IVisualElementRenderer renderer = Element.Content.GetOrCreateRenderer();
 			Control.Content = renderer.ContainerElement;
+
+			if(Control.Content is FrameworkElement control)
+				control.SizeChanged += OnContentSizeChanged;
+		}
+
+		void UpdateContentSize(Windows.Foundation.Size size)
+		{
+			if (Control == null || Control.Content == null)
+				return;
+
+			if (!(Control.Content is ScrollViewRenderer contentRenderer))
+				return;
+
+			// Although the content of the ScrollViewer is not scrollable, we force the same size in the content allowing Pull To Refresh.
+			if (contentRenderer.Control is Windows.UI.Xaml.Controls.ScrollViewer scrollViewer)
+			{
+				if (scrollViewer.Content is FrameworkElement content)
+				{
+					bool isVertical = Control.PullDirection == RefreshPullDirection.TopToBottom || Control.PullDirection == RefreshPullDirection.BottomToTop;
+
+					if (isVertical)
+					{
+						if (content.Height <= size.Height)
+							content.Height = size.Height;
+					}
+					else
+					{
+						if (content.Width <= size.Width)
+							content.Width = size.Width;
+					}
+				}
+			}
 		}
 
 		void UpdateIsEnabled()
@@ -206,6 +239,12 @@ namespace Xamarin.Forms.Platform.UWP
 			CompleteRefresh();
 			_refreshCompletionDeferral = args.GetDeferral();
 			Element.SetValueFromRenderer(RefreshView.IsRefreshingProperty, true);
+		}
+
+		void OnContentSizeChanged(object sender, SizeChangedEventArgs e)
+		{
+			var size = e.NewSize;
+			UpdateContentSize(size);
 		}
 	}
 }
