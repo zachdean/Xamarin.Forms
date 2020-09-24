@@ -27,8 +27,7 @@
                 BackgroundColor="Gray">
                 <ContentView
                     HorizontalOptions="FillAndExpand"
-                    VerticalOptions="FillAndExpand" 
-                    HeightRequest="1000">
+                    VerticalOptions="FillAndExpand">
                     <StackLayout 
                         HorizontalOptions="FillAndExpand"
                         VerticalOptions="FillAndExpand">

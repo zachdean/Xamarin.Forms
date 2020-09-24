@@ -1,10 +1,8 @@
-﻿using System;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using Microsoft.UI.Xaml.Controls;
 using Windows.Foundation;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Media;
 using Xamarin.Forms.PlatformConfiguration.WindowsSpecific;
 using Specifics = Xamarin.Forms.PlatformConfiguration.WindowsSpecific.RefreshView;
 using WBrush = Windows.UI.Xaml.Media.Brush;
@@ -154,13 +152,13 @@ namespace Xamarin.Forms.Platform.UWP
 
 					if (isVertical)
 					{
-						if (content.Height <= size.Height)
-							content.Height = size.Height;
+						if (content.ActualHeight <= size.Height)
+							content.Height = size.Height + 1;
 					}
 					else
 					{
-						if (content.Width <= size.Width)
-							content.Width = size.Width;
+						if (content.ActualWidth <= size.Width)
+							content.Width = size.Width + 1;
 					}
 				}
 			}
