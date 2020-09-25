@@ -101,6 +101,8 @@ namespace Xamarin.Forms.Platform.iOS
 						InitTextField(entry);
 					}
 
+					_useLegacyColorManagement = e.NewElement.UseLegacyColorManagement();
+
 					UpdateDatePickerStyle();
 					_picker.ValueChanged += OnValueChanged;
 
