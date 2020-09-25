@@ -11,6 +11,7 @@ using System.Threading;
 using System;
 using AndroidX.AppCompat.App;
 using AToolbar = AndroidX.AppCompat.Widget.Toolbar;
+using AndroidX.AppCompat.Widget;
 
 namespace Xamarin.Forms.Platform.Android.UnitTests
 {
