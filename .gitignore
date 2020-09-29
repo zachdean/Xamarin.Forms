@@ -78,3 +78,4 @@ TestResult.xml
 **/build/packages
 WriteDevopsVariables.csproj
 !**/Xamarin.Forms.Platform.GTK/Libs/**/*
+!**/Xamarin.Forms.Build.Tasks/ErrorMessages.Designer.cs

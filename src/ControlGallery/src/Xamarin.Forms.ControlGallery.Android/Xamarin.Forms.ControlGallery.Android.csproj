@@ -212,7 +212,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup Condition="$(FromSource) == 'true'">
-    <ProguardConfiguration Include="..\.nuspec\proguard.cfg">
+    <ProguardConfiguration Include="..\..\..\..\.nuspec\proguard.cfg">
       <Link>proguard.cfg</Link>
     </ProguardConfiguration>
     <ProjectReference Include="..\..\..\Platform.Renderers\src\Xamarin.Forms.Platform.Android.FormsViewGroup\Xamarin.Forms.Platform.Android.FormsViewGroup.csproj">
