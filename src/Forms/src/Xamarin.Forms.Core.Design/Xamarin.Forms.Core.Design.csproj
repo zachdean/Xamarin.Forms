@@ -58,8 +58,8 @@
     <Compile Include="VisualDesignTypeConverter.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\src\Platform.Handlers\src\Xamarin.Platform.Handlers\Xamarin.Platform.Handlers.csproj">
-      <Project>{e2403480-7079-4e09-9c21-113b615a2a0a}</Project>
+    <ProjectReference Include="..\..\..\Platform.Handlers\src\Xamarin.Platform.Handlers\Xamarin.Platform.Handlers.csproj">
+      <Project>{29913989-0f70-48d8-8ede-b1dd217f21d1}</Project>
       <Name>Xamarin.Platform.Handlers</Name>
     </ProjectReference>
     <ProjectReference Include="..\Xamarin.Forms.Core\Xamarin.Forms.Core.csproj">
