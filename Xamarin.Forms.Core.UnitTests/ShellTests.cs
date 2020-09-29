@@ -368,6 +368,18 @@ namespace Xamarin.Forms.Core.UnitTests
 			*/
 		}
 
+
+		[Test]
+		public async Task DotDotAdheresToAnimationParameter()
+		{
+			Routing.RegisterRoute(nameof(DotDotAdheresToAnimationParameter), typeof(ContentPage));
+			var shellContent = new ShellContent();
+			var shell = new TestShell(new TestFlyoutItem(new TestShellSection(shellContent)));
+			await shell.GoToAsync(nameof(DotDotAdheresToAnimationParameter));
+			await shell.GoToAsync("..", true);
+			Assert.IsTrue(shell.LastPopWasAnimated);
+		}
+
 		[Test]
 		public async Task DefaultRoutesMaintainedIfThatsAllThereIs()
 		{
@@ -597,40 +609,6 @@ namespace Xamarin.Forms.Core.UnitTests
 		}
 
 		[Test]
-		public void CancelNavigation()
-		{
-			var shell = new Shell();
-
-			var one = new ShellItem { Route = "one" };
-			var two = new ShellItem { Route = "two" };
-
-			var tabone = MakeSimpleShellSection("tabone", "content");
-			var tabtwo = MakeSimpleShellSection("tabtwo", "content");
-			var tabthree = MakeSimpleShellSection("tabthree", "content");
-			var tabfour = MakeSimpleShellSection("tabfour", "content");
-
-			one.Items.Add(tabone);
-			one.Items.Add(tabtwo);
-
-			two.Items.Add(tabthree);
-			two.Items.Add(tabfour);
-
-			shell.Items.Add(one);
-			shell.Items.Add(two);
-
-			Assume.That(shell.CurrentState.Location.ToString(), Is.EqualTo("//one/tabone/content"));
-
-			shell.Navigating += (s, e) =>
-			{
-				e.Cancel();
-			};
-
-			shell.GoToAsync(new ShellNavigationState("//two/tabfour/"));
-
-			Assume.That(shell.CurrentState.Location.ToString(), Is.EqualTo("//one/tabone/content"));
-		}
-
-		[Test]
 		public async Task OnBackbuttonPressedPageReturnsTrue()
 		{
 			TestShell shell = new TestShell();
@@ -783,83 +761,7 @@ namespace Xamarin.Forms.Core.UnitTests
 
 		}
 
-		[Test]
-		public void FlyoutGroupsNumbersForDifferentFlyoutDisplayOptions()
-		{
-			var shell = new Shell();
-			var shellItem = new ShellItem() { FlyoutDisplayOptions = FlyoutDisplayOptions.AsMultipleItems, };
-			var shellItem2 = new ShellItem();
-			var shellSection1 = CreateShellSection(new ContentPage());
-			var shellSection2 = CreateShellSection(new ContentPage());
-			var shellSection3 = CreateShellSection(new ContentPage(), asImplicit: true);
-			var shellSection4 = CreateShellSection(new ContentPage());
-
-			shellItem.Items.Add(shellSection1);
-			shellItem.Items.Add(shellSection2);
-			shellItem2.Items.Add(shellSection3);
-			shellItem2.Items.Add(shellSection4);
-
-			shell.Items.Add(shellItem);
-			shell.Items.Add(shellItem2);
-			IShellController shellController = (IShellController)shell;
-			var groups = shellController.GenerateFlyoutGrouping();
-
-			Assert.AreEqual(groups.Count, 2);
-			Assert.AreEqual(groups[0].Count, 2);
-			Assert.AreEqual(groups[1].Count, 1);
-		}
-
-		[Test]
-		public void FlyoutGroupsNumbersForFlyoutDisplayOptionsAsMultipleItems()
-		{
-			var shell = new Shell();
-			var shellItem = new ShellItem() { FlyoutDisplayOptions = FlyoutDisplayOptions.AsMultipleItems, };
-			var shellItem2 = new ShellItem() { FlyoutDisplayOptions = FlyoutDisplayOptions.AsMultipleItems, };
-			var shellSection1 = CreateShellSection(new ContentPage());
-			var shellSection2 = CreateShellSection(new ContentPage());
-			var shellSection3 = CreateShellSection(new ContentPage(), asImplicit: true);
-			var shellSection4 = CreateShellSection(new ContentPage());
-
-			shellItem.Items.Add(shellSection1);
-			shellItem.Items.Add(shellSection2);
-			shellItem2.Items.Add(shellSection3);
-			shellItem2.Items.Add(shellSection4);
-
-			shell.Items.Add(shellItem);
-			shell.Items.Add(shellItem2);
-			IShellController shellController = (IShellController)shell;
-			var groups = shellController.GenerateFlyoutGrouping();
-
-			Assert.AreEqual(groups.Count, 2);
-			Assert.AreEqual(groups[0].Count, 2);
-			Assert.AreEqual(groups[1].Count, 2);
-		}
-
-		[Test]
-		public void FlyoutGroupsNumbersForFlyoutDisplayOptionsAsSingleItems()
-		{
-			var shell = new Shell();
-			var shellItem = new ShellItem() { FlyoutDisplayOptions = FlyoutDisplayOptions.AsSingleItem, };
-			var shellItem2 = new ShellItem() { FlyoutDisplayOptions = FlyoutDisplayOptions.AsSingleItem, };
-			var shellSection1 = CreateShellSection(new ContentPage());
-			var shellSection2 = CreateShellSection(new ContentPage());
-			var shellSection3 = CreateShellSection(new ContentPage(), asImplicit: true);
-			var shellSection4 = CreateShellSection(new ContentPage());
-
-			shellItem.Items.Add(shellSection1);
-			shellItem.Items.Add(shellSection2);
-			shellItem2.Items.Add(shellSection3);
-			shellItem2.Items.Add(shellSection4);
-
-
-			shell.Items.Add(shellItem);
-			shell.Items.Add(shellItem2);
-			IShellController shellController = (IShellController)shell;
-			var groups = shellController.GenerateFlyoutGrouping();
-
-			Assert.AreEqual(groups.Count, 1);
-			Assert.AreEqual(groups[0].Count, 2);
-		}
+		
 
 
 		[Test]
