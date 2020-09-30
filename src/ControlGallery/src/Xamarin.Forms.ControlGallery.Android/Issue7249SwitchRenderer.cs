@@ -1,13 +1,14 @@
 ﻿using Android.Content;
 using Android.Graphics;
 using Android.OS;
-using Xamarin.Forms.Controls.Issues;
 using Xamarin.Forms.Platform.Android;
+using Xamarin.Forms.Controls.Issues;
+using Xamarin.Platform;
 using static Android.Widget.CompoundButton;
 
 namespace Xamarin.Forms.ControlGallery.Android
 {
-	public class Issue7249SwitchRenderer : Platform.Android.AppCompat.SwitchRenderer
+	public class Issue7249SwitchRenderer : SwitchRenderer
 	{
 		Issue7249Switch _view;
 
