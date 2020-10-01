@@ -7,7 +7,7 @@ using Android.Text;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
-using Xamarin.Forms.PlatformConfiguration.TizenSpecific;
+using Xamarin.Platform;
 
 namespace Xamarin.Forms.Platform.Android
 {
@@ -97,6 +97,7 @@ namespace Xamarin.Forms.Platform.Android
 			Control.RecalculateSpanPositions(Element, _spannableString, new SizeRequest(new Size(r - l, b - t)));
 		}
 
+		[PortHandler]
 		protected override TextView CreateNativeControl()
 		{
 			return new FormsTextView(Context);
@@ -181,6 +182,7 @@ namespace Xamarin.Forms.Platform.Android
 			Control.UpdateFlowDirection(Element);
 		}
 
+		[PortHandler]
 		void UpdateColor()
 		{
 			Color c = Element.TextColor;
@@ -194,6 +196,7 @@ namespace Xamarin.Forms.Platform.Android
 				_view.SetTextColor(c.ToAndroid());
 		}
 
+		[PortHandler]
 		void UpdateFont()
 		{
 #pragma warning disable 618 // We will need to update this when .Font goes away
@@ -215,6 +218,7 @@ namespace Xamarin.Forms.Platform.Android
 			}
 		}
 
+		[PortHandler]
 		void UpdateTextDecorations()
 		{
 			if (!Element.IsSet(Label.TextDecorationsProperty))
@@ -233,6 +237,7 @@ namespace Xamarin.Forms.Platform.Android
 				_view.PaintFlags |= PaintFlags.UnderlineText;
 		}
 
+		[PortHandler]
 		void UpdateGravity()
 		{
 			Label label = Element;
@@ -242,11 +247,14 @@ namespace Xamarin.Forms.Platform.Android
 			_lastSizeRequest = null;
 		}
 
+		[PortHandler]
 		void UpdateLineBreakMode()
 		{
 			_view.SetLineBreakMode(Element);
 			_lastSizeRequest = null;
 		}
+
+		[PortHandler]
 		void UpdateCharacterSpacing()
 		{
 			if (Forms.IsLollipopOrNewer && Control is TextView textControl)
@@ -255,6 +263,7 @@ namespace Xamarin.Forms.Platform.Android
 			}
 		}
 
+		[PortHandler]
 		void UpdateLineHeight()
 		{
 			_lastSizeRequest = null;
@@ -264,11 +273,13 @@ namespace Xamarin.Forms.Platform.Android
 				_view.SetLineSpacing(0, (float)Element.LineHeight);
 		}
 
+		[PortHandler]
 		void UpdateMaxLines()
 		{
 			Control.SetMaxLines(Element);
 		}
 
+		[PortHandler]
 		void UpdateText()
 		{
 			if (Element.FormattedText != null)
@@ -314,6 +325,7 @@ namespace Xamarin.Forms.Platform.Android
 			_lastSizeRequest = null;
 		}
 
+		[PortHandler]
 		void UpdatePadding()
 		{
 			Control.SetPadding(

@@ -2,8 +2,8 @@
 using System.ComponentModel;
 using UIKit;
 using Xamarin.Forms.Internals;
+using Xamarin.Platform;
 using PlatformElement = Xamarin.Forms.PlatformConfiguration.iOSSpecific.VisualElement;
-
 
 namespace Xamarin.Forms.Platform.iOS
 {

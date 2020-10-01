@@ -6,6 +6,7 @@ using Foundation;
 using System.Collections.Generic;
 using CoreGraphics;
 using System.Diagnostics;
+using Xamarin.Platform;
 
 #if __MOBILE__
 using UIKit;
@@ -89,6 +90,7 @@ namespace Xamarin.Forms.Platform.MacOS
 		}
 
 #if __MOBILE__
+		[PortHandler]
 		public override void LayoutSubviews()
 		{
 			base.LayoutSubviews();
@@ -244,6 +246,7 @@ namespace Xamarin.Forms.Platform.MacOS
 				_perfectSizeValid = false;
 		}
 
+		[PortHandler]
 		void UpdateTextDecorations()
 		{
 			if (IsElementOrControlEmpty)
@@ -339,6 +342,7 @@ namespace Xamarin.Forms.Platform.MacOS
 				Layer.RemoveBackgroundLayer();
 		}
 
+		[PortHandler]
 		void UpdateHorizontalTextAlignment()
 		{
 #if __MOBILE__
@@ -348,6 +352,7 @@ namespace Xamarin.Forms.Platform.MacOS
 #endif
 		}
 
+		[PortHandler]
 		void UpdateLineBreakMode()
 		{
 #if __MOBILE__
@@ -397,6 +402,7 @@ namespace Xamarin.Forms.Platform.MacOS
 #endif
 		}
 
+		[PortHandler]
 		void UpdateCharacterSpacing()
 		{
 			if (IsElementOrControlEmpty)
@@ -419,6 +425,7 @@ namespace Xamarin.Forms.Platform.MacOS
 			_perfectSizeValid = false;
 		}
 
+		[PortHandler]
 		void UpdateText()
 		{
             if (IsElementOrControlEmpty)
@@ -436,6 +443,7 @@ namespace Xamarin.Forms.Platform.MacOS
 			}
 		}
 
+		[PortHandler]
 		void UpdateTextPlainText()
 		{
 			_formatted = Element.FormattedText;
@@ -458,6 +466,7 @@ namespace Xamarin.Forms.Platform.MacOS
 			UpdateLayout();
 		}
 
+		[PortHandler]
 		void UpdateFormattedText()
 		{
 #if __MOBILE__
@@ -494,6 +503,7 @@ namespace Xamarin.Forms.Platform.MacOS
 			UpdateFont();
 		}
 
+		[PortHandler]
 		protected virtual NSAttributedStringDocumentAttributes GetNSAttributedStringDocumentAttributes()
 		{
 			return new NSAttributedStringDocumentAttributes
@@ -523,6 +533,7 @@ namespace Xamarin.Forms.Platform.MacOS
 			return true;
 		}
 
+		[PortHandler]
 		void UpdateFont()
 		{
 			if(Element == null)
@@ -551,6 +562,7 @@ namespace Xamarin.Forms.Platform.MacOS
 			UpdateLayout();
 		}
 
+		[PortHandler]
 		void UpdateTextColor()
 		{
 			if (IsTextFormatted)
@@ -589,6 +601,7 @@ namespace Xamarin.Forms.Platform.MacOS
 #endif
 		}
 
+		[PortHandler]
 		void UpdateMaxLines()
 		{
 			if (Element.MaxLines >= 0)
@@ -641,6 +654,7 @@ namespace Xamarin.Forms.Platform.MacOS
 			}
 		}
 
+		[PortHandler]
 		void UpdatePadding()
 		{
 			if (IsElementOrControlEmpty)
@@ -667,6 +681,7 @@ namespace Xamarin.Forms.Platform.MacOS
 		}
 
 #if __MOBILE__
+		[PortHandler]
 		class FormsLabel : NativeLabel
 		{
 			public UIEdgeInsets TextInsets { get; set; }

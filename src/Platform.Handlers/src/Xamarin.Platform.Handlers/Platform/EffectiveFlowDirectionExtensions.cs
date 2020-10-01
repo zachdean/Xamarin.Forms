@@ -1,12 +1,13 @@
-using System;
+﻿using System;
 using System.ComponentModel;
+using Xamarin.Forms;
 
-namespace Xamarin.Forms
+namespace Xamarin.Platform
 {
 	[EditorBrowsable(EditorBrowsableState.Never)]
 	public static class EffectiveFlowDirectionExtensions
 	{
-		internal static EffectiveFlowDirection ToEffectiveFlowDirection(this FlowDirection self, bool isExplicit = false)
+		public static EffectiveFlowDirection ToEffectiveFlowDirection(this FlowDirection self, bool isExplicit = false)
 		{
 			switch (self)
 			{
@@ -39,7 +40,7 @@ namespace Xamarin.Forms
 			}
 		}
 
-		internal static FlowDirection ToFlowDirection(this EffectiveFlowDirection self)
+		public static FlowDirection ToFlowDirection(this EffectiveFlowDirection self)
 		{
 			if (self.IsLeftToRight())
 				return FlowDirection.LeftToRight;

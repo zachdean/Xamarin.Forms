@@ -5,6 +5,7 @@ using Android.Graphics;
 using Android.Util;
 using Xamarin.Forms.Internals;
 using Xamarin.Forms.PlatformConfiguration.AndroidSpecific;
+using Xamarin.Platform;
 using static System.String;
 using AButton = Android.Widget.Button;
 using AColor = Android.Graphics.Color;

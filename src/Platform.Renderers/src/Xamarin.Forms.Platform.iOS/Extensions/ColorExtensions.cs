@@ -327,14 +327,6 @@ namespace Xamarin.Forms.Platform.MacOS
 		}
 	}
 
-	public static class SizeExtensions
-	{
-		public static SizeF ToSizeF(this Size size)
-		{
-			return new SizeF((float)size.Width, (float)size.Height);
-		}
-	}
-
 	public static class RectangleExtensions
 	{
 		public static Rectangle ToRectangle(this RectangleF rect)
