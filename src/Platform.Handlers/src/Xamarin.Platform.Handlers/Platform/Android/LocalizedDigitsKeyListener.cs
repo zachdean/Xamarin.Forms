@@ -1,12 +1,12 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Android.Text;
 using Android.Text.Method;
 using Java.Lang;
 using Java.Text;
 
-namespace Xamarin.Forms.Platform.Android
+namespace Xamarin.Platform
 {
-	internal class LocalizedDigitsKeyListener : NumberKeyListener
+	public class LocalizedDigitsKeyListener : NumberKeyListener
 	{
 		readonly char _decimalSeparator;
 
@@ -14,19 +14,18 @@ namespace Xamarin.Forms.Platform.Android
 		// but we'll make it easy to localize the sign in the future just in case
 		const char SignCharacter = '-';
 
-		static Dictionary<char, LocalizedDigitsKeyListener> s_unsignedCache;
-		static Dictionary<char, LocalizedDigitsKeyListener> s_signedCache;
+		static Dictionary<char, LocalizedDigitsKeyListener>? UnsignedCache;
+		static Dictionary<char, LocalizedDigitsKeyListener>? SignedCache;
 
-		static char GetDecimalSeparator()
+		static char? GetDecimalSeparator()
 		{
-			var format = NumberFormat.Instance as DecimalFormat;
-			if (format == null)
+			if (!(NumberFormat.Instance is DecimalFormat format))
 			{
 				return '.';
 			}
 
-			DecimalFormatSymbols sym = format.DecimalFormatSymbols;
-			return sym.DecimalSeparator;
+			DecimalFormatSymbols? sym = format?.DecimalFormatSymbols;
+			return sym?.DecimalSeparator;
 		}
 
 		public static NumberKeyListener Create(InputTypes inputTypes)
@@ -40,7 +39,7 @@ namespace Xamarin.Forms.Platform.Android
 			}
 
 			// Figure out what the decimal separator is for the current locale
-			char decimalSeparator = GetDecimalSeparator();
+			char? decimalSeparator = GetDecimalSeparator();
 
 			if (decimalSeparator == '.')
 			{
@@ -56,17 +55,17 @@ namespace Xamarin.Forms.Platform.Android
 			return GetInstance(inputTypes, decimalSeparator);
 		}
 
-		public static LocalizedDigitsKeyListener GetInstance(InputTypes inputTypes, char decimalSeparator)
+		public static LocalizedDigitsKeyListener GetInstance(InputTypes inputTypes, char? decimalSeparator)
 		{
 			if ((inputTypes & InputTypes.NumberFlagSigned) != 0)
 			{
-				return GetInstance(inputTypes, decimalSeparator, ref s_signedCache);
+				return GetInstance(inputTypes, decimalSeparator ?? default, ref SignedCache);
 			}
 
-			return GetInstance(inputTypes, decimalSeparator, ref s_unsignedCache);
+			return GetInstance(inputTypes, decimalSeparator ?? default, ref UnsignedCache);
 		}
 
-		static LocalizedDigitsKeyListener GetInstance(InputTypes inputTypes, char decimalSeparator, ref Dictionary<char, LocalizedDigitsKeyListener> cache)
+		static LocalizedDigitsKeyListener GetInstance(InputTypes inputTypes, char decimalSeparator, ref Dictionary<char, LocalizedDigitsKeyListener>? cache)
 		{
 			if (cache == null)
 			{
@@ -89,18 +88,16 @@ namespace Xamarin.Forms.Platform.Android
 
 		public override InputTypes InputType { get; }
 
-		char[] _acceptedChars;
+		char[]? _acceptedChars;
 
 		protected override char[] GetAcceptedChars()
 		{
 			if ((InputType & InputTypes.NumberFlagSigned) == 0)
 			{
-				return _acceptedChars ??
-					   (_acceptedChars = new[] { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', _decimalSeparator });
+				return _acceptedChars ??= new[] { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', _decimalSeparator };
 			}
 
-			return _acceptedChars ??
-				   (_acceptedChars = new[] { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', SignCharacter, _decimalSeparator });
+			return _acceptedChars ??= new[] { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', SignCharacter, _decimalSeparator };
 		}
 
 		static bool IsSignChar(char c)
@@ -113,11 +110,11 @@ namespace Xamarin.Forms.Platform.Android
 			return c == _decimalSeparator;
 		}
 
-		public override ICharSequence FilterFormatted(ICharSequence source, int start, int end, ISpanned dest, int dstart,
+		public override ICharSequence FilterFormatted(ICharSequence? source, int start, int end, ISpanned? dest, int dstart,
 			int dend)
 		{
 			// Borrowed heavily from the Android source
-			ICharSequence filterFormatted = base.FilterFormatted(source, start, end, dest, dstart, dend);
+			ICharSequence? filterFormatted = base.FilterFormatted(source, start, end, dest, dstart, dend);
 
 			if (filterFormatted != null)
 			{
@@ -128,12 +125,12 @@ namespace Xamarin.Forms.Platform.Android
 
 			int sign = -1;
 			int dec = -1;
-			int dlen = dest.Length();
+			int dlen = dest != null ? dest.Length() : 0;
 
 			// Find out if the existing text has a sign or decimal point characters.
 			for (var i = 0; i < dstart; i++)
 			{
-				char c = dest.CharAt(i);
+				char c = dest != null ? dest.CharAt(i) : default;
 				if (IsSignChar(c))
 				{
 					sign = i;
@@ -146,7 +143,7 @@ namespace Xamarin.Forms.Platform.Android
 
 			for (int i = dend; i < dlen; i++)
 			{
-				char c = dest.CharAt(i);
+				char c = dest != null ? dest.CharAt(i) : default;
 				if (IsSignChar(c))
 				{
 					return new String(""); // Nothing can be inserted in front of a sign character.
@@ -162,10 +159,10 @@ namespace Xamarin.Forms.Platform.Android
 			// In addition, a sign character must be the very first character,
 			// and nothing can be inserted before an existing sign character.
 			// Go in reverse order so the offsets are stable.
-			SpannableStringBuilder stripped = null;
+			SpannableStringBuilder? stripped = null;
 			for (int i = end - 1; i >= start; i--)
 			{
-				char c = source.CharAt(i);
+				char c = source != null ? source.CharAt(i) : default;
 				var strip = false;
 
 				if (IsSignChar(c))
@@ -209,7 +206,9 @@ namespace Xamarin.Forms.Platform.Android
 				}
 			}
 
-			return stripped ?? filterFormatted;
+			ICharSequence? result = stripped ?? filterFormatted;
+
+			return result ?? new SpannableStringBuilder();
 		}
 	}
 }

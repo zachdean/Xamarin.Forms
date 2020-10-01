@@ -1,5 +1,4 @@
-﻿using Xamarin.Forms;
-using Xamarin.Platform;
+﻿using Xamarin.Platform;
 using Xamarin.Platform.Core;
 
 namespace Sample

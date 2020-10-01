@@ -20,7 +20,7 @@ namespace Xamarin.Platform.Handlers
 		public static PropertyMapper<IButton, ButtonHandler> ButtonMapper = new PropertyMapper<IButton, ButtonHandler>(ViewHandler.ViewMapper)
 		{
 			[nameof(IButton.Text)] = MapText,
-			[nameof(IButton.Color)] = MapColor
+			[nameof(IButton.TextColor)] = MapColor
 		};
 
 		public static void MapColor(ButtonHandler handler, IButton button)

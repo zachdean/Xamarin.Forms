@@ -22,10 +22,10 @@ namespace Xamarin.Platform
 			button.SetTitleColor(color.Cleanse(defaultColor).ToNative(), UIControlState.Normal);
 
 		public static void UpdateColor(this UIButton nativeButton, IButton button, Color defaultColor) =>
-			nativeButton.UpdateColor(button.Color, defaultColor);
+			nativeButton.UpdateColor(button.TextColor, defaultColor);
 
 		public static void UpdateColor(this UIButton nativeButton, IButton button) =>
-			nativeButton.UpdateColor(button.Color, nativeButton.TitleColor(UIControlState.Normal).ToColor());
+			nativeButton.UpdateColor(button.TextColor, nativeButton.TitleColor(UIControlState.Normal).ToColor());
 
 		static Color Cleanse(this Color color, Color defaultColor) => color.IsDefault ? defaultColor : color;
 

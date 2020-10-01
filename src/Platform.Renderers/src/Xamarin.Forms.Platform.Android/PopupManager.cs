@@ -7,6 +7,7 @@ using Android.Text;
 using Android.Views;
 using Android.Widget;
 using Xamarin.Forms.Internals;
+using Xamarin.Platform;
 using AppCompatActivity = AndroidX.AppCompat.App.AppCompatActivity;
 using AppCompatAlertDialog = AndroidX.AppCompat.App.AlertDialog;
 

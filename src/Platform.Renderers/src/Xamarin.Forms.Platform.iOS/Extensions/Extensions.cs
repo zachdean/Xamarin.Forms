@@ -1,4 +1,3 @@
-using Foundation;
 using System;
 using UIKit;
 using Xamarin.Forms.Internals;
@@ -110,27 +109,6 @@ namespace Xamarin.Forms.Platform.iOS
 			}
 		}
 
-		internal static UIReturnKeyType ToUIReturnKeyType(this ReturnType returnType)
-		{
-			switch (returnType)
-			{
-				case ReturnType.Go:
-					return UIReturnKeyType.Go;
-				case ReturnType.Next:
-					return UIReturnKeyType.Next;
-				case ReturnType.Send:
-					return UIReturnKeyType.Send;
-				case ReturnType.Search:
-					return UIReturnKeyType.Search;
-				case ReturnType.Done:
-					return UIReturnKeyType.Done;
-				case ReturnType.Default:
-					return UIReturnKeyType.Default;
-				default:
-					throw new System.NotImplementedException($"ReturnType {returnType} not supported");
-			}
-		}
-
 		internal static DeviceOrientation ToDeviceOrientation(this UIDeviceOrientation orientation)
 		{
 			switch (orientation)
@@ -145,56 +123,6 @@ namespace Xamarin.Forms.Platform.iOS
 					return DeviceOrientation.LandscapeRight;
 				default:
 					return DeviceOrientation.Other;
-			}
-		}
-
-		internal static NSMutableAttributedString AddCharacterSpacing(this NSAttributedString attributedString, string text, double characterSpacing)
-		{
-			if (attributedString == null && characterSpacing == 0)
-				return null;
-
-			NSMutableAttributedString mutableAttributedString = attributedString as NSMutableAttributedString;
-			if (attributedString == null || attributedString.Length == 0)
-			{
-				mutableAttributedString = text == null ? new NSMutableAttributedString() : new NSMutableAttributedString(text);
-			}
-			else
-			{
-				mutableAttributedString = new NSMutableAttributedString(attributedString);
-			}
-
-			AddKerningAdjustment(mutableAttributedString, text, characterSpacing);
-
-			return mutableAttributedString;
-		}
-
-		internal static bool HasCharacterAdjustment(this NSMutableAttributedString mutableAttributedString)
-		{
-			if (mutableAttributedString == null)
-				return false;
-
-			NSRange removalRange;
-			var attributes = mutableAttributedString.GetAttributes(0, out removalRange);
-
-			for (uint i = 0; i < attributes.Count; i++)
-				if (attributes.Keys[i] is NSString nSString && nSString == UIStringAttributeKey.KerningAdjustment)
-					return true;
-
-			return false;
-		}
-
-		internal static void AddKerningAdjustment(NSMutableAttributedString mutableAttributedString, string text, double characterSpacing)
-		{
-			if (!string.IsNullOrEmpty(text))
-			{
-				if (characterSpacing == 0 && !mutableAttributedString.HasCharacterAdjustment())
-					return;
-
-				mutableAttributedString.AddAttribute
-				(
-					UIStringAttributeKey.KerningAdjustment,
-					NSObject.FromObject(characterSpacing), new NSRange(0, text.Length - 1)
-				);
 			}
 		}
 

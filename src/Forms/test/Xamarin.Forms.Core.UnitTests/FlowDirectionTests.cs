@@ -1,8 +1,7 @@
-using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using NUnit.Framework;
-using Xamarin.Forms.Internals;
+using Xamarin.Platform;
 
 namespace Xamarin.Forms.Core.UnitTests
 {

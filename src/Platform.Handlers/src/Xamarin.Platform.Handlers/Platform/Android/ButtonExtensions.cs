@@ -9,7 +9,7 @@ namespace Xamarin.Platform
 {
 	public static class ButtonExtensions
 	{
-		public static void UpdateColor(this AndroidX.AppCompat.Widget.AppCompatButton button, Color color, ColorStateList? defaultColor)
+		public static void UpdateColor(this AppCompatButton button, Color color, ColorStateList? defaultColor)
 		{
 			if (color.IsDefault)
 				button.SetTextColor(defaultColor);
@@ -18,10 +18,10 @@ namespace Xamarin.Platform
 		}
 
 		public static void UpdateColor(this AppCompatButton appCompatButton, IButton button) =>
-			appCompatButton.UpdateColor(button.Color, appCompatButton.TextColors);
+			appCompatButton.UpdateColor(button.TextColor, appCompatButton.TextColors);
 
 		public static void UpdateColor(this AppCompatButton appCompatButton, IButton button, Color defaultColor) =>
-			appCompatButton.SetTextColor(button.Color.Cleanse(defaultColor).ToNative());		
+			appCompatButton.SetTextColor(button.TextColor.Cleanse(defaultColor).ToNative());		
 
 		public static void UpdateText(this AppCompatButton appCompatButton, IButton button) =>
 			appCompatButton.Text = button.Text;

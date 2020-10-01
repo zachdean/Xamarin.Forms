@@ -4,6 +4,7 @@ namespace Xamarin.Platform
 {
 	public interface IFrameworkElement
 	{
+		bool IsFocused { get; }
 		bool IsEnabled { get; }
 		Color BackgroundColor { get; }
 		Rectangle Frame { get; }

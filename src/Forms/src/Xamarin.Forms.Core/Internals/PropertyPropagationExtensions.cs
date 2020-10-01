@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
+using Xamarin.Platform;
 
 namespace Xamarin.Forms.Internals
 {

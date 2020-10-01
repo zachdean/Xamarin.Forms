@@ -9,9 +9,9 @@ namespace Xamarin.Forms
 
 		public TextAlignment VerticalTextAlignment => throw new NotImplementedException();
 
-		Color IText.Color
+		public string UpdateTransformedText(string source, TextTransform textTransform)
 		{
-			get => this.TextColor;
+			throw new NotImplementedException();
 		}
 
 		void IButton.Clicked()
