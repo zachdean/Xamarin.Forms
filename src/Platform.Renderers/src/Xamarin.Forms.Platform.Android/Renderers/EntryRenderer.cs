@@ -285,6 +285,7 @@ namespace Xamarin.Forms.Platform.Android
 			base.OnElementPropertyChanged(sender, e);
 		}
 
+		[PortHandler]
 		protected virtual NumberKeyListener GetDigitsKeyListener(InputTypes inputTypes)
 		{
 			// Override this in a custom renderer to use a different NumberKeyListener
@@ -293,6 +294,7 @@ namespace Xamarin.Forms.Platform.Android
 			return LocalizedDigitsKeyListener.Create(inputTypes);
 		}
 
+		[PortHandler]
 		protected virtual void UpdateImeOptions()
 		{
 			if (Element == null || Control == null)
@@ -302,11 +304,13 @@ namespace Xamarin.Forms.Platform.Android
 			EditText.ImeOptions = _currentInputImeFlag;
 		}
 
+		[PortHandler]
 		void UpdateHorizontalTextAlignment()
 		{
 			EditText.UpdateTextAlignment(Element.HorizontalTextAlignment, Element.VerticalTextAlignment);
 		}
 
+		[PortHandler]
 		void UpdateVerticalTextAlignment()
 		{
 			EditText.UpdateTextAlignment(Element.HorizontalTextAlignment, Element.VerticalTextAlignment);
@@ -315,12 +319,14 @@ namespace Xamarin.Forms.Platform.Android
 		protected abstract void UpdateColor();
 		protected abstract void UpdateTextColor(Color color);
 
+		[PortHandler]
 		protected virtual void UpdateFont()
 		{
 			EditText.Typeface = Element.ToTypeface();
 			EditText.SetTextSize(ComplexUnitType.Sp, (float)Element.FontSize);
 		}
 
+		[PortHandler]
 		void UpdateInputType()
 		{
 			Entry model = Element;
@@ -367,6 +373,7 @@ namespace Xamarin.Forms.Platform.Android
 			Control?.ClearFocus();
 		}
 
+		[PortHandler]
 		void UpdateMaxLength()
 		{
 			var currentFilters = new List<IInputFilter>(EditText?.GetFilters() ?? new IInputFilter[0]);
@@ -390,6 +397,7 @@ namespace Xamarin.Forms.Platform.Android
 				EditText.Text = currentControlText.Substring(0, Element.MaxLength);
 		}
 
+		[PortHandler]
 		void UpdateCharacterSpacing()
 		{
 			if (Forms.IsLollipopOrNewer)
@@ -398,6 +406,7 @@ namespace Xamarin.Forms.Platform.Android
 			}
 		}
 
+		[PortHandler]
 		void UpdateReturnType()
 		{
 			if (Control == null || Element == null)
@@ -433,6 +442,7 @@ namespace Xamarin.Forms.Platform.Android
 			}
 		}
 
+		[PortHandler]
 		void UpdateCursorSelection()
 		{
 			if (_nativeSelectionIsUpdating || Control == null || Element == null || EditText == null)
@@ -458,6 +468,7 @@ namespace Xamarin.Forms.Platform.Android
 			}
 		}
 
+		[PortHandler]
 		int GetSelectionEnd(int start)
 		{
 			int end = start;
@@ -473,6 +484,7 @@ namespace Xamarin.Forms.Platform.Android
 			return end;
 		}
 
+		[PortHandler]
 		int GetSelectionStart()
 		{
 			int start = EditText.Length();
@@ -487,6 +499,7 @@ namespace Xamarin.Forms.Platform.Android
 			return start;
 		}
 
+		[PortHandler]
 		void SetCursorPositionFromRenderer(int start)
 		{
 			try
@@ -504,6 +517,7 @@ namespace Xamarin.Forms.Platform.Android
 			}
 		}
 
+		[PortHandler]
 		void SetSelectionLengthFromRenderer(int selectionLength)
 		{
 			try
@@ -521,6 +535,7 @@ namespace Xamarin.Forms.Platform.Android
 			}
 		}
 
+		[PortHandler]
 		protected virtual void UpdateIsReadOnly()
 		{
 			bool isReadOnly = !Element.IsReadOnly;
@@ -529,6 +544,7 @@ namespace Xamarin.Forms.Platform.Android
 			EditText.Focusable = isReadOnly;
 		}
 
+		[PortHandler]
 		void UpdateText()
 		{
 			var text = Element.UpdateFormsText(Element.Text, Element.TextTransform);
@@ -548,7 +564,9 @@ namespace Xamarin.Forms.Platform.Android
 	// Entry clear button management
 	public abstract partial class EntryRendererBase<TControl>
 	{
+		[PortHandler]
 		Drawable _clearBtn;
+
 		internal override void OnNativeFocusChanged(bool hasFocus)
 		{
 			base.OnNativeFocusChanged(hasFocus);
@@ -561,6 +579,7 @@ namespace Xamarin.Forms.Platform.Android
 				UpdateClearBtnOnTyping();
 		}
 
+		[PortHandler]
 		void EditTextTouched(object sender, TouchEventArgs e)
 		{
 			e.Handled = false;
@@ -593,6 +612,7 @@ namespace Xamarin.Forms.Platform.Android
 			}
 		}
 
+		[PortHandler]
 		void UpdateClearBtnOnPropertyChanged()
 		{
 			bool isFocused = Element.IsFocused;
@@ -621,6 +641,7 @@ namespace Xamarin.Forms.Platform.Android
 				UpdateClearBtn(true);
 		}
 
+		[PortHandler]
 		void UpdateClearBtn(bool showClearButton)
 		{
 			Drawable d = showClearButton && (Element.Text?.Length > 0) ? GetCloseButtonDrawable() : null;
@@ -628,9 +649,11 @@ namespace Xamarin.Forms.Platform.Android
 			_clearBtn = d;
 		}
 
+		[PortHandler]
 		protected virtual Drawable GetCloseButtonDrawable()
 			=> ContextCompat.GetDrawable(Context, Resource.Drawable.abc_ic_clear_material);
 
+		[PortHandler]
 		void ListenForCloseBtnTouch(bool listen)
 		{
 			if (listen)

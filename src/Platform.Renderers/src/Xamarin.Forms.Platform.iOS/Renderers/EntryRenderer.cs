@@ -255,16 +255,19 @@ namespace Xamarin.Forms.Platform.iOS
 			return false;
 		}
 
+		[PortHandler]
 		void UpdateHorizontalTextAlignment()
 		{
 			Control.TextAlignment = Element.HorizontalTextAlignment.ToNativeTextAlignment(((IVisualElementController)Element).EffectiveFlowDirection);
 		}
 
+		[PortHandler]
 		void UpdateVerticalTextAlignment()
 		{
 			Control.VerticalAlignment = Element.VerticalTextAlignment.ToNativeTextAlignment();
 		}
 
+		[PortHandler]
 		protected virtual void UpdateColor()
 		{
 			var textColor = Element.TextColor;
@@ -284,6 +287,7 @@ namespace Xamarin.Forms.Platform.iOS
 			Control.AdjustsFontSizeToFitWidth = Element.OnThisPlatform().AdjustsFontSizeToFitWidth();
 		}
 
+		[PortHandler]
 		protected virtual void UpdateFont()
 		{
 			if (initialSize == CGSize.Empty)
@@ -295,6 +299,7 @@ namespace Xamarin.Forms.Platform.iOS
 			Control.Font = Element.ToUIFont();
 		}
 
+		[PortHandler]
 		void UpdateKeyboard()
 		{
 			var keyboard = Element.Keyboard;
@@ -319,6 +324,7 @@ namespace Xamarin.Forms.Platform.iOS
 			Control.ReloadInputViews();
 		}
 
+		[PortHandler]
 		void UpdatePassword()
 		{
 			if (Element.IsPassword && Control.IsFirstResponder)
@@ -356,9 +362,11 @@ namespace Xamarin.Forms.Platform.iOS
 			UpdateAttributedPlaceholder(Control.AttributedPlaceholder.AddCharacterSpacing(Element.Placeholder, Element.CharacterSpacing));
 		}
 
+		[PortHandler]
 		protected virtual void UpdateAttributedPlaceholder(NSAttributedString nsAttributedString) =>
 			Control.AttributedPlaceholder = nsAttributedString;
 
+		[PortHandler]
 		void UpdateText()
 		{
 			var text = Element.UpdateFormsText(Element.Text, Element.TextTransform);
@@ -367,6 +375,7 @@ namespace Xamarin.Forms.Platform.iOS
 				Control.Text = text;
 		}
 
+		[PortHandler]
 		void UpdateCharacterSpacing()
 		{
 			var textAttr = Control.AttributedText.AddCharacterSpacing(Element.Text, Element.CharacterSpacing);
@@ -380,6 +389,7 @@ namespace Xamarin.Forms.Platform.iOS
 				UpdateAttributedPlaceholder(placeHolder);
 		}
 
+		[PortHandler]
 		void UpdateMaxLength()
 		{
 			var currentControlText = Control.Text;
@@ -388,12 +398,14 @@ namespace Xamarin.Forms.Platform.iOS
 				Control.Text = currentControlText.Substring(0, Element.MaxLength);
 		}
 
+		[PortHandler]
 		bool ShouldChangeCharacters(UITextField textField, NSRange range, string replacementString)
 		{
 			var newLength = textField?.Text?.Length + replacementString?.Length - range.Length;
 			return newLength <= Element?.MaxLength;
 		}
 
+		[PortHandler]
 		void UpdateReturnType()
 		{
 			if (Control == null || Element == null)
@@ -401,6 +413,7 @@ namespace Xamarin.Forms.Platform.iOS
 			Control.ReturnKeyType = Element.ReturnType.ToUIReturnKeyType();
 		}
 
+		[PortHandler]
 		void UpdateCursorFromControl(NSObservedChange obj)
 		{
 			if (_nativeSelectionIsUpdating || Control == null || Element == null)
@@ -426,6 +439,7 @@ namespace Xamarin.Forms.Platform.iOS
 			}
 		}
 
+		[PortHandler]
 		void UpdateCursorSelection()
 		{
 			if (_nativeSelectionIsUpdating || Control == null || Element == null)
@@ -458,6 +472,7 @@ namespace Xamarin.Forms.Platform.iOS
 			}
 		}
 
+		[PortHandler]
 		UITextPosition GetSelectionEnd(int cursorPosition, UITextPosition start, int startOffset)
 		{
 			UITextPosition end = start;
@@ -477,6 +492,7 @@ namespace Xamarin.Forms.Platform.iOS
 			return end;
 		}
 
+		[PortHandler]
 		UITextPosition GetSelectionStart(int cursorPosition, out int startOffset)
 		{
 			UITextPosition start = Control.EndOfDocument;
@@ -510,6 +526,7 @@ namespace Xamarin.Forms.Platform.iOS
 			}
 		}
 
+		[PortHandler]
 		void SetCursorPositionFromRenderer(int start)
 		{
 			try
@@ -527,6 +544,7 @@ namespace Xamarin.Forms.Platform.iOS
 			}
 		}
 
+		[PortHandler]
 		void SetSelectionLengthFromRenderer(int selectionLength)
 		{
 			try
@@ -544,11 +562,13 @@ namespace Xamarin.Forms.Platform.iOS
 			}
 		}
 
+		[PortHandler]
 		void UpdateIsReadOnly()
 		{
 			Control.UserInteractionEnabled = !Element.IsReadOnly;
 		}
 
+		[PortHandler]
 		void UpdateClearButtonVisibility()
 		{
 			Control.ClearButtonMode = Element.ClearButtonVisibility == ClearButtonVisibility.WhileEditing ? UITextFieldViewMode.WhileEditing : UITextFieldViewMode.Never;
