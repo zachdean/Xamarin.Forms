@@ -309,11 +309,6 @@ namespace Xamarin.Forms.Core.UnitTests
 				throw new NotImplementedException();
 			}
 
-			public IIsolatedStorageFile GetUserStoreForApplication()
-			{
-				throw new NotImplementedException();
-			}
-
 			public void OpenUriAction(Uri uri)
 			{
 				throw new NotImplementedException();

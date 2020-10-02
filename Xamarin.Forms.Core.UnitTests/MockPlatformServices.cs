@@ -41,19 +41,7 @@ namespace Xamarin.Forms.Core.UnitTests
 			_isInvokeRequired = isInvokeRequired;
 		}
 
-		public string GetHash(string input)
-		{
-			return Internals.Crc64.GetHash(input);
-		}
-
-		string IPlatformServices.GetMD5Hash(string input) => GetHash(input);
-
-		static int hex(int v)
-		{
-			if (v < 10)
-				return '0' + v;
-			return 'a' + v - 10;
-		}
+		public string GetHash(string input) => Crc64.GetHash(input);
 
 		public double GetNamedSize(NamedSize size, Type targetElement, bool useOldSizes)
 		{
@@ -141,53 +129,6 @@ namespace Xamarin.Forms.Core.UnitTests
 		public Assembly[] GetAssemblies()
 		{
 			return AppDomain.CurrentDomain.GetAssemblies();
-		}
-
-		public Internals.IIsolatedStorageFile GetUserStoreForApplication()
-		{
-			return new MockIsolatedStorageFile(IsolatedStorageFile.GetUserStoreForAssembly());
-		}
-
-		public class MockIsolatedStorageFile : Internals.IIsolatedStorageFile
-		{
-			readonly IsolatedStorageFile isolatedStorageFile;
-			public MockIsolatedStorageFile(IsolatedStorageFile isolatedStorageFile)
-			{
-				this.isolatedStorageFile = isolatedStorageFile;
-			}
-
-			public Task<bool> GetDirectoryExistsAsync(string path)
-			{
-				return Task.FromResult(isolatedStorageFile.DirectoryExists(path));
-			}
-
-			public Task CreateDirectoryAsync(string path)
-			{
-				isolatedStorageFile.CreateDirectory(path);
-				return Task.FromResult(true);
-			}
-
-			public Task<Stream> OpenFileAsync(string path, FileMode mode, FileAccess access)
-			{
-				Stream stream = isolatedStorageFile.OpenFile(path, mode, access);
-				return Task.FromResult(stream);
-			}
-
-			public Task<Stream> OpenFileAsync(string path, FileMode mode, FileAccess access, FileShare share)
-			{
-				Stream stream = isolatedStorageFile.OpenFile(path, mode, access, share);
-				return Task.FromResult(stream);
-			}
-
-			public Task<bool> GetFileExistsAsync(string path)
-			{
-				return Task.FromResult(isolatedStorageFile.FileExists(path));
-			}
-
-			public Task<DateTimeOffset> GetLastWriteTimeAsync(string path)
-			{
-				return Task.FromResult(isolatedStorageFile.GetLastWriteTime(path));
-			}
 		}
 
 		public void QuitApplication()
