@@ -4,7 +4,7 @@ using System.IO;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
-using Xamarin.Forms.Internals;
+using Xamarin.Platform;
 
 namespace Xamarin.Forms.Internals
 {
@@ -21,9 +21,6 @@ namespace Xamarin.Forms.Internals
 
 		string GetHash(string input);
 
-		[Obsolete("GetMD5Hash is obsolete as of version 4.7.0")]
-		string GetMD5Hash(string input);
-
 		double GetNamedSize(NamedSize size, Type targetElementType, bool useOldSizes);
 
 		Color GetNamedColor(string name);
@@ -31,8 +28,6 @@ namespace Xamarin.Forms.Internals
 		OSAppTheme RequestedTheme { get; }
 
 		Task<Stream> GetStreamAsync(Uri uri, CancellationToken cancellationToken);
-
-		IIsolatedStorageFile GetUserStoreForApplication();
 
 		void OpenUriAction(Uri uri);
 

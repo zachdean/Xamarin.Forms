@@ -2,13 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.IO.IsolatedStorage;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Net.Http;
 using System.Reflection;
-using System.Security.Cryptography;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Xamarin.Forms.Internals;
@@ -256,25 +252,14 @@ namespace Xamarin.Forms
 #endif
 			}
 
-			public void BeginInvokeOnMainThread(Action action)
-			{
-				NSRunLoop.Main.BeginInvokeOnMainThread(action.Invoke);
-			}
+			public void BeginInvokeOnMainThread(Action action) => NSRunLoop.Main.BeginInvokeOnMainThread(action.Invoke);
 
-			public Ticker CreateTicker()
-			{
-				return new CADisplayLinkTicker();
-			}
+			public Ticker CreateTicker() => new CADisplayLinkTicker();
 
-			public Assembly[] GetAssemblies()
-			{
-				return AppDomain.CurrentDomain.GetAssemblies();
-			}
+			public Assembly[] GetAssemblies() => AppDomain.CurrentDomain.GetAssemblies();
 
 			public string GetHash(string input) => Crc64.GetHash(input);
-
-			string IPlatformServices.GetMD5Hash(string input) => GetHash(input);
-
+		
 			public double GetNamedSize(NamedSize size, Type targetElementType, bool useOldSizes)
 			{
 				// We make these up anyway, so new sizes didn't really change
@@ -594,22 +579,7 @@ namespace Xamarin.Forms
 #endif
 			}
 
-			public async Task<Stream> GetStreamAsync(Uri uri, CancellationToken cancellationToken)
-			{
-				using (var client = GetHttpClient())
-				{
-					// Do not remove this await otherwise the client will dispose before
-					// the stream even starts
-					var result = await StreamWrapper.GetStreamAsync(uri, cancellationToken, client).ConfigureAwait(false);
-
-					return result;
-				}
-			}
-
-			public IIsolatedStorageFile GetUserStoreForApplication()
-			{
-				return new _IsolatedStorageFile(IsolatedStorageFile.GetUserStoreForApplication());
-			}
+			public Task<Stream> GetStreamAsync(Uri uri, CancellationToken cancellationToken) => Xamarin.Platform.StreamExtensions.GetStreamAsync(uri, cancellationToken);
 
 			public bool IsInvokeRequired => !NSThread.IsMain;
 
@@ -642,68 +612,6 @@ namespace Xamarin.Forms
 						t.Invalidate();
 				});
 				NSRunLoop.Main.AddTimer(timer, NSRunLoopMode.Common);
-			}
-
-			HttpClient GetHttpClient()
-			{
-				var proxy = CoreFoundation.CFNetwork.GetSystemProxySettings();
-				var handler = new HttpClientHandler();
-				if (!string.IsNullOrEmpty(proxy.HTTPProxy))
-				{
-					handler.Proxy = CoreFoundation.CFNetwork.GetDefaultProxy();
-					handler.UseProxy = true;
-				}
-				return new HttpClient(handler);
-			}
-
-			static int Hex(int v)
-			{
-				if (v < 10)
-					return '0' + v;
-				return 'a' + v - 10;
-			}
-
-			public class _IsolatedStorageFile : IIsolatedStorageFile
-			{
-				readonly IsolatedStorageFile _isolatedStorageFile;
-
-				public _IsolatedStorageFile(IsolatedStorageFile isolatedStorageFile)
-				{
-					_isolatedStorageFile = isolatedStorageFile;
-				}
-
-				public Task CreateDirectoryAsync(string path)
-				{
-					_isolatedStorageFile.CreateDirectory(path);
-					return Task.FromResult(true);
-				}
-
-				public Task<bool> GetDirectoryExistsAsync(string path)
-				{
-					return Task.FromResult(_isolatedStorageFile.DirectoryExists(path));
-				}
-
-				public Task<bool> GetFileExistsAsync(string path)
-				{
-					return Task.FromResult(_isolatedStorageFile.FileExists(path));
-				}
-
-				public Task<DateTimeOffset> GetLastWriteTimeAsync(string path)
-				{
-					return Task.FromResult(_isolatedStorageFile.GetLastWriteTime(path));
-				}
-
-				public Task<Stream> OpenFileAsync(string path, FileMode mode, FileAccess access)
-				{
-					Stream stream = _isolatedStorageFile.OpenFile(path, mode, access);
-					return Task.FromResult(stream);
-				}
-
-				public Task<Stream> OpenFileAsync(string path, FileMode mode, FileAccess access, FileShare share)
-				{
-					Stream stream = _isolatedStorageFile.OpenFile(path, mode, access, share);
-					return Task.FromResult(stream);
-				}
 			}
 
 			public void QuitApplication()

@@ -2,13 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
-using System.IO.IsolatedStorage;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Net.Http;
 using System.Reflection;
-using System.Security.Cryptography;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Android.App;
@@ -248,12 +245,7 @@ namespace Xamarin.Forms
 
 		public static event EventHandler<ViewInitializedEventArgs> ViewInitialized;
 
-		internal static void SendViewInitialized(this VisualElement self, global::Android.Views.View nativeView)
-		{
-			EventHandler<ViewInitializedEventArgs> viewInitialized = ViewInitialized;
-			if (viewInitialized != null)
-				viewInitialized(self, new ViewInitializedEventArgs { View = self, NativeView = nativeView });
-		}
+		internal static void SendViewInitialized(this VisualElement self, global::Android.Views.View nativeView) => ViewInitialized?.Invoke(self, new ViewInitializedEventArgs { View = self, NativeView = nativeView });
 
 		static void SetupInit(
 			Context activity,
@@ -515,18 +507,11 @@ namespace Xamarin.Forms
 				}
 			}
 
-			public override Size PixelScreenSize
-			{
-				get { return _pixelScreenSize; }
-			}
+			public override Size PixelScreenSize => _pixelScreenSize;
 
 			public override Size ScaledScreenSize => _scaledScreenSize;
 
-			public override double ScalingFactor
-			{
-				get { return _scalingFactor; }
-			}
-
+			public override double ScalingFactor => _scalingFactor;
 
 			public override double DisplayRound(double value) =>
 				Math.Round(ScalingFactor * value) / ScalingFactor;
@@ -581,10 +566,7 @@ namespace Xamarin.Forms
 				UpdateScreenMetrics(formsActivity);
 			}
 
-			void ConfigurationChanged(object sender, EventArgs e)
-			{
-				CheckOrientationChanged(_formsActivity);
-			}
+			void ConfigurationChanged(object sender, EventArgs e) => CheckOrientationChanged(_formsActivity);
 		}
 
 		class AndroidExpressionSearch : ExpressionVisitor, IExpressionSearch
@@ -650,19 +632,11 @@ namespace Xamarin.Forms
 				s_handler.Post(action);
 			}
 
-			public Ticker CreateTicker()
-			{
-				return new AndroidTicker();
-			}
+			public Ticker CreateTicker() => new AndroidTicker();
 
-			public Assembly[] GetAssemblies()
-			{
-				return AppDomain.CurrentDomain.GetAssemblies();
-			}
+			public Assembly[] GetAssemblies() => AppDomain.CurrentDomain.GetAssemblies();
 
 			public string GetHash(string input) => Crc64.GetHash(input);
-
-			string IPlatformServices.GetMD5Hash(string input) => GetHash(input);
 
 			public double GetNamedSize(NamedSize size, Type targetElementType, bool useOldSizes)
 			{
@@ -826,18 +800,7 @@ namespace Xamarin.Forms
 				}
 			}
 
-			public IIsolatedStorageFile GetUserStoreForApplication()
-			{
-				return new _IsolatedStorageFile(IsolatedStorageFile.GetUserStoreForApplication());
-			}
-
-			public bool IsInvokeRequired
-			{
-				get
-				{
-					return Looper.MainLooper != Looper.MyLooper();
-				}
-			}
+			public bool IsInvokeRequired => Looper.MainLooper != Looper.MyLooper();
 
 			public string RuntimePlatform => Device.Android;
 
@@ -878,13 +841,6 @@ namespace Xamarin.Forms
 				return defaultValue;
 			}
 
-			static int Hex(int v)
-			{
-				if (v < 10)
-					return '0' + v;
-				return 'a' + v - 10;
-			}
-
 			bool TryGetTextAppearance(int appearance, out double val)
 			{
 				val = 0;
@@ -911,15 +867,9 @@ namespace Xamarin.Forms
 				return false;
 			}
 
-			public void QuitApplication()
-			{
-				Internals.Log.Warning(nameof(AndroidPlatformServices), "Platform doesn't implement QuitApp");
-			}
+			public void QuitApplication() => Internals.Log.Warning(nameof(AndroidPlatformServices), "Platform doesn't implement QuitApp");
 
-			public SizeRequest GetNativeSize(VisualElement view, double widthConstraint, double heightConstraint)
-			{
-				return Platform.Android.Platform.GetNativeSize(view, widthConstraint, heightConstraint);
-			}
+			public SizeRequest GetNativeSize(VisualElement view, double widthConstraint, double heightConstraint) => Platform.Android.Platform.GetNativeSize(view, widthConstraint, heightConstraint);
 
 			public void Invalidate(VisualElement visualElement)
 			{
@@ -947,49 +897,6 @@ namespace Xamarin.Forms
 						default:
 							return OSAppTheme.Unspecified;
 					};
-				}
-			}
-
-			public class _IsolatedStorageFile : IIsolatedStorageFile
-			{
-				readonly IsolatedStorageFile _isolatedStorageFile;
-
-				public _IsolatedStorageFile(IsolatedStorageFile isolatedStorageFile)
-				{
-					_isolatedStorageFile = isolatedStorageFile;
-				}
-
-				public Task CreateDirectoryAsync(string path)
-				{
-					_isolatedStorageFile.CreateDirectory(path);
-					return Task.FromResult(true);
-				}
-
-				public Task<bool> GetDirectoryExistsAsync(string path)
-				{
-					return Task.FromResult(_isolatedStorageFile.DirectoryExists(path));
-				}
-
-				public Task<bool> GetFileExistsAsync(string path)
-				{
-					return Task.FromResult(_isolatedStorageFile.FileExists(path));
-				}
-
-				public Task<DateTimeOffset> GetLastWriteTimeAsync(string path)
-				{
-					return Task.FromResult(_isolatedStorageFile.GetLastWriteTime(path));
-				}
-
-				public Task<Stream> OpenFileAsync(string path, FileMode mode, FileAccess access)
-				{
-					Stream stream = _isolatedStorageFile.OpenFile(path, mode, access);
-					return Task.FromResult(stream);
-				}
-
-				public Task<Stream> OpenFileAsync(string path, FileMode mode, FileAccess access, FileShare share)
-				{
-					Stream stream = _isolatedStorageFile.OpenFile(path, mode, access, share);
-					return Task.FromResult(stream);
 				}
 			}
 		}

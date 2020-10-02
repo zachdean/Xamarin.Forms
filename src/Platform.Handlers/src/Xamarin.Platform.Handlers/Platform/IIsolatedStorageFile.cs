@@ -3,7 +3,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Threading.Tasks;
 
-namespace Xamarin.Forms.Internals
+namespace Xamarin.Platform
 {
 	[EditorBrowsable(EditorBrowsableState.Never)]
 	public interface IIsolatedStorageFile
