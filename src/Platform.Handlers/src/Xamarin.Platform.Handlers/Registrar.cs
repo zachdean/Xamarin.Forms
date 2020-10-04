@@ -2,15 +2,20 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Diagnostics;
+using System.Reflection;
 
 namespace Xamarin.Platform
 {
 	public static class Registrar
 	{
+		static Assembly _callingAssembly;
+		public static Assembly CallingAssembly => _callingAssembly;
 		public static Registrar<IFrameworkElement, IViewHandler> Handlers { get; private set; }
 
 		static Registrar()
 		{
+			_callingAssembly = Assembly.GetCallingAssembly();
+
 			Handlers = new Registrar<IFrameworkElement, IViewHandler>();
 		}
 	}
