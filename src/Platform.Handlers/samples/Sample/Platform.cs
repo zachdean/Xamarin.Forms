@@ -1,4 +1,5 @@
 ﻿using Xamarin.Platform.Handlers;
+using Xamarin.Platform.Handlers.Image;
 using RegistrarHandlers = Xamarin.Platform.Registrar;
 
 namespace Sample
@@ -7,18 +8,30 @@ namespace Sample
 	{
 		static bool HasInit;
 
-		public static void Init()
+		public static void Init(bool useForms = true)
 		{
 			if (HasInit)
 				return;
 
 			HasInit = true;
 
-			//RegistrarHandlers.Handlers.Register<Layout, LayoutHandler>();
-
-			RegistrarHandlers.Handlers.Register<Button, ButtonHandler>();
-			//RegistrarHandlers.Handlers.Register<Entry, EntryHandler>();
-			//RegistrarHandlers.Handlers.Register<Label, LabelHandler>();
+			if (useForms)
+				RegisterForms();
+			else
+				RegisterPoco();
 		}
+
+		static void RegisterForms()
+		{
+			RegistrarHandlers.Handlers.Register<Xamarin.Forms.Button, ButtonHandler>();
+			RegistrarHandlers.Handlers.Register<Xamarin.Forms.Image, ImageHandler>();
+		}
+
+		static void RegisterPoco()
+		{
+			RegistrarHandlers.Handlers.Register<Button, ButtonHandler>();
+			RegistrarHandlers.Handlers.Register<Image, ImageHandler>();
+		}
+
 	}
 }

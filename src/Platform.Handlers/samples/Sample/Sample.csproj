@@ -7,6 +7,12 @@
     <ProjectReference Include="..\..\..\..\Xamarin.Forms.Platform.iOS\Xamarin.Forms.Platform.iOS.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <None Remove="Images\xamarinlogo.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Images\xamarinlogo.png" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\..\src\Xamarin.Platform.Handlers\Xamarin.Platform.Handlers.csproj" />
     <ProjectReference Include="..\..\..\..\Xamarin.Forms.Core\Xamarin.Forms.Core.csproj" />
   </ItemGroup>
