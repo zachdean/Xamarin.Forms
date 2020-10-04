@@ -6,7 +6,7 @@ using Xamarin.Forms.Internals;
 
 namespace Xamarin.Forms
 {
-	public class Image : View, IImageController, IElementConfiguration<Image>, IViewController, IImageElement
+	public partial class Image : View, IImageController, IElementConfiguration<Image>, IViewController, IImageElement
 	{
 		public static readonly BindableProperty SourceProperty = ImageElement.SourceProperty;
 

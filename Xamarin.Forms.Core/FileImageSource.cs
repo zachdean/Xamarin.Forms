@@ -1,9 +1,11 @@
+using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Xamarin.Forms
 {
 	[TypeConverter(typeof(FileImageSourceConverter))]
-	public sealed class FileImageSource : ImageSource
+	public sealed class FileImageSource : ImageSource, Xamarin.Platform.IFileImageSource
 	{
 		public static readonly BindableProperty FileProperty = BindableProperty.Create("File", typeof(string), typeof(FileImageSource), default(string));
 
@@ -15,15 +17,9 @@ namespace Xamarin.Forms
 			set { SetValue(FileProperty, value); }
 		}
 
-		public override Task<bool> Cancel()
-		{
-			return Task.FromResult(false);
-		}
+		public override Task<bool> Cancel() => Task.FromResult(false);
 
-		public override string ToString()
-		{
-			return $"File: {File}";
-		}
+		public override string ToString() => $"File: {File}";
 
 		public static implicit operator FileImageSource(string file)
 		{
@@ -32,7 +28,7 @@ namespace Xamarin.Forms
 
 		public static implicit operator string(FileImageSource file)
 		{
-			return file != null ? file.File : null;
+			return file?.File;
 		}
 
 		protected override void OnPropertyChanged(string propertyName = null)

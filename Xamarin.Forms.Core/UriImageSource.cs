@@ -5,18 +5,19 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using Xamarin.Forms.Internals;
+using Xamarin.Platform;
 using IOPath = System.IO.Path;
 
 namespace Xamarin.Forms
 {
-	public sealed class UriImageSource : ImageSource
+	public sealed class UriImageSource : ImageSource, Xamarin.Platform.IStreamImageSource
 	{
 		internal const string CacheName = "ImageLoaderCache";
 
 		public static readonly BindableProperty UriProperty = BindableProperty.Create("Uri", typeof(Uri), typeof(UriImageSource), default(Uri),
 			propertyChanged: (bindable, oldvalue, newvalue) => ((UriImageSource)bindable).OnUriChanged(), validateValue: (bindable, value) => value == null || ((Uri)value).IsAbsoluteUri);
 
-		static readonly Xamarin.Forms.Internals.IIsolatedStorageFile Store = Device.PlatformServices.GetUserStoreForApplication();
+		static readonly Xamarin.Platform.IIsolatedStorageFile Store = new Xamarin.Platform.IsolatedStorageService();
 
 		static readonly object s_syncHandle = new object();
 		static readonly Dictionary<string, LockingSemaphore> s_semaphores = new Dictionary<string, LockingSemaphore>();
@@ -68,7 +69,8 @@ namespace Xamarin.Forms
 			set { SetValue(UriProperty, value); }
 		}
 
-		[EditorBrowsable(EditorBrowsableState.Never)]
+		public Task<Stream> GetStreamSourceAsync(CancellationToken userToken = default(CancellationToken)) => GetStreamAsync(userToken);
+
 		public async Task<Stream> GetStreamAsync(CancellationToken userToken = default(CancellationToken))
 		{
 			OnLoadingStarted();
@@ -94,15 +96,9 @@ namespace Xamarin.Forms
 			return stream;
 		}
 
-		public override string ToString()
-		{
-			return $"Uri: {Uri}";
-		}
+		public override string ToString() => $"Uri: {Uri}";
 
-		static string GetCacheKey(Uri uri)
-		{
-			return Device.PlatformServices.GetHash(uri.AbsoluteUri);
-		}
+		static string GetCacheKey(Uri uri) => Crc64.GetHash(uri.AbsoluteUri);
 
 		async Task<bool> GetHasLocallyCachedCopyAsync(string key, bool checkValidity = true)
 		{
@@ -133,7 +129,7 @@ namespace Xamarin.Forms
 			{
 				try
 				{
-					stream = await Device.GetStreamAsync(uri, cancellationToken).ConfigureAwait(false);
+					stream = await StreamExtensions.GetStreamAsync(uri, cancellationToken).ConfigureAwait(false);
 				}
 				catch (Exception ex)
 				{
@@ -176,7 +172,7 @@ namespace Xamarin.Forms
 			Stream stream;
 			try
 			{
-				stream = await Device.GetStreamAsync(uri, cancellationToken).ConfigureAwait(false);
+				stream = await StreamExtensions.GetStreamAsync(uri, cancellationToken).ConfigureAwait(false);
 				if (stream == null)
 					return null;
 			}

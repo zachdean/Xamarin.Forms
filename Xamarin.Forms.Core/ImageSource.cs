@@ -3,11 +3,12 @@ using System.IO;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
+using Xamarin.Platform;
 
 namespace Xamarin.Forms
 {
 	[TypeConverter(typeof(ImageSourceConverter))]
-	public abstract class ImageSource : Element
+	public abstract class ImageSource : Element, IImageSource
 	{
 		readonly object _synchandle = new object();
 		CancellationTokenSource _cancellationTokenSource;
