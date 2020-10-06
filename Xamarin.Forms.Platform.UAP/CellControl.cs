@@ -117,7 +117,7 @@ namespace Xamarin.Forms.Platform.UWP
 		{
 			base.OnProcessKeyboardAccelerators(args);
 
-			if (Cell.HasContextActions && args.Modifiers == VirtualKeyModifiers.Control && args.Key == VirtualKey.)
+			if (Cell.HasContextActions && args.Modifiers == VirtualKeyModifiers.Control && args.Key == VirtualKey.O)
 				OpenContextMenu();
 		}
 
