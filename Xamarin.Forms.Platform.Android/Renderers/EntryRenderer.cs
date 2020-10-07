@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using Android.Content;
+using Android.Graphics;
 using Android.Graphics.Drawables;
 using Android.Text;
 using Android.Text.Method;
@@ -623,6 +624,12 @@ namespace Xamarin.Forms.Platform.Android
 		void UpdateClearBtn(bool showClearButton)
 		{
 			Drawable d = showClearButton && (Element.Text?.Length > 0) ? GetCloseButtonDrawable() : null;
+
+			if (!Element.TextColor.IsDefault)
+				d?.SetColorFilter(Element.TextColor.ToAndroid(), FilterMode.SrcIn);
+			else
+				d?.ClearColorFilter();
+
 			EditText.SetCompoundDrawablesWithIntrinsicBounds(null, null, d, null);
 			_clearBtn = d;
 		}
