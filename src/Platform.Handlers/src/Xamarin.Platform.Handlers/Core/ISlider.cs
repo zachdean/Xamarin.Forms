@@ -1,5 +1,4 @@
-﻿using System.Windows.Input;
-using Xamarin.Forms;
+﻿using Xamarin.Forms;
 
 namespace Xamarin.Platform
 {
@@ -12,9 +11,6 @@ namespace Xamarin.Platform
 		Color MinimumTrackColor { get; }
 		Color MaximumTrackColor { get; }
 		Color ThumbColor { get; }
-
-		ICommand DragStartedCommand { get; }
-		ICommand DragCompletedCommand { get; }
 
 		void ValueChanged();
 		void DragStarted();
