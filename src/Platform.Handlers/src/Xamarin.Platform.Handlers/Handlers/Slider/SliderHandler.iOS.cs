@@ -5,15 +5,13 @@ namespace Xamarin.Platform.Handlers
 {
 	public partial class SliderHandler : AbstractViewHandler<ISlider, UISlider>
 	{
-		internal UIColor? _defaultMinTrackColor;
-		internal UIColor? _defaultMaxTrackColor;
-		internal UIColor? _defaultThumbColor;
+		static UIColor? DefaultMinTrackColor;
+		static UIColor? DefaultMaxTrackColor;
+		static UIColor? DefaultThumbColor;
 
 		protected override UISlider CreateView()
 		{
 			var slider = new UISlider();
-
-			UpdateDefaultColors(slider);
 
 			slider.ValueChanged += OnControlValueChanged;
 
@@ -23,14 +21,66 @@ namespace Xamarin.Platform.Handlers
 			return slider;
 		}
 
-		void UpdateDefaultColors(UISlider uISlider)
+		protected override void SetupDefaults()
 		{
-			if (uISlider == null)
+			base.SetupDefaults();
+
+			var slider = TypedNativeView;
+
+			if (slider == null)
 				return;
 
-			_defaultMinTrackColor = uISlider.MinimumTrackTintColor;
-			_defaultMaxTrackColor = uISlider.MaximumTrackTintColor;
-			_defaultThumbColor = uISlider.ThumbTintColor;
+			DefaultMinTrackColor = slider.MinimumTrackTintColor;
+			DefaultMaxTrackColor = slider.MaximumTrackTintColor;
+			DefaultThumbColor = slider.ThumbTintColor;
+		}
+
+		public static void MapMinimum(IViewHandler handler, ISlider slider)
+		{
+			ViewHandler.CheckParameters(handler, slider);
+
+			if (handler is SliderHandler sliderHandler)
+				sliderHandler.TypedNativeView?.UpdateMinimum(slider);
+		}
+
+		public static void MapMaximum(IViewHandler handler, ISlider slider)
+		{
+			ViewHandler.CheckParameters(handler, slider);
+
+			if (handler is SliderHandler sliderHandler)
+				sliderHandler.TypedNativeView?.UpdateMaximum(slider);
+		}
+
+		public static void MapValue(IViewHandler handler, ISlider slider)
+		{
+			ViewHandler.CheckParameters(handler, slider);
+
+			if (handler is SliderHandler sliderHandler)
+				sliderHandler.TypedNativeView?.UpdateValue(slider);
+		}
+
+		public static void MapMinimumTrackColor(IViewHandler handler, ISlider slider)
+		{
+			ViewHandler.CheckParameters(handler, slider);
+
+			if (handler is SliderHandler sliderHandler)
+				sliderHandler.TypedNativeView?.UpdateMinimumTrackColor(slider, DefaultMinTrackColor);
+		}
+
+		public static void MapMaximumTrackColor(IViewHandler handler, ISlider slider)
+		{
+			ViewHandler.CheckParameters(handler, slider);
+
+			if (handler is SliderHandler sliderHandler)
+				sliderHandler.TypedNativeView?.UpdateMaximumTrackColor(slider, DefaultMaxTrackColor);
+		}
+
+		public static void MapThumbColor(IViewHandler handler, ISlider slider)
+		{
+			ViewHandler.CheckParameters(handler, slider);
+
+			if (handler is SliderHandler sliderHandler)
+				sliderHandler.TypedNativeView?.UpdateThumbColor(slider, DefaultThumbColor);
 		}
 
 		void OnControlValueChanged(object sender, EventArgs eventArgs)
@@ -39,7 +89,6 @@ namespace Xamarin.Platform.Handlers
 				return;
 
 			VirtualView.Value = TypedNativeView.Value;
-			VirtualView.ValueChanged();
 		}
 
 		void OnTouchDownControlEvent(object sender, EventArgs e)

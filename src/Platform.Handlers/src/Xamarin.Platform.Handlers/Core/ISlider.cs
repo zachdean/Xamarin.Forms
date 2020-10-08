@@ -12,7 +12,6 @@ namespace Xamarin.Platform
 		Color MaximumTrackColor { get; }
 		Color ThumbColor { get; }
 
-		void ValueChanged();
 		void DragStarted();
 		void DragCompleted();
 	}

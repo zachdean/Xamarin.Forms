@@ -2,12 +2,11 @@
 using Android.Graphics;
 using Android.Widget;
 using Xamarin.Forms;
-using Xamarin.Platform.Handlers;
 
 namespace Xamarin.Platform
 {
 	public static class SliderExtensions
-	{ 
+	{
 		public static void UpdateMinimum(this SeekBar seekBar, ISlider slider)
 		{
 			seekBar.Min = (int)slider.Minimum;
@@ -27,12 +26,20 @@ namespace Xamarin.Platform
 			seekBar.Progress = (int)((value - min) / (max - min) * 1000.0);
 		}
 
-		public static void UpdateMinimumTrackColor(this SeekBar seekBar, SliderHandler sliderHandler, ISlider slider)
+		public static void UpdateMinimumTrackColor(this SeekBar seekBar, ISlider slider)
+		{
+			UpdateMinimumTrackColor(seekBar, slider, null, null);
+		}
+
+		public static void UpdateMinimumTrackColor(this SeekBar seekBar, ISlider slider, ColorStateList? defaultProgressTintList, PorterDuff.Mode? defaultProgressTintMode)
 		{
 			if (slider.MinimumTrackColor == Forms.Color.Default)
 			{
-				seekBar.ProgressTintList = sliderHandler._defaultProgressTintList;
-				seekBar.ProgressTintMode = sliderHandler._defaultProgressTintMode;
+				if (defaultProgressTintList != null)
+					seekBar.ProgressTintList = defaultProgressTintList;
+
+				if (defaultProgressTintMode != null)
+					seekBar.ProgressTintMode = defaultProgressTintMode;
 			}
 			else
 			{
@@ -41,12 +48,20 @@ namespace Xamarin.Platform
 			}
 		}
 
-		public static void UpdateMaximumTrackColor(this SeekBar seekBar, SliderHandler sliderHandler, ISlider slider)
+		public static void UpdateMaximumTrackColor(this SeekBar seekBar, ISlider slider)
+		{
+			UpdateMaximumTrackColor(seekBar, slider, null, null);
+		}
+
+		public static void UpdateMaximumTrackColor(this SeekBar seekBar, ISlider slider, ColorStateList? defaultProgressBackgroundTintList, PorterDuff.Mode? defaultProgressBackgroundTintMode)
 		{
 			if (slider.MaximumTrackColor == Forms.Color.Default)
 			{
-				seekBar.ProgressBackgroundTintList = sliderHandler._defaultProgressBackgroundTintList;
-				seekBar.ProgressBackgroundTintMode = sliderHandler._defaultProgressBackgroundTintMode;
+				if (defaultProgressBackgroundTintList != null)
+					seekBar.ProgressBackgroundTintList = defaultProgressBackgroundTintList;
+
+				if (defaultProgressBackgroundTintMode != null)
+					seekBar.ProgressBackgroundTintMode = defaultProgressBackgroundTintMode;
 			}
 			else
 			{
@@ -55,9 +70,14 @@ namespace Xamarin.Platform
 			}
 		}
 
-		public static void UpdateThumbColor(this SeekBar seekBar, SliderHandler sliderHandler, ISlider slider)
+		public static void UpdateThumbColor(this SeekBar seekBar, ISlider slider)
 		{
-			seekBar.Thumb?.SetColorFilter(slider.ThumbColor, sliderHandler._defaultThumbColorFilter, FilterMode.SrcIn);
+			UpdateThumbColor(seekBar, slider);
+		}
+
+		public static void UpdateThumbColor(this SeekBar seekBar, ISlider slider, ColorFilter? defaultThumbColorFilter)
+		{
+			seekBar.Thumb?.SetColorFilter(slider.ThumbColor, defaultThumbColorFilter, FilterMode.SrcIn);
 		}
 	}
 }

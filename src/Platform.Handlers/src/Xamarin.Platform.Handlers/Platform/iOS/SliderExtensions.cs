@@ -1,6 +1,5 @@
 ﻿using UIKit;
 using Xamarin.Forms;
-using Xamarin.Platform.Handlers;
 
 namespace Xamarin.Platform
 {
@@ -22,26 +21,44 @@ namespace Xamarin.Platform
 				uiSlider.Value = (float)slider.Value;
 		}
 
-		public static void UpdateMinimumTrackColor(this UISlider uiSlider, SliderHandler sliderHandler, ISlider slider)
+		public static void UpdateMinimumTrackColor(this UISlider uiSlider, ISlider slider)
+		{
+			UpdateMinimumTrackColor(uiSlider, slider, null);
+		}
+
+		public static void UpdateMinimumTrackColor(this UISlider uiSlider, ISlider slider, UIColor? defaultMinTrackColor)
 		{
 			if (slider.MinimumTrackColor == Color.Default)
-				uiSlider.MinimumTrackTintColor = sliderHandler._defaultMinTrackColor;
+			{
+				if (defaultMinTrackColor != null)
+					uiSlider.MinimumTrackTintColor = defaultMinTrackColor;
+			}
 			else
 				uiSlider.MinimumTrackTintColor = slider.MinimumTrackColor.ToNative();
 		}
 
-		public static void UpdateMaximumTrackColor(this UISlider uiSlider, SliderHandler sliderHandler, ISlider slider)
+		public static void UpdateMaximumTrackColor(this UISlider uiSlider, ISlider slider)
+		{
+			UpdateMaximumTrackColor(uiSlider, slider, null);
+		}
+
+		public static void UpdateMaximumTrackColor(this UISlider uiSlider, ISlider slider, UIColor? defaultMaxTrackColor)
 		{
 			if (slider.MaximumTrackColor == Color.Default)
-				uiSlider.MaximumTrackTintColor = sliderHandler._defaultMaxTrackColor;
+				uiSlider.MaximumTrackTintColor = defaultMaxTrackColor;
 			else
 				uiSlider.MaximumTrackTintColor = slider.MaximumTrackColor.ToNative();
 		}
 
-		public static void UpdateThumbColor(this UISlider uiSlider, SliderHandler sliderHandler, ISlider slider)
+		public static void UpdateThumbColor(this UISlider uiSlider, ISlider slider)
+		{
+			UpdateThumbColor(uiSlider, slider, null);
+		}
+
+		public static void UpdateThumbColor(this UISlider uiSlider, ISlider slider, UIColor? defaultThumbColor)
 		{
 			if (slider.ThumbColor == Color.Default)
-				uiSlider.ThumbTintColor = sliderHandler._defaultThumbColor;
+				uiSlider.ThumbTintColor = defaultThumbColor;
 			else
 				uiSlider.ThumbTintColor = slider.ThumbColor.ToNative();
 		}
