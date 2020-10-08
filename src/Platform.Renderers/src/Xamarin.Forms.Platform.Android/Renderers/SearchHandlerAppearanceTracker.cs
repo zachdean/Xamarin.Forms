@@ -130,7 +130,7 @@ namespace Xamarin.Forms.Platform.Android
 		{
 			_editText.UpdateVerticalAlignment(_searchHandler.VerticalTextAlignment, Xamarin.Forms.TextAlignment.Center.ToVerticalGravityFlags());
 		}
-		
+
 		void UpdateTextTransform()
 		{
 			_editText.Text = _searchHandler.UpdateFormsText(_editText.Text, _searchHandler.TextTransform);
@@ -141,7 +141,7 @@ namespace Xamarin.Forms.Platform.Android
 			var linearLayout = (_control as ViewGroup).GetChildrenOfType<LinearLayout>().FirstOrDefault();
 			linearLayout.SetBackgroundColor(_searchHandler.BackgroundColor.ToAndroid());
 		}
-		
+
 		void UpdateCancelButtonColor()
 		{
 			//For now we are using the clear icon 
@@ -151,7 +151,7 @@ namespace Xamarin.Forms.Platform.Android
 
 		void UpdateClearIconColor()
 		{
-			UpdateImageButtonIconColor(nameof(SearchHandler.ClearIcon),_searchHandler.CancelButtonColor);
+			UpdateImageButtonIconColor(nameof(SearchHandler.ClearIcon), _searchHandler.CancelButtonColor);
 		}
 
 		void UpdateClearPlaceholderIconColor()
