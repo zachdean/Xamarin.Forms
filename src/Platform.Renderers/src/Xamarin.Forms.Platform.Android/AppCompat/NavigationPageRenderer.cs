@@ -1103,7 +1103,7 @@ namespace Xamarin.Forms.Platform.Android.AppCompat
 				_titleViewRenderer.SetElement(titleView);
 			else
 			{
-				_titleViewRenderer = Android.Platform.CreateRenderer(titleView, Context);
+				_titleViewRenderer = Platform.CreateRenderer(titleView, Context);
 
 				if (_titleView == null)
 				{
