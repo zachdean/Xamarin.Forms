@@ -171,9 +171,9 @@ namespace Xamarin.Forms.Platform.Android
 				UpdateHorizontalTextAlignment();
 			else if (e.PropertyName == InputView.MaxLengthProperty.PropertyName)
 				UpdateMaxLength();
-			else if(e.PropertyName == InputView.KeyboardProperty.PropertyName)
+			else if (e.PropertyName == InputView.KeyboardProperty.PropertyName)
 				UpdateInputType();
-			else if(e.PropertyName == InputView.IsSpellCheckEnabledProperty.PropertyName)
+			else if (e.PropertyName == InputView.IsSpellCheckEnabledProperty.PropertyName)
 				UpdateInputType();
 		}
 

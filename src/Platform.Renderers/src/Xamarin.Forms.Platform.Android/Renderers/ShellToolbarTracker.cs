@@ -398,7 +398,7 @@ namespace Xamarin.Forms.Platform.Android
 				defaultDrawerArrowDrawable = true;
 			}
 
-			if(icon != null)
+			if (icon != null)
 				icon.Progress = (CanNavigateBack) ? 1 : 0;
 
 			if (command != null || CanNavigateBack)
@@ -406,7 +406,7 @@ namespace Xamarin.Forms.Platform.Android
 				_drawerToggle.DrawerIndicatorEnabled = false;
 				toolbar.NavigationIcon = icon;
 			}
-			else if(_flyoutBehavior == FlyoutBehavior.Flyout || !defaultDrawerArrowDrawable)
+			else if (_flyoutBehavior == FlyoutBehavior.Flyout || !defaultDrawerArrowDrawable)
 			{
 				bool drawerEnabled = isEnabled && icon != null;
 				_drawerToggle.DrawerIndicatorEnabled = drawerEnabled;

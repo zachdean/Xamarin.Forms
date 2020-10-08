@@ -187,7 +187,7 @@ namespace Xamarin.Forms.Platform.Android
 
 			foreach (var item in toolbarItems)
 			{
-				if(item == toolbarItem)
+				if (item == toolbarItem)
 				{
 					break;
 				}

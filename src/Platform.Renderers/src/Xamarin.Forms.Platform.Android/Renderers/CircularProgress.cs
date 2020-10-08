@@ -84,10 +84,10 @@ namespace Xamarin.Forms.Platform.Android
 
 				_isRunning = value;
 				if (_isRunning && !AnimatedDrawable.IsRunning)
-						AnimatedDrawable.Start();
+					AnimatedDrawable.Start();
 				else if (AnimatedDrawable.IsRunning)
-						AnimatedDrawable.Stop();
-				
+					AnimatedDrawable.Stop();
+
 				PostInvalidate();
 			}
 		}
