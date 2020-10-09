@@ -182,7 +182,7 @@ namespace Xamarin.Forms.Platform.Android
 		public void OnViewDetachedFromWindow(AView detachedView)
 		{
 		}
-
+		
 		public void Update()
 		{
 			if (View?.LayoutParameters == null && _hasLayoutOccurred)
@@ -190,6 +190,7 @@ namespace Xamarin.Forms.Platform.Android
 
 			if (!UpdateTextAndImage())
 				UpdateImage();
+				
 			UpdatePadding();
 		}
 
@@ -262,6 +263,7 @@ namespace Xamarin.Forms.Platform.Android
 
 		bool UpdateTextAndImage()
 		{
+
 			if (_disposed || _renderer?.View == null || _element == null)
 				return false;
 
@@ -273,8 +275,10 @@ namespace Xamarin.Forms.Platform.Android
 				return false;
 
 			var textTransform = _element.TextTransform;
-			
-			_renderer.View.SetAllCaps(textTransform == TextTransform.Default);
+
+			UpdateAllCaps();
+
+			var nativeAllCapsAfter = _renderer.View.IsAllCaps;
 
 			string oldText = view.Text;
 			view.Text = _element.UpdateFormsText(_element.Text, textTransform);
@@ -354,6 +358,13 @@ namespace Xamarin.Forms.Platform.Android
 						_element?.InvalidateMeasureNonVirtual(InvalidationTrigger.MeasureChanged);
 				});
 			}
+		}
+
+		void UpdateAllCaps()
+		{
+			var nativeAllCaps = _renderer.View.IsAllCaps;
+
+			_renderer.View.SetAllCaps((_element.TextTransform == TextTransform.Default) && nativeAllCaps);
 		}
 	}
 }
