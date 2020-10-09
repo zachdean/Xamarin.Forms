@@ -1,6 +1,15 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Android.Content;
+using Android.Content.Res;
+using Android.Runtime;
+using Android.Support.V7.Text;
+using Android.Support.V7.View;
+using Android.Support.V7.Widget;
+using Android.Text.Method;
+using Android.Views;
 using NUnit.Framework;
+using Xamarin.Forms;
 using Xamarin.Forms.CustomAttributes;
 using AColor = Android.Graphics.Color;
 
@@ -35,19 +44,77 @@ namespace Xamarin.Forms.Platform.Android.UnitTests
 		[Test, Category("Button")]
 		[Description("Account for user's setting of styles property textAllCaps")]
 		[Issue(IssueTracker.Github, 11703, "[Bug] Android textAllCaps no longer works")]
-		public async Task Issue11703Test()
+		public void Issue11703Test()
 		{
 			var button = new Button { Text = "foo" };
-			var actual = await GetControlProperty(button, control => control.TransformationMethod);
+			var buttonControl = GetNativeControl(button);
 
+			var initialTextTransform = buttonControl.TransformationMethod;
+			Assert.IsNotNull(initialTextTransform);
 			button.TextTransform = TextTransform.Uppercase;
-			var newValue = await GetControlProperty(button, control => control.TransformationMethod);
-
+			Assert.IsNull(buttonControl.TransformationMethod);
 			button.TextTransform = TextTransform.Default;
-			var newerValue = await GetControlProperty(button, control => control.TransformationMethod);
-
-			Assert.AreNotEqual(actual, newValue);
-			Assert.AreEqual(actual.GetType(), newerValue.GetType());
+			Assert.AreEqual(initialTextTransform, buttonControl.TransformationMethod);
 		}
+
+		[Test, Category("Button")]
+		[Description("Test Text Transform property works")]
+		[Issue(IssueTracker.Github, 0, "Text Transform Tests")]
+		public void TextTransformUpperCase()
+		{
+			var button = new Button { Text = "foo" };
+			var buttonControl = GetNativeControl(button);
+			button.TextTransform = TextTransform.Uppercase;
+			Assert.AreEqual("FOO", buttonControl.Text);
+		}
+
+		[Test, Category("Button")]
+		[Description("Test Text Transform property works")]
+		[Issue(IssueTracker.Github, 0, "Text Transform Tests")]
+		public void TextTransformLowerCase()
+		{
+			var button = new Button { Text = "FOO" };
+			var buttonControl = GetNativeControl(button);
+			button.TextTransform = TextTransform.Lowercase;
+			Assert.AreEqual("foo", buttonControl.Text);
+		}
+
+		[Category("Button")]
+		[Description("Account for user's setting of styles property textAllCaps")]
+		[Issue(IssueTracker.Github, 11703, "[Bug] Android textAllCaps no longer works", issueTestNumber: 1)]
+		[Test]
+		public void StyleTextAllCapsSettingIsRespected()
+		{
+			var button = new ClearTextTransform { Text = "foo" };
+			var buttonControl = GetNativeControl(button);
+			Assert.IsNull(buttonControl.TransformationMethod);
+			button.TextTransform = TextTransform.Uppercase;
+			Assert.IsNull(buttonControl.TransformationMethod);
+			button.TextTransform = TextTransform.Default;
+			Assert.IsNull(buttonControl.TransformationMethod);
+		}
+
+		//[Category("Button")]
+		//[Description("Account for user's setting of styles property textAllCaps")]
+		//[Issue(IssueTracker.Github, 11703, "[Bug] Android textAllCaps no longer works", issueTestNumber: 1)]
+		//[TestCase(false)]
+		//[TestCase(true)]
+		//public void StyleTextAllCapsSettingIsRespected(bool allCaps)
+		//{
+		//	ContextThemeWrapper contextThemeWrapper = null;
+		//	if (allCaps)
+		//		contextThemeWrapper = new ContextThemeWrapper(Context, Resource.Style.TextAllCapsStyleTrue);
+		//	else
+		//		contextThemeWrapper = new ContextThemeWrapper(Context, Resource.Style.TextAllCapsStyleFalse);
+
+		//	var button = new Button { Text = "foo" };
+		//	var buttonControl = GetRenderer(button, contextThemeWrapper).View as AppCompatButton;
+		//	var initialTextTransform = buttonControl.TransformationMethod;
+
+		//	Assert.AreEqual(allCaps, initialTextTransform is AllCapsTransformationMethod);
+		//}
+
+
+		
 	}
 }
