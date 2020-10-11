@@ -8,7 +8,7 @@ using static Android.Widget.CompoundButton;
 
 namespace Xamarin.Forms.ControlGallery.Android
 {
-	public class Issue7249SwitchRenderer : SwitchRenderer
+	public class Issue7249SwitchRenderer : Platform.Android.AppCompat.SwitchRenderer
 	{
 		Issue7249Switch _view;
 
