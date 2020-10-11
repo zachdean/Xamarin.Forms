@@ -9,7 +9,10 @@ namespace Xamarin.Platform
 	{
 		public static void UpdateMinimum(this SeekBar seekBar, ISlider slider)
 		{
-			seekBar.Min = (int)slider.Minimum;
+			if (NativeVersion.Supports(NativeApis.SeekBarSetMin))
+			{
+				seekBar.Min = (int)slider.Minimum;
+			}
 		}
 
 		public static void UpdateMaximum(this SeekBar seekBar, ISlider slider)

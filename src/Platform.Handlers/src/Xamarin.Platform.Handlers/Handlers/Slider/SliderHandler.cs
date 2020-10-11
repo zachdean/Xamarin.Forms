@@ -2,7 +2,7 @@
 {
 	public partial class SliderHandler
 	{
-		public static PropertyMapper<ISlider> SliderMapper = new PropertyMapper<ISlider>(ViewHandler.ViewMapper)
+		public static PropertyMapper<ISlider, SliderHandler> SliderMapper = new PropertyMapper<ISlider, SliderHandler>(ViewHandler.ViewMapper)
 		{
 			[nameof(ISlider.Minimum)] = MapMinimum,
 			[nameof(ISlider.Maximum)] = MapMaximum,

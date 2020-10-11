@@ -4,18 +4,12 @@ using Xamarin.Forms;
 using AColor = Android.Graphics.Color;
 using AColorFilter = Android.Graphics.ColorFilter;
 using ADrawable = Android.Graphics.Drawables.Drawable;
-
-#if __ANDROID_29__
 using ADrawableCompat = AndroidX.Core.Graphics.Drawable.DrawableCompat;
-#else
-using ADrawableCompat = Android.Support.V4.Graphics.Drawable.DrawableCompat;
-#endif
 
 namespace Xamarin.Platform
 {
 	public static class DrawableExtensions
 	{
-#if __ANDROID_29__
 		public static BlendMode? GetFilterMode(FilterMode mode)
 		{
 			switch (mode)
@@ -30,14 +24,6 @@ namespace Xamarin.Platform
 
 			throw new Exception("Invalid Mode");
 		}
-
-#else
-		[Obsolete]
-		static PorterDuff.Mode? GetFilterMode(FilterMode mode)
-		{
-			return GetFilterModePre29(mode);
-		}
-#endif
 
 		[Obsolete]
 		static PorterDuff.Mode? GetFilterModePre29(FilterMode mode)
@@ -94,11 +80,8 @@ namespace Xamarin.Platform
 			drawable.SetColorFilter(color.ToNative(), mode);
 		}
 
-#pragma warning disable CS0612 // Type or member is obsolete
-#pragma warning disable CS0618 // Type or member is obsolete
 		public static void SetColorFilter(this ADrawable drawable, AColor color, FilterMode mode)
 		{
-#if __ANDROID_29__
 			if (NativeVersion.Supports(NativeApis.BlendModeColorFilter))
 			{
 				BlendMode? filterMode29 = GetFilterMode(mode);
@@ -108,19 +91,15 @@ namespace Xamarin.Platform
 			}
 			else
 			{
+#pragma warning disable CS0612 // Type or member is obsolete
 				PorterDuff.Mode? filterModePre29 = GetFilterModePre29(mode);
+#pragma warning restore CS0612 // Type or member is obsolete
 
 				if (filterModePre29 != null)
+#pragma warning disable CS0618 // Type or member is obsolete
 					drawable.SetColorFilter(color, filterModePre29);
-			}
-#else
-			PorterDuff.Mode? filterMode = GetFilterMode(mode);
-
-			if (filterMode != null)
-				drawable.SetColorFilter(color, filterMode);
-#endif
-		}
 #pragma warning restore CS0618 // Type or member is obsolete
-#pragma warning restore CS0612 // Type or member is obsolete
+			}
+		}
 	}
 }

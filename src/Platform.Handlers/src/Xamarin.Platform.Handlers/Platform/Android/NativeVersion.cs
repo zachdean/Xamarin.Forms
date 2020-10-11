@@ -28,5 +28,6 @@ namespace Xamarin.Platform
 	{
 		public const int PowerSaveMode = 21;
 		public const int BlendModeColorFilter = 29;
+		public const int SeekBarSetMin = 26;
 	}
 }

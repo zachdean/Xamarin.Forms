@@ -41,52 +41,46 @@ namespace Xamarin.Platform.Handlers
 			}
 		}
 
-		public static void MapMinimum(IViewHandler handler, ISlider slider)
+		public static void MapMinimum(SliderHandler handler, ISlider slider)
 		{
 			ViewHandler.CheckParameters(handler, slider);
 
-			if (handler is SliderHandler sliderHandler)
-				sliderHandler.TypedNativeView?.UpdateMinimum(slider);
+			handler.TypedNativeView?.UpdateMinimum(slider);
 		}
 
-		public static void MapMaximum(IViewHandler handler, ISlider slider)
+		public static void MapMaximum(SliderHandler handler, ISlider slider)
 		{
 			ViewHandler.CheckParameters(handler, slider);
 
-			if (handler is SliderHandler sliderHandler)
-				sliderHandler.TypedNativeView?.UpdateMaximum(slider);
+			handler.TypedNativeView?.UpdateMaximum(slider);
 		}
 
-		public static void MapValue(IViewHandler handler, ISlider slider)
+		public static void MapValue(SliderHandler handler, ISlider slider)
 		{
 			ViewHandler.CheckParameters(handler, slider);
 
-			if (handler is SliderHandler sliderHandler)
-				sliderHandler.TypedNativeView?.UpdateValue(slider);
+			handler.TypedNativeView?.UpdateValue(slider);
 		}
 
-		public static void MapMinimumTrackColor(IViewHandler handler, ISlider slider)
+		public static void MapMinimumTrackColor(SliderHandler handler, ISlider slider)
 		{
 			ViewHandler.CheckParameters(handler, slider);
 
-			if (handler is SliderHandler sliderHandler)
-				sliderHandler.TypedNativeView?.UpdateMinimumTrackColor(slider, DefaultProgressBackgroundTintList, DefaultProgressBackgroundTintMode);
+			handler.TypedNativeView?.UpdateMinimumTrackColor(slider, DefaultProgressBackgroundTintList, DefaultProgressBackgroundTintMode);
 		}
 
-		public static void MapMaximumTrackColor(IViewHandler handler, ISlider slider)
+		public static void MapMaximumTrackColor(SliderHandler handler, ISlider slider)
 		{
 			ViewHandler.CheckParameters(handler, slider);
 
-			if (handler is SliderHandler sliderHandler)
-				sliderHandler.TypedNativeView?.UpdateMaximumTrackColor(slider, DefaultProgressTintList, DefaultProgressTintMode);
+			handler.TypedNativeView?.UpdateMaximumTrackColor(slider, DefaultProgressTintList, DefaultProgressTintMode);
 		}
 
-		public static void MapThumbColor(IViewHandler handler, ISlider slider)
+		public static void MapThumbColor(SliderHandler handler, ISlider slider)
 		{
 			ViewHandler.CheckParameters(handler, slider);
 
-			if (handler is SliderHandler sliderHandler)
-				sliderHandler.TypedNativeView?.UpdateThumbColor(slider, DefaultThumbColorFilter);
+			handler.TypedNativeView?.UpdateThumbColor(slider, DefaultThumbColorFilter);
 		}
 
 		internal class SeekBarChangeListener : Java.Lang.Object, SeekBar.IOnSeekBarChangeListener

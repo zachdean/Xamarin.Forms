@@ -63,11 +63,6 @@ namespace Sample
 		public ICommand DragStartedCommand { get; set; }
 		public ICommand DragCompletedCommand { get; set; }
 
-		void ISlider.ValueChanged()
-		{
-			ValueChanged?.Invoke(Value);
-		}
-
 		void ISlider.DragStarted()
 		{
 			if (IsEnabled)

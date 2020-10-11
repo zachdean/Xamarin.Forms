@@ -2,12 +2,7 @@ using Android.Content;
 using Android.Content.Res;
 using Xamarin.Forms;
 using AColor = Android.Graphics.Color;
-
-#if MONOANDROID10_0
 using AndroidX.Core.Content;
-#else
-using Android.Support.V4.Content;
-#endif
 
 namespace Xamarin.Platform
 {
