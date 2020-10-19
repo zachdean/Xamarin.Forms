@@ -7,6 +7,7 @@ using Android.Text;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
+using Xamarin.Platform;
 using Xamarin.Forms.PlatformConfiguration.TizenSpecific;
 
 namespace Xamarin.Forms.Platform.Android

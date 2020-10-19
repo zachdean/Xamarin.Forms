@@ -3,6 +3,7 @@ using System.ComponentModel;
 using Foundation;
 using UIKit;
 using Xamarin.Forms.PlatformConfiguration.iOSSpecific;
+using Xamarin.Platform;
 using RectangleF = CoreGraphics.CGRect;
 
 namespace Xamarin.Forms.Platform.iOS
@@ -15,6 +16,7 @@ namespace Xamarin.Forms.Platform.iOS
 
 		}
 
+		[PortHandler]
 		protected override UITextField CreateNativeControl()
 		{
 			return new NoCaretField { BorderStyle = UITextBorderStyle.RoundedRect };
@@ -24,6 +26,7 @@ namespace Xamarin.Forms.Platform.iOS
 	public abstract class TimePickerRendererBase<TControl> : ViewRenderer<TimePicker, TControl>
 		where TControl : UITextField
 	{
+		[PortHandler]
 		UIDatePicker _picker;
 		UIColor _defaultTextColor;
 		bool _disposed;
@@ -37,6 +40,7 @@ namespace Xamarin.Forms.Platform.iOS
 
 		}
 
+		[PortHandler]
 		protected override void Dispose(bool disposing)
 		{
 			if (_disposed)
@@ -69,6 +73,7 @@ namespace Xamarin.Forms.Platform.iOS
 
 		protected abstract override TControl CreateNativeControl();
 
+		[PortHandler]
 		protected override void OnElementChanged(ElementChangedEventArgs<TimePicker> e)
 		{
 			if (e.NewElement != null)
@@ -158,6 +163,7 @@ namespace Xamarin.Forms.Platform.iOS
 			ElementController.SetValueFromRenderer(VisualElement.IsFocusedPropertyKey, true);
 		}
 
+		[PortHandler]
 		void OnValueChanged(object sender, EventArgs e)
 		{
 			if (Element.OnThisPlatform().UpdateMode() == UpdateMode.Immediately)
@@ -171,11 +177,13 @@ namespace Xamarin.Forms.Platform.iOS
 			(Control as UITextField).UpdateTextAlignment(Element);
 		}
 
+		[PortHandler]
 		protected internal virtual void UpdateFont()
 		{
 			Control.Font = Element.ToUIFont();
 		}
 
+		[PortHandler]
 		protected internal virtual void UpdateTextColor()
 		{
 			var textColor = Element.TextColor;
@@ -189,6 +197,7 @@ namespace Xamarin.Forms.Platform.iOS
 			Control.Text = Control.Text;
 		}
 
+		[PortHandler]
 		void UpdateCharacterSpacing()
 		{
 			var textAttr = Control.AttributedText.AddCharacterSpacing(Control.Text, Element.CharacterSpacing);
@@ -197,6 +206,7 @@ namespace Xamarin.Forms.Platform.iOS
 				Control.AttributedText = textAttr;
 		}
 
+		[PortHandler]
 		void UpdateTime()
 		{
 			_picker.Date = new DateTime(1, 1, 1).Add(Element.Time).ToNSDate();
@@ -204,6 +214,7 @@ namespace Xamarin.Forms.Platform.iOS
 			Element.InvalidateMeasureNonVirtual(Internals.InvalidationTrigger.MeasureChanged);
 		}
 
+		[PortHandler]
 		void UpdateElementTime()
 		{
 			ElementController.SetValueFromRenderer(TimePicker.TimeProperty, _picker.Date.ToDateTime() - new DateTime(1, 1, 1));

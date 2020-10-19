@@ -6,6 +6,7 @@ using Android.OS;
 using Android.Text.Format;
 using Android.Util;
 using Android.Widget;
+using Xamarin.Platform;
 using AColor = Android.Graphics.Color;
 using ATimePicker = Android.Widget.TimePicker;
 
@@ -14,6 +15,7 @@ namespace Xamarin.Forms.Platform.Android
 	public abstract class TimePickerRendererBase<TControl> : ViewRenderer<TimePicker, TControl>, TimePickerDialog.IOnTimeSetListener, IPickerRenderer
 		where TControl : global::Android.Views.View
 	{
+		[PortHandler]
 		AlertDialog _dialog;
 		bool _disposed;
 
@@ -38,6 +40,7 @@ namespace Xamarin.Forms.Platform.Android
 
 		IElementController ElementController => Element as IElementController;
 
+		[PortHandler]
 		void TimePickerDialog.IOnTimeSetListener.OnTimeSet(ATimePicker view, int hourOfDay, int minute)
 		{
 			ElementController.SetValueFromRenderer(TimePicker.TimeProperty, new TimeSpan(hourOfDay, minute, 0));
@@ -112,6 +115,7 @@ namespace Xamarin.Forms.Platform.Android
 			}
 		}
 
+		[PortHandler]
 		protected virtual TimePickerDialog CreateTimePickerDialog(int hours, int minutes)
 		{
 			var dialog = new TimePickerDialog(Context, this, hours, minutes, Is24HourView);
@@ -122,6 +126,7 @@ namespace Xamarin.Forms.Platform.Android
 			return dialog;
 		}
 
+		[PortHandler]
 		protected override void Dispose(bool disposing)
 		{
 			if (_disposed)
@@ -143,6 +148,7 @@ namespace Xamarin.Forms.Platform.Android
 			base.Dispose(disposing);
 		}
 
+		[PortHandler]
 		void IPickerRenderer.OnClick()
 		{
 			if (_dialog != null && _dialog.IsShowing)
@@ -162,6 +168,7 @@ namespace Xamarin.Forms.Platform.Android
 			Element.Unfocus();
 		}
 
+		[PortHandler]
 		void SetTime(TimeSpan time)
 		{
 			var timeFormat = Is24HourView ? "HH:mm" : Element.Format;
@@ -169,12 +176,14 @@ namespace Xamarin.Forms.Platform.Android
 			Element.InvalidateMeasureNonVirtual(Internals.InvalidationTrigger.MeasureChanged);
 		}
 
+		[PortHandler]
 		void UpdateFont()
 		{
 			EditText.Typeface = Element.ToTypeface();
 			EditText.SetTextSize(ComplexUnitType.Sp, (float)Element.FontSize);
 		}
 
+		[PortHandler]
 		void UpdateCharacterSpacing()
 		{
 			if (Forms.IsLollipopOrNewer)
