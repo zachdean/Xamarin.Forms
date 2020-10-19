@@ -5,6 +5,7 @@ using Android.Content;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
+using Xamarin.Platform;
 using AColor = Android.Graphics.Color;
 
 namespace Xamarin.Forms.Platform.Android
@@ -33,6 +34,7 @@ namespace Xamarin.Forms.Platform.Android
 				Device.Info.PropertyChanged += DeviceInfoPropertyChanged;
 		}
 
+		[PortHandler]
 		protected override void Dispose(bool disposing)
 		{
 			if (disposing && !_disposed)
@@ -115,6 +117,7 @@ namespace Xamarin.Forms.Platform.Android
 			}
 		}
 
+		[PortHandler]
 		protected virtual DatePickerDialog CreateDatePickerDialog(int year, int month, int day)
 		{
 			DatePicker view = Element;
@@ -173,11 +176,13 @@ namespace Xamarin.Forms.Platform.Android
 			Element.Unfocus();
 		}
 
+		[PortHandler]
 		void SetDate(DateTime date)
 		{
 			EditText.Text = date.ToString(Element.Format);
 		}
 
+		[PortHandler]
 		void UpdateCharacterSpacing()
 		{
 			if (Forms.IsLollipopOrNewer)
@@ -186,12 +191,14 @@ namespace Xamarin.Forms.Platform.Android
 			}
 		}
 
+		[PortHandler]
 		void UpdateFont()
 		{
 			EditText.Typeface = Element.ToTypeface();
 			EditText.SetTextSize(ComplexUnitType.Sp, (float)Element.FontSize);
 		}
 
+		[PortHandler]
 		void UpdateMaximumDate()
 		{
 			if (_dialog != null)
@@ -200,6 +207,7 @@ namespace Xamarin.Forms.Platform.Android
 			}
 		}
 
+		[PortHandler]
 		void UpdateMinimumDate()
 		{
 			if (_dialog != null)

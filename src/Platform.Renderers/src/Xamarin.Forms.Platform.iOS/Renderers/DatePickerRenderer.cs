@@ -3,10 +3,12 @@ using System.ComponentModel;
 using Foundation;
 using UIKit;
 using Xamarin.Forms.PlatformConfiguration.iOSSpecific;
+using Xamarin.Platform;
 using RectangleF = CoreGraphics.CGRect;
 
 namespace Xamarin.Forms.Platform.iOS
 {
+	[PortHandler]
 	internal class NoCaretField : UITextField
 	{
 		public NoCaretField() : base(new RectangleF())
@@ -30,6 +32,7 @@ namespace Xamarin.Forms.Platform.iOS
 
 		}
 
+		[PortHandler]
 		protected override UITextField CreateNativeControl()
 		{
 			return new NoCaretField { BorderStyle = UITextBorderStyle.RoundedRect };
@@ -55,6 +58,7 @@ namespace Xamarin.Forms.Platform.iOS
 
 		}
 
+		[PortHandler]
 		protected override void OnElementChanged(ElementChangedEventArgs<DatePicker> e)
 		{
 			base.OnElementChanged(e);
@@ -169,6 +173,7 @@ namespace Xamarin.Forms.Platform.iOS
 			Control.Text = Element.Date.ToString(Element.Format);
 		}
 
+		[PortHandler]
 		void UpdateElementDate()
 		{
 			ElementController.SetValueFromRenderer(DatePicker.DateProperty, _picker.Date.ToDateTime().Date);
@@ -179,11 +184,13 @@ namespace Xamarin.Forms.Platform.iOS
 			(Control as UITextField).UpdateTextAlignment(Element);
 		}
 
+		[PortHandler]
 		protected internal virtual void UpdateFont()
 		{
 			Control.Font = Element.ToUIFont();
 		}
 
+		[PortHandler]
 		void UpdateCharacterSpacing()
 		{
 			var textAttr = Control.AttributedText.AddCharacterSpacing(Control.Text, Element.CharacterSpacing);
@@ -191,16 +198,20 @@ namespace Xamarin.Forms.Platform.iOS
 			if (textAttr != null)
 				Control.AttributedText = textAttr;
 		}
+
+		[PortHandler]
 		void UpdateMaximumDate()
 		{
 			_picker.MaximumDate = Element.MaximumDate.ToNSDate();
 		}
 
+		[PortHandler]
 		void UpdateMinimumDate()
 		{
 			_picker.MinimumDate = Element.MinimumDate.ToNSDate();
 		}
 
+		[PortHandler]
 		protected internal virtual void UpdateTextColor()
 		{
 			var textColor = Element.TextColor;
@@ -214,6 +225,7 @@ namespace Xamarin.Forms.Platform.iOS
 			Control.Text = Control.Text;
 		}
 
+		[PortHandler]
 		protected override void Dispose(bool disposing)
 		{
 			if (_disposed)

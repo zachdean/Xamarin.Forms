@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Net;
 using Foundation;
+using Xamarin.Platform;
 
 #if __MOBILE__
 namespace Xamarin.Forms.Platform.iOS

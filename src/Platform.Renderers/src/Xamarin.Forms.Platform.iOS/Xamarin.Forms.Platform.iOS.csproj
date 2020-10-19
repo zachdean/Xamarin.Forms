@@ -73,7 +73,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Cells\TextCellRenderer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Cells\ViewCellRenderer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\ColorExtensions.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Extensions\DateExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\Extensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\ToolbarItemExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\UIViewExtensions.cs" />
