@@ -23,6 +23,7 @@ namespace Xamarin.Forms.Platform.Android
 			AutoPackage = false;
 		}
 
+		[PortHandler]
 		protected override AProgressBar CreateNativeControl()
 		{
 			return new AProgressBar(Context) { Indeterminate = true };
@@ -53,6 +54,7 @@ namespace Xamarin.Forms.Platform.Android
 				UpdateColor();
 		}
 
+		[PortHandler]
 		void UpdateColor()
 		{
 			if (Element == null || Control == null)
@@ -66,6 +68,7 @@ namespace Xamarin.Forms.Platform.Android
 				Control.IndeterminateDrawable?.ClearColorFilter();
 		}
 
+		[PortHandler]
 		void UpdateVisibility()
 		{
 			if (Element == null || Control == null)
