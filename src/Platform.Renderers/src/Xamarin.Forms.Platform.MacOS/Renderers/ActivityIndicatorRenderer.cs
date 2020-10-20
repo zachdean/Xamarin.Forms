@@ -3,6 +3,7 @@ using System.Drawing;
 using AppKit;
 using CoreImage;
 using System.Linq;
+using Xamarin.Platform;
 
 namespace Xamarin.Forms.Platform.MacOS
 {
@@ -11,6 +12,7 @@ namespace Xamarin.Forms.Platform.MacOS
 		static CIColorPolynomial s_currentColorFilter;
 		static NSColor s_currentColor;
 
+		[PortHandler]
 		protected override void OnElementChanged(ElementChangedEventArgs<ActivityIndicator> e)
 		{
 			if (e.NewElement != null)
@@ -35,6 +37,7 @@ namespace Xamarin.Forms.Platform.MacOS
 				UpdateIsRunning();
 		}
 
+		[PortHandler]
 		void UpdateColor()
 		{
 			var color = Element.Color;
@@ -66,6 +69,7 @@ namespace Xamarin.Forms.Platform.MacOS
 			Control.ContentFilters = new CIFilter[] { s_currentColorFilter };
 		}
 
+		[PortHandler]
 		void UpdateIsRunning()
 		{
 			if (Element.IsRunning)
