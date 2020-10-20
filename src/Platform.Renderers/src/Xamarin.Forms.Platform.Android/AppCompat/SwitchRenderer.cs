@@ -31,12 +31,14 @@ namespace Xamarin.Forms.Platform.Android.AppCompat
 		protected override void SetContentDescription()
 			=> AutomationPropertiesProvider.SetBasicContentDescription(this, Element, ref _defaultContentDescription);
 
+		[PortHandler]
 		void CompoundButton.IOnCheckedChangeListener.OnCheckedChanged(CompoundButton buttonView, bool isChecked)
 		{
 			((IViewController)Element).SetValueFromRenderer(Switch.IsToggledProperty, isChecked);
 			UpdateOnColor();
 		}
 
+		[PortHandler]
 		public override SizeRequest GetDesiredSize(int widthConstraint, int heightConstraint)
 		{
 			SizeRequest sizeConstraint = base.GetDesiredSize(widthConstraint, heightConstraint);
@@ -53,6 +55,7 @@ namespace Xamarin.Forms.Platform.Android.AppCompat
 			return sizeConstraint;
 		}
 
+		[PortHandler]
 		protected override SwitchCompat CreateNativeControl()
 		{
 			return new SwitchCompat(Context);
@@ -117,6 +120,7 @@ namespace Xamarin.Forms.Platform.Android.AppCompat
 				UpdateThumbColor();
 		}
 
+		[PortHandler]
 		void UpdateOnColor()
 		{
 			if (Element == null || Control == null)
@@ -139,6 +143,7 @@ namespace Xamarin.Forms.Platform.Android.AppCompat
 			}
 		}
 
+		[PortHandler]
 		void UpdateThumbColor()
 		{
 			if (Element == null)
@@ -159,6 +164,7 @@ namespace Xamarin.Forms.Platform.Android.AppCompat
 			}
 		}
 
+		[PortHandler]
 		void HandleToggled(object sender, EventArgs e)
 		{
 			Control.Checked = Element.IsToggled;
