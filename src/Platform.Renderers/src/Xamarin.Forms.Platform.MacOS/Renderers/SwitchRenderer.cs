@@ -1,5 +1,6 @@
 ﻿using System;
 using AppKit;
+using Xamarin.Platform;
 
 namespace Xamarin.Forms.Platform.MacOS
 {
@@ -9,6 +10,7 @@ namespace Xamarin.Forms.Platform.MacOS
 
 		IElementController ElementController => Element;
 
+		[PortHandler]
 		protected override void OnElementChanged(ElementChangedEventArgs<Switch> e)
 		{
 			if (e.OldElement != null)
@@ -31,6 +33,7 @@ namespace Xamarin.Forms.Platform.MacOS
 			base.OnElementChanged(e);
 		}
 
+		[PortHandler]
 		protected override void Dispose(bool disposing)
 		{
 			if (disposing && !_disposed)
@@ -53,6 +56,7 @@ namespace Xamarin.Forms.Platform.MacOS
 			UpdateState();
 		}
 
+		[PortHandler]
 		void UpdateState()
 		{
 			Control.State = Element.IsToggled ? NSCellStateValue.On : NSCellStateValue.Off;
