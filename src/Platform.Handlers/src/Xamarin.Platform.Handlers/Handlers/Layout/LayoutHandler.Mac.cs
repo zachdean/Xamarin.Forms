@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using AppKit;
 
 namespace Xamarin.Platform.Handlers
 {
 	public partial class LayoutHandler : AbstractViewHandler<ILayout, NSView>
 	{
-		protected override NSView CreateView()
+		protected override NSView CreateNativeView()
 		{
 			return new NSView();
 		}
