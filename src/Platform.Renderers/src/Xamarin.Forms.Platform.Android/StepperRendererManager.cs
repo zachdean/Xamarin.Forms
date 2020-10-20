@@ -1,10 +1,12 @@
 ﻿using System.ComponentModel;
 using Android.Views;
+using Xamarin.Platform;
 using AButton = Android.Widget.Button;
 using AView = Android.Views.View;
 
 namespace Xamarin.Forms.Platform.Android
 {
+	[PortHandler]
 	public static class StepperRendererManager
 	{
 		public static void CreateStepperButtons<TButton>(IStepperRenderer renderer, out TButton downButton, out TButton upButton)
