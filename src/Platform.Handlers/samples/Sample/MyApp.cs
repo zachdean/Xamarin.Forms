@@ -33,6 +33,7 @@ namespace Sample
 			horizontalStack.Add(new Label { Text = "And these buttons are in a HorizontalStackLayout" });
 
 			verticalStack.Add(horizontalStack);
+			verticalStack.Add(new ProgressBar { Progress = 0.5, ProgressColor = Color.Purple });
 
 			return verticalStack;
 		}

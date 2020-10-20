@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using UIKit;
+using Xamarin.Platform;
 using SizeF = CoreGraphics.CGSize;
 
 namespace Xamarin.Forms.Platform.iOS
@@ -20,6 +21,7 @@ namespace Xamarin.Forms.Platform.iOS
 			return new SizeF(10, result.Height);
 		}
 
+		[PortHandler]
 		protected override void OnElementChanged(ElementChangedEventArgs<ProgressBar> e)
 		{
 			if (e.NewElement != null)
@@ -54,11 +56,13 @@ namespace Xamarin.Forms.Platform.iOS
 			Control.TrackTintColor = color != Color.Default ? color.ToUIColor() : null;
 		}
 
+		[PortHandler]
 		void UpdateProgressColor()
 		{
 			Control.ProgressTintColor = Element.ProgressColor == Color.Default ? null : Element.ProgressColor.ToUIColor();
 		}
 
+		[PortHandler]
 		void UpdateProgress()
 		{
 			Control.Progress = (float)Element.Progress;
