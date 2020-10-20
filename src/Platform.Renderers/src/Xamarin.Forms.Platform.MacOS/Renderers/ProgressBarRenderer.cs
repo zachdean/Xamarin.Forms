@@ -2,6 +2,7 @@
 using System.Linq;
 using AppKit;
 using CoreImage;
+using Xamarin.Platform;
 
 namespace Xamarin.Forms.Platform.MacOS
 {
@@ -10,6 +11,7 @@ namespace Xamarin.Forms.Platform.MacOS
 		static CIColorPolynomial s_currentColorFilter;
 		static NSColor s_currentColor;
 
+		[PortHandler]
 		protected override void OnElementChanged(ElementChangedEventArgs<ProgressBar> e)
 		{
 			if (e.NewElement == null) return;
@@ -41,6 +43,7 @@ namespace Xamarin.Forms.Platform.MacOS
 			SetBackgroundColor(Element.ProgressColor);
 		}
 
+		[PortHandler]
 		protected override void SetBackgroundColor(Color color)
 		{
 			if (Control == null)
@@ -79,6 +82,7 @@ namespace Xamarin.Forms.Platform.MacOS
 			Control.ContentFilters = new CIFilter[] { s_currentColorFilter };
 		}
 
+		[PortHandler]
 		void UpdateProgress()
 		{
 			Control.DoubleValue = Element.Progress;
