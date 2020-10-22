@@ -41,7 +41,9 @@ namespace Xamarin.Forms.Platform.MacOS
         {
             base.OnElementPropertyChanged(sender, args);
 
-            if (args.IsOneOf(VisualElement.HeightProperty, VisualElement.WidthProperty, Platform.RendererProperty))
+            if (args.PropertyName == VisualElement.HeightProperty.PropertyName ||
+                args.PropertyName == VisualElement.WidthProperty.PropertyName ||
+                args.PropertyName == Platform.RendererProperty.PropertyName)
                 UpdateSize();
             else if (args.PropertyName == Shape.AspectProperty.PropertyName)
                 UpdateAspect();

@@ -7,7 +7,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     x:Class="Xamarin.Forms.Controls.Issues.Issue12521"
-    Title="Issue 11875">
+    Title="Issue 12521">
     <StackLayout>
         <Label
             Padding="12"
