@@ -22,7 +22,7 @@
 
 		}
 
-		public static void UpdateMaximumTrackColor(this object nothing, object sliderHandler, ISlider slider)
+		public static void UpdateMaximumTrackColor(this NativePlaceHolder seekBar, Forms.Color maximumTrackColor)
 		{
 
 		}

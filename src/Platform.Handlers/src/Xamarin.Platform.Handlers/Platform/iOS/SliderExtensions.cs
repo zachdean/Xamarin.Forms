@@ -44,10 +44,15 @@ namespace Xamarin.Platform
 
 		public static void UpdateMaximumTrackColor(this UISlider uiSlider, ISlider slider, UIColor? defaultMaxTrackColor)
 		{
-			if (slider.MaximumTrackColor == Color.Default)
+			uiSlider.UpdateMaximumTrackColor(slider.MaximumTrackColor, defaultMaxTrackColor);
+		}
+
+		public static void UpdateMaximumTrackColor(this UISlider uiSlider, Color maximumTrackColor, UIColor? defaultMaxTrackColor)
+		{
+			if (maximumTrackColor == Color.Default)
 				uiSlider.MaximumTrackTintColor = defaultMaxTrackColor;
 			else
-				uiSlider.MaximumTrackTintColor = slider.MaximumTrackColor.ToNative();
+				uiSlider.MaximumTrackTintColor = maximumTrackColor.ToNative();
 		}
 
 		public static void UpdateThumbColor(this UISlider uiSlider, ISlider slider)

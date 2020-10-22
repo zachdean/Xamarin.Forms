@@ -2,9 +2,9 @@
 
 namespace Xamarin.Platform.Handlers
 {
-	public partial class SliderHandler : AbstractViewHandler<ISlider, object>
+	public partial class SliderHandler : AbstractViewHandler<ISlider, NativePlaceHolder>
 	{
-		protected override object CreateNativeView() => throw new NotImplementedException();
+		protected override NativePlaceHolder CreateNativeView() => new NativePlaceHolder();
 
 		public static void MapMinimum(IViewHandler handler, ISlider slider) { }
 		public static void MapMaximum(IViewHandler handler, ISlider slider) { }

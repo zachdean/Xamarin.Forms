@@ -1,6 +1,7 @@
 ﻿using Xamarin.Forms;
 using Xamarin.Platform;
 using Xamarin.Platform.Core;
+using Xamarin.Platform.Handlers;
 
 namespace Sample
 {
@@ -9,6 +10,15 @@ namespace Sample
 		public MyApp()
 		{
 			Platform.Init();
+
+			SliderHandler.SliderMapper[nameof(ISlider.MaximumTrackColor)] =
+				(handler, v) =>
+				{
+					handler
+						.TypedNativeView
+						.UpdateMaximumTrackColor(Color.Purple);
+
+				};
 		}
 
 		public IView CreateView()
