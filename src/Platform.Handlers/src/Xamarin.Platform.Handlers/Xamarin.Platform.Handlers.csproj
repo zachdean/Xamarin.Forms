@@ -9,8 +9,5 @@
     <PackageId>Xamarin.Platform</PackageId>
     <Product>Xamarin</Product>
   </PropertyGroup>
-  <ItemGroup>
-    <Folder Include="Platform\Mac\" />
-  </ItemGroup>
   <Import Project="..\..\..\..\.nuspec\Xamarin.Forms.MultiTargeting.targets" />
 </Project>
