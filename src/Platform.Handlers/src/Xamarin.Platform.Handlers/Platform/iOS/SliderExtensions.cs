@@ -47,6 +47,11 @@ namespace Xamarin.Platform
 			uiSlider.UpdateMaximumTrackColor(slider.MaximumTrackColor, defaultMaxTrackColor);
 		}
 
+		public static void UpdateMaximumTrackColor(this UISlider uiSlider, Color maximumTrackColor)
+		{
+			uiSlider.UpdateMaximumTrackColor(maximumTrackColor);
+		}
+
 		public static void UpdateMaximumTrackColor(this UISlider uiSlider, Color maximumTrackColor, UIColor? defaultMaxTrackColor)
 		{
 			if (maximumTrackColor == Color.Default)

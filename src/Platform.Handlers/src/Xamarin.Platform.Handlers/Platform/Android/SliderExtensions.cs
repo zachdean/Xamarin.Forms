@@ -55,6 +55,11 @@ namespace Xamarin.Platform
 			seekBar.UpdateMaximumTrackColor(slider.MaximumTrackColor, defaultProgressBackgroundTintList, defaultProgressBackgroundTintMode);
 		}
 
+		public static void UpdateMaximumTrackColor(this SeekBar seekBar, Forms.Color maximumTrackColor)
+		{
+			seekBar.UpdateMaximumTrackColor(maximumTrackColor, null, null);
+		}
+
 		public static void UpdateMaximumTrackColor(this SeekBar seekBar, Forms.Color maximumTrackColor, ColorStateList? defaultProgressBackgroundTintList, PorterDuff.Mode? defaultProgressBackgroundTintMode)
 		{
 			if (maximumTrackColor == Forms.Color.Default)
