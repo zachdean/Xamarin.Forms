@@ -1,5 +1,6 @@
 using UIKit;
 using Xamarin.Forms.Internals;
+using Xamarin.Platform;
 
 namespace Xamarin.Forms.Platform.iOS
 {

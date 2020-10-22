@@ -8,12 +8,14 @@ using Android.Text;
 using Android.Text.Style;
 using Android.Util;
 using Android.Widget;
+using Xamarin.Platform;
 
 namespace Xamarin.Forms.Platform.Android.AppCompat
 {
 	public abstract class PickerRendererBase<TControl> : ViewRenderer<Picker, TControl>, IPickerRenderer
 		where TControl : global::Android.Views.View
 	{
+		[PortHandler]
 		AlertDialog _dialog;
 		bool _disposed;
 		EntryAccessibilityDelegate _pickerAccessibilityDelegate;
@@ -96,6 +98,7 @@ namespace Xamarin.Forms.Platform.Android.AppCompat
 				UpdateGravity();
 		}
 
+		[PortHandler]
 		protected override void OnFocusChangeRequested(object sender, VisualElement.FocusRequestArgs e)
 		{
 			base.OnFocusChangeRequested(sender, e);
@@ -116,6 +119,7 @@ namespace Xamarin.Forms.Platform.Android.AppCompat
 			}
 		}
 
+		[PortHandler]
 		void IPickerRenderer.OnClick()
 		{
 			Picker model = Element;
@@ -156,17 +160,20 @@ namespace Xamarin.Forms.Platform.Android.AppCompat
 			}
 		}
 
+		[PortHandler]
 		void RowsCollectionChanged(object sender, EventArgs e)
 		{
 			UpdatePicker();
 		}
 
+		[PortHandler]
 		void UpdateFont()
 		{
 			EditText.Typeface = Element.ToTypeface();
 			EditText.SetTextSize(ComplexUnitType.Sp, (float)Element.FontSize);
 		}
 
+		[PortHandler]
 		protected void UpdateCharacterSpacing()
 		{
 			if (Forms.IsLollipopOrNewer)
@@ -175,6 +182,7 @@ namespace Xamarin.Forms.Platform.Android.AppCompat
 			}
 		}
 
+		[PortHandler]
 		void UpdatePicker()
 		{
 			UpdatePlaceHolderText();
@@ -208,6 +216,7 @@ namespace Xamarin.Forms.Platform.Android.AppCompat
 		{
 		}
 
+		[PortHandler]
 		protected override EditText CreateNativeControl()
 		{
 			return new PickerEditText(Context);
@@ -215,22 +224,27 @@ namespace Xamarin.Forms.Platform.Android.AppCompat
 
 		protected override EditText EditText => Control;
 
+		[PortHandler]
 		protected override void UpdateTitleColor()
 		{
 			_hintColorSwitcher = _hintColorSwitcher ?? new TextColorSwitcher(EditText.HintTextColors, Element.UseLegacyColorManagement());
 			_hintColorSwitcher.UpdateTextColor(EditText, Element.TitleColor, EditText.SetHintTextColor);
 		}
 
+		[PortHandler]
 		protected override void UpdateTextColor()
 		{
 			_textColorSwitcher = _textColorSwitcher ?? new TextColorSwitcher(EditText.TextColors, Element.UseLegacyColorManagement());
 			_textColorSwitcher.UpdateTextColor(EditText, Element.TextColor);
 		}
+
+		[PortHandler]
 		protected override void UpdatePlaceHolderText()
 		{
 			EditText.Hint = Element.Title;
 		}
 
+		[PortHandler]
 		protected override void UpdateGravity()
 		{
 			EditText.Gravity = Element.HorizontalTextAlignment.ToHorizontalGravityFlags() | Element.VerticalTextAlignment.ToVerticalGravityFlags();

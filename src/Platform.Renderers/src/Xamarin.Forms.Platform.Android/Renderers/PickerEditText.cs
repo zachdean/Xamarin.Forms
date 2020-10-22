@@ -1,10 +1,12 @@
 using Android.Content;
 using Android.Runtime;
 using Android.Views;
+using Xamarin.Platform;
 using ARect = Android.Graphics.Rect;
 
 namespace Xamarin.Forms.Platform.Android
 {
+	[PortHandler]
 	public class PickerEditText : FormsEditTextBase, IPopupTrigger
 	{
 		public bool ShowPopupOnFocus { get; set; }

@@ -1,15 +1,13 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Collections.Specialized;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
 using Xamarin.Forms.Internals;
+using Xamarin.Platform;
 
 namespace Xamarin.Forms
 {
-	public class Picker : View, IFontElement, ITextElement, ITextAlignmentElement, IElementConfiguration<Picker>
+	public partial class Picker : View, IFontElement, ITextElement, ITextAlignmentElement, IElementConfiguration<Picker>
 	{
 		public static readonly BindableProperty TextColorProperty = TextElement.TextColorProperty;
 
@@ -211,6 +209,7 @@ namespace Xamarin.Forms
 			((Picker)bindable).OnItemsSourceChanged((IList)oldValue, (IList)newValue);
 		}
 
+		[PortHandler]
 		void OnItemsSourceChanged(IList oldValue, IList newValue)
 		{
 			var oldObservable = oldValue as INotifyCollectionChanged;
@@ -235,6 +234,7 @@ namespace Xamarin.Forms
 			}
 		}
 
+		[PortHandler]
 		void CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
 		{
 			switch (e.Action)
@@ -250,6 +250,8 @@ namespace Xamarin.Forms
 					break;
 			}
 		}
+
+		[PortHandler]
 		void AddItems(NotifyCollectionChangedEventArgs e)
 		{
 			int index = e.NewStartingIndex < 0 ? Items.Count : e.NewStartingIndex;
@@ -257,6 +259,7 @@ namespace Xamarin.Forms
 				((LockableObservableListWrapper)Items).InternalInsert(index++, GetDisplayMember(newItem));
 		}
 
+		[PortHandler]
 		void RemoveItems(NotifyCollectionChangedEventArgs e)
 		{
 			int index = e.OldStartingIndex < Items.Count ? e.OldStartingIndex : Items.Count;
@@ -264,6 +267,7 @@ namespace Xamarin.Forms
 				((LockableObservableListWrapper)Items).InternalRemoveAt(index--);
 		}
 
+		[PortHandler]
 		void ResetItems()
 		{
 			if (ItemsSource == null)
@@ -287,6 +291,7 @@ namespace Xamarin.Forms
 			picker.UpdateSelectedIndex(newValue);
 		}
 
+		[PortHandler]
 		void UpdateSelectedIndex(object selectedItem)
 		{
 			if (ItemsSource != null)
@@ -297,6 +302,7 @@ namespace Xamarin.Forms
 			SelectedIndex = Items.IndexOf(selectedItem);
 		}
 
+		[PortHandler]
 		void UpdateSelectedItem(int index)
 		{
 			if (index == -1)

@@ -3,6 +3,7 @@ using System.ComponentModel;
 using Xamarin.Forms.Internals;
 using UIKit;
 using Xamarin.Forms.PlatformConfiguration.iOSSpecific;
+using Xamarin.Platform;
 using PointF = CoreGraphics.CGPoint;
 using RectangleF = CoreGraphics.CGRect;
 using CoreGraphics;
