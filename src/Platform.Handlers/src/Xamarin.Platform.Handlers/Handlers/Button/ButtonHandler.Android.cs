@@ -1,5 +1,4 @@
 ﻿using AndroidX.AppCompat.Widget;
-using Xamarin.Forms;
 using AView = Android.Views.View;
 
 namespace Xamarin.Platform.Handlers
@@ -13,33 +12,45 @@ namespace Xamarin.Platform.Handlers
 		ButtonClickListener ClickListener { get; } = new ButtonClickListener();
 		ButtonTouchListener TouchListener { get; } = new ButtonTouchListener();
 
-		protected override AppCompatButton CreateView()
+		protected override AppCompatButton CreateNativeView()
 		{
 			AppCompatButton nativeButton = new AppCompatButton(Context)
 			{
 				SoundEffectsEnabled = false
 			};
 
-			nativeButton.AddOnAttachStateChangeListener(AttachStateChangeListener);
-
-			ClickListener.Handler = this;
-			nativeButton.SetOnClickListener(ClickListener);
-
-			TouchListener.Handler = this;
-			nativeButton.SetOnTouchListener(TouchListener);
-
 			return nativeButton;
 		}
 
-		public override void TearDown()
+		protected override void ConnectHandler(AppCompatButton nativeView)
 		{
-			TypedNativeView?.RemoveOnAttachStateChangeListener(AttachStateChangeListener);
+			nativeView.LayoutChange += OnLayoutChange;
+
+			nativeView.AddOnAttachStateChangeListener(AttachStateChangeListener);
+
+			ClickListener.Handler = this;
+			nativeView.SetOnClickListener(ClickListener);
+
+			TouchListener.Handler = this;
+			nativeView.SetOnTouchListener(TouchListener);
+
+			BackgroundTracker = new ButtonBorderBackgroundManager(nativeView, VirtualView);
+			ButtonLayoutManager = new ButtonLayoutManager(nativeView, VirtualView);
+
+			base.ConnectHandler(nativeView);
+		}
+
+		protected override void DisconnectHandler(AppCompatButton nativeView)
+		{
+			nativeView.LayoutChange -= OnLayoutChange;
+
+			nativeView.RemoveOnAttachStateChangeListener(AttachStateChangeListener);
 
 			ClickListener.Handler = null;
-			TypedNativeView?.SetOnClickListener(null);
+			nativeView.SetOnClickListener(null);
 
 			TouchListener.Handler = null;
-			TypedNativeView?.SetOnTouchListener(null);
+			nativeView.SetOnTouchListener(null);
 
 			BackgroundTracker?.Dispose();
 			BackgroundTracker = null;
@@ -47,51 +58,13 @@ namespace Xamarin.Platform.Handlers
 			ButtonLayoutManager?.Dispose();
 			ButtonLayoutManager = null;
 
-			base.TearDown();
-		}
-
-		public override SizeRequest GetDesiredSize(double wConstraint, double hConstraint)
-		{
-			var hint = TypedNativeView?.Hint;
-			bool setHint = TypedNativeView?.LayoutParameters != null;
-
-			if (TypedNativeView != null && !string.IsNullOrWhiteSpace(hint) && setHint)
-			{
-				TypedNativeView.Hint = string.Empty;
-			}
-
-			int widthConstraint = wConstraint == double.MaxValue ? int.MaxValue : (int)wConstraint;
-			int heightConstraint = hConstraint == double.MaxValue ? int.MaxValue : (int)hConstraint;
-
-			TypedNativeView?.Measure(widthConstraint, heightConstraint);
-
-			if (TypedNativeView != null && setHint)
-				TypedNativeView.Hint = hint;
-
-			var previousHeight = TypedNativeView?.MeasuredHeight;
-			var previousWidth = TypedNativeView?.MeasuredWidth;
-
-			if (View != null)
-			{
-				// If the measure of the view has changed then trigger a request for layout
-				// If the measure hasn't changed then force a layout of the button
-				if (previousHeight != View.MeasuredHeight || previousWidth != View.MeasuredWidth)
-					View.RequestLayout();
-				else
-					View.ForceLayout();
-
-				var result = new SizeRequest(new Size(View.MeasuredWidth, View.MeasuredHeight), Size.Zero);
-
-				return result;
-			}
-
-			return base.GetDesiredSize(widthConstraint, heightConstraint);
+			base.DisconnectHandler(nativeView);
 		}
 
 		public static void MapBackgroundColor(ButtonHandler handler, IButton button)
 		{
 			ViewHandler.CheckParameters(handler, button);
-			handler.TypedNativeView?.UpdateBackgroundColor(button);
+			handler.TypedNativeView?.UpdateBackgroundColor(button, BackgroundTracker);
 		}
 
 		public static void MapColor(ButtonHandler handler, IButton button)
@@ -146,6 +119,11 @@ namespace Xamarin.Platform.Handlers
 		{
 			ViewHandler.CheckParameters(handler, button);
 			handler.TypedNativeView?.UpdatePadding(button, ButtonLayoutManager);
+		}
+
+		void OnLayoutChange(object sender, AView.LayoutChangeEventArgs e)
+		{
+			ButtonLayoutManager?.OnLayout(true, e.Left, e.Top, e.Right, e.Bottom);
 		}
 
 		public class ButtonAttachStateChangeListener : Java.Lang.Object, AView.IOnAttachStateChangeListener

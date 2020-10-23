@@ -7,18 +7,17 @@ namespace Sample
 {
 	public class Button : FontElement, IButton
 	{
-		public const int DefaultCornerRadius = -1;
-		public const int DefaultBorderWidth = -1;
+		const double DefaultSpacing = 10;
 
 		public string Text { get; set; }
 
 		public Color Color { get; set; }
 
-		public int CornerRadius { get; set; } = DefaultCornerRadius;
+		public int CornerRadius { get; set; } = -1;
 
 		public Color BorderColor { get; set; }
 
-		public double BorderWidth { get; set; } = DefaultBorderWidth;
+		public double BorderWidth { get; set; } = -1d;
 
 		public TextTransform TextTransform { get; set; }
 
@@ -30,9 +29,9 @@ namespace Sample
 
 		public LineBreakMode LineBreakMode { get; set; }
 
-		public ButtonContentLayout ContentLayout { get; set; }
+		public ButtonContentLayout ContentLayout { get; set; } = new ButtonContentLayout(ButtonContentLayout.ImagePosition.Left, DefaultSpacing);
 
-		public Thickness Padding { get; set; }
+		public Thickness Padding { get; set; } = default;
 
 		public ICommand Command { get; set; }
 

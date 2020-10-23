@@ -90,7 +90,7 @@ namespace Xamarin.Platform
 			}
 			else
 			{
-				_normalBitmap = _normalBitmap ?? CreateBitmap(false, width, height);
+				_normalBitmap ??= CreateBitmap(false, width, height);
 				bitmap = _normalBitmap;
 			}
 

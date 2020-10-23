@@ -84,52 +84,52 @@ namespace Xamarin.Platform
 
 		public static void UpdateCornerRadius(this AppCompatButton appCompatButton, IButton button)
 		{
-			UpdateDrawable(appCompatButton, button, null);
+			appCompatButton.UpdateDrawable(button, null);
 		}
 
 		public static void UpdateCornerRadius(this AppCompatButton appCompatButton, IButton button, ButtonBorderBackgroundManager? borderBackgroundManager)
 		{
-			UpdateDrawable(appCompatButton, button, borderBackgroundManager);
+			appCompatButton.UpdateDrawable(button, borderBackgroundManager);
 		}
 
 		public static void UpdateBorderColor(this AppCompatButton appCompatButton, IButton button)
 		{
-			UpdateDrawable(appCompatButton, button, null);
+			appCompatButton.UpdateDrawable(button, null);
 		}
 
 		public static void UpdateBorderColor(this AppCompatButton appCompatButton, IButton button, ButtonBorderBackgroundManager? borderBackgroundManager)
 		{
-			UpdateDrawable(appCompatButton, button, borderBackgroundManager);
+			appCompatButton.UpdateDrawable(button, borderBackgroundManager);
 		}
 
 		public static void UpdateBorderWidth(this AppCompatButton appCompatButton, IButton button)
 		{
-			UpdateDrawable(appCompatButton, button, null);
+			appCompatButton.UpdateDrawable(button, null);
 		}
 
 		public static void UpdateBorderWidth(this AppCompatButton appCompatButton, IButton button, ButtonBorderBackgroundManager? borderBackgroundManager)
 		{
-			UpdateDrawable(appCompatButton, button, borderBackgroundManager);
+			appCompatButton.UpdateDrawable(button, borderBackgroundManager);
 		}
 
 		public static void UpdateContentLayout(this AppCompatButton appCompatButton, IButton button)
 		{
-			UpdateLayout(appCompatButton, button, null);
+			appCompatButton.UpdateLayout(button, null);
 		}
 
 		public static void UpdateContentLayout(this AppCompatButton appCompatButton, IButton button, ButtonLayoutManager? buttonLayoutManager)
 		{
-			UpdateLayout(appCompatButton, button, buttonLayoutManager);
+			appCompatButton.UpdateLayout(button, buttonLayoutManager);
 		}
 
 		public static void UpdatePadding(this AppCompatButton appCompatButton, IButton button)
 		{
-			UpdateLayout(appCompatButton, button, null);
+			appCompatButton.UpdateLayout(button, null);
 		}
 
 		public static void UpdatePadding(this AppCompatButton appCompatButton, IButton button, ButtonLayoutManager? buttonLayoutManager)
 		{
-			UpdateLayout(appCompatButton, button, buttonLayoutManager);
+			appCompatButton.UpdateLayout(button, buttonLayoutManager);
 		}
 
 		public static XColor GetColorButtonNormal(this AView appCompatButton)

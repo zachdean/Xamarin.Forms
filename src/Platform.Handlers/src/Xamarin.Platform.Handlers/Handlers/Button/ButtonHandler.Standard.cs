@@ -4,7 +4,7 @@ namespace Xamarin.Platform.Handlers
 {
 	public partial class ButtonHandler : AbstractViewHandler<IButton, object>
 	{
-		protected override object CreateView() => throw new NotImplementedException();
+		protected override object CreateNativeView() => throw new NotImplementedException();
 
 		public static void MapColor(ButtonHandler handler, IButton button) { }
 		public static void MapText(ButtonHandler handler, IButton button) { }

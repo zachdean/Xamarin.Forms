@@ -13,19 +13,22 @@ namespace Sample
 
 		public IView CreateView()
 		{
-			var verticalStack = new Xamarin.Platform.VerticalStackLayout() { Spacing = 5, BackgroundColor = Color.AntiqueWhite };
-			var horizontalStack = new Xamarin.Platform.HorizontalStackLayout() { Spacing = 2 };
+			var verticalStack = new VerticalStackLayout() { Spacing = 5, BackgroundColor = Color.AntiqueWhite };
+			var horizontalStack = new HorizontalStackLayout() { Spacing = 2 };
 
 			var label = new Label { Text = "This top part is a Xamarin.Platform.VerticalStackLayout" };
 
 			verticalStack.Add(label);
 
-			var button = new Button() { Text = "A Button", Width = 200 };
+			var button = new Button() { Text = "A Button", WidthRequest = 200 };
 			var button2 = new Button()
 			{
 				Color = Color.Green,
 				Text = "Hello I'm a button",
-				BackgroundColor = Color.Purple
+				BackgroundColor = Color.Purple,
+				BorderColor = Color.Red,
+				BorderWidth = 2,
+				CornerRadius = 12
 			};
 
 			horizontalStack.Add(button);

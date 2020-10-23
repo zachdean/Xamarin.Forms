@@ -15,9 +15,6 @@ namespace Xamarin.Platform
 	//       If we do this, we must remember to undo the offset in OnLayout.
 	public class ButtonLayoutManager : IDisposable
 	{
-		// We use left/right as this does not resize the button when there is no text
-		readonly ButtonContentLayout _imageOnlyLayout = new ButtonContentLayout(ButtonContentLayout.ImagePosition.Left, 0);
-
 		// Reuse this instance to save on allocations
 		readonly ARect _drawableBounds = new ARect();
 
@@ -31,21 +28,19 @@ namespace Xamarin.Platform
 		readonly bool _alignIconWithText;
 		readonly bool _preserveInitialPadding;
 		readonly bool _borderAdjustsPadding;
-		readonly bool _maintainLegacyMeasurements;
 
 		bool _hasLayoutOccurred;
 
-		public ButtonLayoutManager(AButton renderer, IButton virtualView)
-			: this(renderer, virtualView, false, false, false, true)
+		public ButtonLayoutManager(AButton nativeView, IButton? virtualView)
+			: this(nativeView, virtualView, false, false, false)
 		{
 		}
 
 		public ButtonLayoutManager(AButton nativeView,
-			IButton virtualView,
+			IButton? virtualView,
 			bool alignIconWithText,
 			bool preserveInitialPadding,
-			bool borderAdjustsPadding,
-			bool maintainLegacyMeasurements)
+			bool borderAdjustsPadding)
 		{
 			_nativeView = nativeView ?? throw new ArgumentNullException(nameof(nativeView));
 			_virtualView = virtualView ?? throw new ArgumentNullException(nameof(virtualView));
@@ -53,7 +48,6 @@ namespace Xamarin.Platform
 			_alignIconWithText = alignIconWithText;
 			_preserveInitialPadding = preserveInitialPadding;
 			_borderAdjustsPadding = borderAdjustsPadding;
-			_maintainLegacyMeasurements = maintainLegacyMeasurements;
 		}
 
 		public void Dispose()

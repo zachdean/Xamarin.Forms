@@ -10,6 +10,7 @@ using Specifics = Xamarin.Forms.PlatformConfiguration.iOSSpecific;
 using SizeF = CoreGraphics.CGSize;
 using PreserveAttribute = Foundation.PreserveAttribute;
 using CoreGraphics;
+using Xamarin.Platform;
 
 namespace Xamarin.Forms.Platform.iOS
 {
@@ -31,6 +32,7 @@ namespace Xamarin.Forms.Platform.iOS
 		// but under iOS that suggestion won't work
 		readonly nfloat _minimumButtonHeight = 44; // Apple docs 
 
+		[PortHandler]
 		static readonly UIControlState[] s_controlStates = { UIControlState.Normal, UIControlState.Highlighted, UIControlState.Disabled };
 
 		public bool IsDisposed => _isDisposed;
@@ -93,6 +95,7 @@ namespace Xamarin.Forms.Platform.iOS
 			base.LayoutSubviews();
 		}
 
+		[PortHandler]
 		protected override void OnElementChanged(ElementChangedEventArgs<Button> e)
 		{
 			base.OnElementChanged(e);
@@ -124,6 +127,7 @@ namespace Xamarin.Forms.Platform.iOS
 			}
 		}
 
+		[PortHandler]
 		protected override UIButton CreateNativeControl()
 		{
 			return new UIButton(UIButtonType.System);
@@ -175,6 +179,7 @@ namespace Xamarin.Forms.Platform.iOS
 			Control.BackgroundColor = backgroundColor;
 		}
 
+		[PortHandler]
 		void SetControlPropertiesFromProxy()
 		{
 			foreach (UIControlState uiControlState in s_controlStates)
@@ -185,21 +190,25 @@ namespace Xamarin.Forms.Platform.iOS
 			}
 		}
 
+		[PortHandler]
 		void OnButtonTouchUpInside(object sender, EventArgs eventArgs)
 		{
 			ButtonElementManager.OnButtonTouchUpInside(this.Element);
 		}
 
+		[PortHandler]
 		void OnButtonTouchUpOutside(object sender, EventArgs eventArgs)
 		{
 			ButtonElementManager.OnButtonTouchUpOutside(this.Element);
 		}
 
+		[PortHandler]
 		void OnButtonTouchDown(object sender, EventArgs eventArgs)
 		{
 			ButtonElementManager.OnButtonTouchDown(this.Element);
 		}
 
+		[PortHandler]
 		void UpdateFont()
 		{
 			Control.TitleLabel.Font = Element.ToUIFont();
@@ -209,6 +218,7 @@ namespace Xamarin.Forms.Platform.iOS
 
 		public UIImageView GetImage() => Control?.ImageView;
 
+		[PortHandler]
 		void UpdateTextColor()
 		{
 			if (Element.TextColor == Color.Default)

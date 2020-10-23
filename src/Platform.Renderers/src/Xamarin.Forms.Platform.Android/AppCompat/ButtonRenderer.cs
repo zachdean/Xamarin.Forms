@@ -51,23 +51,28 @@ namespace Xamarin.Forms.Platform.Android.AppCompat
 			return _buttonLayoutManager.GetDesiredSize(widthConstraint, heightConstraint);
 		}
 
+		[PortHandler]
 		void AView.IOnAttachStateChangeListener.OnViewAttachedToWindow(AView attachedView) =>
 			_buttonLayoutManager?.OnViewAttachedToWindow(attachedView);
 
+		[PortHandler]
 		void AView.IOnAttachStateChangeListener.OnViewDetachedFromWindow(AView detachedView) =>
 			_buttonLayoutManager?.OnViewDetachedFromWindow(detachedView);
 
+		[PortHandler]
 		protected override void OnLayout(bool changed, int l, int t, int r, int b)
 		{
 			_buttonLayoutManager?.OnLayout(changed, l, t, r, b);
 			base.OnLayout(changed, l, t, r, b);
 		}
 
+		[PortHandler]
 		protected override AppCompatButton CreateNativeControl()
 		{
 			return new AppCompatButton(Context);
 		}
 
+		[PortHandler]
 		protected override void Dispose(bool disposing)
 		{
 			if (_isDisposed)
@@ -137,6 +142,7 @@ namespace Xamarin.Forms.Platform.Android.AppCompat
 			base.OnElementPropertyChanged(sender, e);
 		}
 
+		[PortHandler]
 		protected override void UpdateBackgroundColor()
 		{
 			if (Element == null || Control == null)
@@ -159,6 +165,7 @@ namespace Xamarin.Forms.Platform.Android.AppCompat
 			Control.Enabled = Element.IsEnabled;
 		}
 
+		[PortHandler]
 		void UpdateFont()
 		{
 			Button button = Element;
@@ -185,11 +192,13 @@ namespace Xamarin.Forms.Platform.Android.AppCompat
 			}
 		}
 
+		[PortHandler]
 		void UpdateTextColor()
 		{
 			_textColorSwitcher?.UpdateTextColor(Control, Element.TextColor);
 		}
 
+		[PortHandler]
 		void UpdateCharacterSpacing()
 		{
 			if (Forms.IsLollipopOrNewer)
@@ -199,8 +208,10 @@ namespace Xamarin.Forms.Platform.Android.AppCompat
 
 		}
 
+		[PortHandler]
 		void IOnClickListener.OnClick(AView v) => ButtonElementManager.OnClick(Element, Element, v);
 
+		[PortHandler]
 		bool IOnTouchListener.OnTouch(AView v, MotionEvent e) => ButtonElementManager.OnTouch(Element, Element, v, e);
 
 		float IBorderVisualElementRenderer.ShadowRadius => Control.ShadowRadius;

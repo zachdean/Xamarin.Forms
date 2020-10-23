@@ -18,11 +18,11 @@ namespace Xamarin.Platform
 		 
 		readonly bool _drawOutlineWithBackground;
 
-		public ButtonBorderBackgroundManager(View nativeView, IBorder border) : this(nativeView, border, true)
+		public ButtonBorderBackgroundManager(View nativeView, IBorder? border) : this(nativeView, border, true)
 		{
 		}
 
-		public ButtonBorderBackgroundManager(View nativeView, IBorder border, bool drawOutlineWithBackground)
+		public ButtonBorderBackgroundManager(View nativeView, IBorder? border, bool drawOutlineWithBackground)
 		{
 			_nativeView = nativeView;
 			_border = border;
@@ -36,10 +36,10 @@ namespace Xamarin.Platform
 			if (_border == null || _nativeView == null)
 				return;
 
-			bool cornerRadiusIsDefault = _border.CornerRadius == ButtonBorderDrawable.DefaultCornerRadius;
+			bool cornerRadiusIsDefault = _border.CornerRadius == -1;
 			bool backgroundColorIsDefault = _border.BackgroundColor == Color.Default;
 			bool borderColorIsDefault = _border.BorderColor == Color.Default;
-			bool borderWidthIsDefault = _border.BorderWidth == 0.0d;
+			bool borderWidthIsDefault = _border.BorderWidth == -1d;
 
 			if (backgroundColorIsDefault
 				&& cornerRadiusIsDefault

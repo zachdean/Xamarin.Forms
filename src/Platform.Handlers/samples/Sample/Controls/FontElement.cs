@@ -3,7 +3,7 @@ using Xamarin.Platform;
 
 namespace Sample
 {
-	public class FontElement : View, IFont
+	public class FontElement : Xamarin.Forms.View, IFont
 	{
 		FontAttributes _fontAttributes;
 		string _fontFamily;
