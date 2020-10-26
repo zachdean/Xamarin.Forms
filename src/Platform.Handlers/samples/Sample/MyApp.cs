@@ -13,8 +13,8 @@ namespace Sample
 
 		public IView CreateView()
 		{
-			var verticalStack = new Xamarin.Platform.VerticalStackLayout() { Spacing = 5, BackgroundColor = Color.AntiqueWhite };
-			var horizontalStack = new Xamarin.Platform.HorizontalStackLayout() { Spacing = 2 };
+			var verticalStack = new VerticalStackLayout() { Spacing = 5, BackgroundColor = Color.AntiqueWhite };
+			var horizontalStack = new HorizontalStackLayout() { Spacing = 2 };
 
 			var label = new Label { Text = "This top part is a Xamarin.Platform.VerticalStackLayout" };
 
@@ -33,6 +33,7 @@ namespace Sample
 			horizontalStack.Add(new Label { Text = "And these buttons are in a HorizontalStackLayout" });
 
 			verticalStack.Add(horizontalStack);
+			verticalStack.Add(new DatePicker());
 			verticalStack.Add(new Slider());
 
 			return verticalStack;

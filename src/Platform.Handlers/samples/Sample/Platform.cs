@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using Xamarin.Forms;
+﻿using Xamarin.Forms;
 using Xamarin.Platform;
 using Xamarin.Platform.Handlers;
 using RegistrarHandlers = Xamarin.Platform.Registrar;
@@ -19,14 +17,14 @@ namespace Sample
 			HasInit = true;
 
 			RegistrarHandlers.Handlers.Register<Button, ButtonHandler>();
-			RegistrarHandlers.Handlers.Register<DatePicker, DatePickerHandler>();			
-      RegistrarHandlers.Handlers.Register<Label, LabelHandler>();
+			RegistrarHandlers.Handlers.Register<DatePicker, DatePickerHandler>();
+			RegistrarHandlers.Handlers.Register<Label, LabelHandler>();
 			RegistrarHandlers.Handlers.Register<Slider, SliderHandler>();
-      
-			RegistrarHandlers.Handlers.Register<Xamarin.Platform.HorizontalStackLayout, LayoutHandler>();
-			RegistrarHandlers.Handlers.Register<Xamarin.Forms.FlexLayout, LayoutHandler>();
-			RegistrarHandlers.Handlers.Register<Xamarin.Forms.StackLayout, LayoutHandler>();			
-      RegistrarHandlers.Handlers.Register<Xamarin.Platform.VerticalStackLayout, LayoutHandler>();
+
+			RegistrarHandlers.Handlers.Register<HorizontalStackLayout, LayoutHandler>();
+			RegistrarHandlers.Handlers.Register<FlexLayout, LayoutHandler>();
+			RegistrarHandlers.Handlers.Register<Xamarin.Forms.StackLayout, LayoutHandler>();
+			RegistrarHandlers.Handlers.Register<VerticalStackLayout, LayoutHandler>();
 		}
 	}
 }

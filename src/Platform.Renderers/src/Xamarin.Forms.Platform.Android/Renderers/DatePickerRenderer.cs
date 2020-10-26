@@ -222,6 +222,7 @@ namespace Xamarin.Forms.Platform.Android
 
 	public class DatePickerRenderer : DatePickerRendererBase<EditText>
 	{
+		[PortHandler]
 		TextColorSwitcher _textColorSwitcher;
 		[Obsolete("This constructor is obsolete as of version 2.5. Please use DatePickerRenderer(Context) instead.")]
 		public DatePickerRenderer()
@@ -239,6 +240,7 @@ namespace Xamarin.Forms.Platform.Android
 
 		protected override EditText EditText => Control;
 
+		[PortHandler]
 		protected override void UpdateTextColor()
 		{
 			_textColorSwitcher = _textColorSwitcher ?? new TextColorSwitcher(EditText.TextColors, Element.UseLegacyColorManagement());

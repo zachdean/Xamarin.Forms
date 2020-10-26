@@ -4,7 +4,7 @@ namespace Xamarin.Platform.Handlers
 {
 	public partial class DatePickerHandler : AbstractViewHandler<IDatePicker, object>
 	{
-		protected override object CreateView() => throw new NotImplementedException();
+		protected override object CreateNativeView() => throw new NotImplementedException();
 
 		public static void MapFormat(DatePickerHandler handler, IDatePicker datePicker) { }
 		public static void MapDate(DatePickerHandler handler, IDatePicker datePicker) { }

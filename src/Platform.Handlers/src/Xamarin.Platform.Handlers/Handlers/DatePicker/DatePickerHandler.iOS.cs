@@ -7,25 +7,19 @@ namespace Xamarin.Platform.Handlers
 {
 	public partial class DatePickerHandler : AbstractViewHandler<IDatePicker, NativeDatePicker>
 	{
-		NativeDatePicker? _nativeDatePicker;
 		static UIDatePicker? Picker;
 		static UIColor? DefaultTextColor;
 
-		protected override NativeDatePicker CreateView()
+		protected override NativeDatePicker CreateNativeView()
 		{
-			_nativeDatePicker = new NativeDatePicker();
-
-			_nativeDatePicker.EditingDidBegin += OnStarted;
-			_nativeDatePicker.EditingDidEnd += OnEnded;
+			NativeDatePicker nativeDatePicker = new NativeDatePicker();
 
 			Picker = new UIDatePicker { Mode = UIDatePickerMode.Date, TimeZone = new NSTimeZone("UTC") };
 
 			if (NativeVersion.IsAtLeast(14))
 			{
-				Picker.PreferredDatePickerStyle = UIKit.UIDatePickerStyle.Wheels;
+				Picker.PreferredDatePickerStyle = UIDatePickerStyle.Wheels;
 			}
-
-			Picker.ValueChanged += OnValueChanged;
 
 			var width = UIScreen.MainScreen.Bounds.Width;
 			var toolbar = new UIToolbar(new RectangleF(0, 0, width, 44)) { BarStyle = UIBarStyle.Default, Translucent = true };
@@ -33,51 +27,52 @@ namespace Xamarin.Platform.Handlers
 			var doneButton = new UIBarButtonItem(UIBarButtonSystemItem.Done, (o, a) =>
 			{
 				SetVirtualViewDate();
-				_nativeDatePicker.ResignFirstResponder();
+				nativeDatePicker.ResignFirstResponder();
 			});
 
 			toolbar.SetItems(new[] { spacer, doneButton }, false);
 
-			_nativeDatePicker.InputView = Picker;
-			_nativeDatePicker.InputAccessoryView = toolbar;
+			nativeDatePicker.InputView = Picker;
+			nativeDatePicker.InputAccessoryView = toolbar;
 
-			_nativeDatePicker.InputView.AutoresizingMask = UIViewAutoresizing.FlexibleHeight;
-			_nativeDatePicker.InputAccessoryView.AutoresizingMask = UIViewAutoresizing.FlexibleHeight;
+			nativeDatePicker.InputView.AutoresizingMask = UIViewAutoresizing.FlexibleHeight;
+			nativeDatePicker.InputAccessoryView.AutoresizingMask = UIViewAutoresizing.FlexibleHeight;
 
-			_nativeDatePicker.InputAssistantItem.LeadingBarButtonGroups = null;
-			_nativeDatePicker.InputAssistantItem.TrailingBarButtonGroups = null;
+			nativeDatePicker.InputAssistantItem.LeadingBarButtonGroups = null;
+			nativeDatePicker.InputAssistantItem.TrailingBarButtonGroups = null;
 
-			_nativeDatePicker.AccessibilityTraits = UIAccessibilityTrait.Button;
+			nativeDatePicker.AccessibilityTraits = UIAccessibilityTrait.Button;
 
-			return _nativeDatePicker;
+			return nativeDatePicker;
 		}
 
-		protected override void SetupDefaults()
+		protected override void ConnectHandler(NativeDatePicker nativeView)
 		{
-			DefaultTextColor = _nativeDatePicker?.TextColor;
-
-			base.SetupDefaults();
-		}
-
-		public override void TearDown()
-		{
-			DefaultTextColor = null;
+			nativeView.EditingDidBegin += OnStarted;
+			nativeView.EditingDidEnd += OnEnded;
 
 			if (Picker != null)
-			{
-				Picker.RemoveFromSuperview();
+				Picker.ValueChanged += OnValueChanged;
+
+			base.ConnectHandler(nativeView);
+		}
+
+		protected override void DisconnectHandler(NativeDatePicker nativeView)
+		{
+			nativeView.EditingDidBegin -= OnStarted;
+			nativeView.EditingDidEnd -= OnEnded;
+
+			if (Picker != null)
 				Picker.ValueChanged -= OnValueChanged;
-				Picker.Dispose();
-				Picker = null;
-			}
 
-			if (TypedNativeView != null)
-			{
-				TypedNativeView.EditingDidBegin -= OnStarted;
-				TypedNativeView.EditingDidEnd -= OnEnded;
-			}
+			base.DisconnectHandler(nativeView);
+		}
 
-			base.TearDown();
+		protected override void SetupDefaults(NativeDatePicker nativeView)
+		{
+			DefaultTextColor = nativeView.TextColor;
+
+			base.SetupDefaults(nativeView);
 		}
 
 		public static void MapFormat(DatePickerHandler handler, IDatePicker datePicker)

@@ -4,21 +4,19 @@ namespace Xamarin.Platform.Handlers
 {
 	public partial class DatePickerHandler : AbstractViewHandler<IDatePicker, NativeDatePicker>
 	{
-		NativeDatePicker? _timePicker;
+		static TextColorSwitcher? TextColorSwitcher;
 		static AlertDialog? Dialog;
 
-		protected override NativeDatePicker CreateView()
+		protected override NativeDatePicker CreateNativeView()
 		{
-			_timePicker = new NativeDatePicker(Context)
+			return new NativeDatePicker(Context)
 			{
 				ShowPicker = ShowPickerDialog,
 				HidePicker = HidePickerDialog
 			};
-
-			return _timePicker;
 		}
 
-		public override void TearDown()
+		protected override void DisconnectHandler(NativeDatePicker nativeView)
 		{
 			if (Dialog != null)
 			{
@@ -27,7 +25,7 @@ namespace Xamarin.Platform.Handlers
 				Dialog = null;
 			}
 
-			base.TearDown();
+			base.DisconnectHandler(nativeView);
 		}
 
 		protected virtual DatePickerDialog CreateDatePickerDialog(int year, int month, int day)
@@ -68,7 +66,8 @@ namespace Xamarin.Platform.Handlers
 		public static void MapColor(DatePickerHandler handler, IDatePicker datePicker)
 		{
 			ViewHandler.CheckParameters(handler, datePicker);
-			handler.TypedNativeView?.UpdateTextColor(datePicker);
+			TextColorSwitcher ??= new TextColorSwitcher(handler.TypedNativeView?.TextColors);
+			handler.TypedNativeView?.UpdateTextColor(datePicker, TextColorSwitcher);
 		}
 
 		public static void MapFont(DatePickerHandler handler, IDatePicker datePicker)

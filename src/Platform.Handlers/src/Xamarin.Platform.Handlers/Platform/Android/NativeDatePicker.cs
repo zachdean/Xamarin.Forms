@@ -1,9 +1,11 @@
 ﻿using System;
 using Android.Content;
 using Android.Runtime;
+using Android.Text;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
+using AndroidX.Core.Graphics.Drawable;
 using static Android.Views.View;
 
 namespace Xamarin.Platform
@@ -31,7 +33,12 @@ namespace Xamarin.Platform
 
 		private void Initialize()
 		{
+			DrawableCompat.Wrap(Background);
+
 			Focusable = true;
+			Clickable = true;
+			InputType = InputTypes.Null;
+
 			SetOnClickListener(this);
 		}
 

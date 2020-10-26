@@ -1,14 +1,11 @@
 ﻿using System;
 using Android.App;
-using Android.Content.Res;
 using Android.Util;
 
 namespace Xamarin.Platform
 {
 	public static class DatePickerExtensions
 	{
-		static readonly int[][] ColorStates = { new[] { global::Android.Resource.Attribute.StateEnabled }, new[] { -global::Android.Resource.Attribute.StateEnabled } };
-
 		public static void UpdateFormat(this NativeDatePicker nativeDatePicker, IDatePicker datePicker)
 		{
 			nativeDatePicker.SetText(datePicker);
@@ -47,8 +44,18 @@ namespace Xamarin.Platform
 
 		public static void UpdateTextColor(this NativeDatePicker nativeDatePicker, IDatePicker datePicker)
 		{
-			var textColor = datePicker.Color.ToNative().ToArgb();
-			nativeDatePicker.SetTextColor(new ColorStateList(ColorStates, new[] { textColor, textColor }));
+			nativeDatePicker.UpdateTextColor(datePicker, null);
+		}
+
+		public static void UpdateTextColor(this NativeDatePicker nativeDatePicker, IDatePicker datePicker, TextColorSwitcher? textColorSwitcher)
+		{
+			if (nativeDatePicker == null)
+				return;
+
+			if (textColorSwitcher == null)
+				textColorSwitcher = new TextColorSwitcher(nativeDatePicker?.TextColors);
+
+			textColorSwitcher.UpdateTextColor(nativeDatePicker!, datePicker.Color);
 		}
 
 		public static void UpdateFont(this NativeDatePicker nativeDatePicker, IDatePicker datePicker)

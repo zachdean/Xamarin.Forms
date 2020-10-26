@@ -4,7 +4,7 @@ using Xamarin.Platform;
 
 namespace Sample
 {
-	public class DatePicker : View, IDatePicker
+	public class DatePicker : Xamarin.Forms.View, IDatePicker
 	{
 		public string Format { get; set; } = "d";
 

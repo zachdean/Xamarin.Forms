@@ -3,8 +3,6 @@ using Android.OS;
 using Android.Runtime;
 using Android.Views;
 using AndroidX.AppCompat.App;
-using Xamarin.Forms;
-using AndroidX.Core.Widget;
 using Xamarin.Platform;
 
 namespace Sample.Droid
