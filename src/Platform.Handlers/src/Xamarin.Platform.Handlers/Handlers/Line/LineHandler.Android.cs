@@ -2,6 +2,6 @@
 {
 	public partial class LineHandler : AbstractViewHandler<ILine, NativeLine>
 	{
-		protected override NativeLine CreateView() => new NativeLine(Context);
+		protected override NativeLine CreateNativeView() => new NativeLine(Context);
 	}
 }

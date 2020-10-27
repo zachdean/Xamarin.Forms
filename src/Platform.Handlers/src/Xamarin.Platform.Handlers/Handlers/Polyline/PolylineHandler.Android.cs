@@ -2,6 +2,6 @@
 {
 	public partial class PolylineHandler : AbstractViewHandler<IPolyline, NativePolyline>
 	{
-		protected override NativePolyline CreateView() => new NativePolyline(Context);
+		protected override NativePolyline CreateNativeView() => new NativePolyline(Context);
 	}
 }

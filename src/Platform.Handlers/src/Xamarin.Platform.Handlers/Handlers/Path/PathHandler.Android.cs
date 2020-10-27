@@ -2,7 +2,7 @@
 {
     public partial class PathHandler : AbstractViewHandler<IPath, NativePath>
     {
-        protected override NativePath CreateView()
+        protected override NativePath CreateNativeView()
         {
             return new NativePath(Context);
         }

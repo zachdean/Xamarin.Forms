@@ -1,7 +1,7 @@
 ﻿
 namespace Xamarin.Forms.Shapes
 {
-	public sealed class Line : Shape
+	public partial class Line : Shape
 	{
 		public static readonly BindableProperty X1Property =
 			BindableProperty.Create(nameof(X1), typeof(double), typeof(Line), 0.0d);

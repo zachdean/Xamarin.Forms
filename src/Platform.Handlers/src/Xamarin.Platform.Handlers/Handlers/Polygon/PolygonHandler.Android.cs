@@ -2,6 +2,6 @@
 {
 	public partial class PolygonHandler : AbstractViewHandler<IPolygon, NativePolygon>
 	{
-		protected override NativePolygon CreateView() => new NativePolygon(Context);
+		protected override NativePolygon CreateNativeView() => new NativePolygon(Context);
 	}
 }

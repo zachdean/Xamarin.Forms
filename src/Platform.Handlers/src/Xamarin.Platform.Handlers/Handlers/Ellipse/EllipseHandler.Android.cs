@@ -4,13 +4,14 @@ namespace Xamarin.Platform.Handlers
 {
 	public partial class EllipseHandler : AbstractViewHandler<IEllipse, NativeEllipse>
 	{
-		protected override NativeEllipse CreateView() => new NativeEllipse(Context);
+		protected override NativeEllipse CreateNativeView() => new NativeEllipse(Context);
 
-		public override SizeRequest GetDesiredSize(double widthConstraint, double heightConstraint)
+		public override Size GetDesiredSize(double widthConstraint, double heightConstraint)
 		{
 			if (TypedNativeView != null)
 			{
-				return TypedNativeView.GetDesiredSize();
+				var desiredSize = TypedNativeView.GetDesiredSize();
+				return desiredSize.Request;
 			}
 
 			return base.GetDesiredSize(widthConstraint, heightConstraint);

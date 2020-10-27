@@ -2,6 +2,6 @@
 {
 	public partial class RectangleHandler : AbstractViewHandler<IRectangle, NativeRectangle>
 	{
-		protected override NativeRectangle CreateView() => new NativeRectangle(Context);
+		protected override NativeRectangle CreateNativeView() => new NativeRectangle(Context);
 	}
 }

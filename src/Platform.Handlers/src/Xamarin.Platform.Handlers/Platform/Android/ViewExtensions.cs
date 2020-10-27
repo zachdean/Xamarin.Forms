@@ -1,8 +1,4 @@
-﻿using System;
-using Android.Content.Res;
-using Android.Graphics.Drawables;
-using Xamarin.Forms;
-using AView = Android.Views.View;
+﻿using AView = Android.Views.View;
 
 namespace Xamarin.Platform
 {
@@ -13,7 +9,6 @@ namespace Xamarin.Platform
 			if (nativeView != null)
 				nativeView.Enabled = view.IsEnabled;
 		}
-
 
 		public static void UpdateBackgroundColor(this AView nativeView, IView view)
 		{

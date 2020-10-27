@@ -3,7 +3,7 @@ using Xamarin.Platform;
 
 namespace Sample
 {
-    public class Shape : View, IShape
+    public class Shape : Xamarin.Forms.View, IShape
     {
         public Shape()
         {

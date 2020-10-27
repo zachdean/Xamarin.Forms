@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Drawing;
 using System.Runtime.CompilerServices;
 #if __IOS__
 using NativeView = UIKit.UIView;
@@ -39,7 +38,6 @@ namespace Xamarin.Platform.Handlers
 			CheckParameters(handler, view);
 			(handler.NativeView as NativeView)?.UpdateBackgroundColor(view);
 		}
-
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		internal static void CheckParameters(IViewHandler handler, IView view)

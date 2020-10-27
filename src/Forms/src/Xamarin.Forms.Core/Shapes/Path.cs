@@ -1,9 +1,7 @@
-﻿using System.ComponentModel;
-
-namespace Xamarin.Forms.Shapes
+﻿namespace Xamarin.Forms.Shapes
 {
 	// TODO: Code commented because Geometry and Transform has been moved to Xamarin.Platform where BindableProperties are not used.
-	public class Path : Shape
+	public partial class Path : Shape
 	{
 		public static readonly BindableProperty DataProperty =
 			 BindableProperty.Create(nameof(Data), typeof(Geometry), typeof(Path), null);

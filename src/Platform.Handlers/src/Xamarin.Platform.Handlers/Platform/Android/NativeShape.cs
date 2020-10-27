@@ -43,7 +43,7 @@ namespace Xamarin.Platform
             _aspect = Stretch.None;
         }
 
-        protected override void OnDraw(Canvas? canvas)
+		protected override void OnDraw(Canvas? canvas)
         {
             base.OnDraw(canvas);
 

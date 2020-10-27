@@ -1,7 +1,6 @@
-﻿
-namespace Xamarin.Forms.Shapes
+﻿namespace Xamarin.Forms.Shapes
 {
-	public sealed class Polyline : Shape
+	public partial class Polyline : Shape
 	{
 		public static readonly BindableProperty PointsProperty =
 			BindableProperty.Create(nameof(Points), typeof(PointCollection), typeof(Polyline), null, defaultValueCreator: bindable => new PointCollection());

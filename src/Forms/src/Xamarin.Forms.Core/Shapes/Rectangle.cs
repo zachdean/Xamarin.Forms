@@ -1,7 +1,6 @@
-﻿
-namespace Xamarin.Forms.Shapes
+﻿namespace Xamarin.Forms.Shapes
 {
-	public sealed class Rectangle : Shape
+	public partial class Rectangle : Shape
 	{
 		public Rectangle()
 		{

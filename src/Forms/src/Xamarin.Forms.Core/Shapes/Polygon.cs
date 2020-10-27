@@ -1,7 +1,6 @@
-﻿
-namespace Xamarin.Forms.Shapes
+﻿namespace Xamarin.Forms.Shapes
 {
-	public sealed class Polygon : Shape
+	public partial class Polygon : Shape
 	{
 		public static readonly BindableProperty PointsProperty =
 			BindableProperty.Create(nameof(Points), typeof(PointCollection), typeof(Polygon), null, defaultValueCreator: bindable => new PointCollection());
@@ -19,7 +18,6 @@ namespace Xamarin.Forms.Shapes
 		{
 			set { SetValue(FillRuleProperty, value); }
 			get { return (FillRule)GetValue(FillRuleProperty); }
-
 		}
 	}
 }

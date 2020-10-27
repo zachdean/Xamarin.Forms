@@ -4,6 +4,6 @@ namespace Xamarin.Platform.Handlers
 {
     public partial class PathHandler : AbstractViewHandler<IPath, object>
 	{
-		protected override object CreateView() => throw new NotImplementedException();
+		protected override object CreateNativeView() => throw new NotImplementedException();
 	}
 }

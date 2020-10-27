@@ -55,6 +55,5 @@ namespace Xamarin.Platform
 			IsArrangeValid = true;
 			Handler?.SetFrame(bounds);
 		}
-
 	}
 }
