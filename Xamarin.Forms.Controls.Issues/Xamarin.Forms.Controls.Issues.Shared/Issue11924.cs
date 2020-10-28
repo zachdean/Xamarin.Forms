@@ -32,7 +32,7 @@ namespace Xamarin.Forms.Controls.Issues
 			AddBottomTab(CreatePage1(Test1), Test1);
 			AddBottomTab(CreatePage2(Test2), Test2);
 
-			ContentPage CreatePage1(string title)
+			static ContentPage CreatePage1(string title)
 			{
 				var layout = new StackLayout();
 
@@ -62,7 +62,7 @@ namespace Xamarin.Forms.Controls.Issues
 				};
 			}
 
-			ContentPage CreatePage2(string title)
+			static ContentPage CreatePage2(string title)
 			{
 				var layout = new StackLayout();
 

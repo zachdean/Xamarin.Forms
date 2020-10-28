@@ -45,7 +45,9 @@ namespace Xamarin.Forms.Platform.Android
 		{
 			base.OnElementPropertyChanged(sender, args);
 
-			if (args.PropertyName == VisualElement.HeightProperty.PropertyName || args.PropertyName == VisualElement.WidthProperty.PropertyName)
+			if (args.PropertyName == VisualElement.HeightProperty.PropertyName ||
+				args.PropertyName == VisualElement.WidthProperty.PropertyName ||
+				args.PropertyName == Platform.RendererProperty.PropertyName)
 				UpdateSize();
 			else if (args.PropertyName == Shape.AspectProperty.PropertyName)
 				UpdateAspect();
@@ -79,8 +81,9 @@ namespace Xamarin.Forms.Platform.Android
 
 		void UpdateSize()
 		{
-      double height = Math.Max(Element.Height, 0);
-      double width = Math.Max(Element.Width, 0);
+			double height = Math.Max(Element.Height, 0);
+			double width = Math.Max(Element.Width, 0);
+
 			Control.UpdateSize(width, height);
 		}
 
