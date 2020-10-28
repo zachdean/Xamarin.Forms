@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using System.ComponentModel;
+using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Xamarin.Forms.Internals;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
-using System.Linq;
 
 namespace Xamarin.Forms
 {
@@ -60,21 +60,6 @@ namespace Xamarin.Forms
 		#region IShellItemController
 
 		IShellItemController ShellItemController => this;
-
-		internal Task GoToPart(NavigationRequest request, Dictionary<string, string> queryData)
-		{
-			var shellSection = request.Request.Section;
-
-			if (shellSection == null)
-				shellSection = ShellItemController.GetItems()[0];
-
-			Shell.ApplyQueryAttributes(shellSection, queryData, request.Request.Content == null);
-
-			if (CurrentItem != shellSection)
-				SetValueFromRenderer(CurrentItemProperty, shellSection);
-
-			return shellSection.GoToPart(request, queryData);
-		}
 
 		bool IShellItemController.ProposeSection(ShellSection shellSection, bool setValue)
 		{
@@ -158,7 +143,7 @@ namespace Xamarin.Forms
 					}
 				}
 
-				if(args.NewItems != null)
+				if (args.NewItems != null)
 				{
 					foreach (Element item in args.NewItems)
 					{
@@ -291,7 +276,7 @@ namespace Xamarin.Forms
 
 			shellItem.SendStructureChanged();
 
-			if(shellItem.IsVisibleItem)
+			if (shellItem.IsVisibleItem)
 				((IShellController)shellItem?.Parent)?.AppearanceChanged(shellItem, false);
 		}
 
