@@ -1,0 +1,105 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<controls:TestContentPage
+    xmlns:controls="clr-namespace:Xamarin.Forms.Controls"
+    xmlns="http://xamarin.com/schemas/2014/forms"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    x:Class="Xamarin.Forms.Controls.Issues.Issue12303"
+    Title="Issue 12303">
+    <ContentPage.Resources>
+        
+        <Style
+            TargetType="Button">
+            <Setter
+                Property="WidthRequest"
+                Value="88" />
+            <Setter
+                Property="HeightRequest"
+                Value="88" />
+            <Setter
+                Property="HorizontalOptions"
+                Value="Start" />
+            <Setter
+                Property="VerticalOptions"
+                Value="Start" />
+            <Setter
+                Property="CornerRadius"
+                Value="8" />
+            <Setter
+                Property="TextColor"
+                Value="White" />
+            <Setter
+                Property="BorderWidth"
+                Value="0" />
+            <Setter
+                Property="Margin"
+                Value="0,0,8,0" />
+        </Style>
+        
+    </ContentPage.Resources>
+    <Grid
+        RowDefinitions="Auto, *, 88">
+        <Label          
+            Padding="12"
+            BackgroundColor="Black"
+            TextColor="White"
+            Text="If the button color is: Blue, Purple, MediumPurple and DarkBlue. The test has passed."/>
+        <StackLayout
+            Grid.Row="1"
+            Margin="15,0"
+            Orientation="Horizontal">
+            <Button
+                Text="1"
+                Clicked="Button_Clicked"
+                BackgroundColor="Blue">
+                <Button.GestureRecognizers>
+                    <DragGestureRecognizer
+                        DragStarting="DragGestureRecognizer_DragStarting"
+                        CanDrag="True" />
+                </Button.GestureRecognizers>
+            </Button>
+            <Button
+                Text="2"
+                BackgroundColor="Purple" >
+                <Button.GestureRecognizers>
+                    <DragGestureRecognizer
+                        DragStarting="DragGestureRecognizer_DragStarting"
+                        CanDrag="True" />
+                </Button.GestureRecognizers>
+            </Button>
+            <Button
+                Text="3"
+                BackgroundColor="MediumPurple">
+                <Button.GestureRecognizers>
+                    <DragGestureRecognizer
+                        DragStarting="DragGestureRecognizer_DragStarting"
+                        CanDrag="True" />
+                </Button.GestureRecognizers>
+            </Button>
+            <Button
+                Text="4"
+                BackgroundColor="DarkBlue">
+                <Button.GestureRecognizers>
+                    <DragGestureRecognizer
+                        DragStarting="DragGestureRecognizer_DragStarting"
+                        CanDrag="True" />
+                </Button.GestureRecognizers>
+            </Button>
+        </StackLayout>
+        <StackLayout    
+            Grid.Row="2"
+            Orientation="Horizontal"
+            Padding="15,0"
+            BackgroundColor="LightGray">
+            <StackLayout.GestureRecognizers>
+                <DropGestureRecognizer
+                    AllowDrop="True"
+                    DragOver="DropGestureRecognizer_DragOver"
+                    DragLeave="DropGestureRecognizer_DragLeave"
+                    Drop="DropGestureRecognizer_Drop"/>
+            </StackLayout.GestureRecognizers>
+        </StackLayout>
+    </Grid>
+</controls:TestContentPage>
