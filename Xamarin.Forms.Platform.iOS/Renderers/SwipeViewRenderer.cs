@@ -139,7 +139,10 @@ namespace Xamarin.Forms.Platform.iOS
 			base.LayoutSubviews();
 
 			if (Bounds.X < 0 || Bounds.Y < 0)
+			{
 				Bounds = new CGRect(0, 0, Bounds.Width, Bounds.Height);
+				_originalBounds = Bounds;
+			}
 
 			if (_contentView != null && _contentView.Frame.IsEmpty)
 				_contentView.Frame = Bounds;
@@ -301,10 +304,7 @@ namespace Xamarin.Forms.Platform.iOS
 			return null;
 		}
 
-		bool OnShouldReceiveTouch(UIGestureRecognizer recognizer, UITouch touch)
-		{
-			return _swipeOffset != 0;
-		}
+		bool OnShouldReceiveTouch(UIGestureRecognizer recognizer, UITouch touch) => _swipeOffset != 0;
 
 		void UpdateContent()
 		{
@@ -354,7 +354,7 @@ namespace Xamarin.Forms.Platform.iOS
 
 		void HandlePan(UIPanGestureRecognizer panGestureRecognizer)
 		{
-			if (panGestureRecognizer != null)
+			if (_isSwipeEnabled && panGestureRecognizer != null)
 			{
 				CGPoint point = panGestureRecognizer.LocationInView(this);
 				var navigationController = GetUINavigationController(GetViewController());
@@ -399,11 +399,6 @@ namespace Xamarin.Forms.Platform.iOS
 		void UpdateIsSwipeEnabled()
 		{
 			_isSwipeEnabled = Element.IsEnabled;
-		}
-
-		bool HasSwipeItems()
-		{
-			return Element != null && (IsValidSwipeItems(Element.LeftItems) || IsValidSwipeItems(Element.RightItems) || IsValidSwipeItems(Element.TopItems) || IsValidSwipeItems(Element.BottomItems));
 		}
 
 		bool IsHorizontalSwipe()
@@ -479,9 +474,6 @@ namespace Xamarin.Forms.Platform.iOS
 
 			if (items == null || items.Count == 0)
 				return;
-
-			if (_originalBounds == CGRect.Empty)
-				_originalBounds = _contentView.Frame;
 
 			int i = 0;
 			float previousWidth = 0;
@@ -712,7 +704,7 @@ namespace Xamarin.Forms.Platform.iOS
 					break;
 				case GestureStatus.Canceled:
 				case GestureStatus.Completed:
-					ProcessTouchUp(point);
+					ProcessTouchUp();
 					break;
 			}
 
@@ -766,7 +758,7 @@ namespace Xamarin.Forms.Platform.iOS
 			RaiseSwipeChanging();
 		}
 
-		void ProcessTouchUp(CGPoint point)
+		void ProcessTouchUp()
 		{
 			_isTouchDown = false;
 
@@ -774,7 +766,6 @@ namespace Xamarin.Forms.Platform.iOS
 				return;
 
 			_isSwiping = false;
-			IsParentScrollEnabled(true);
 
 			RaiseSwipeEnded();
 
@@ -799,20 +790,9 @@ namespace Xamarin.Forms.Platform.iOS
 			var parent = this.GetParentOfType<UIScrollView>();
 
 			if (parent != null)
+			{
 				parent.ScrollEnabled = _isScrollEnabled;
-		}
-
-		bool CanProcessTouchSwipeItems(CGPoint point)
-		{
-			// We only invoke the SwipeItem command if we tap on the SwipeItems area
-			// and the SwipeView is fully open.
-			if (TouchInsideContent(point))
-				return false;
-
-			if (_swipeOffset == _swipeThreshold)
-				return true;
-
-			return false;
+			}
 		}
 
 		bool TouchInsideContent(CGPoint point)
@@ -989,7 +969,6 @@ namespace Xamarin.Forms.Platform.iOS
 			_swipeItems.Clear();
 			_swipeThreshold = 0;
 			_swipeOffset = 0;
-			_originalBounds = CGRect.Empty;
 
 			if (_actionView != null)
 			{
@@ -1013,11 +992,14 @@ namespace Xamarin.Forms.Platform.iOS
 			_isSwiping = false;
 			_swipeThreshold = 0;
 			_swipeDirection = null;
+
 			DisposeSwipeItems();
 		}
 
 		void ResetSwipe(bool animated = true)
 		{
+			IsParentScrollEnabled(true);
+
 			if (_swipeItemsRect == null || _contentView == null)
 				return;
 
