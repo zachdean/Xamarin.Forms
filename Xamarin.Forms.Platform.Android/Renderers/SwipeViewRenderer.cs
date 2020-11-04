@@ -32,8 +32,6 @@ namespace Xamarin.Forms.Platform.Android
 		AView _contentView;
 		LinearLayoutCompat _actionView;
 		SwipeTransitionMode _swipeTransitionMode;
-		float _downX;
-		float _downY;
 		float _density;
 		bool _isTouchDown;
 		bool _isSwiping;
@@ -268,17 +266,12 @@ namespace Xamarin.Forms.Platform.Android
 			return true;
 		}
 
-		public override bool OnInterceptTouchEvent(MotionEvent e)
-		{
-			return ShouldInterceptTouch(e);
-		}
+		public override bool OnInterceptTouchEvent(MotionEvent e) => ShouldInterceptTouch(e);
 
 		public override bool DispatchTouchEvent(MotionEvent e)
 		{
 			if (e.Action == MotionEventActions.Down)
 			{
-				_downX = e.RawX;
-				_downY = e.RawY;
 				_initialPoint = new APointF(e.GetX() / _density, e.GetY() / _density);
 			}
 
@@ -292,8 +285,6 @@ namespace Xamarin.Forms.Platform.Android
 				{
 					if (!_isSwiping && _isOpen && TouchInsideContent(touchUpPoint))
 						ResetSwipe();
-
-					PropagateParentTouch();
 				}
 			}
 
@@ -368,11 +359,6 @@ namespace Xamarin.Forms.Platform.Android
 			return swipeItems;
 		}
 
-		bool HasSwipeItems()
-		{
-			return Element != null && (IsValidSwipeItems(Element.LeftItems) || IsValidSwipeItems(Element.RightItems) || IsValidSwipeItems(Element.TopItems) || IsValidSwipeItems(Element.BottomItems));
-		}
-
 		bool IsHorizontalSwipe()
 		{
 			return _swipeDirection == SwipeDirection.Left || _swipeDirection == SwipeDirection.Right;
@@ -391,9 +377,6 @@ namespace Xamarin.Forms.Platform.Android
 			switch (e.Action)
 			{
 				case MotionEventActions.Down:
-					_downX = e.RawX;
-					_downY = e.RawY;
-
 					handled = HandleTouchInteractions(GestureStatus.Started, point);
 
 					if (handled == true)
@@ -509,6 +492,7 @@ namespace Xamarin.Forms.Platform.Android
 		{
 			_isTouchDown = false;
 
+			PropagateParentTouch();
 			EnableParentGesture(true);
 
 			if (!_isSwiping)
