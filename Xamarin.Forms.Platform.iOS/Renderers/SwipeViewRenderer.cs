@@ -760,6 +760,8 @@ namespace Xamarin.Forms.Platform.iOS
 
 		void ProcessTouchUp()
 		{
+			IsParentScrollEnabled(true);
+
 			_isTouchDown = false;
 
 			if (!_isSwiping)
@@ -998,8 +1000,6 @@ namespace Xamarin.Forms.Platform.iOS
 
 		void ResetSwipe(bool animated = true)
 		{
-			IsParentScrollEnabled(true);
-
 			if (_swipeItemsRect == null || _contentView == null)
 				return;
 
