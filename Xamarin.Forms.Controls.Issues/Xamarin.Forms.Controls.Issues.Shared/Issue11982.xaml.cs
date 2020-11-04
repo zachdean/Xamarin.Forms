@@ -32,12 +32,20 @@ namespace Xamarin.Forms.Controls.Issues
                 if (item == null)
                     return;
 
-                Issue11982CollectionView.SelectedItem = null;
+                Issue11982CollectionView1.SelectedItem = null;
+                Issue11982CollectionView2.SelectedItem = null;
 
                 DisplayAlert("Info", item.Name, "Ok");
             });
 
-            Items = new ObservableCollection<Issue11982Model>
+            Items1 = new ObservableCollection<Issue11982Model>
+            {
+                new Issue11982Model { Name = "First" },
+                new Issue11982Model { Name = "Second" },
+                new Issue11982Model { Name = "Third" },
+            };
+
+            Items2 = new ObservableCollection<Issue11982Model>
             {
                 new Issue11982Model { Name = "First" },
                 new Issue11982Model { Name = "Second" },
@@ -48,7 +56,9 @@ namespace Xamarin.Forms.Controls.Issues
 #endif
         }
 
-		public ObservableCollection<Issue11982Model> Items { get; private set; }
+		public ObservableCollection<Issue11982Model> Items1 { get; private set; }
+
+        public ObservableCollection<Issue11982Model> Items2 { get; private set; }
 
         public ICommand SelectionChangedCommand { get; private set; }
 
