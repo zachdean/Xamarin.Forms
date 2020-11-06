@@ -823,7 +823,6 @@ namespace Xamarin.Forms
 		protected override void OnBindingContextChanged()
 		{
 			PropagateBindingContextToStateTriggers();
-			PropagateBindingContextToGradientBrush();
 
 			base.OnBindingContextChanged();
 		}
@@ -986,17 +985,6 @@ namespace Xamarin.Forms
 				foreach (var state in group.States)
 					foreach (var stateTrigger in state.StateTriggers)
 						SetInheritedBindingContext(stateTrigger, BindingContext);
-		}
-
-		void PropagateBindingContextToGradientBrush()
-		{
-			var brush = (Brush)GetValue(BackgroundProperty);
-
-			if (brush != null && brush is GradientBrush gradientBrush)
-			{
-				foreach (var item in gradientBrush.GradientStops)
-					SetInheritedBindingContext(item, BindingContext);
-			}
 		}
 
 		void OnFocused() => Focused?.Invoke(this, new FocusEventArgs(this, true));
