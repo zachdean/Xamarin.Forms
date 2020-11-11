@@ -14,7 +14,7 @@ using Xamarin.Forms.Core.UITests;
 namespace Xamarin.Forms.Controls.Issues
 {
 #if UITEST
-	[Category(UITestCategories.Shape)]
+	[NUnit.Framework.Category(UITestCategories.Shape)]
 #endif
 	[Preserve(AllMembers = true)]
 	[Issue(IssueTracker.Github, 11982,
