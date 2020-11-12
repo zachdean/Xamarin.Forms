@@ -397,7 +397,7 @@ namespace Xamarin.Forms.Platform.Android
 					handled = HandleTouchInteractions(GestureStatus.Started, point);
 
 					if (handled == true)
-						Parent.RequestDisallowInterceptTouchEvent(true);
+						Parent.RequestDisallowInterceptTouchEvent(false);
 
 					break;
 				case MotionEventActions.Up:
@@ -444,8 +444,10 @@ namespace Xamarin.Forms.Platform.Android
 				case GestureStatus.Running:
 					return !ProcessTouchMove(point);
 				case GestureStatus.Canceled:
+					ProcessTouchUp(false);
+					break;
 				case GestureStatus.Completed:
-					ProcessTouchUp();
+					ProcessTouchUp(true);
 					break;
 			}
 
@@ -505,11 +507,13 @@ namespace Xamarin.Forms.Platform.Android
 			return true;
 		}
 
-		bool ProcessTouchUp()
+		bool ProcessTouchUp(bool propagateParentTouch)
 		{
 			_isTouchDown = false;
 
-			PropagateParentTouch();
+			if (propagateParentTouch)
+				PropagateParentTouch();
+
 			EnableParentGesture(true);
 
 			if (!_isSwiping)

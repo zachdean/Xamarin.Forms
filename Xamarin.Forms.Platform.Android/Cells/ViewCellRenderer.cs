@@ -251,7 +251,8 @@ namespace Xamarin.Forms.Platform.Android
 
 			void UpdateWatchForLongPress()
 			{
-				if (!(_view.Element is View vw))
+				var vw = _view.Element as Xamarin.Forms.View;
+				if (vw == null)
 				{
 					return;
 				}
@@ -275,7 +276,7 @@ namespace Xamarin.Forms.Platform.Android
 				ListViewRenderer?.ClickOn(this);
 			}
 
-			void TriggerLongClick()
+			internal void TriggerLongClick()
 			{
 				ListViewRenderer?.LongClickOn(this);
 			}
