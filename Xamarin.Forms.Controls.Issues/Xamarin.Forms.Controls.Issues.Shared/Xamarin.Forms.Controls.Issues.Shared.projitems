@@ -46,6 +46,7 @@
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Issue12246.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Issue12652.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Issue12714.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Issue8613.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Issue9137.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Issue8691.cs" />
@@ -1628,6 +1629,8 @@
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Issue12222.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Issue12760.xaml.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Issue12574.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Issue12777.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Issue11911.xaml.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Issue11691.xaml.cs" />
   </ItemGroup>
