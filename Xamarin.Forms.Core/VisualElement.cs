@@ -992,7 +992,7 @@ namespace Xamarin.Forms
 		{
 			var brush = (Brush)GetValue(BackgroundProperty);
 
-			SetInheritedBindingContext(brush, BindingContext)
+			SetInheritedBindingContext(brush, BindingContext);
 		}
 
 		void OnFocused() => Focused?.Invoke(this, new FocusEventArgs(this, true));
