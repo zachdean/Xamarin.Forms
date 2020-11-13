@@ -13,6 +13,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Issue10897.xaml.cs">
       <DependentUpon>Issue10897.xaml</DependentUpon>
     </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Issue12193.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Issue12320.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Issue12153.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Issue10324.cs" />
@@ -45,6 +46,7 @@
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Issue12246.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Issue12652.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Issue12714.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Issue8613.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Issue9137.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Issue8691.cs" />
@@ -1580,6 +1582,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Issue11430.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Issue11247.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Issue10608.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DateTimePickerLocalizationTests.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Issue11800.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Issue11572.xaml.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Issue11571.xaml.cs" />
@@ -1626,6 +1629,8 @@
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Issue12222.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Issue11982.xaml.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Issue12574.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Issue12777.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Issue11911.xaml.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Issue11691.xaml.cs" />
   </ItemGroup>
