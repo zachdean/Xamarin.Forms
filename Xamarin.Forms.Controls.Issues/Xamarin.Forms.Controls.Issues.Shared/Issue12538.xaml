@@ -17,7 +17,7 @@
             Padding="12"
             BackgroundColor="Black"
             TextColor="White"
-            Text="If an Ellipse is rendered below using am static SolidColorBrush, the test has passed."/>
+            Text="If Ellipses are rendered below using static and dynamic SolidColorBrush, the test has passed."/>
         <Label
             Text="Using StaticResource"/>
         <Ellipse
