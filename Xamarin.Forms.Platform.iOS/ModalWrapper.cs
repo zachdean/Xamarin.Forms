@@ -138,7 +138,6 @@ namespace Xamarin.Forms.Platform.iOS
 			{
 				if (_modal?.Element is Page modalPage)
 				{
-					_modal.SetElementSize(new Size(-1, -1));
 					modalPage.PropertyChanged -= OnModalPagePropertyChanged;
 				}
 				_modal = null;

@@ -33,14 +33,15 @@ namespace Xamarin.Forms.Platform.MacOS
 #if __MOBILE__
 					if (renderer.ViewController != null)
 					{
-
-						var modalWrapper = renderer.ViewController.ParentViewController as ModalWrapper;
-						if (modalWrapper != null)
+						if (renderer.ViewController.ParentViewController is ModalWrapper modalWrapper)
 							modalWrapper.Dispose();
 					}
 #endif
 					renderer.NativeView.RemoveFromSuperview();
 					renderer.Dispose();
+					//reset layout size so we can re-layout the layer if we are reusing the same page.
+					//fixes a issue on split apps on iPad and iOS13
+					visualElement.Layout(new Rectangle(0, 0, -1, -1));
 				}
 				view.ClearValue(Platform.RendererProperty);
 			}
