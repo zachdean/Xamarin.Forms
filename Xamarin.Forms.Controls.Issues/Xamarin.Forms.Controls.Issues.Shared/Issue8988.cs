@@ -24,9 +24,10 @@ namespace Xamarin.Forms.Controls.Issues
 			var layout = new StackLayout();
 			var label = new Label
 			{
-				Text = "Welcome to Xamarin Forms!",
+				Text = "Click Next to push a modal, pop it, and push it again, you should see the second page a 2nd time without glitches.",
 				VerticalOptions = LayoutOptions.CenterAndExpand,
 				HorizontalOptions = LayoutOptions.CenterAndExpand,
+				HorizontalTextAlignment = TextAlignment.Center
 			};
 			var button = new Button
 			{
@@ -44,18 +45,6 @@ namespace Xamarin.Forms.Controls.Issues
 			BackgroundColor = Color.YellowGreen;
 			Content = layout;
 		}
-
-#if UITEST
-		[Test]
-		public void Issue8988Test()
-		{
-			RunningApp.WaitForElement("Issue1Label");
-			// Delete this and all other UITEST sections if there is no way to automate the test. Otherwise, be sure to rename the test and update the Category attribute on the class. Note that you can add multiple categories.
-			RunningApp.Screenshot("I am at Issue1");
-			RunningApp.WaitForElement(q => q.Marked("Issue1Label"));
-			RunningApp.Screenshot("I see the Label");
-		}
-#endif
 	}
 
 	class SecondPage : ContentPage
@@ -65,9 +54,10 @@ namespace Xamarin.Forms.Controls.Issues
 			var layout = new StackLayout();
 			var label = new Label
 			{
-				Text = "This is the Second Page!",
+				Text = "This is the Second Page! Pop me and push again. I should look the same",
 				VerticalOptions = LayoutOptions.CenterAndExpand,
 				HorizontalOptions = LayoutOptions.CenterAndExpand,
+				HorizontalTextAlignment = TextAlignment.Center
 			};
 			var button = new Button
 			{
