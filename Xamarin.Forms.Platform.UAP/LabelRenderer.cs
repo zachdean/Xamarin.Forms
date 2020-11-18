@@ -63,6 +63,10 @@ namespace Xamarin.Forms.Platform.UWP
 		//	return new TextBlockAutomationPeer(Control);
 		//}
 
+		public LabelRenderer()
+		{
+		}
+
 		protected override Windows.Foundation.Size ArrangeOverride(Windows.Foundation.Size finalSize)
 		{
 			if (Element == null)

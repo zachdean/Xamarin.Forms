@@ -55,7 +55,7 @@ namespace Xamarin.Forms.Platform.UWP
 				throw new InvalidOperationException("call Forms.Init() before this");
 			}
 
-			var root = new Microsoft.UI.Xaml.Controls.Page();
+			var root = new Microsoft.UI.Xaml.Window();
 
 			// Yes, this looks awkward. But the page needs to be Platformed or several things won't work
 			new WindowsPlatform(root);

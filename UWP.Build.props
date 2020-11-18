@@ -1,5 +1,5 @@
 <Project>
-  <PropertyGroup>
+  <!--<PropertyGroup>
     <WindowsXamlEnableOverview>true</WindowsXamlEnableOverview>
     <UsingMicrosoftNETSdk>false</UsingMicrosoftNETSdk>
     <IsWinUIAlpha Condition="'$(IsWinUIAlpha)' == ''">true</IsWinUIAlpha>
@@ -24,5 +24,5 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(TargetFramework)' == 'uap10.0.17763' ">
     <DefineConstants>$(DefineConstants);UWP_18362;UWP_19041;UWP_14393;UWP_17763;UWP_16299</DefineConstants>
-  </PropertyGroup>
+  </PropertyGroup>-->
 </Project>

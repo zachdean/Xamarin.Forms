@@ -28,25 +28,34 @@ namespace Xamarin.Forms.Platform.UWP
 	internal abstract class WindowsBasePlatformServices : IPlatformServices
 	{
 		const string WrongThreadError = "RPC_E_WRONG_THREAD";
-		readonly CoreDispatcher _dispatcher;
+#pragma warning disable CS8305 // Type is for evaluation purposes only and is subject to change or removal in future updates.
+		readonly Microsoft.System.DispatcherQueue _dispatcher;
+#pragma warning restore CS8305 // Type is for evaluation purposes only and is subject to change or removal in future updates.
 		readonly UISettings _uiSettings = new UISettings();
 
-		protected WindowsBasePlatformServices(CoreDispatcher dispatcher)
+#pragma warning disable CS8305 // Type is for evaluation purposes only and is subject to change or removal in future updates.
+		protected WindowsBasePlatformServices(Microsoft.System.DispatcherQueue dispatcher)
+#pragma warning restore CS8305 // Type is for evaluation purposes only and is subject to change or removal in future updates.
 		{
 			_dispatcher = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher));
 			_uiSettings.ColorValuesChanged += UISettingsColorValuesChanged;
 		}
 
-		public async void BeginInvokeOnMainThread(Action action)
+		public void BeginInvokeOnMainThread(Action action)
 		{
-			if (CoreApplication.Views.Count == 1)
+			//if (CoreApplication.Views.Count == 1)
 			{
 				// This is the normal scenario - one window only
-				_dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => action()).WatchForError();
+
+				// TODO WINUI
+				_dispatcher.TryEnqueue(() =>
+				{
+					action();
+				});//.WatchForError();
 				return;
 			}
 
-			await TryAllDispatchers(action);
+			//await TryAllDispatchers(action);
 		}
 
 		public Ticker CreateTicker()
@@ -58,25 +67,27 @@ namespace Xamarin.Forms.Platform.UWP
 		{
 			var options = new QueryOptions { FileTypeFilter = { ".exe", ".dll" } };
 
-			StorageFileQueryResult query = Package.Current.InstalledLocation.CreateFileQueryWithOptions(options);
-			IReadOnlyList<StorageFile> files = query.GetFilesAsync().AsTask().Result;
+			//StorageFileQueryResult query = Package.Current.InstalledLocation.CreateFileQueryWithOptions(options);
+			var assemblies = new List<Assembly>();
+			// TODO WINUI
+			//IReadOnlyList<StorageFile> files = query.GetFilesAsync().AsTask().Result;
 
-			var assemblies = new List<Assembly>(files.Count);
-			foreach (StorageFile file in files)
-			{
-				try
-				{
-					Assembly assembly = Assembly.Load(new AssemblyName { Name = IOPath.GetFileNameWithoutExtension(file.Name) });
+			//var assemblies = new List<Assembly>(files.Count);
+			//foreach (StorageFile file in files)
+			//{
+			//	try
+			//	{
+			//		Assembly assembly = Assembly.Load(new AssemblyName { Name = IOPath.GetFileNameWithoutExtension(file.Name) });
 
-					assemblies.Add(assembly);
-				}
-				catch (IOException)
-				{
-				}
-				catch (BadImageFormatException)
-				{
-				}
-			}
+			//		assemblies.Add(assembly);
+			//	}
+			//	catch (IOException)
+			//	{
+			//	}
+			//	catch (BadImageFormatException)
+			//	{
+			//	}
+			//}
 
 			Assembly thisAssembly = GetType().GetTypeInfo().Assembly;
 			// this happens with .NET Native
@@ -166,95 +177,95 @@ namespace Xamarin.Forms.Platform.UWP
 			return Platform.GetNativeSize(view, widthConstraint, heightConstraint);
 		}
 
-		async void UISettingsColorValuesChanged(UISettings sender, object args)
+		void UISettingsColorValuesChanged(UISettings sender, object args)
 		{
-			await _dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => Application.Current?.TriggerThemeChanged(new AppThemeChangedEventArgs(Application.Current.RequestedTheme)));
+			_dispatcher.TryEnqueue(() => Application.Current?.TriggerThemeChanged(new AppThemeChangedEventArgs(Application.Current.RequestedTheme)));
 		}
 
-		async Task TryAllDispatchers(Action action)
-		{
-			// Our best bet is Window.Current; most of the time, that's the Dispatcher we need
-			var currentWindow = Window.Current;
+		//async Task TryAllDispatchers(Action action)
+		//{
+		//	// Our best bet is Window.Current; most of the time, that's the Dispatcher we need
+		//	var currentWindow = Window.Current;
 
-			if (currentWindow?.Dispatcher != null)
-			{
-				try
-				{
-					await TryDispatch(currentWindow.Dispatcher, action);
-					return;
-				}
-				catch (Exception ex) when (ex.Message.Contains(WrongThreadError))
-				{
-					// The current window is not the one we need 
-				}
-			}
+		//	if (currentWindow?.Dispatcher != null)
+		//	{
+		//		try
+		//		{
+		//			await TryDispatch(currentWindow.Dispatcher, action);
+		//			return;
+		//		}
+		//		catch (Exception ex) when (ex.Message.Contains(WrongThreadError))
+		//		{
+		//			// The current window is not the one we need 
+		//		}
+		//	}
 
-			// Either Window.Current was the wrong Dispatcher, or Window.Current was null because we're on a 
-			// non-UI thread (e.g., one from the thread pool). So now it's time to try all the available Dispatchers 
+		//	// Either Window.Current was the wrong Dispatcher, or Window.Current was null because we're on a 
+		//	// non-UI thread (e.g., one from the thread pool). So now it's time to try all the available Dispatchers 
 
-			var views = CoreApplication.Views;
+		//	var views = CoreApplication.Views;
 
-			for (int n = 0; n < views.Count; n++)
-			{
-				var dispatcher = views[n].Dispatcher;
+		//	for (int n = 0; n < views.Count; n++)
+		//	{
+		//		var dispatcher = views[n].Dispatcher;
 
-				if (dispatcher == null || dispatcher == currentWindow?.Dispatcher)
-				{
-					// Obviously null Dispatchers are no good, and we already tried the one from currentWindow
-					continue;
-				}
+		//		if (dispatcher == null || dispatcher == currentWindow?.Dispatcher)
+		//		{
+		//			// Obviously null Dispatchers are no good, and we already tried the one from currentWindow
+		//			continue;
+		//		}
 
-				// We need to ignore Deactivated/Never Activated windows, but it's possible we can't access their 
-				// properties from this thread. So we'll check those using the Dispatcher
-				bool activated = false;
+		//		// We need to ignore Deactivated/Never Activated windows, but it's possible we can't access their 
+		//		// properties from this thread. So we'll check those using the Dispatcher
+		//		bool activated = false;
 
-				await TryDispatch(dispatcher, () => {
-					var mode = views[n].CoreWindow.ActivationMode;
-					activated = (mode == CoreWindowActivationMode.ActivatedInForeground
-						|| mode == CoreWindowActivationMode.ActivatedNotForeground);
-				});
+		//		await TryDispatch(dispatcher, () => {
+		//			var mode = views[n].CoreWindow.ActivationMode;
+		//			activated = (mode == CoreWindowActivationMode.ActivatedInForeground
+		//				|| mode == CoreWindowActivationMode.ActivatedNotForeground);
+		//		});
 
-				if (!activated)
-				{
-					// This is a deactivated (or not yet activated) window; move on
-					continue;
-				}
+		//		if (!activated)
+		//		{
+		//			// This is a deactivated (or not yet activated) window; move on
+		//			continue;
+		//		}
 
-				try
-				{
-					await TryDispatch(dispatcher, action);
-					return;
-				}
-				catch (Exception ex) when (ex.Message.Contains(WrongThreadError))
-				{
-					// This was the incorrect dispatcher; move on to try another one
-				}
-			}
-		}
+		//		try
+		//		{
+		//			await TryDispatch(dispatcher, action);
+		//			return;
+		//		}
+		//		catch (Exception ex) when (ex.Message.Contains(WrongThreadError))
+		//		{
+		//			// This was the incorrect dispatcher; move on to try another one
+		//		}
+		//	}
+		//}
 
-		async Task<bool> TryDispatch(CoreDispatcher dispatcher, Action action)
-		{
-			if (dispatcher == null)
-			{
-				throw new ArgumentNullException(nameof(dispatcher));
-			}
+		//async Task<bool> TryDispatch(CoreDispatcher dispatcher, Action action)
+		//{
+		//	if (dispatcher == null)
+		//	{
+		//		throw new ArgumentNullException(nameof(dispatcher));
+		//	}
 
-			var taskCompletionSource = new TaskCompletionSource<bool>();
+		//	var taskCompletionSource = new TaskCompletionSource<bool>();
 
-			await dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => {
-				try
-				{
-					action();
-					taskCompletionSource.SetResult(true);
-				}
-				catch (Exception ex)
-				{
-					taskCompletionSource.SetException(ex);
-				}
-			});
+		//	await dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => {
+		//		try
+		//		{
+		//			action();
+		//			taskCompletionSource.SetResult(true);
+		//		}
+		//		catch (Exception ex)
+		//		{
+		//			taskCompletionSource.SetException(ex);
+		//		}
+		//	});
 
-			return await taskCompletionSource.Task;
-		}
+		//	return await taskCompletionSource.Task;
+		//}
 
 		public OSAppTheme RequestedTheme => Microsoft.UI.Xaml.Application.Current.RequestedTheme == ApplicationTheme.Dark ? OSAppTheme.Dark : OSAppTheme.Light;
 	}

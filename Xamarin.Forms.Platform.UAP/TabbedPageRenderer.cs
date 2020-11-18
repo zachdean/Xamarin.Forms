@@ -336,7 +336,7 @@ namespace Xamarin.Forms.Platform.UWP
 
 		WBrush GetBarBackgroundBrush()
 		{
-			object defaultColor = new WSolidColorBrush(Windows.UI.Colors.Transparent);
+			object defaultColor = new WSolidColorBrush(Microsoft.UI.Colors.Transparent);
 
 			if (Element.BarBackgroundColor.IsDefault && defaultColor != null)
 				return (WBrush)defaultColor;

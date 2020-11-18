@@ -57,11 +57,7 @@ namespace Xamarin.Forms.Platform.UWP
 
 		internal static WGridLength CreateGridLength(int v, UwpGridUnitType auto)
 		{
-			return new WGridLength
-			{
-				  Value = v,
-				  GridUnitType = auto
-			};
+			return new WGridLength(v, auto);
 		}
 	}
 }

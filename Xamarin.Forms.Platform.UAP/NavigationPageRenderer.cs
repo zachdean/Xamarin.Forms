@@ -424,11 +424,11 @@ namespace Xamarin.Forms.Platform.UWP
 			if (e.Handled)
 				return;
 
-			PointerPoint point = e.GetCurrentPoint(_container);
+			var point = e.GetCurrentPoint(_container);
 			if (point == null)
 				return;
 
-			if (point.PointerDevice.PointerDeviceType != PointerDeviceType.Mouse)
+			if (point.PointerDeviceType != PointerDeviceType.Mouse)
 				return;
 
 			if (point.Properties.IsXButton1Pressed)

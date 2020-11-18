@@ -166,7 +166,7 @@ namespace Xamarin.Forms.Platform.UWP
 			}
 
 			var controller = (IElementController)oldElement;
-			if (controller != null && controller.EffectControlProvider == this)
+			if (controller != null && (Panel)controller.EffectControlProvider == this)
 			{
 				controller.EffectControlProvider = null;
 			}
@@ -678,7 +678,8 @@ namespace Xamarin.Forms.Platform.UWP
 				// in hit testing. 
 				if (Element is Layout && Background == null)
 				{
-					Background = new WSolidColorBrush(Windows.UI.Colors.Transparent);
+					// TODO WINUI
+					Background = new WSolidColorBrush(Microsoft.UI.Colors.Transparent);
 				}
 			}
 		}

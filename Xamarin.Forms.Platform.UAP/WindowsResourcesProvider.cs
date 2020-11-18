@@ -3,6 +3,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Xamarin.Forms.Internals;
 using WStyle = Microsoft.UI.Xaml.Style;
+using Microsoft.UI.Text;
 
 namespace Xamarin.Forms.Platform.UWP
 {

@@ -16,11 +16,11 @@ namespace Xamarin.Forms
 	{
 		const string LogFormat = "[{0}] {1}";
 
-		static ApplicationExecutionState s_state;
+		//static ApplicationExecutionState s_state;
 
 		public static bool IsInitialized { get; private set; }
 		
-		public static void Init(ILaunchActivatedEventArgs launchActivatedEventArgs, IEnumerable<Assembly> rendererAssemblies = null)
+		public static void Init(Microsoft.UI.Xaml.LaunchActivatedEventArgs launchActivatedEventArgs, IEnumerable<Assembly> rendererAssemblies = null)
 		{
 			if (IsInitialized)
 				return;
@@ -49,7 +49,10 @@ namespace Xamarin.Forms
 
 			Device.SetIdiom(TargetIdiom.Tablet);
 			Device.SetFlowDirection(GetFlowDirection());
-			Device.PlatformServices = new WindowsPlatformServices(Window.Current.Dispatcher);
+			// TODO SHANE WINUI
+			//if(Window.Current?.DispatcherQueue != null)
+			//	Device.PlatformServices = new WindowsPlatformServices(Window.Current.DispatcherQueue);
+
 			Device.SetFlags(s_flags);
 			Device.Info = new WindowsDeviceInfo();
 
@@ -76,15 +79,30 @@ namespace Xamarin.Forms
 			ExpressionSearch.Default = new WindowsExpressionSearch();
 
 			Registrar.ExtraAssemblies = rendererAssemblies?.ToArray();
+		}
+
+#pragma warning disable CS8305 // Type is for evaluation purposes only and is subject to change or removal in future updates.
+		public static void InitDispatcher(Microsoft.System.DispatcherQueue dispatcher)
+#pragma warning restore CS8305 // Type is for evaluation purposes only and is subject to change or removal in future updates.
+		{
+			Device.PlatformServices = new WindowsPlatformServices(dispatcher);
+
+			var assemblies = Device.GetAssemblies();
+			// TODO WINUI
+			//Registrar.Registered.Register(typeof(ContentPage), typeof(PageRenderer));
+			//Registrar.Registered.Register(typeof(Label), typeof(LabelRenderer));
+
+			//Registrar.Registered.Register(typeof(ContentPage), typeof(PageRenderer));
 
 			Registrar.RegisterAll(new[] { typeof(ExportRendererAttribute), typeof(ExportCellAttribute), typeof(ExportImageSourceHandlerAttribute), typeof(ExportFontAttribute) });
 
 			IsInitialized = true;
-			s_state = launchActivatedEventArgs.PreviousExecutionState;
+			// TODO SHANE
+			//s_state = launchActivatedEventArgs.PreviousExecutionState;
 
-			Platform.UWP.Platform.SubscribeAlertsAndActionSheets();
+			//Platform.UWP.Platform.SubscribeAlertsAndActionSheets();
 		}
-		 
+
 		static FlowDirection GetFlowDirection()
 		{
 			string resourceFlowDirection = ResourceContext.GetForCurrentView().QualifierValues["LayoutDirection"];

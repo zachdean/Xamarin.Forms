@@ -6,6 +6,7 @@ using Microsoft.UI.Xaml.Media;
 using Xamarin.Forms.Internals;
 using IOPath = System.IO.Path;
 using WApplication = Microsoft.UI.Xaml.Application;
+using Microsoft.UI.Text;
 
 namespace Xamarin.Forms.Platform.UWP
 {

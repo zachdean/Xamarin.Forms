@@ -6,6 +6,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using WBrush = Microsoft.UI.Xaml.Media.Brush;
 using WSolidColorBrush = Microsoft.UI.Xaml.Media.SolidColorBrush;
+using Microsoft.UI;
 
 namespace Xamarin.Forms.Platform.UWP
 {
@@ -17,8 +18,8 @@ namespace Xamarin.Forms.Platform.UWP
 			new PropertyMetadata(default(Brush)));
 
 		internal static readonly Windows.UI.Color DefaultBackgroundColor = Windows.UI.Color.FromArgb(255, 3, 169, 244);
-		internal static readonly Windows.UI.Color DefaultForegroundColor = Windows.UI.Colors.White;
-		internal static readonly Windows.UI.Color DefaultTitleColor = Windows.UI.Colors.White;
+		internal static readonly Windows.UI.Color DefaultForegroundColor = Microsoft.UI.Colors.White;
+		internal static readonly Windows.UI.Color DefaultTitleColor = Microsoft.UI.Colors.White;
 		internal static readonly Windows.UI.Color DefaultUnselectedColor = Windows.UI.Color.FromArgb(180, 255, 255, 255);
 		const string TogglePaneButton = "TogglePaneButton";
 		const string NavigationViewBackButton = "NavigationViewBackButton";
