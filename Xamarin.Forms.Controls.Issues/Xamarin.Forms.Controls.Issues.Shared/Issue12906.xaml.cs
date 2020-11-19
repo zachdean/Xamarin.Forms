@@ -30,10 +30,16 @@ namespace Xamarin.Forms.Controls.Issues
 #if APP
 		void OnUpdateCornerRadiusClicked(object sender, EventArgs e) => Box.CornerRadius = new CornerRadius(12, 0, 24, 0);
 
-		void OnUpdateColorClicked(object sender, EventArgs e) => Box.Color = Color.Orange;
+		void OnUpdateColorClicked(object sender, EventArgs e)
+		{
+			Box.Color = Color.Orange;
+			Box.Background = Brush.Default;
+		}
 
 		void OnUpdateBackgroundClicked(object sender, EventArgs e)
 		{
+			Box.Color = Color.Default;
+
 			LinearGradientBrush background = new LinearGradientBrush
 			{
 				StartPoint = new Point(0, 0),

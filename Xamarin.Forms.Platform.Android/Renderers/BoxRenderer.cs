@@ -39,7 +39,8 @@ namespace Xamarin.Forms.Platform.Android
 
 			_motionEventHelper.UpdateElement(e.NewElement);
 
-			UpdateBoxView();
+			UpdateCornerRadius();
+			UpdateColor();
 		}
 
 		protected override void OnElementPropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -56,7 +57,16 @@ namespace Xamarin.Forms.Platform.Android
 				VisualElement.BackgroundProperty,
 				BoxView.ColorProperty,
 				BoxView.CornerRadiusProperty))
-				UpdateBoxView();
+			{
+				UpdateCornerRadius();
+				UpdateColor();
+			}
+
+			else if (e.PropertyName == BoxView.CornerRadiusProperty.PropertyName)
+			{
+				UpdateCornerRadius();
+				UpdateColor();
+			}
 		}
 
 		protected override void UpdateBackgroundColor()
@@ -69,13 +79,7 @@ namespace Xamarin.Forms.Platform.Android
 
 		}
 
-		void UpdateBoxView()
-		{
-			UpdateCornerRadius();
-			UpdateBoxBackground();
-		}
-
-		void UpdateBoxBackground()
+		void UpdateColor()
 		{
 			Brush brushToSet = Element.Background;
 
