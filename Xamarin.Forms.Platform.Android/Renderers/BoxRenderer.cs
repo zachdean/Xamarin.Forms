@@ -61,12 +61,6 @@ namespace Xamarin.Forms.Platform.Android
 				UpdateCornerRadius();
 				UpdateColor();
 			}
-
-			else if (e.PropertyName == BoxView.CornerRadiusProperty.PropertyName)
-			{
-				UpdateCornerRadius();
-				UpdateColor();
-			}
 		}
 
 		protected override void UpdateBackgroundColor()
