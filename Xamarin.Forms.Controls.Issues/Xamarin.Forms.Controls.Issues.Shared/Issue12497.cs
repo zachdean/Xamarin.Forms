@@ -16,13 +16,18 @@ namespace Xamarin.Forms.Controls.Issues
 #endif
 	[Preserve(AllMembers = true)]
 	[Issue(IssueTracker.Github, 12497, "Calling Focus() on a WebView on UWP does not move the focus to the WebView", PlatformAffected.UWP)]
-	public class Issue12497 : TestContentPage // or TestFlyoutPage, etc ...
+	public class Issue12497 : TestContentPage
 	{
 		bool _firstTimeOnAppearing = true;
 		Button _button1;
 		Button _button2;
 		Button _button3;
 		WebView _webView;
+		Label _label;
+
+		const string FAIL = "Fail";
+		const string SUCCESS = "Success";
+		const string btnAutomationId = "btn3";
 
 		protected override void Init()
 		{
@@ -56,6 +61,11 @@ namespace Xamarin.Forms.Controls.Issues
 		{
 			int defaultTabIndex = Int32.MaxValue; // UWP says this should be the max int. Xamarin.Forms docs say it should be 0;
 
+			_label = new Label
+			{
+				Text = FAIL
+			};
+
 			_button1 = new Button
 			{
 				Text = "Button 1 (should be first in tab order)",
@@ -77,6 +87,11 @@ namespace Xamarin.Forms.Controls.Issues
 				}
 			};
 
+			_webView.Focused += (s, e) =>
+			{
+				_label.Text = SUCCESS;
+			};
+
 			_button2 = new Button
 			{
 				Text = "Button 2 (should be third in tab order)",
@@ -88,6 +103,7 @@ namespace Xamarin.Forms.Controls.Issues
 
 			_button3 = new Button
 			{
+				AutomationId = btnAutomationId,
 				Text = "Button 3 (press to set focus to WebView)",
 				TextColor = Color.Black,
 				BackgroundColor = Color.White,
@@ -105,13 +121,23 @@ namespace Xamarin.Forms.Controls.Issues
 				VerticalOptions = LayoutOptions.Fill,
 				BackgroundColor = Color.Pink,
 				Children =
-			{
-				_button1,
-				_webView,
-				_button2,
-				_button3
-			}
+				{
+					_button1,
+					_webView,
+					_button2,
+					_button3,
+					_label
+				}
 			};
 		}
+
+#if UITEST
+		[Test]
+		public void Issue12497Test()
+		{
+			RunningApp.Tap(btnAutomationId);
+			RunningApp.WaitForElement(SUCCESS);
+		}
+#endif
 	}
 }
