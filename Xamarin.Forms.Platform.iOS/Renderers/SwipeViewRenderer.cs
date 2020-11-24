@@ -66,7 +66,18 @@ namespace Xamarin.Forms.Platform.iOS
 				DelaysTouchesEnded = false
 			};
 
-			_panGestureRecognizer.ShouldRecognizeSimultaneously = (recognizer, gestureRecognizer) => true;
+			_panGestureRecognizer.ShouldRecognizeSimultaneously = (recognizer, gestureRecognizer) =>
+			{
+				if (gestureRecognizer is UIPanGestureRecognizer panGesture)
+				{
+					CGPoint beginvelocity = panGesture.VelocityInView(this);
+
+					if (beginvelocity.X == 0 && beginvelocity.Y == 0)
+						return false;
+				}
+
+				return true;
+			};
 
 			AddGestureRecognizer(_tapGestureRecognizer);
 			AddGestureRecognizer(_panGestureRecognizer);
@@ -139,10 +150,7 @@ namespace Xamarin.Forms.Platform.iOS
 			base.LayoutSubviews();
 
 			if (Bounds.X < 0 || Bounds.Y < 0)
-			{
 				Bounds = new CGRect(0, 0, Bounds.Width, Bounds.Height);
-				_originalBounds = Bounds;
-			}
 
 			if (_contentView != null && _contentView.Frame.IsEmpty)
 				_contentView.Frame = Bounds;
@@ -304,7 +312,10 @@ namespace Xamarin.Forms.Platform.iOS
 			return null;
 		}
 
-		bool OnShouldReceiveTouch(UIGestureRecognizer recognizer, UITouch touch) => _swipeOffset != 0;
+		bool OnShouldReceiveTouch(UIGestureRecognizer recognizer, UITouch touch)
+		{
+			return _swipeOffset != 0;
+		}
 
 		void UpdateContent()
 		{
@@ -327,10 +338,7 @@ namespace Xamarin.Forms.Platform.iOS
 
 		void HandleTap()
 		{
-			if (_tapGestureRecognizer == null)
-				return;
-
-			if (_isSwiping)
+			if (!_isSwipeEnabled || _isSwiping || _tapGestureRecognizer == null)
 				return;
 
 			var state = _tapGestureRecognizer.State;
@@ -354,7 +362,7 @@ namespace Xamarin.Forms.Platform.iOS
 
 		void HandlePan(UIPanGestureRecognizer panGestureRecognizer)
 		{
-			if (_isSwipeEnabled && panGestureRecognizer != null)
+			if (panGestureRecognizer != null)
 			{
 				CGPoint point = panGestureRecognizer.LocationInView(this);
 				var navigationController = GetUINavigationController(GetViewController());
@@ -474,6 +482,9 @@ namespace Xamarin.Forms.Platform.iOS
 
 			if (items == null || items.Count == 0)
 				return;
+
+			if (_originalBounds == CGRect.Empty)
+				_originalBounds = _contentView.Frame;
 
 			int i = 0;
 			float previousWidth = 0;
@@ -792,9 +803,7 @@ namespace Xamarin.Forms.Platform.iOS
 			var parent = this.GetParentOfType<UIScrollView>();
 
 			if (parent != null)
-			{
 				parent.ScrollEnabled = _isScrollEnabled;
-			}
 		}
 
 		bool TouchInsideContent(CGPoint point)
@@ -971,7 +980,7 @@ namespace Xamarin.Forms.Platform.iOS
 			_swipeItems.Clear();
 			_swipeThreshold = 0;
 			_swipeOffset = 0;
-
+	
 			if (_actionView != null)
 			{
 				_actionView.RemoveFromSuperview();
@@ -994,7 +1003,6 @@ namespace Xamarin.Forms.Platform.iOS
 			_isSwiping = false;
 			_swipeThreshold = 0;
 			_swipeDirection = null;
-
 			DisposeSwipeItems();
 		}
 
