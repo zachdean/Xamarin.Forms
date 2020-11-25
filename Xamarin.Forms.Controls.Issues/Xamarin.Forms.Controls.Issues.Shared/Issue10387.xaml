@@ -1,0 +1,58 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<controls:TestContentPage
+	xmlns:controls="clr-namespace:Xamarin.Forms.Controls"
+	xmlns="http://xamarin.com/schemas/2014/forms"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    x:Class="Xamarin.Forms.Controls.Issues.Issue10387"
+    Title="Issue 10387">
+    <ContentPage.Resources>
+
+        <SwipeItems x:Key="LeftSwipeItems" x:Shared="false" Mode="Reveal">
+            <SwipeItemView>
+                <Grid
+                    WidthRequest="100">
+                <Label
+                    Text="{Binding Name}"
+                    HorizontalOptions="Center"
+                    VerticalOptions="Center"/>
+                </Grid>
+            </SwipeItemView>
+        </SwipeItems>
+
+    </ContentPage.Resources>
+   <ContentPage.Content>
+       <StackLayout>
+           <Label
+               Padding="12"
+               BackgroundColor="Black"
+               TextColor="White"
+               Text="Open a couple of SwipeViews and verify that the name that appears in the SwipeViewItem matches the name of the content."/>
+            <CollectionView
+                ItemsSource="{Binding People}">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <StackLayout
+                            Orientation="Vertical">
+                            <SwipeView
+                                HeightRequest="50"
+                                LeftItems="{x:StaticResource Key=LeftSwipeItems}">
+                                <Grid
+                                    BackgroundColor="White"
+                                    Padding="12">
+                                    <Label
+                                        Text="{Binding Name}"
+                                        FontAttributes="Bold"
+                                        VerticalOptions ="Center" />
+                                    <Label
+                                        Grid.Column="1"
+                                        Text="{Binding Age}"
+                                        VerticalOptions ="Center" />
+                                </Grid>
+                            </SwipeView>
+                        </StackLayout>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </StackLayout>
+    </ContentPage.Content>
+</controls:TestContentPage>
