@@ -12,7 +12,7 @@ using NUnit.Framework;
 namespace Xamarin.Forms.Controls.Issues
 {
 #if UITEST
-	[Category(UITestCategories.ManualReview)]
+	[Category(UITestCategories.WebView)]
 #endif
 	[Preserve(AllMembers = true)]
 	[Issue(IssueTracker.Github, 12497, "Calling Focus() on a WebView on UWP does not move the focus to the WebView", PlatformAffected.UWP)]
@@ -133,7 +133,7 @@ namespace Xamarin.Forms.Controls.Issues
 
 #if UITEST
 		[Test]
-		public void Issue12497Test()
+		public void WebviewFocusIsFiring()
 		{
 			RunningApp.Tap(btnAutomationId);
 			RunningApp.WaitForElement(SUCCESS);
