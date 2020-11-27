@@ -31,8 +31,10 @@ namespace Xamarin.Forms.Controls.Issues
 			InitializeComponent();
 	
             BindingContext = _viewModel = new Issue12056ViewModel();
-		}
+#endif
+        }
 
+#if APP
         protected override void OnAppearing()
         {
             base.OnAppearing();
