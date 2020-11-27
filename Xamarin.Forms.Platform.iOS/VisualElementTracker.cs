@@ -325,10 +325,13 @@ namespace Xamarin.Forms.Platform.MacOS
 					transform = transform.Rotate(rotationY * (float)Math.PI / 180.0f, 0.0f, 1.0f, 0.0f);
 
 				transform = transform.Rotate(rotation * (float)Math.PI / 180.0f, 0.0f, 0.0f, 1.0f);
-
+#if !__MOBILE__
+				if ((scaleX > 0 && Math.Abs(scaleX - 1) > epsilon) || (scaleY > 0 && Math.Abs(scaleY - 1) > epsilon))
+#else
 				if (Math.Abs(scaleX - 1) > epsilon || Math.Abs(scaleY - 1) > epsilon)
+#endif
 					transform = transform.Scale(scaleX, scaleY, scale);
-
+				
 				if (Foundation.NSThread.IsMain)
 				{
 					caLayer.Transform = transform;
