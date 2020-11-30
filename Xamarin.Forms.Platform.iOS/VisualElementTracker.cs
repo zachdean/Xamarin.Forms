@@ -32,6 +32,7 @@ namespace Xamarin.Forms.Platform.MacOS
 		Rectangle _lastBounds;
 #if !__MOBILE__
 		Rectangle _lastParentBounds;
+		nfloat _lastScaleX, _lastScaleY, _lastScale;
 #endif
 		CALayer _layer;
 		CGPoint _originalAnchor;
@@ -326,12 +327,29 @@ namespace Xamarin.Forms.Platform.MacOS
 
 				transform = transform.Rotate(rotation * (float)Math.PI / 180.0f, 0.0f, 0.0f, 1.0f);
 #if !__MOBILE__
-				if ((scaleX > 0 && Math.Abs(scaleX - 1) > epsilon) || (scaleY > 0 && Math.Abs(scaleY - 1) > epsilon))
+				if (Math.Abs(scaleX - 1) > epsilon || Math.Abs(scaleY - 1) > epsilon)
+				{
+					if (scaleX > 0 || scaleY > 0)
+					{
+						transform = transform.Scale(scaleX, scaleY, scale);
+
+						_lastScaleX = scaleX;
+						_lastScaleY = scaleY;
+						_lastScale = scale;
+					}
+					else
+					{
+						var scaleX = (float)Math.Min(_lastScaleX, epsilon);
+						var scaleY = (float)Math.Min(_lastScaleY, epsilon);
+						var scale = (float)Math.Min(_lastScale, epsilon);
+
+						transform = transform.Scale(scaleX, scaleY, scale);
+					}
+				}
 #else
 				if (Math.Abs(scaleX - 1) > epsilon || Math.Abs(scaleY - 1) > epsilon)
-#endif
 					transform = transform.Scale(scaleX, scaleY, scale);
-				
+#endif
 				if (Foundation.NSThread.IsMain)
 				{
 					caLayer.Transform = transform;
