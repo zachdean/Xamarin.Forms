@@ -34,7 +34,7 @@ namespace Xamarin.Forms.Controls.Issues
 			base.OnAppearing();
 
 			await TestLabel.ScaleTo(0, 1000);
-			//await TestLabel.ScaleTo(1, 1000);
+			await TestLabel.ScaleTo(1, 1000);
 		}
 #endif
 	}
