@@ -27,14 +27,14 @@ namespace Xamarin.Forms.Controls.Issues
 
 		public Issue12056()
 		{
+            _viewModel = new Issue12056ViewModel();
 #if APP
 			InitializeComponent();
 	
-            BindingContext = _viewModel = new Issue12056ViewModel();
+            BindingContext = _viewModel;
 #endif
         }
 
-#if APP
         protected override void OnAppearing()
         {
             base.OnAppearing();
@@ -42,7 +42,6 @@ namespace Xamarin.Forms.Controls.Issues
             if (_viewModel.Items.Count == 0)
                 _viewModel.IsBusy = true;
         }
-#endif
 
 		protected override void Init()
 		{
