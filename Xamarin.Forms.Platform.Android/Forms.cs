@@ -288,7 +288,6 @@ namespace Xamarin.Forms
 			{
 				// Only need to do this once
 				Profile.FramePartition("ResourceManager.Init");
-				ResourceManager.Init(resourceAssembly);
 			}
 
 			Profile.FramePartition("Color.SetAccent()");

@@ -194,7 +194,7 @@ namespace Xamarin.Forms.Platform.Android
 				InJustDecodeBounds = true
 			};
 
-			int drawableIdentifier = ResourceManager.GetDrawableByName(file);
+			int drawableIdentifier = ResourceManager.GetDrawableByName(file, context);
 
 			if (drawableIdentifier != 0)
 			{
