@@ -16,7 +16,7 @@ using Xamarin.Forms.Core.UITests;
 namespace Xamarin.Forms.Controls.Issues
 {
 #if UITEST
-	[Category(UITestCategories.Brush)]
+	[NUnit.Framework.Category(UITestCategories.Brush)]
 #endif
 #if APP
 	[XamlCompilation(XamlCompilationOptions.Compile)]
