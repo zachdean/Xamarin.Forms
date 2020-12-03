@@ -9,20 +9,12 @@ namespace Xamarin.Forms.Controls.GalleryPages.ShapesGalleries
 		{
 			Title = "Shapes Gallery";
 
-			var button = new Button
-			{
-				Text = "Enable Shapes",
-				AutomationId = "EnableShapes"
-			};
-			button.Clicked += ButtonClicked;
-
 			Content = new ScrollView
 			{
 				Content = new StackLayout
 				{
 					Children =
 					{
-						button,
 						GalleryBuilder.NavButton("Ellipse Gallery", () => new EllipseGallery(), Navigation),
 						GalleryBuilder.NavButton("Line Gallery", () => new LineGallery(), Navigation),
 						GalleryBuilder.NavButton("Polygon Gallery", () => new PolygonGallery(), Navigation),
@@ -30,6 +22,7 @@ namespace Xamarin.Forms.Controls.GalleryPages.ShapesGalleries
 						GalleryBuilder.NavButton("Rectangle Gallery", () => new RectangleGallery(), Navigation),
 						GalleryBuilder.NavButton("LineCap Gallery", () => new LineCapGallery(), Navigation),
 						GalleryBuilder.NavButton("LineJoin Gallery", () => new LineJoinGallery(), Navigation),
+						GalleryBuilder.NavButton("IsVisible Gallery", () => new ShapeIsVisibleGallery(), Navigation),
 						GalleryBuilder.NavButton("AutoSize Shapes Gallery", () => new AutoSizeShapesGallery(), Navigation),
 						GalleryBuilder.NavButton("Path Gallery", () => new PathGallery(), Navigation),
 						GalleryBuilder.NavButton("Path Aspect Gallery", () => new PathAspectGallery(), Navigation),
@@ -45,15 +38,6 @@ namespace Xamarin.Forms.Controls.GalleryPages.ShapesGalleries
 					}
 				}
 			};
-		}
-
-		void ButtonClicked(object sender, System.EventArgs e)
-		{
-			var button = sender as Button;
-
-			button.Text = "Shapes Enabled!";
-			button.TextColor = Color.Black;
-			button.IsEnabled = false;
 		}
 	}
 }
