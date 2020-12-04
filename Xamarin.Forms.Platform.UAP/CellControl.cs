@@ -219,7 +219,7 @@ namespace Xamarin.Forms.Platform.UWP
 
 		void OnClick(object sender, PointerRoutedEventArgs e)
 		{
-			PointerPoint point = e.GetCurrentPoint(CellContent);
+			var point = e.GetCurrentPoint(CellContent);
 			if (point.Properties.PointerUpdateKind != PointerUpdateKind.RightButtonReleased)
 				return;
 
