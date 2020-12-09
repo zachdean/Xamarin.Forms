@@ -156,6 +156,7 @@ namespace Xamarin.Forms.Platform.iOS
 			base.ViewDidLayoutSubviews();
 
 			_appearanceTracker.UpdateLayout(this);
+			UpdateBackground();
 
 			if (!_firstLayoutCompleted)
 			{
@@ -173,8 +174,6 @@ namespace Xamarin.Forms.Platform.iOS
 			InteractivePopGestureRecognizer.Delegate = new GestureDelegate(this, ShouldPop);
 			UpdateFlowDirection();
 		}
-
-
 
 		void IDisconnectable.Disconnect()
 		{
@@ -553,6 +552,20 @@ namespace Xamarin.Forms.Platform.iOS
 		void UpdateShadowImages()
 		{
 			NavigationBar.SetValueForKey(NSObject.FromObject(true), new NSString("hidesShadow"));
+		}
+
+		void UpdateBackground()
+		{
+			var currentItem = _context.Shell.CurrentItem;
+			var currentAppearance = _appearanceTracker.CurrentAppearance;
+
+			if (currentItem == null || currentAppearance == null)
+				return;
+
+			var background = currentAppearance.Background;
+			var backgroundImage = NavigationBar.GetBackgroundImage(background);
+			var backgroundColorFromBrush = backgroundImage != null ? UIColor.FromPatternImage(backgroundImage) : UIColor.Clear;
+			NavigationBar.BarTintColor = backgroundColorFromBrush;
 		}
 
 		class GestureDelegate : UIGestureRecognizerDelegate

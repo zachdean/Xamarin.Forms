@@ -13,6 +13,8 @@ namespace Xamarin.Forms.Platform.iOS
 		float _shadowOpacity = float.MinValue;
 		CGColor _shadowColor;
 
+		public ShellAppearance CurrentAppearance { get; private set; }
+
 		public void UpdateLayout(UINavigationController controller)
 		{
 		}
@@ -21,6 +23,8 @@ namespace Xamarin.Forms.Platform.iOS
 		{
 			if (_defaultTint != null)
 			{
+				CurrentAppearance = null;
+
 				var navBar = controller.NavigationBar;
 				navBar.TintColor = _defaultTint;
 				navBar.TitleTextAttributes = _defaultTitleAttributes;
@@ -29,6 +33,8 @@ namespace Xamarin.Forms.Platform.iOS
 
 		public void SetAppearance(UINavigationController controller, ShellAppearance appearance)
 		{
+			CurrentAppearance = appearance;
+
 			var backgroundColor = appearance.BackgroundColor;
 			var background = appearance.Background;
 			var foreground = appearance.ForegroundColor;
