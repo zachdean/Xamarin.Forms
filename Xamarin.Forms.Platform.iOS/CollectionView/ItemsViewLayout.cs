@@ -527,15 +527,16 @@ namespace Xamarin.Forms.Platform.iOS
 				return base.ShouldInvalidateLayoutForBoundsChange(newBounds);
 			}
 
-			return true;
-		}
-
-		public override void InvalidateLayout()
-		{
-			if (CollectionView != null && CollectionView.Frame != null) {
-				UpdateConstraints(CollectionView.Frame.Size);
+			if (Forms.IsiOS11OrNewer)
+			{
+				UpdateConstraints(CollectionView.AdjustedContentInset.InsetRect(newBounds).Size);
 			}
-			base.InvalidateLayout();
+			else
+			{
+				UpdateConstraints(CollectionView.Bounds.Size);
+			}
+
+			return true;
 		}
 	}
 }
