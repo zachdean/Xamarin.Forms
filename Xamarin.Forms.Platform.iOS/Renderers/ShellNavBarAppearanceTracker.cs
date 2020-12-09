@@ -29,7 +29,8 @@ namespace Xamarin.Forms.Platform.iOS
 
 		public void SetAppearance(UINavigationController controller, ShellAppearance appearance)
 		{
-			var background = appearance.BackgroundColor;
+			var backgroundColor = appearance.BackgroundColor;
+			var background = appearance.Background;
 			var foreground = appearance.ForegroundColor;
 			var titleColor = appearance.TitleColor;
 
@@ -42,8 +43,14 @@ namespace Xamarin.Forms.Platform.iOS
 				_defaultTitleAttributes = navBar.TitleTextAttributes;
 			}
 
-			if (!background.IsDefault)
-				navBar.BarTintColor = background.ToUIColor();
+			if (!backgroundColor.IsDefault)
+				navBar.BarTintColor = backgroundColor.ToUIColor();
+			if (!Brush.IsNullOrEmpty(background))
+			{
+				var backgroundImage = navBar.GetBackgroundImage(background);
+				var backgroundColorFromBrush = backgroundImage != null ? UIColor.FromPatternImage(backgroundImage) : UIColor.Clear;
+				navBar.BarTintColor = backgroundColorFromBrush;
+			}
 			if (!foreground.IsDefault)
 				navBar.TintColor = foreground.ToUIColor();
 			if (!titleColor.IsDefault)
