@@ -37,6 +37,21 @@ namespace Xamarin.Forms.Controls.Issues
 		{
 			var page = CreateContentPage("Issue 13066");
 
+			var clearButton = new Button
+			{
+				Text = "Clear Colors"
+			};
+
+			var colorButton = new Button
+			{
+				Text = "Set Shell.BackgroundColor"
+			};
+
+			var brushButton = new Button
+			{
+				Text = "Set Shell.Background"
+			};
+
 			var instructions = new StackLayout()
 			{
 				Children =
@@ -44,7 +59,10 @@ namespace Xamarin.Forms.Controls.Issues
 					new Label()
 					{
 						Text = "If the background is a gradient, the test has passed."
-					}
+					},
+					clearButton,
+					colorButton,
+					brushButton
 				}
 			};
 
@@ -54,6 +72,33 @@ namespace Xamarin.Forms.Controls.Issues
 				{
 					instructions
 				}
+			};
+
+			clearButton.Clicked += (sender, args) =>
+			{
+				SetBackgroundColor(this, Color.Default);
+				SetBackground(this, Brush.Default);
+			};
+
+			colorButton.Clicked += (sender, args) =>
+			{
+				SetBackgroundColor(this, Color.BlueViolet);
+				SetBackground(this, Brush.Default);
+			};
+
+			brushButton.Clicked += (sender, args) =>
+			{
+				SetBackgroundColor(this, Color.Default);
+				SetBackground(this, new LinearGradientBrush
+				{
+					StartPoint = new Point(0, 0),
+					EndPoint = new Point(1, 0),
+					GradientStops = new GradientStopCollection
+					{
+						new GradientStop { Color = Color.Green, Offset = 0.1f },
+						new GradientStop { Color = Color.GreenYellow, Offset = 1.0f }
+					}
+				});
 			};
 		}
 	}
