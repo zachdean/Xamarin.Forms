@@ -82,6 +82,9 @@ namespace Xamarin.Forms.Platform.MacOS
 
         void UpdateSize()
         {
+            if (Control == null)
+                return;
+
             double height = Element.Height;
             double width = Element.Width;
 
