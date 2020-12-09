@@ -22,6 +22,7 @@ namespace Xamarin.Forms
 
 		static readonly BindableProperty[] s_ingestBrushArray = new[]
 		{
+			Shell.BackgroundProperty,
 			Shell.FlyoutBackdropProperty
 		};
 
@@ -48,7 +49,9 @@ namespace Xamarin.Forms
 
 		public Color UnselectedColor => _colorArray[9].Value;
 
-		public Brush FlyoutBackdrop => _brushArray[0];
+		public Brush Background => _brushArray[0];
+
+		public Brush FlyoutBackdrop => _brushArray[1];
 
 		Color IShellAppearanceElement.EffectiveTabBarBackgroundColor =>
 			!TabBarBackgroundColor.IsDefault ? TabBarBackgroundColor : BackgroundColor;
