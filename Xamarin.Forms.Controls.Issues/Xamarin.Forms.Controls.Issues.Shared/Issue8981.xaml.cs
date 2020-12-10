@@ -13,7 +13,7 @@ namespace Xamarin.Forms.Controls.Issues
 	[Category(UITestCategories.CollectionView)]
 #endif
 	[Preserve(AllMembers = true)]
-	[Issue(IssueTracker.Github, 8981, "[Bug] [iOS] CollectionView EmptyView causes the application to crash",
+	[Issue(IssueTracker.Github, 8981, "[Bug] [macOS] Hang App scaling a View to zero",
 		PlatformAffected.macOS)]
 	public partial class Issue8981 : TestContentPage
 	{
@@ -37,5 +37,20 @@ namespace Xamarin.Forms.Controls.Issues
 			await TestLabel.ScaleTo(1, 1000);
 		}
 #endif
+
+		void OnScaleXChanged(object sender, ValueChangedEventArgs e)
+		{
+			TestLabel.ScaleX = e.NewValue;
+		}
+
+		void OnScaleYChanged(object sender, ValueChangedEventArgs e)
+		{
+			TestLabel.ScaleY = e.NewValue;
+		}
+
+		void OnScaleChanged(object sender, ValueChangedEventArgs e)
+		{
+			TestLabel.Scale = e.NewValue;
+		}
 	}
 }

@@ -7,7 +7,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     x:Class="Xamarin.Forms.Controls.Issues.Issue8981"
-    Title="Issue 12374">
+    Title="Issue 8981">
     <Grid RowDefinitions="Auto,*">
         <Label
             Grid.Row="0"
@@ -23,6 +23,13 @@
                 Text="#8981" 
                 HorizontalOptions="Center"
                 VerticalOptions="Center" />
+            
+            <Label Text="Scale X:" />
+            <Slider Minimum="-11" Maximum="11" Value="1" ValueChanged="OnScaleXChanged" />
+            <Label Text="Scale Y:" />
+            <Slider Minimum="-11" Maximum="11" Value="1" ValueChanged="OnScaleYChanged" />
+            <Label Text="Scale:" />
+            <Slider Minimum="-11" Maximum="11" Value="1" ValueChanged="OnScaleChanged" />
         </StackLayout>
     </Grid>
 </controls:TestContentPage>
