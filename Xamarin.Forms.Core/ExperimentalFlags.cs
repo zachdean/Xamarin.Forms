@@ -10,9 +10,7 @@ namespace Xamarin.Forms
 	static class ExperimentalFlags
 	{
 		internal const string ShellUWPExperimental = "Shell_UWP_Experimental";
-		internal const string MarkupExperimental = "Markup_Experimental";
-		internal const string RadioButtonExperimental = "RadioButton_Experimental";
-		
+
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		public static void VerifyFlagEnabled(
 			string coreComponentName,
@@ -22,7 +20,7 @@ namespace Xamarin.Forms
 		{
 			if (DesignMode.IsDesignModeEnabled)
 			{
-				return; 
+				return;
 			}
 
 			if (Device.Flags == null || !Device.Flags.Contains(flagName))

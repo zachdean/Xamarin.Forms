@@ -17,7 +17,7 @@
         This is needed for non SDK style project so the IDE will pick the correct LangVersion.
         Once this is an SDK style project it will pick this up from the Directory.Build.Props file correctly
      -->
-    <LangVersion>7.3</LangVersion>
+    <LangVersion>8.0</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -127,6 +127,7 @@
     <Compile Include="CollectionView\HorizontalTemplatedHeaderView.cs" />
     <Compile Include="CollectionView\IItemsViewSource.cs" />
     <Compile Include="CollectionView\IndexPathExtensions.cs" />
+    <Compile Include="CollectionView\IndexPathHelpers.cs" />
     <Compile Include="CollectionView\ItemsSourceFactory.cs" />
     <Compile Include="CollectionView\ItemsViewCell.cs" />
     <Compile Include="CollectionView\ItemsViewRenderer.cs" />
@@ -173,7 +174,6 @@
     <Compile Include="IOSDeviceInfo.cs" />
     <Compile Include="LinkerSafeAttribute.cs" />
     <Compile Include="ModalWrapper.cs" />
-    <Compile Include="PageLifecycleManager.cs" />
     <Compile Include="Renderers\FormsCAKeyFrameAnimation.cs" />
     <Compile Include="Renderers\FormsCheckBox.cs" />
     <Compile Include="Renderers\FormsUIImageView.cs" />
@@ -191,7 +191,6 @@
     <Compile Include="Renderers\PageContainer.cs" />
     <Compile Include="Renderers\CheckBoxRendererBase.cs" />
     <Compile Include="Renderers\PhoneFlyoutPageRenderer.cs" />
-    <Compile Include="Renderers\RadioButtonCALayer.cs" />
     <Compile Include="Renderers\TabletFlyoutPageRenderer.cs" />
     <Compile Include="Renderers\WkWebViewRenderer.cs" />
     <Compile Include="Renderers\ElementSelectedEventArgs.cs" />

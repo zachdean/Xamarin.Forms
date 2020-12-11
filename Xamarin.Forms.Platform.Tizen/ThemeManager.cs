@@ -1,16 +1,16 @@
+using System;
 using ElmSharp;
 using ElmSharp.Wearable;
-using ELayout = ElmSharp.Layout;
-using EColor = ElmSharp.Color;
+using static Xamarin.Forms.Platform.Tizen.Native.TableView;
 using EButton = ElmSharp.Button;
+using EColor = ElmSharp.Color;
 using EEntry = ElmSharp.Entry;
 using ELabel = ElmSharp.Label;
-using ESlider = ElmSharp.Slider;
-using ESize = ElmSharp.Size;
-using EToolbarItem = ElmSharp.ToolbarItem;
+using ELayout = ElmSharp.Layout;
 using EProgressBar = ElmSharp.ProgressBar;
-using static Xamarin.Forms.Platform.Tizen.Native.TableView;
-using System;
+using ESize = ElmSharp.Size;
+using ESlider = ElmSharp.Slider;
+using EToolbarItem = ElmSharp.ToolbarItem;
 
 namespace Xamarin.Forms.Platform.Tizen
 {
@@ -235,6 +235,17 @@ namespace Xamarin.Forms.Platform.Tizen
 			return button;
 		}
 
+		public static EButton SetWatchTextStyle(this EButton button)
+		{
+			if (Device.Idiom != TargetIdiom.Watch)
+			{
+				Log.Error($"ToWatchPopupRightStyleButton is only supported on TargetIdiom.Watch : {0}", Device.Idiom);
+				return button;
+			}
+			button.Style = ThemeConstants.Button.Styles.Watch.Text;
+			return button;
+		}
+
 		public static bool SetIconPart(this EButton button, EvasObject content, bool preserveOldContent = false)
 		{
 			return button.SetPartContent(ThemeConstants.Button.Parts.Icon, content, preserveOldContent);
@@ -273,6 +284,7 @@ namespace Xamarin.Forms.Platform.Tizen
 			button.SetPartColor(ThemeConstants.Button.ColorClass.Effect, color);
 			button.SetPartColor(ThemeConstants.Button.ColorClass.EffectPressed, color);
 		}
+
 		#endregion
 
 		#region Popup
@@ -371,7 +383,7 @@ namespace Xamarin.Forms.Platform.Tizen
 						ThemeConstants.Check.ColorClass.Watch.CheckOn,
 						ThemeConstants.Check.ColorClass.Watch.CheckOnPressed
 					};
-				}	
+				}
 			}
 			else if (Device.Idiom == TargetIdiom.TV)
 			{
@@ -403,7 +415,7 @@ namespace Xamarin.Forms.Platform.Tizen
 		public static string[] GetColorEdjeParts(this Check check)
 		{
 			string[] ret = check.GetColorParts();
-			
+
 			for (int i = 0; i < ret.Length; i++)
 			{
 				ret[i] = check.ClassName.ToLower().Replace("elm_", "") + "/" + ret[i];
@@ -619,6 +631,24 @@ namespace Xamarin.Forms.Platform.Tizen
 		}
 		#endregion
 
+		#region Cell
+		public static void SendSignalToItem(this Cell cell, GenListItem item)
+		{
+			// This is only required for TV profile.
+			if (Device.Idiom != TargetIdiom.TV)
+				return;
+
+			if (cell is ImageCell)
+			{
+				item.EmitSignal(ThemeConstants.GenListItem.Signals.TV.SinglelineIconTextTheme, "");
+			}
+			else if (cell is SwitchCell)
+			{
+				item.EmitSignal(ThemeConstants.GenListItem.Signals.TV.SinglelineTextIconTheme, "");
+			}
+		}
+		#endregion
+
 		#region CellRenderer
 		public static string GetTextCellRendererStyle()
 		{
@@ -672,7 +702,7 @@ namespace Xamarin.Forms.Platform.Tizen
 		public static string GetImageCellRendererStyle()
 		{
 			return Device.Idiom == TargetIdiom.Watch ? ThemeConstants.GenItemClass.Styles.Watch.Icon2Text : Device.Idiom == TargetIdiom.TV ? ThemeConstants.GenItemClass.Styles.Default : ThemeConstants.GenItemClass.Styles.DoubleLabel;
-		} 
+		}
 
 		public static string GetImagePart(this ImageCellRenderer imageCell)
 		{
@@ -860,7 +890,7 @@ namespace Xamarin.Forms.Platform.Tizen
 		{
 			if (s_shellNavBarDefaultMenuSize > 0)
 				return s_shellNavBarDefaultMenuSize;
-			return s_shellNavBarDefaultMenuSize = CalculateDoubleScaledSizeInLargeScreen(40);
+			return s_shellNavBarDefaultMenuSize = CalculateDoubleScaledSizeInLargeScreen(Device.Idiom == TargetIdiom.TV ? 70 : 40);
 		}
 
 		static double s_shellNavBarDefaultMargin = -1;
@@ -921,6 +951,15 @@ namespace Xamarin.Forms.Platform.Tizen
 			return s_navigationViewFlyoutItemFontSize = CalculateDoubleScaledSizeInLargeScreen(25);
 		}
 
+		#endregion
+
+		#region NavigationDrawer
+
+		static double s_navigationDrawerRatio = -1;
+		public static double GetFlyoutRatio(this NavigationDrawer drawer, int width, int height)
+		{
+			return s_navigationDrawerRatio = (width > height) ? 0.4 : 0.83;
+		}
 		#endregion
 
 		#region ShellMoreToolbar
