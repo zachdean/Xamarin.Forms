@@ -36,7 +36,6 @@ namespace Xamarin.Forms.Controls.Issues
 			await TestLabel.ScaleTo(0, 1000);
 			await TestLabel.ScaleTo(1, 1000);
 		}
-#endif
 
 		void OnScaleXChanged(object sender, ValueChangedEventArgs e)
 		{
@@ -52,5 +51,6 @@ namespace Xamarin.Forms.Controls.Issues
 		{
 			TestLabel.Scale = e.NewValue;
 		}
+#endif
 	}
 }
