@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Runtime.CompilerServices;
 using Xamarin.Forms.Internals;
 using Xamarin.Forms.Shapes;
 
@@ -39,16 +38,16 @@ namespace Xamarin.Forms
 			propertyChanged: (b, o, n) => ((RadioButton)b).OnValuePropertyChanged());
 
 		public static readonly BindableProperty IsCheckedProperty = BindableProperty.Create(
-			nameof(IsChecked), typeof(bool), typeof(RadioButton), false, 
-			propertyChanged: (b, o, n) => ((RadioButton)b).OnIsCheckedPropertyChanged((bool)n), 
+			nameof(IsChecked), typeof(bool), typeof(RadioButton), false,
+			propertyChanged: (b, o, n) => ((RadioButton)b).OnIsCheckedPropertyChanged((bool)n),
 			defaultBindingMode: BindingMode.TwoWay);
 
 		public static readonly BindableProperty GroupNameProperty = BindableProperty.Create(
-			nameof(GroupName), typeof(string), typeof(RadioButton), null, 
+			nameof(GroupName), typeof(string), typeof(RadioButton), null,
 			propertyChanged: (b, o, n) => ((RadioButton)b).OnGroupNamePropertyChanged((string)o, (string)n));
 
 		public static readonly BindableProperty TextColorProperty = TextElement.TextColorProperty;
-		
+
 		public static readonly BindableProperty CharacterSpacingProperty = TextElement.CharacterSpacingProperty;
 
 		public static readonly BindableProperty TextTransformProperty = TextElement.TextTransformProperty;
@@ -153,9 +152,7 @@ namespace Xamarin.Forms
 
 		public RadioButton()
 		{
-			ExperimentalFlags.VerifyFlagEnabled(nameof(RadioButton), ExperimentalFlags.RadioButtonExperimental, nameof(RadioButton));
-
-			_platformConfigurationRegistry = new Lazy<PlatformConfigurationRegistry<RadioButton>>(() => 
+			_platformConfigurationRegistry = new Lazy<PlatformConfigurationRegistry<RadioButton>>(() =>
 				new PlatformConfigurationRegistry<RadioButton>(this));
 		}
 
@@ -294,9 +291,9 @@ namespace Xamarin.Forms
 			}
 		}
 
-		static bool RendererAvailable 
-		{ 
-			get 
+		static bool RendererAvailable
+		{
+			get
 			{
 				if (!s_rendererAvailable.HasValue)
 				{
@@ -304,16 +301,16 @@ namespace Xamarin.Forms
 				}
 
 				return s_rendererAvailable.Value;
-			} 
+			}
 		}
 
-		static Brush ResolveThemeColor(string key) 
+		static Brush ResolveThemeColor(string key)
 		{
 			if (Application.Current.TryGetResource(key, out object color))
 			{
 				return (Brush)color;
 			}
-			
+
 			if (Application.Current?.RequestedTheme == OSAppTheme.Dark)
 			{
 				return Brush.White;
@@ -420,17 +417,26 @@ namespace Xamarin.Forms
 			IsChecked = true;
 		}
 
+		static void BindToTemplatedParent(BindableObject bindableObject, params BindableProperty[] properties)
+		{
+			foreach (var property in properties)
+			{
+				bindableObject.SetBinding(property, new Binding(property.PropertyName,
+					source: RelativeBindingSource.TemplatedParent));
+			}
+		}
+
 		static View BuildDefaultTemplate()
 		{
 			var frame = new Frame
 			{
 				HasShadow = false,
-				BackgroundColor = Color.Transparent,
-				VerticalOptions = LayoutOptions.Start,
-				HorizontalOptions = LayoutOptions.Start,
-				Margin = new Thickness(6),
-				Padding = new Thickness(0)
+				Padding = 6
 			};
+
+			BindToTemplatedParent(frame, BackgroundColorProperty, Frame.BorderColorProperty, HorizontalOptionsProperty,
+				MarginProperty, OpacityProperty, RotationProperty, ScaleProperty, ScaleXProperty, ScaleYProperty,
+				TranslationYProperty, TranslationXProperty, VerticalOptionsProperty);
 
 			var grid = new Grid
 			{
@@ -476,7 +482,7 @@ namespace Xamarin.Forms
 			};
 
 			contentPresenter.SetBinding(MarginProperty, new Binding("Padding", source: RelativeBindingSource.TemplatedParent));
-			contentPresenter.SetBinding(BackgroundColorProperty, new Binding(BackgroundColorProperty.PropertyName, 
+			contentPresenter.SetBinding(BackgroundColorProperty, new Binding(BackgroundColorProperty.PropertyName,
 				source: RelativeBindingSource.TemplatedParent));
 
 			grid.Children.Add(normalEllipse);
@@ -519,7 +525,7 @@ namespace Xamarin.Forms
 			return frame;
 		}
 
-		public string ContentAsString() 
+		public string ContentAsString()
 		{
 			var content = Content;
 			if (content is View)

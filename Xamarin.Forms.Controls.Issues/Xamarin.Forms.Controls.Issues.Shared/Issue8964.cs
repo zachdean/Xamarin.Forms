@@ -1,8 +1,8 @@
-﻿using Xamarin.Forms.CustomAttributes;
-using Xamarin.Forms.Internals;
-using System.Collections.ObjectModel;
+﻿using System;
 using System.Collections.Generic;
-using System;
+using System.Collections.ObjectModel;
+using Xamarin.Forms.CustomAttributes;
+using Xamarin.Forms.Internals;
 
 #if UITEST
 using Xamarin.Forms.Core.UITests;
@@ -14,6 +14,7 @@ namespace Xamarin.Forms.Controls.Issues
 {
 #if UITEST
 	[Category(UITestCategories.CarouselView)]
+	[Category(UITestCategories.UwpIgnore)]
 #endif
 	[Preserve(AllMembers = true)]
 	[Issue(IssueTracker.Github, 8964, "Adding an item to the beginning of the bound ItemSource causes the carousel to skip sometimes", PlatformAffected.Android)]

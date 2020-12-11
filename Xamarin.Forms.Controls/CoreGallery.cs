@@ -3,23 +3,24 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Xamarin.Forms.Controls.GalleryPages;
+using Xamarin.Forms.Controls.GalleryPages.AppThemeGalleries;
 using Xamarin.Forms.Controls.GalleryPages.CollectionViewGalleries;
+using Xamarin.Forms.Controls.GalleryPages.CollectionViewGalleries.CarouselViewGalleries;
+using Xamarin.Forms.Controls.GalleryPages.DateTimePickerGalleries;
+using Xamarin.Forms.Controls.GalleryPages.DragAndDropGalleries;
+using Xamarin.Forms.Controls.GalleryPages.GradientGalleries;
+using Xamarin.Forms.Controls.GalleryPages.PlatformTestsGallery;
+using Xamarin.Forms.Controls.GalleryPages.RadioButtonGalleries;
+using Xamarin.Forms.Controls.GalleryPages.RefreshViewGalleries;
+using Xamarin.Forms.Controls.GalleryPages.ShapesGalleries;
+using Xamarin.Forms.Controls.GalleryPages.SwipeViewGalleries;
+using Xamarin.Forms.Controls.GalleryPages.VisualStateManagerGalleries;
+using Xamarin.Forms.Controls.Issues;
 using Xamarin.Forms.CustomAttributes;
 using Xamarin.Forms.Internals;
 using Xamarin.Forms.PlatformConfiguration;
 using Xamarin.Forms.PlatformConfiguration.AndroidSpecific;
 using Xamarin.Forms.PlatformConfiguration.iOSSpecific;
-using Xamarin.Forms.Controls.GalleryPages.VisualStateManagerGalleries;
-using Xamarin.Forms.Controls.Issues;
-using Xamarin.Forms.Controls.GalleryPages.CollectionViewGalleries.CarouselViewGalleries;
-using Xamarin.Forms.Controls.GalleryPages.RefreshViewGalleries;
-using Xamarin.Forms.Controls.GalleryPages.SwipeViewGalleries;
-using Xamarin.Forms.Controls.GalleryPages.PlatformTestsGallery;
-using Xamarin.Forms.Controls.GalleryPages.AppThemeGalleries;
-using Xamarin.Forms.Controls.GalleryPages.RadioButtonGalleries;
-using Xamarin.Forms.Controls.GalleryPages.ShapesGalleries;
-using Xamarin.Forms.Controls.GalleryPages.GradientGalleries;
-using Xamarin.Forms.Controls.GalleryPages.DragAndDropGalleries;
 
 namespace Xamarin.Forms.Controls
 {
@@ -305,7 +306,7 @@ namespace Xamarin.Forms.Controls
 				new GalleryPageFactory(() => new RadioButtonGalleries(), "RadioButton Gallery"),
 				new GalleryPageFactory(() => new RadioButtonCoreGalleryPage(), "RadioButton Core Gallery"),
 				new GalleryPageFactory(() => new FontImageSourceGallery(), "Font ImageSource"),
-				new GalleryPageFactory(() => new IndicatorGalleries(), "IndicatorView Gallery"),				
+				new GalleryPageFactory(() => new IndicatorGalleries(), "IndicatorView Gallery"),
 				new GalleryPageFactory(() => new CarouselViewGallery(), "CarouselView Gallery"),
 				new GalleryPageFactory(() => new CarouselViewCoreGalleryPage(), "CarouselView Core Gallery"),
 				new GalleryPageFactory(() => new CollectionViewGallery(), "CollectionView Gallery"),
@@ -336,6 +337,7 @@ namespace Xamarin.Forms.Controls
 				new GalleryPageFactory(() => new AlertGallery(), "DisplayAlert Gallery"),
 				new GalleryPageFactory(() => new ToolbarItems(), "ToolbarItems Gallery"),
 				new GalleryPageFactory(() => new ActionSheetGallery(), "ActionSheet Gallery"),
+				new GalleryPageFactory(() => new DateTimePickerGallery(), "DateTime Picker Localization Gallery"),
 				new GalleryPageFactory(() => new ActivityIndicatorCoreGalleryPage(), "ActivityIndicator Gallery"),
 				new GalleryPageFactory(() => new BehaviorsAndTriggers(), "BehaviorsTriggers Gallery"),
 				new GalleryPageFactory(() => new ContextActionsGallery(), "ContextActions List Gallery"),
@@ -398,7 +400,7 @@ namespace Xamarin.Forms.Controls
 				new GalleryPageFactory(() => new EditorGallery(), "Editor Gallery - Legacy"),
 				new GalleryPageFactory(() => new EntryGallery(), "Entry Gallery - Legacy"),
 				new GalleryPageFactory(() => new FrameGallery (), "Frame Gallery - Legacy"),
-   	    		new GalleryPageFactory(() => new GifGallery(), "Gif Support Gallery"),
+				   new GalleryPageFactory(() => new GifGallery(), "Gif Support Gallery"),
 				new GalleryPageFactory(() => new GridGallery(), "Grid Gallery - Legacy"),
 				new GalleryPageFactory(() => new GroupedListActionsGallery(), "GroupedListActions Gallery - Legacy"),
 				new GalleryPageFactory(() => new GroupedListContactsGallery(), "GroupedList Gallery - Legacy"),
@@ -579,11 +581,11 @@ namespace Xamarin.Forms.Controls
 				{
 					if (!string.IsNullOrEmpty(searchBar.Text))
 					{
-						if(!(await corePageView.PushPage(searchBar.Text)))
+						if (!(await corePageView.PushPage(searchBar.Text)))
 						{
-							foreach(CoreViewContainer item in CoreRootView.ItemsSource)
+							foreach (CoreViewContainer item in CoreRootView.ItemsSource)
 							{
-								if(item.Name == searchBar.Text)
+								if (item.Name == searchBar.Text)
 								{
 									CoreRootView.SelectedItem = item;
 									break;

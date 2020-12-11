@@ -1,7 +1,7 @@
-﻿using Xamarin.Forms.CustomAttributes;
-using Xamarin.Forms.Internals;
+﻿using System.Threading;
 using System.Threading.Tasks;
-using System.Threading;
+using Xamarin.Forms.CustomAttributes;
+using Xamarin.Forms.Internals;
 
 #if UITEST
 using Xamarin.Forms.Core.UITests;
@@ -13,6 +13,7 @@ namespace Xamarin.Forms.Controls.Issues
 {
 #if UITEST
 	[Category(UITestCategories.LifeCycle)]
+	[Category(UITestCategories.UwpIgnore)]
 #endif
 	[Preserve(AllMembers = true)]
 	[Issue(IssueTracker.Github, 5376, "Call unfocus entry crashes app", PlatformAffected.Android)]

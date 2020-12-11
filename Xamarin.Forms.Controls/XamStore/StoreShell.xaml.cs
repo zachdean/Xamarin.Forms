@@ -12,8 +12,6 @@ namespace Xamarin.Forms.Controls.XamStore
 		{
 			InitializeComponent();
 
-			Device.SetFlags(new List<string> { ExperimentalFlags.ShellUWPExperimental });
-
 			CurrentItem = _storeItem;
 		}
 
@@ -58,11 +56,11 @@ namespace Xamarin.Forms.Controls.XamStore
 		{
 			base.OnNavigating(args);
 
-			if(_defernavigationWithAlert)
+			if (_defernavigationWithAlert)
 			{
 				var token = args.GetDeferral();
 
-				var result  = await DisplayActionSheet(
+				var result = await DisplayActionSheet(
 					"Are you sure?",
 					"cancel",
 					"destruction",
