@@ -422,11 +422,6 @@ namespace Xamarin.Forms.Platform.iOS
 				MessagingCenter.Unsubscribe<SwipeViewRenderer, SwipeView>(this, SwipeView.AutoCloseSwipeViewSignalName);
 		}
 
-		bool HasSwipeItems()
-		{
-			return Element != null && (IsValidSwipeItems(Element.LeftItems) || IsValidSwipeItems(Element.RightItems) || IsValidSwipeItems(Element.TopItems) || IsValidSwipeItems(Element.BottomItems));
-		}
-
 		bool IsHorizontalSwipe()
 		{
 			return _swipeDirection == SwipeDirection.Left || _swipeDirection == SwipeDirection.Right;
