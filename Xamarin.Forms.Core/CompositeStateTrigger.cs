@@ -66,6 +66,16 @@ namespace Xamarin.Forms
 			trigger.UpdateState();
 		}
 
+		protected override void OnBindingContextChanged()
+		{
+			base.OnBindingContextChanged();
+
+			object bc = BindingContext;
+
+			foreach (var stateTrigger in StateTriggers)
+				SetInheritedBindingContext(stateTrigger, bc);
+		}
+
 		void OnCompositeTriggerCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
 		{
 			if (e.NewItems != null)
