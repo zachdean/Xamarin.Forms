@@ -80,6 +80,9 @@ namespace Xamarin.Forms.Platform.MacOS
 
         void UpdateSize()
         {
+            if (Control == null)
+                return;
+
             nfloat height = new nfloat(Math.Max(Element.Height, 0));
             nfloat width = new nfloat(Math.Max(Element.Width, 0));
 

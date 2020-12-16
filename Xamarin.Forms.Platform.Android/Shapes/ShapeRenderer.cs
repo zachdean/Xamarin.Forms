@@ -81,6 +81,9 @@ namespace Xamarin.Forms.Platform.Android
 
 		void UpdateSize()
 		{
+			if (Control == null)
+				return;
+
 			double height = Math.Max(Element.Height, 0);
 			double width = Math.Max(Element.Width, 0);
 
