@@ -10,7 +10,7 @@
 			Padding="12"
 			BackgroundColor="Black"
 			TextColor="White"
-			Text="" />
+			Text="If the result is the same on Android and iOS, the test has passed." />
 		<Label Text="#FF0000" />
 		<Line X1="0" X2="{Binding Source={RelativeSource Mode=Self}, Path=Width}" Stroke="#FF0000" StrokeThickness="12" HorizontalOptions="FillAndExpand" />
 		<Label Text="#99FF0000" />
