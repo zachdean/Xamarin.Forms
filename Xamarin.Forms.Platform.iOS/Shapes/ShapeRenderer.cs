@@ -115,28 +115,28 @@ namespace Xamarin.Forms.Platform.MacOS
                 Control.ShapeLayer.UpdateStrokeDash(new nfloat[0]);
             else
             {
-				nfloat[] dashArray;
-				double[] array;
+                nfloat[] dashArray;
+                double[] array;
 
-				if (Element.StrokeDashArray.Count % 2 == 0)
-				{
-					array = new double[Element.StrokeDashArray.Count];
+                if (Element.StrokeDashArray.Count % 2 == 0)
+                {
+                    array = new double[Element.StrokeDashArray.Count];
                     dashArray = new nfloat[Element.StrokeDashArray.Count];
-					Element.StrokeDashArray.CopyTo(array, 0);
-				}
-				else
-				{
-					array = new double[2 * Element.StrokeDashArray.Count];
+                    Element.StrokeDashArray.CopyTo(array, 0);
+                }
+                else
+                {
+                    array = new double[2 * Element.StrokeDashArray.Count];
                     dashArray = new nfloat[2 * Element.StrokeDashArray.Count];
-					Element.StrokeDashArray.CopyTo(array, 0);
-					Element.StrokeDashArray.CopyTo(array, Element.StrokeDashArray.Count);
-				}
+                    Element.StrokeDashArray.CopyTo(array, 0);
+                    Element.StrokeDashArray.CopyTo(array, Element.StrokeDashArray.Count);
+                }
 
-				double thickness = Element.StrokeThickness;
+                double thickness = Element.StrokeThickness;
 
                 for (int i = 0; i < array.Length; i++)
                     dashArray[i] = new nfloat(thickness * array[i]);
-                
+
                 Control.ShapeLayer.UpdateStrokeDash(dashArray);
             }
         }
@@ -146,8 +146,8 @@ namespace Xamarin.Forms.Platform.MacOS
             Control.ShapeLayer.UpdateStrokeDashOffset((nfloat)Element.StrokeDashOffset);
         }
 
-		void UpdateStrokeLineCap()
-		{
+        void UpdateStrokeLineCap()
+        {
             PenLineCap lineCap = Element.StrokeLineCap;
             CGLineCap iLineCap = CGLineCap.Butt;
 
@@ -196,7 +196,7 @@ namespace Xamarin.Forms.Platform.MacOS
 
     public class ShapeView
 #if __MOBILE__
-	: UIView
+    : UIView
 #else
     : NSView
 #endif
@@ -245,7 +245,7 @@ namespace Xamarin.Forms.Platform.MacOS
 
         Stretch _stretch;
 
-		CGLineCap _strokeLineCap;
+        CGLineCap _strokeLineCap;
         CGLineJoin _strokeLineJoin;
         nfloat _strokeMiterLimit;
 
