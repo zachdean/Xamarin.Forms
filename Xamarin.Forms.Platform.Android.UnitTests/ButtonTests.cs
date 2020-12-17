@@ -101,7 +101,7 @@ namespace Xamarin.Forms.Platform.Android.UnitTests
 		[Issue(IssueTracker.Github, 11703, "[Bug] Android textAllCaps no longer works", issueTestNumber: 1)]
 		[TestCase(false)]
 		[TestCase(true)]
-		public void StyleTextAllCapsSettingIsRespected(bool allCaps)
+		public async Task StyleTextAllCapsSettingIsRespected(bool allCaps)
 		{
 			AContextThemeWrapper contextThemeWrapper = null;
 			if (allCaps)
@@ -110,8 +110,7 @@ namespace Xamarin.Forms.Platform.Android.UnitTests
 				contextThemeWrapper = new AContextThemeWrapper(Context, Context.GetStyle("TextAllCapsStyleFalse"));
 
 			var button = new Button { Text = "foo" };
-			var buttonControl = GetRenderer(button, contextThemeWrapper).View as AppCompatButton;
-			var initialTextTransform = buttonControl.TransformationMethod;
+			var initialTextTransform = await GetControlProperty(button, x => x.TransformationMethod);
 
 			// when set through a style the type is an internal version of AllCapsTransformationMethod
 			string typeName = $"{initialTextTransform}";
