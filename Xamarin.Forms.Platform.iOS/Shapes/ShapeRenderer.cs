@@ -472,54 +472,60 @@ namespace Xamarin.Forms.Platform.MacOS
             graphics.SetLineJoin(_strokeLineJoin);
             graphics.SetMiterLimit(_strokeMiterLimit * _strokeWidth / 4);
 
-            if (_fill is GradientBrush fillGradientBrush)
+            if (!Brush.IsNullOrEmpty(_fill))
             {
-                graphics.AddPath(_renderPath);
+                if (_fill is GradientBrush fillGradientBrush)
+                {
+                    graphics.AddPath(_renderPath);
 
-                if (_fillMode)
-                    graphics.Clip();
+                    if (_fillMode)
+                        graphics.Clip();
+                    else
+                        graphics.EOClip();
+
+                    RenderBrush(graphics, _renderPathFill, fillGradientBrush);
+                }
                 else
-                    graphics.EOClip();
-
-                RenderBrush(graphics, _renderPathFill, fillGradientBrush);
-            }
-            else
-            {
-                CGColor fillColor =
+                {
+                    CGColor fillColor =
 #if __MOBILE__
                     UIColor.Clear.CGColor;
 #else
                     NSColor.Clear.CGColor;
 #endif
-                if (_fill is SolidColorBrush solidColorBrush && solidColorBrush.Color != Color.Default)
-                    fillColor = solidColorBrush.Color.ToCGColor();
+                    if (_fill is SolidColorBrush solidColorBrush && solidColorBrush.Color != Color.Default)
+                        fillColor = solidColorBrush.Color.ToCGColor();
 
-                graphics.AddPath(_renderPath);
-                graphics.SetFillColor(fillColor);
-                graphics.DrawPath(_fillMode ? CGPathDrawingMode.FillStroke : CGPathDrawingMode.EOFillStroke);
+                    graphics.AddPath(_renderPath);
+                    graphics.SetFillColor(fillColor);
+                    graphics.DrawPath(_fillMode ? CGPathDrawingMode.FillStroke : CGPathDrawingMode.EOFillStroke);
+                }
             }
 
-            if (_stroke is GradientBrush strokeGradientBrush)
+            if (!Brush.IsNullOrEmpty(_stroke))
             {
-                graphics.AddPath(_renderPath);
-                graphics.ReplacePathWithStrokedPath();
-                graphics.Clip();
-                RenderBrush(graphics, _renderPathStroke, strokeGradientBrush);
-            }
-            else
-            {
-                CGColor strokeColor =
+                if (_stroke is GradientBrush strokeGradientBrush)
+                {
+                    graphics.AddPath(_renderPath);
+                    graphics.ReplacePathWithStrokedPath();
+                    graphics.Clip();
+                    RenderBrush(graphics, _renderPathStroke, strokeGradientBrush);
+                }
+                else
+                {
+                    CGColor strokeColor =
 #if __MOBILE__
                     UIColor.Clear.CGColor;
 #else
                     NSColor.Clear.CGColor;
 #endif
-                if (_stroke is SolidColorBrush solidColorBrush && solidColorBrush.Color != Color.Default)
-                    strokeColor = solidColorBrush.Color.ToCGColor();
+                    if (_stroke is SolidColorBrush solidColorBrush && solidColorBrush.Color != Color.Default)
+                        strokeColor = solidColorBrush.Color.ToCGColor();
 
-                graphics.AddPath(_renderPath);
-                graphics.SetStrokeColor(strokeColor);
-                graphics.DrawPath(CGPathDrawingMode.Stroke);
+                    graphics.AddPath(_renderPath);
+                    graphics.SetStrokeColor(strokeColor);
+                    graphics.DrawPath(CGPathDrawingMode.Stroke);
+                }
             }
 
             CATransaction.Commit();
