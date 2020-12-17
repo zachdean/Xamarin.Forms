@@ -282,6 +282,14 @@ namespace Xamarin.Forms.Platform.Android
 			return true;
 		}
 
+		bool IsViewInBounds(AView view, int x, int y)
+		{
+			ARect outRect = new ARect();
+			view.GetHitRect(outRect);
+
+			return x > outRect.Left && x < outRect.Right && y > outRect.Top && y < outRect.Bottom;
+		}
+
 		bool ShouldInterceptScrollChildrenTouch(ViewGroup scrollView, bool isHorizontal)
 		{
 			AView scrollViewContent = scrollView.GetChildAt(0);
