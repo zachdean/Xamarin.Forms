@@ -96,7 +96,7 @@ namespace Xamarin.Forms.Platform.Android.UnitTests
 		}
 
 		// This is the ideal test for Issue11703. It's currently being tabled due to a Resource linking bug that we're working out with Android team
-		[Category("Button")]
+		/*[Category("Button")]
 		[Description("Account for user's setting of styles property textAllCaps")]
 		[Issue(IssueTracker.Github, 11703, "[Bug] Android textAllCaps no longer works", issueTestNumber: 1)]
 		[TestCase(false)]
@@ -115,7 +115,7 @@ namespace Xamarin.Forms.Platform.Android.UnitTests
 			// when set through a style the type is an internal version of AllCapsTransformationMethod
 			string typeName = $"{initialTextTransform}";
 			Assert.AreEqual(allCaps, typeName.Contains("AllCapsTransformationMethod"));
-		}
+		}*/
 
 	}
 }
