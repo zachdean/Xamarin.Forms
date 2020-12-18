@@ -266,6 +266,9 @@ namespace Xamarin.Forms.Platform.Android
 
 				if (IsViewInBounds(child, x, y))
 				{
+					if (child is AButton)
+						return false;
+
 					if (child is AbsListView absListView)
 						return ShouldInterceptScrollChildrenTouch(absListView, isHorizontal);
 
