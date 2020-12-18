@@ -40,23 +40,23 @@ namespace Xamarin.Forms.Controls.Issues
 
             Items1 = new ObservableCollection<Issue11982Model>
             {
-                new Issue11982Model { Name = "First" },
-                new Issue11982Model { Name = "Second" },
-                new Issue11982Model { Name = "Third" },
+                new Issue11982Model { Name = "First", CommandName = "First Command" },
+                new Issue11982Model { Name = "Second", CommandName = "Second Command" },
+                new Issue11982Model { Name = "Third", CommandName = "Third Command" },
             };
 
             Items2 = new ObservableCollection<Issue11982Model>
             {
-                new Issue11982Model { Name = "First" },
-                new Issue11982Model { Name = "Second" },
-                new Issue11982Model { Name = "Third" },
+                new Issue11982Model { Name = "First", CommandName = "First Command (SV)" },
+                new Issue11982Model { Name = "Second", CommandName = "Second Command (SV)" },
+                new Issue11982Model { Name = "Third", CommandName = "Third Command (SV)" },
             };
 
             BindingContext = this;
 #endif
         }
 
-		public ObservableCollection<Issue11982Model> Items1 { get; private set; }
+        public ObservableCollection<Issue11982Model> Items1 { get; private set; }
 
         public ObservableCollection<Issue11982Model> Items2 { get; private set; }
 
@@ -65,17 +65,35 @@ namespace Xamarin.Forms.Controls.Issues
         protected override void Init()
 		{
 
+        }
+
+#if UITEST && __ANDROID__
+		[Test]
+		public void Issue11982SwipeViewTapTest()
+		{
+			RunningApp.WaitForElement(q => q.Marked("First Command (SV)"));
+            RunningApp.Tap(q => q.Marked("First Command (SV)"));
+            RunningApp.WaitForElement(q => q.Marked("First- PRESSED"));
+            RunningApp.Screenshot("Button inside SwipeView Content tapped");
 		}
+#endif
     }
 
     public class Issue11982Model : INotifyPropertyChanged
     {
         string _name;
+        string _commandName;
 
         public string Name
         {
             get => _name;
             set { _name = value; OnPropertyChanged(nameof(Name)); }
+        }
+
+        public string CommandName
+        {
+            get => _commandName;
+            set { _commandName = value; OnPropertyChanged(nameof(CommandName)); }
         }
 
         public ICommand TestCommand { get; private set; }

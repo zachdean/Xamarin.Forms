@@ -24,7 +24,7 @@
                     <DataTemplate>
                         <Grid BackgroundColor="White" ColumnDefinitions="*,Auto">
                             <Label Grid.Column="0" Text="{Binding Name}" VerticalTextAlignment="Center" Margin="10,0,0,0" />
-                            <Button Grid.Column="1" Text="Command" Command="{Binding TestCommand}" />
+                            <Button Grid.Column="1" Text="{Binding CommandName}" Command="{Binding TestCommand}" />
                         </Grid>
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
@@ -49,7 +49,7 @@
                             </SwipeView.LeftItems>
                             <Grid BackgroundColor="White" ColumnDefinitions="*,Auto">
                                 <Label Grid.Column="0" Text="{Binding Name}" VerticalTextAlignment="Center" Margin="10,0,0,0" />
-                                <Button Grid.Column="1" Text="Command" Command="{Binding TestCommand}" />
+                                <Button Grid.Column="1" Text="{Binding CommandName}" Command="{Binding TestCommand}" />
                             </Grid>
                         </SwipeView>
                     </DataTemplate>
