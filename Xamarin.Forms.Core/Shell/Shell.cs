@@ -122,7 +122,7 @@ namespace Xamarin.Forms
 
 		public static readonly new BindableProperty BackgroundProperty =
 			BindableProperty.CreateAttached("Background", typeof(Brush), typeof(Shell), Brush.Default,
-				propertyChanged: OnColorValueChanged);
+				propertyChanged: OnShellAppearanceValueChanged);
 
 		public static readonly BindableProperty DisabledColorProperty =
 			BindableProperty.CreateAttached("DisabledColor", typeof(Color), typeof(Shell), Color.Default,
