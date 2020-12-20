@@ -27,7 +27,7 @@ namespace Xamarin.Forms.Controls.Issues
 #if APP
 			Title = "Issue 11224";
 			InitializeComponent();
-#
+
 			carousel.Scrolled += (sender, args) =>
 			{
 				if (args.CenterItemIndex == 3)
