@@ -27,15 +27,7 @@ namespace Xamarin.Forms.Controls.Issues
 #if APP
 			Title = "Issue 11224";
 			InitializeComponent();
-
-			carousel.Scrolled += (sender, args) =>
-			{
-				if (args.CenterItemIndex == 3)
-					ResultLabel.Text = "The test has passed";
-				else
-					ResultLabel.Text = "The test has failed";
-			};
-
+#if __IOS__
 			carousel.PropertyChanged += (sender, args) => {
 				if (args.PropertyName == CarouselView.IsVisibleProperty.PropertyName)
 				{
@@ -45,6 +37,15 @@ namespace Xamarin.Forms.Controls.Issues
 					}
 				}
 			};
+#else
+			carousel.Scrolled += (sender, args) =>
+			{
+				if (args.CenterItemIndex == 3)
+					ResultLabel.Text = "The test has passed";
+				else
+					ResultLabel.Text = "The test has failed";
+			};
+#endif
 #endif
 		}
 
