@@ -17,6 +17,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\BlazorDesktopApp\BlazorDesktopApp.csproj" />
+    <ProjectReference Include="..\..\Microsoft.BlazorWebView.Windows\Microsoft.BlazorWebView.Windows.csproj" />
     <ProjectReference Include="..\..\Xamarin.Forms.Platform.UAP\Xamarin.Forms.Platform.UAP.csproj" />
   </ItemGroup>
 </Project>

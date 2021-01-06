@@ -17,11 +17,11 @@ namespace WinUI3Desktop
 					Children =
 						{
 							new Xamarin.Forms.Label(){ Text = "Hello There"},
-							new Xamarin.Forms.WebView()
+							new Microsoft.MobileBlazorBindings.WebView.Elements.BlazorWebView<BlazorDesktopApp.WebUI.MessageList>
 							{
 								HeightRequest = 500,
 								WidthRequest = 500,
-								Source = "http://www.microsoft.com"
+								Host = null,
 							}
 						}
 				}
