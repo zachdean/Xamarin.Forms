@@ -1,5 +1,7 @@
 using System;
 using System.ComponentModel;
+using System.Globalization;
+using System.Linq;
 using Foundation;
 using UIKit;
 using Xamarin.Forms.PlatformConfiguration.iOSSpecific;
@@ -197,11 +199,44 @@ namespace Xamarin.Forms.Platform.iOS
 		void UpdateTime()
 		{
 			_picker.Date = new DateTime(1, 1, 1).Add(Element.Time).ToNSDate();
-			if (TextField != null)
+
+			string iOSLocale = NSLocale.CurrentLocale.CountryCode;
+			var cultureInfos = CultureInfo.GetCultures(CultureTypes.AllCultures)
+							  .Where(c => c.Name.EndsWith("-" + iOSLocale)).FirstOrDefault();
+			if (cultureInfos == null)
+				cultureInfos = CultureInfo.InvariantCulture;
+			
+      var textTextField = "";
+			if (String.IsNullOrEmpty(Element.Format))
 			{
-				TextField.Text = DateTime.Today.Add(Element.Time).ToString(Element.Format);
-				Element.InvalidateMeasureNonVirtual(Internals.InvalidationTrigger.MeasureChanged);
+				string timeformat = cultureInfos.DateTimeFormat.ShortTimePattern;
+				NSLocale locale = new NSLocale(cultureInfos.TwoLetterISOLanguageName);
+        textTextField = DateTime.Today.Add(Element.Time).ToString(timeformat, cultureInfos);
+				_picker.Locale = locale;
 			}
+			else
+			{
+				textTextField = DateTime.Today.Add(Element.Time).ToString(Element.Format, cultureInfos);
+			}
+      
+      if (TextField != null)
+			{
+			  TextField .Text = textTextField;
+      }
+
+			if (Element.Format?.Contains('H') == true)
+			{
+				var ci = new System.Globalization.CultureInfo("de-DE");
+				NSLocale locale = new NSLocale(ci.TwoLetterISOLanguageName);
+				_picker.Locale = locale;
+			}
+			else if (Element.Format?.Contains('h') == true)
+			{
+				var ci = new System.Globalization.CultureInfo("en-US");
+				NSLocale locale = new NSLocale(ci.TwoLetterISOLanguageName);
+				_picker.Locale = locale;
+			}
+			Element.InvalidateMeasureNonVirtual(Internals.InvalidationTrigger.MeasureChanged);
 		}
 
 		void UpdateElementTime()

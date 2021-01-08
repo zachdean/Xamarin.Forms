@@ -13,6 +13,7 @@ using Android.OS;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
+using AndroidX.DrawerLayout.Widget;
 using AndroidX.Legacy.App;
 using Xamarin.Forms.Internals;
 using Xamarin.Forms.Platform.Android.AppCompat;
@@ -340,7 +341,10 @@ namespace Xamarin.Forms.Platform.Android
 		{
 			IVisualElementRenderer renderer = null;
 
-			if (element is TemplatedView tv && tv.ResolveControlTemplate() != null)
+			// temporary hack to fix the following issues
+			// https://github.com/xamarin/Xamarin.Forms/issues/13261
+			// https://github.com/xamarin/Xamarin.Forms/issues/12484
+			if (element is RadioButton tv && tv.ResolveControlTemplate() != null)
 			{
 				renderer = new DefaultRenderer(context);
 			}
@@ -352,7 +356,6 @@ namespace Xamarin.Forms.Platform.Android
 			}
 
 			renderer.SetElement(element);
-
 			return renderer;
 		}
 
@@ -793,7 +796,7 @@ namespace Xamarin.Forms.Platform.Android
 
 		void GetNewFlyoutPageToggle()
 		{
-			var drawer = GetRenderer(CurrentFlyoutPage) as FlyoutPageRenderer;
+			var drawer = GetRenderer(CurrentFlyoutPage) as DrawerLayout;
 			if (drawer == null)
 				return;
 
