@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Hosting;
 
 namespace WinUI3Desktop
 {
@@ -10,6 +11,8 @@ namespace WinUI3Desktop
 	{
 		public XFApplication() : base()
 		{
+			IHost host = null;
+
 			MainPage = new Xamarin.Forms.ContentPage()
 			{
 				Content = new Xamarin.Forms.StackLayout()
@@ -21,7 +24,7 @@ namespace WinUI3Desktop
 							{
 								HeightRequest = 500,
 								WidthRequest = 500,
-								Host = null,
+								Host = host,
 							}
 						}
 				}

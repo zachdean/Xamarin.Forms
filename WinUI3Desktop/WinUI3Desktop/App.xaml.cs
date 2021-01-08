@@ -1,4 +1,6 @@
-﻿using Microsoft.UI.Xaml;
+﻿using Microsoft.MobileBlazorBindings.WebView.Elements;
+using Microsoft.MobileBlazorBindings.WebView.Windows;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Data;
@@ -15,6 +17,7 @@ using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Xamarin.Forms.Internals;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -31,8 +34,8 @@ namespace WinUI3Desktop
         /// executed, and as such is the logical equivalent of main() or WinMain().
         /// </summary>
         public App()
-        {
-            this.InitializeComponent();
+        {			
+			this.InitializeComponent();
             this.Suspending += OnSuspending;
         }
 
@@ -43,6 +46,8 @@ namespace WinUI3Desktop
         /// <param name="args">Details about the launch request and process.</param>
         protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
         {
+			BlazorHybridWindows.Init();
+
 			Xamarin.Forms.Forms.Init(args);
 			m_window = new MainWindow();
 			//var thing = m_window.DispatcherQueue;

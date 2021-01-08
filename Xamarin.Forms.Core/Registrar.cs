@@ -260,6 +260,7 @@ namespace Xamarin.Forms.Internals
 		static readonly Lazy<Dictionary<string, IList<StylePropertyAttribute>>> LazyStyleProperties = new Lazy<Dictionary<string, IList<StylePropertyAttribute>>>(LoadStyleSheets);
 
 		public static IEnumerable<Assembly> ExtraAssemblies { get; set; }
+		public static IEnumerable<Assembly> DoubleExtraAssemblies { get; set; }
 
 		public static Registrar<IRegisterable> Registered { get; internal set; }
 
@@ -325,6 +326,8 @@ namespace Xamarin.Forms.Internals
 
 			if (ExtraAssemblies != null)
 				assemblies = assemblies.Union(ExtraAssemblies).ToArray();
+			if (DoubleExtraAssemblies != null)
+				assemblies = assemblies.Union(DoubleExtraAssemblies).ToArray();
 
 			Assembly defaultRendererAssembly = Device.PlatformServices.GetType().GetTypeInfo().Assembly;
 			int indexOfExecuting = Array.IndexOf(assemblies, defaultRendererAssembly);

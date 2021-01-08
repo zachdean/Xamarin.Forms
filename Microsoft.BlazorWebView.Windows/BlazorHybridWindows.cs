@@ -3,7 +3,10 @@
 
 using System;
 using System.IO;
+using System.Linq;
 using System.Reflection;
+using Microsoft.MobileBlazorBindings.WebView.Elements;
+using Xamarin.Forms.Internals;
 
 namespace Microsoft.MobileBlazorBindings.WebView.Windows
 {
@@ -24,15 +27,26 @@ namespace Microsoft.MobileBlazorBindings.WebView.Windows
         /// <param name="webViewDirectory">The location where WebView2 user data is stored. See the <see cref="WebViewDirectory"/>
         /// property for more information.</param>
         public static void Init(string webViewDirectory = null)
-        {
-            if (webViewDirectory == null)
-            {
-                var applicationName = (Assembly.GetEntryAssembly() ?? Assembly.GetCallingAssembly()).GetName().Name;
-                webViewDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), applicationName);
-            }
-            WebViewDirectory = webViewDirectory;
+		{
+			RegisterExtraAssembliesWithRenderers();
 
-            // Calling this means the assembly will be loaded, so Xamarin.Forms will discover its ExportRenderer attributes
-        }
-    }
+			if (webViewDirectory == null)
+			{
+				var applicationName = (Assembly.GetEntryAssembly() ?? Assembly.GetCallingAssembly()).GetName().Name;
+				webViewDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), applicationName);
+			}
+			WebViewDirectory = webViewDirectory;
+
+			// Calling this means the assembly will be loaded, so Xamarin.Forms will discover its ExportRenderer attributes
+		}
+
+		private static void RegisterExtraAssembliesWithRenderers()
+		{
+			Registrar.DoubleExtraAssemblies = new[]
+			{
+				typeof(BlazorWebView<>).Assembly,
+				typeof(BlazorHybridWindows).Assembly,
+			};
+		}
+	}
 }
