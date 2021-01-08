@@ -1,4 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
+  <!-- Normally this import would be automatic through the nuget package. We do it manually for projects inside this solution. -->
+  <Import Project="..\..\Microsoft.BlazorWebView.Windows\build\Microsoft.BlazorWebView.Windows.props" />
+
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net5.0-windows10.0.18362.0</TargetFramework>
@@ -21,4 +24,7 @@
     <ProjectReference Include="..\..\Microsoft.BlazorWebView.Windows\Microsoft.BlazorWebView.Windows.csproj" />
     <ProjectReference Include="..\..\Xamarin.Forms.Platform.UAP\Xamarin.Forms.Platform.UAP.csproj" />
   </ItemGroup>
+
+  <!-- Normally this import would be automatic through the nuget package. We do it manually for projects inside this solution. -->
+  <Import Project="..\..\Microsoft.BlazorWebView.Windows\build\Microsoft.BlazorWebView.Windows.targets" />
 </Project>
