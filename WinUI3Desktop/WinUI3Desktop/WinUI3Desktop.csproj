@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <!-- Normally this import would be automatic through the nuget package. We do it manually for projects inside this solution. -->
   <Import Project="..\..\Microsoft.BlazorWebView.Windows\build\Microsoft.BlazorWebView.Windows.props" />
 
@@ -23,6 +23,12 @@
     <ProjectReference Include="..\..\BlazorDesktopApp\BlazorDesktopApp.csproj" />
     <ProjectReference Include="..\..\Microsoft.BlazorWebView.Windows\Microsoft.BlazorWebView.Windows.csproj" />
     <ProjectReference Include="..\..\Xamarin.Forms.Platform.UAP\Xamarin.Forms.Platform.UAP.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Update="wwwroot\index.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <!-- Normally this import would be automatic through the nuget package. We do it manually for projects inside this solution. -->
