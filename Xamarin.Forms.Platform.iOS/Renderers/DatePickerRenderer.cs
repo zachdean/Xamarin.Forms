@@ -165,29 +165,29 @@ namespace Xamarin.Forms.Platform.iOS
 			  return;
 
 			//can't use Element.Format because it won't display the correct format if the region and language are set differently
-			if (String.IsNullOrWhiteSpace(Element.Format) || Element.Format.Equals("d") || Element.Format.Equals("D"))
+			if (string.IsNullOrWhiteSpace(Element.Format) || Element.Format.Equals("d") || Element.Format.Equals("D"))
 			{
 				NSDateFormatter dateFormatter = new NSDateFormatter();
 				if (Element.Format?.Equals("D") == true)
 				{
 					dateFormatter.DateStyle = NSDateFormatterStyle.Long;
 					var strDate = dateFormatter.StringFor(_picker.Date);
-					Control.Text = strDate;
+					TextField.Text = strDate;
 				}
 				else
 				{
 					dateFormatter.DateStyle = NSDateFormatterStyle.Short;
 					var strDate = dateFormatter.StringFor(_picker.Date);
-					Control.Text = strDate;
+					TextField.Text = strDate;
 				}
 			}
 			else if (Element.Format.Contains("/"))
 			{
-				Control.Text = Element.Date.ToString(Element.Format, CultureInfo.InvariantCulture);
+				TextField.Text = Element.Date.ToString(Element.Format, CultureInfo.InvariantCulture);
 			}
 			else
 			{
-				Control.Text = Element.Date.ToString(Element.Format);
+				TextField.Text = Element.Date.ToString(Element.Format);
 			}
 		}
 
