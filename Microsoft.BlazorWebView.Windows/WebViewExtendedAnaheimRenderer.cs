@@ -168,10 +168,11 @@ namespace Microsoft.MobileBlazorBindings.WebView.Windows
                     responseStream.Position = 0;
 
 					args.Response = _coreWebView2Environment.CreateWebResourceResponse(
-						Content: responseStream.AsRandomAccessStream(),
+						Content: new MemoryStream(global::System.Text.Encoding.UTF8.GetBytes("hi")).AsRandomAccessStream(),
 						StatusCode: 200,
 						ReasonPhrase: "OK",
 						Headers: $"Content-Type: {responseContentType}{Environment.NewLine}Cache-Control: no-cache, max-age=0, must-revalidate, no-store");
+						//Content: responseStream.AsRandomAccessStream(),
 				}
 			}
         }

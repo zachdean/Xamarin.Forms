@@ -26,19 +26,24 @@ namespace WinUI3Desktop
 			hostBuilder.UseStaticFiles();
 			var host = hostBuilder.Build();
 
+			var label = new Xamarin.Forms.Label() { Text = "Hello There" };
+			var button = new Xamarin.Forms.Button() { Text = "Click me" };
+			button.Clicked += (s, e) => { label.Text += " clicked"; };
+
 			MainPage = new Xamarin.Forms.ContentPage()
 			{
 				Content = new Xamarin.Forms.StackLayout()
 				{
 					Children =
 						{
-							new Xamarin.Forms.Label(){ Text = "Hello There"},
+							label,
+							button,
 							new Microsoft.MobileBlazorBindings.WebView.Elements.BlazorWebView<BlazorDesktopApp.WebUI.MessageList>
 							{
 								HeightRequest = 500,
 								WidthRequest = 500,
 								Host = host,
-							}
+							},
 						}
 				}
 			};
