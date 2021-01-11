@@ -158,6 +158,9 @@ namespace Xamarin.Forms.Platform.iOS
 
 		void UpdateDateFromModel(bool animate)
 		{
+			if (_picker == null)
+				return;
+
 			if (_picker.Date.ToDateTime().Date != Element.Date.Date)
 				_picker.SetDate(Element.Date.ToNSDate(), animate);
 
@@ -219,11 +222,17 @@ namespace Xamarin.Forms.Platform.iOS
 		}
 		void UpdateMaximumDate()
 		{
+			if (_picker == null)
+				return;
+
 			_picker.MaximumDate = Element.MaximumDate.ToNSDate();
 		}
 
 		void UpdateMinimumDate()
 		{
+			if (_picker == null)
+				return;
+
 			_picker.MinimumDate = Element.MinimumDate.ToNSDate();
 		}
 
