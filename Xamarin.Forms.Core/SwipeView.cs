@@ -116,6 +116,23 @@ namespace Xamarin.Forms
 				SetInheritedBindingContext(BottomItems, bc);
 		}
 
+		protected override void OnParentSet()
+		{
+			base.OnParentSet();
+
+			if (LeftItems != null)
+				UpdateSwipeItemsParent(LeftItems);
+
+			if (RightItems != null)
+				UpdateSwipeItemsParent(RightItems);
+
+			if (TopItems != null)
+				UpdateSwipeItemsParent(TopItems);
+
+			if (BottomItems != null)
+				UpdateSwipeItemsParent(BottomItems);
+		}
+
 		SwipeItems SwipeItemsDefaultValueCreator() => new SwipeItems();
 
 		static object SwipeItemsDefaultValueCreator(BindableObject bindable)
