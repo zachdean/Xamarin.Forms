@@ -226,6 +226,9 @@ namespace Xamarin.Forms.Platform.iOS
 				{
 					Element.OpenRequested -= OnOpenRequested;
 					Element.CloseRequested -= OnCloseRequested;
+
+					if (Element.Content != null)
+						Element.Content.PropertyChanged -= OnContentPropertyChanged;
 				}
 
 				if (_scrollParent != null)
@@ -285,10 +288,13 @@ namespace Xamarin.Forms.Platform.iOS
 
 			foreach (var subview in Subviews)
 			{
-				var view = HitTest(subview, point, uievent);
+				if (subview.UserInteractionEnabled)
+				{
+					var view = HitTest(subview, point, uievent);
 
-				if (view != null)
-					return view;
+					if (view != null)
+						return view;
+				}
 			}
 
 			return base.HitTest(point, uievent);
@@ -301,12 +307,15 @@ namespace Xamarin.Forms.Platform.iOS
 
 			foreach (var subview in view.Subviews)
 			{
-				CGPoint subPoint = subview.ConvertPointFromView(point, this);
-				UIView result = subview.HitTest(subPoint, uievent);
-
-				if (result != null)
+				if (subview.UserInteractionEnabled)
 				{
-					return result;
+					CGPoint subPoint = subview.ConvertPointFromView(point, this);
+					UIView result = subview.HitTest(subPoint, uievent);
+
+					if (result != null)
+					{
+						return result;
+					}
 				}
 			}
 
@@ -329,12 +338,20 @@ namespace Xamarin.Forms.Platform.iOS
 			}
 			else
 			{
+				Element.Content.PropertyChanged += OnContentPropertyChanged;
+
 				if (Subviews.Length > 0)
 					_contentView = Subviews[0];
 			}
 
 			if (_contentView != null)
 				BringSubviewToFront(_contentView);
+		}
+
+		void OnContentPropertyChanged(object sender, PropertyChangedEventArgs e)
+		{
+			if (e.PropertyName == VisualElement.IsEnabledProperty.PropertyName)
+				UpdateIsSwipeEnabled();
 		}
 
 		void HandleTap()
@@ -407,7 +424,11 @@ namespace Xamarin.Forms.Platform.iOS
 
 		void UpdateIsSwipeEnabled()
 		{
+			UserInteractionEnabled = true;
 			_isSwipeEnabled = Element.IsEnabled;
+
+			var isContentEnabled = Element.Content.IsEnabled;
+			_contentView.UserInteractionEnabled = isContentEnabled;
 		}
 
 		bool IsHorizontalSwipe()
