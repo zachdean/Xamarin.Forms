@@ -37,10 +37,15 @@ namespace Sample
 			verticalStack.Add(horizontalStack);
 			verticalStack.Add(new Slider());
 
-			verticalStack.Add(new Label { Text = "The horizontal stack below has FlowDirection RTL"});
+			verticalStack.Add(new Label { Text = "The horizontal stack below has FlowDirection RTL" });
 
-			var rtlStack = new HorizontalStackLayout { Spacing = 5, BackgroundColor = Color.LightGreen, FlowDirection = Xamarin.Platform.FlowDirection.RightToLeft };
-			rtlStack.Add(new Label { Text = "Label 1" });
+			var rtlStack = new HorizontalStackLayout { Spacing = 5, BackgroundColor = Color.LightGreen,
+				FlowDirection = Xamarin.Platform.FlowDirection.RightToLeft };
+			
+			// Explicitly setting RTL on this Label, because Sample doesn't have any concept of inherited FlowDirection
+			rtlStack.Add(new Label { Text = "Label 1", BackgroundColor = Color.CornflowerBlue,
+				Margin = new Thickness(20, 2, 0, 2), FlowDirection = Xamarin.Forms.FlowDirection.RightToLeft });
+			
 			rtlStack.Add(new Label { Text = "Label 2" });
 			rtlStack.Add(new Label { Text = "Label 3" });
 

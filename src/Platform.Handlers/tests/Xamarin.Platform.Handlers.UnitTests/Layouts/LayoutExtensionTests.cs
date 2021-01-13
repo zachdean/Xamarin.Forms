@@ -10,7 +10,7 @@ namespace Xamarin.Platform.Handlers.UnitTests.Layouts
 	public class LayoutExtensionTests
 	{
 		[Test]
-		public void FrameExcludesMargin() 
+		public void FrameExcludesMargin()
 		{
 			var element = Substitute.For<IFrameworkElement>();
 			var margin = new Thickness(20);
@@ -40,13 +40,13 @@ namespace Xamarin.Platform.Handlers.UnitTests.Layouts
 
 			// The margin is simply too large for the bounds; since negative widths/heights on a frame don't make sense,
 			// we expect them to collapse to zero
-			
+
 			Assert.That(frame.Width, Is.EqualTo(0));
 			Assert.That(frame.Height, Is.EqualTo(0));
 		}
 
 		[Test]
-		public void DesiredSizeIncludesMargin() 
+		public void DesiredSizeIncludesMargin()
 		{
 			var widthConstraint = 400;
 			var heightConstraint = 655;
@@ -68,6 +68,29 @@ namespace Xamarin.Platform.Handlers.UnitTests.Layouts
 
 			Assert.That(desiredSize.Width, Is.EqualTo(140));
 			Assert.That(desiredSize.Height, Is.EqualTo(90));
+		}
+
+		[Test]
+		public void MarginsAccountForFlowDirectionRTL()
+		{
+			var element = Substitute.For<IFrameworkElement>();
+			element.FlowDirection.Returns(FlowDirection.RightToLeft);
+			var margin = new Thickness(10, 0, 15, 0);
+			element.Margin.Returns(margin);
+
+			var bounds = new Rectangle(0, 0, 100, 100);
+			var frame = element.ComputeFrame(bounds);
+
+			// The top and bottom margins are zero, so we expect the Frame to have the full height of 100
+			Assert.That(frame.Top, Is.EqualTo(0));
+			Assert.That(frame.Height, Is.EqualTo(100));
+
+			// The left and right margins together are 25, so we expect the Frame to have a width of 75
+			Assert.That(frame.Width, Is.EqualTo(75));
+
+			// The left and right margins should be swapped (because of RTL) to we expect the Frame location
+			// to have a Left value of 15 (the "right side" margin)
+			Assert.That(frame.Left, Is.EqualTo(15));
 		}
 	}
 }
