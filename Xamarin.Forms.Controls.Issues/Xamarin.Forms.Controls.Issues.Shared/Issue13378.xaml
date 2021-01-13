@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<controls:TestContentPage
+    xmlns="http://xamarin.com/schemas/2014/forms"
+    xmlns:controls="clr-namespace:Xamarin.Forms.Controls"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    x:Class="Xamarin.Forms.Controls.Issues.Issue13378"
+    Title="Issue 13378">
+    <Grid RowDefinitions="Auto,*">
+        <Label
+            Grid.Row="0"
+            Padding="12"
+            BackgroundColor="Black"
+            TextColor="White"
+            Text="if can see a White Frame below, the test has passed."/>
+        <Frame
+            Grid.Row="1"
+            BorderColor="Black">
+            <Frame.Background>
+				<LinearGradientBrush
+                    EndPoint="0,1">
+					<GradientStop
+                        Color="Transparent"
+                        Offset="0.2" />
+					<GradientStop
+                        Color="White"
+                        Offset="1.0" />
+				</LinearGradientBrush>
+			</Frame.Background>
+        </Frame>
+    </Grid>
+</controls:TestContentPage>
