@@ -88,7 +88,7 @@ namespace Xamarin.Platform.Handlers.UnitTests.Layouts
 			// The left and right margins together are 25, so we expect the Frame to have a width of 75
 			Assert.That(frame.Width, Is.EqualTo(75));
 
-			// The left and right margins should be swapped (because of RTL) to we expect the Frame location
+			// The left and right margins should be swapped (because of RTL) so we expect the Frame location
 			// to have a Left value of 15 (the "right side" margin)
 			Assert.That(frame.Left, Is.EqualTo(15));
 		}
