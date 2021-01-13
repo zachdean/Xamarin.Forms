@@ -244,6 +244,8 @@ namespace Xamarin.Forms
 		double IFrameworkElement.Width { get => WidthRequest; }
 		double IFrameworkElement.Height { get => HeightRequest; }
 
+		Platform.FlowDirection IFrameworkElement.FlowDirection => FlowDirection.ToPlatformFlowDirection();
+
 		#endregion
 	}
 }

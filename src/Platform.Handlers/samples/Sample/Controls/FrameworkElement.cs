@@ -31,6 +31,8 @@ namespace Sample
 
 		public Thickness Margin { get; set; } = Thickness.Zero;
 
+		public Xamarin.Platform.FlowDirection FlowDirection { get; set; } = Xamarin.Platform.FlowDirection.LeftToRight;
+
 		public virtual void Arrange(Rectangle bounds)
 		{
 			Frame = this.ComputeFrame(bounds);

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Xamarin.Forms;
 
 namespace Xamarin.Platform.Layouts
@@ -21,7 +22,17 @@ namespace Xamarin.Platform.Layouts
 			return new Size(finalWidth, measure.Height);
 		}
 
-		public override void Arrange(Rectangle bounds) => Arrange(Stack.Spacing, Stack.Children);
+		public override void Arrange(Rectangle bounds) 
+		{
+			if (Stack.FlowDirection == FlowDirection.LeftToRight)
+			{
+				Arrange(Stack.Spacing, Stack.Children);
+			}
+			else
+			{
+				Arrange(Stack.Spacing, Stack.Children.Reverse());
+			}
+		}
 
 		static Size Measure(double heightConstraint, int spacing, IReadOnlyList<IView> views)
 		{

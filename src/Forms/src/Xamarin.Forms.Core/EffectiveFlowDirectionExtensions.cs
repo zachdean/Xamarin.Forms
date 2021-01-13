@@ -68,5 +68,11 @@ namespace Xamarin.Forms
 		{
 			return (self & EffectiveFlowDirection.Explicit) == EffectiveFlowDirection.Explicit;
 		}
+
+		public static Xamarin.Platform.FlowDirection ToPlatformFlowDirection(this FlowDirection flowDirection) 
+		{
+			return flowDirection.ToEffectiveFlowDirection().IsLeftToRight()
+					? Xamarin.Platform.FlowDirection.LeftToRight : Xamarin.Platform.FlowDirection.RightToLeft;
+		}
 	}
 }
