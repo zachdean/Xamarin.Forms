@@ -77,7 +77,13 @@ namespace Xamarin.Forms.Platform.MacOS
 				if (gradientStop.Color == Color.Transparent)
 				{
 					var color = gradientStops[index == 0 ? index + 1 : index - 1].Color;
-					colors[index] = color.ToCGColor();
+					CGColor nativeColor;
+#if __MOBILE__
+					nativeColor = color.ToUIColor().ColorWithAlpha(0.0f).CGColor;
+#else
+					nativeColor = color.ToNSColor().ColorWithAlphaComponent(0.0f).CGColor;
+#endif
+					colors[index] = nativeColor;
 				}
 				else
 					colors[index] = gradientStop.Color.ToCGColor();

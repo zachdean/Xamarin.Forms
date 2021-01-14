@@ -14,21 +14,44 @@
             Padding="12"
             BackgroundColor="Black"
             TextColor="White"
-            Text="if can see a White Frame below, the test has passed."/>
-        <Frame
+            Text="Without gray colors in the gradient, the test has passed."/>
+        <Grid
             Grid.Row="1"
-            BorderColor="Black">
-            <Frame.Background>
-				<LinearGradientBrush
-                    EndPoint="0,1">
-					<GradientStop
-                        Color="Transparent"
-                        Offset="0.2" />
-					<GradientStop
-                        Color="White"
-                        Offset="1.0" />
-				</LinearGradientBrush>
-			</Frame.Background>
-        </Frame>
+            Padding="12"
+            RowDefinitions="Auto,Auto">
+            <Frame
+                BorderColor="Red"
+                HeightRequest="150"
+                VerticalOptions="Start">
+                <Frame.Background>
+				    <LinearGradientBrush
+                        EndPoint="0,1">
+					    <GradientStop
+                            Color="Transparent"
+                            Offset="0.2" />
+					    <GradientStop
+                            Color="Red"
+                            Offset="1.0" />
+				    </LinearGradientBrush>
+			    </Frame.Background>
+            </Frame>
+            <Frame
+                Grid.Row="1"
+                BorderColor="Red"
+                HeightRequest="150"
+                VerticalOptions="Start">
+                <Frame.Background>
+				    <LinearGradientBrush
+                        EndPoint="0,1">
+					    <GradientStop
+                            Color="Transparent"
+                            Offset="0.2" />
+					    <GradientStop
+                            Color="White"
+                            Offset="1.0" />
+				    </LinearGradientBrush>
+			    </Frame.Background>
+            </Frame>
+        </Grid>
     </Grid>
 </controls:TestContentPage>
