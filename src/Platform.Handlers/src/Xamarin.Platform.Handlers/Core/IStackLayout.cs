@@ -1,4 +1,7 @@
-﻿namespace Xamarin.Platform
+﻿using System.Collections.Generic;
+using Xamarin.Forms;
+
+namespace Xamarin.Platform
 {
 	public interface IStackLayout : ILayout
 	{

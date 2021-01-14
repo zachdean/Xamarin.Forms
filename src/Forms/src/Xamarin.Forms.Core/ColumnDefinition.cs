@@ -1,8 +1,9 @@
 using System;
+using Xamarin.Platform;
 
 namespace Xamarin.Forms
 {
-	public sealed class ColumnDefinition : BindableObject, IDefinition
+	public sealed class ColumnDefinition : BindableObject, IDefinition, IGridColumnDefinition
 	{
 		public static readonly BindableProperty WidthProperty = BindableProperty.Create("Width", typeof(GridLength), typeof(ColumnDefinition), new GridLength(1, GridUnitType.Star),
 			propertyChanged: (bindable, oldValue, newValue) => ((ColumnDefinition)bindable).OnSizeChanged());
@@ -21,6 +22,8 @@ namespace Xamarin.Forms
 		internal double ActualWidth { get; set; }
 
 		internal double MinimumWidth { get; set; }
+
+		double IGridColumnDefinition.ActualWidth => ActualWidth;
 
 		public event EventHandler SizeChanged;
 

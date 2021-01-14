@@ -3,7 +3,6 @@ using System.Diagnostics;
 
 namespace Xamarin.Forms
 {
-	[TypeConverter(typeof(GridLengthTypeConverter))]
 	[DebuggerDisplay("{Value}.{GridUnitType}")]
 	public struct GridLength
 	{

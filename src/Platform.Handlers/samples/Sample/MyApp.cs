@@ -37,7 +37,38 @@ namespace Sample
 			verticalStack.Add(horizontalStack);
 			verticalStack.Add(new Slider());
 
+			verticalStack.Add(CreateSampleGrid());
+
 			return verticalStack;
+		}
+
+		IView CreateSampleGrid() 
+		{
+			var layout = new GridLayout();
+
+			layout.AddRowDefinition(new RowDefinition() { Height = GridLength.Auto });
+			layout.AddRowDefinition(new RowDefinition() { Height = GridLength.Auto });
+
+			layout.AddColumnDefinition(new ColumnDefinition() { Width = GridLength.Auto });
+			layout.AddColumnDefinition(new ColumnDefinition() { Width = GridLength.Auto });
+
+			var topLeft = new Label { Text = "Top Left" };
+			layout.Add(topLeft);
+
+			var bottomLeft = new Label { Text = "Bottom Left" };
+			layout.Add(bottomLeft);
+			layout.SetRow(bottomLeft, 1);
+
+			var topRight = new Label { Text = "Top Right" };
+			layout.Add(topRight);
+			layout.SetColumn(topRight, 1);
+
+			var bottomRight = new Label { Text = "Bottom Right" };
+			layout.Add(bottomRight);
+			layout.SetRow(bottomRight, 1);
+			layout.SetColumn(bottomRight, 1);
+
+			return layout;
 		}
 	}
 }
