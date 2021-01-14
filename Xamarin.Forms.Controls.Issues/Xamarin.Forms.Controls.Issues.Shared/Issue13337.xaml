@@ -16,7 +16,8 @@
             VerticalOptions="CenterAndExpand"
             HorizontalOptions="CenterAndExpand">
             <Label
-                Text="If this page not swipe, the test has passed." />
+                Text="Interact with the SwipeView available in Page 2 and then, try to swipe to move between tabs. If the page not swipe, the test has passed."
+                Margin="12"/>
         </StackLayout>
     </ContentPage>
     <ContentPage
