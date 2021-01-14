@@ -55,7 +55,9 @@ namespace Sample
 
 			base.Arrange(bounds);
 
-			LayoutManager.Arrange(Frame);
+			// The reference frame for arranging the children should be the Layout itself
+			LayoutManager.ArrangeChildren(new Rectangle(Point.Zero, Frame.Size));
+			
 			IsArrangeValid = true;
 			Handler?.SetFrame(Frame);
 		}

@@ -69,7 +69,7 @@ namespace Xamarin.Platform.Handlers.UnitTests.Layouts
 		{
 			var stack = CreateTestLayout();
 
-			var view = CreateTestView(new Size(viewWidth, 100));
+			var view = LayoutTestHelpers.CreateTestView(new Size(viewWidth, 100));
 
 			var children = new List<IView>() { view }.AsReadOnly();
 
@@ -87,8 +87,8 @@ namespace Xamarin.Platform.Handlers.UnitTests.Layouts
 			var stack = CreateTestLayout();
 			var manager = new HorizontalStackLayoutManager(stack);
 
-			var view1 = CreateTestView(new Size(100, 200));
-			var view2 = CreateTestView(new Size(100, 150));
+			var view1 = LayoutTestHelpers.CreateTestView(new Size(100, 200));
+			var view2 = LayoutTestHelpers.CreateTestView(new Size(100, 150));
 
 			var children = new List<IView>() { view1, view2 }.AsReadOnly();
 			stack.Children.Returns(children);

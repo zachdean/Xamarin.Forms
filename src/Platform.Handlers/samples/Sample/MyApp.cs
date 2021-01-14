@@ -68,6 +68,8 @@ namespace Sample
 			layout.SetRow(bottomRight, 1);
 			layout.SetColumn(bottomRight, 1);
 
+			layout.BackgroundColor = Color.Chartreuse;
+
 			return layout;
 		}
 	}
