@@ -514,7 +514,14 @@ namespace Xamarin.Forms.Platform.iOS
 					if (!Brush.IsNullOrEmpty(background))
 						NativeView.UpdateBackground(Element.Background);
 					else
-						NativeView.BackgroundColor = Element.BackgroundColor.ToUIColor();
+					{
+						Color backgroundColor = Element.BackgroundColor;
+
+						if (backgroundColor.IsDefault)
+							NativeView.BackgroundColor = ColorExtensions.BackgroundColor;
+						else
+							NativeView.BackgroundColor = backgroundColor.ToUIColor();
+					}
 				}
 			});
 		}
