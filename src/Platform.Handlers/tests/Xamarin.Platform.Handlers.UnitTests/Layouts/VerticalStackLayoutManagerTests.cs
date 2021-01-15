@@ -37,7 +37,7 @@ namespace Xamarin.Platform.Handlers.UnitTests.Layouts
 			var manager = new VerticalStackLayoutManager(stack);
 
 			var measuredSize = manager.Measure(100, double.PositiveInfinity);
-			manager.Arrange(new Rectangle(Point.Zero, measuredSize));
+			manager.ArrangeChildren(new Rectangle(Point.Zero, measuredSize));
 
 			var expectedRectangle = new Rectangle(0, 0, 100, 100);
 			stack.Children[0].Received().Arrange(Arg.Is(expectedRectangle));
@@ -53,7 +53,7 @@ namespace Xamarin.Platform.Handlers.UnitTests.Layouts
 			var manager = new VerticalStackLayoutManager(stack);
 
 			var measuredSize = manager.Measure(double.PositiveInfinity, 100);
-			manager.Arrange(new Rectangle(Point.Zero, measuredSize));
+			manager.ArrangeChildren(new Rectangle(Point.Zero, measuredSize));
 
 			var expectedRectangle0 = new Rectangle(0, 0, 100, 100);
 			stack.Children[0].Received().Arrange(Arg.Is(expectedRectangle0));
@@ -94,7 +94,7 @@ namespace Xamarin.Platform.Handlers.UnitTests.Layouts
 			stack.Children.Returns(children);
 
 			var measurement = manager.Measure(double.PositiveInfinity, double.PositiveInfinity);
-			manager.Arrange(new Rectangle(Point.Zero, measurement));
+			manager.ArrangeChildren(new Rectangle(Point.Zero, measurement));
 
 			// The widest IView is 200, so the stack should be that wide
 			Assert.That(measurement.Width, Is.EqualTo(200));

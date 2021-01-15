@@ -26,7 +26,7 @@ namespace Xamarin.Platform.Handlers.UnitTests.Layouts
 			return view;
 		}
 
-		public static void SubstituteChildren(ILayout layout, params IView[] views) 
+		public static void AddChildren(ILayout layout, params IView[] views) 
 		{
 			var children = new List<IView>(views);
 			layout.Children.Returns(children.AsReadOnly());
