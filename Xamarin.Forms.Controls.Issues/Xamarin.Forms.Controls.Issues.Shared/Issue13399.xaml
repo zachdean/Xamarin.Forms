@@ -51,8 +51,8 @@
                                             <SwipeItem
                                                 Text="Delete"
                                                 BackgroundColor="Red"
-                                                Command="{Binding Source={x:Reference Issue13399Page}, Path=BindingContext.DeleteItemCommand}">
-                                            </SwipeItem>
+                                                Command="{Binding Source={x:Reference Issue13399Page}, Path=BindingContext.DeleteItemCommand}"
+                                                CommandParameter="{Binding}"/>
                                         </SwipeItems>
                                     </SwipeView.RightItems>
                                     <Grid>
@@ -80,6 +80,6 @@
         <Button
             Grid.Row="2"
             Text="Delete Item"
-            Command="{Binding DeleteItemCommand}"/>
+            Command="{Binding DeleteLastItemCommand}"/>
     </Grid>
 </local:TestContentPage>

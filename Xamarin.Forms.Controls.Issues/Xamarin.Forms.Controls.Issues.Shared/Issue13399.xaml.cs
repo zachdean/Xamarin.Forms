@@ -59,20 +59,32 @@ namespace Xamarin.Forms.Controls.Issues
 			}
 		}
 
-		public ICommand DeleteItemCommand => new Command(ExecuteDeleteItem);
+		public ICommand DeleteLastItemCommand => new Command(ExecuteDeleteLastItem);
+		public ICommand DeleteItemCommand => new Command<Issue13399Model>(ExecuteDeleteItem);
 
 		void LoadItems()
 		{
-			for (int i = 0; i < 10; i++)
+			for (int i = 0; i < 100; i++)
 			{
 				Items.Add(new Issue13399Model { Id = i + 1, Text = $"Item {i + 1}" });
 			}
 		}
 
-		void ExecuteDeleteItem()
+		void ExecuteDeleteLastItem()
 		{
+			if (Items.Count == 0)
+				return;
+
 			var index = Items.Count - 1;
 			Items.RemoveAt(index);
+		}
+
+		void ExecuteDeleteItem(Issue13399Model item)
+		{
+			if (Items.Count == 0)
+				return;
+
+			Items.Remove(item);
 		}
 	}
 }
