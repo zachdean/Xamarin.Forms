@@ -565,7 +565,7 @@ namespace Xamarin.Forms.Platform.iOS
 		void UpdateBackground()
 		{
 			var currentItem = _context.Shell.CurrentItem;
-			var currentAppearance = _appearanceTracker.CurrentAppearance;
+			var currentAppearance = (_appearanceTracker as ShellNavBarAppearanceTracker)?.CurrentAppearance;
 
 			if (currentItem == null || currentAppearance == null)
 				return;

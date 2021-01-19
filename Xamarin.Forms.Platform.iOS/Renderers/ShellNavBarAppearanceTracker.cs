@@ -26,6 +26,7 @@ namespace Xamarin.Forms.Platform.iOS
 				CurrentAppearance = null;
 
 				var navBar = controller.NavigationBar;
+				navBar.BarTintColor = _defaultBarTint;
 				navBar.TintColor = _defaultTint;
 				navBar.TitleTextAttributes = _defaultTitleAttributes;
 			}
@@ -49,14 +50,15 @@ namespace Xamarin.Forms.Platform.iOS
 				_defaultTitleAttributes = navBar.TitleTextAttributes;
 			}
 
-			if (!backgroundColor.IsDefault)
-				navBar.BarTintColor = backgroundColor.ToUIColor();
 			if (!Brush.IsNullOrEmpty(background))
 			{
 				var backgroundImage = navBar.GetBackgroundImage(background);
 				var backgroundColorFromBrush = backgroundImage != null ? UIColor.FromPatternImage(backgroundImage) : UIColor.Clear;
 				navBar.BarTintColor = backgroundColorFromBrush;
 			}
+			else
+				navBar.BarTintColor = backgroundColor.IsDefault ? _defaultBarTint : backgroundColor.ToUIColor();
+
 			if (!foreground.IsDefault)
 				navBar.TintColor = foreground.ToUIColor();
 			if (!titleColor.IsDefault)

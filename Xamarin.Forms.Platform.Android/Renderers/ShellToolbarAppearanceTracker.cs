@@ -1,6 +1,5 @@
 ﻿using Android.Graphics.Drawables;
 using AndroidX.AppCompat.Widget;
-using AColor = Android.Graphics.Color;
 
 namespace Xamarin.Forms.Platform.Android
 {
@@ -22,15 +21,17 @@ namespace Xamarin.Forms.Platform.Android
 			var background = appearance.Background;
 			var titleColor = appearance.TitleColor;
 
-			SetColors(toolbar, toolbarTracker, foreground, backgroundColor, background, titleColor);
+			SetColors(toolbar, toolbarTracker, foreground, backgroundColor, titleColor);
+			SetBrushes(toolbar, background);
 		}
 
 		public virtual void ResetAppearance(Toolbar toolbar, IShellToolbarTracker toolbarTracker)
 		{
-			SetColors(toolbar, toolbarTracker, ShellRenderer.DefaultForegroundColor, ShellRenderer.DefaultBackgroundColor, ShellRenderer.DefaultBackground, ShellRenderer.DefaultTitleColor);
+			SetColors(toolbar, toolbarTracker, ShellRenderer.DefaultForegroundColor, ShellRenderer.DefaultBackgroundColor, ShellRenderer.DefaultTitleColor);
+			SetBrushes(toolbar, ShellRenderer.DefaultBackground);
 		}
 
-		protected virtual void SetColors(Toolbar toolbar, IShellToolbarTracker toolbarTracker, Color foreground, Color backgroundColor, Brush background, Color title)
+		protected virtual void SetColors(Toolbar toolbar, IShellToolbarTracker toolbarTracker, Color foreground, Color background, Color title)
 		{
 			var titleArgb = title.ToAndroid(ShellRenderer.DefaultTitleColor).ToArgb();
 
@@ -40,21 +41,10 @@ namespace Xamarin.Forms.Platform.Android
 				_titleTextColor = titleArgb;
 			}
 
-			bool isDefaultBackground = Brush.IsNullOrEmpty(background);
-			var newBackground = isDefaultBackground ? ShellRenderer.DefaultBackground : background;
-
-			AColor? defaultBackgroundColor = null;
-			if (isDefaultBackground && newBackground is SolidColorBrush solidColorBrush)
-				defaultBackgroundColor = solidColorBrush.Color.ToAndroid();
-
-			if (!isDefaultBackground || (isDefaultBackground && (!(toolbar.Background is ColorDrawable bcd) || bcd.Color != defaultBackgroundColor)))
-				toolbar.UpdateBackground(newBackground);
-
-			var newColor = backgroundColor.ToAndroid(ShellRenderer.DefaultBackgroundColor);
-
-			if (isDefaultBackground && (!(toolbar.Background is ColorDrawable bccd) || bccd.Color != newColor))
+			var newColor = background.ToAndroid(ShellRenderer.DefaultBackgroundColor);
+			if (!(toolbar.Background is ColorDrawable cd) || cd.Color != newColor)
 			{
-				using (var colorDrawable = new ColorDrawable(backgroundColor.ToAndroid(ShellRenderer.DefaultBackgroundColor)))
+				using (var colorDrawable = new ColorDrawable(background.ToAndroid(ShellRenderer.DefaultBackgroundColor)))
 					toolbar.SetBackground(colorDrawable);
 			}
 
@@ -62,6 +52,15 @@ namespace Xamarin.Forms.Platform.Android
 
 			if (toolbarTracker.TintColor != newTintColor)
 				toolbarTracker.TintColor = newTintColor;
+		}
+
+		protected virtual void SetBrushes(Toolbar toolbar, Brush background)
+		{
+			bool isDefaultBackground = Brush.IsNullOrEmpty(background);
+			var newBackground = isDefaultBackground ? ShellRenderer.DefaultBackground : background;
+
+			if (!isDefaultBackground || (isDefaultBackground && (!(toolbar.Background is ColorDrawable))))
+				toolbar.UpdateBackground(newBackground);
 		}
 
 		#region IDisposable
