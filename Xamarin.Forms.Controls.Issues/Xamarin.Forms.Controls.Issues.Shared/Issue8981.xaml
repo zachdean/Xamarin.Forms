@@ -15,7 +15,7 @@
             Padding="12"
             BackgroundColor="Black"
             TextColor="White"
-            Text="Without hang, the test has passed."/> 
+            Text="Without hang, the test has passed."/>
         <StackLayout
             Grid.Row="1">
             <Label
@@ -23,13 +23,27 @@
                 Text="#8981" 
                 HorizontalOptions="Center"
                 VerticalOptions="Center" />
-            
-            <Label Text="Scale X:" />
-            <Slider Minimum="-11" Maximum="11" Value="1" ValueChanged="OnScaleXChanged" />
-            <Label Text="Scale Y:" />
-            <Slider Minimum="-11" Maximum="11" Value="1" ValueChanged="OnScaleYChanged" />
-            <Label Text="Scale:" />
-            <Slider Minimum="-11" Maximum="11" Value="1" ValueChanged="OnScaleChanged" />
+            <Label
+                Text="Scale X:" />
+            <Slider
+                Minimum="-11"
+                Maximum="11"
+                Value="1"
+                ValueChanged="OnScaleXChanged" />
+            <Label
+                Text="Scale Y:" />
+            <Slider
+                Minimum="-11"
+                Maximum="11"
+                Value="1"
+                ValueChanged="OnScaleYChanged" />
+            <Label
+                Text="Scale:" />
+            <Slider
+                Minimum="-11"
+                Maximum="11"
+                Value="1"
+                ValueChanged="OnScaleChanged" />
         </StackLayout>
     </Grid>
 </controls:TestContentPage>

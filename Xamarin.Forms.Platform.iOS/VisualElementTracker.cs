@@ -32,7 +32,6 @@ namespace Xamarin.Forms.Platform.MacOS
 		Rectangle _lastBounds;
 #if !__MOBILE__
 		Rectangle _lastParentBounds;
-		nfloat _lastScaleX, _lastScaleY, _lastScale;
 #endif
 		CALayer _layer;
 		CGPoint _originalAnchor;
@@ -329,22 +328,14 @@ namespace Xamarin.Forms.Platform.MacOS
 #if !__MOBILE__
 				if (Math.Abs(scaleX - 1) > epsilon || Math.Abs(scaleY - 1) > epsilon)
 				{
-					if (scaleX > 0 || scaleY > 0)
-					{
-						transform = transform.Scale(scaleX, scaleY, scale);
+					if (scaleX == 0)
+						scaleX = (float)epsilon;
+					if (scaleY == 0)
+						scaleY = (float)epsilon;
+					if (scale == 0)
+						scale = (float)epsilon;
 
-						_lastScaleX = scaleX;
-						_lastScaleY = scaleY;
-						_lastScale = scale;
-					}
-					else
-					{
-						var scaleX = (float)Math.Min(_lastScaleX, epsilon);
-						var scaleY = (float)Math.Min(_lastScaleY, epsilon);
-						var scale = (float)Math.Min(_lastScale, epsilon);
-
-						transform = transform.Scale(scaleX, scaleY, scale);
-					}
+					transform = transform.Scale(scaleX, scaleY, scale);
 				}
 #else
 				if (Math.Abs(scaleX - 1) > epsilon || Math.Abs(scaleY - 1) > epsilon)
