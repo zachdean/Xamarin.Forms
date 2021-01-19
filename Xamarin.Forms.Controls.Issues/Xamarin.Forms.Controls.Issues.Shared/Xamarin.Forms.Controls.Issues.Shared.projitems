@@ -1705,6 +1705,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)ShellFlyoutContentOffest.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ShellFlyoutContentWithZeroMargin.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Issue13436.xaml.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Issue13315.xaml.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="$(MSBuildThisFileDirectory)Bugzilla22229.xaml">
@@ -2099,6 +2100,9 @@
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
     <EmbeddedResource Include="$(MSBuildThisFileDirectory)Issue13436.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Issue13315.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
   </ItemGroup>
