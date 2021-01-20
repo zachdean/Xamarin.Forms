@@ -8,7 +8,7 @@ namespace Xamarin.Platform.Handlers
 		NativeTimePicker? _timePicker;
 		AlertDialog? _dialog;
 
-		protected override NativeTimePicker CreateView()
+		protected override NativeTimePicker CreateNativeView()
 		{
 			_timePicker = new NativeTimePicker(Context)
 			{
@@ -19,6 +19,7 @@ namespace Xamarin.Platform.Handlers
 			return _timePicker;
 		}
 
+		/*
 		public override void TearDown()
 		{
 			if (_dialog != null)
@@ -29,6 +30,7 @@ namespace Xamarin.Platform.Handlers
 
 			base.TearDown();
 		}
+		*/
 
 		protected virtual TimePickerDialog CreateTimePickerDialog(int hour, int minute)
 		{

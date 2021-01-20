@@ -37,7 +37,7 @@ namespace Sample
 			verticalStack.Add(horizontalStack);
 			verticalStack.Add(new Slider());
 			verticalStack.Add(new TimePicker());
-      
+
 			return verticalStack;
 		}
 	}

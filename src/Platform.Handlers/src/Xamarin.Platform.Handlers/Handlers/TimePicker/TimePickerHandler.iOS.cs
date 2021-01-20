@@ -11,7 +11,7 @@ namespace Xamarin.Platform.Handlers
 		static UIDatePicker? Picker;
 		static UIColor? DefaultTextColor;
 
-		protected override NativeTimePicker CreateView()
+		protected override NativeTimePicker CreateNativeView()
 		{
 			_nativeTimePicker = new NativeTimePicker();
 
@@ -53,13 +53,14 @@ namespace Xamarin.Platform.Handlers
 			return _nativeTimePicker;
 		}
 
-		protected override void SetupDefaults()
+		protected override void SetupDefaults(NativeTimePicker nativeView)
 		{
 			DefaultTextColor = _nativeTimePicker?.TextColor;
 
-			base.SetupDefaults();
+			base.SetupDefaults(nativeView);
 		}
 
+		/*
 		public override void TearDown()
 		{
 			DefaultTextColor = null;
@@ -80,6 +81,7 @@ namespace Xamarin.Platform.Handlers
 
 			base.TearDown();
 		}
+		*/
 
 		public static void MapFormat(TimePickerHandler handler, ITimePicker timePicker)
 		{
