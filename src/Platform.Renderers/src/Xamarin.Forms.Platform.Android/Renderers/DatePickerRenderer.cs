@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel;
+using System.Globalization;
 using Android.App;
 using Android.Content;
 using Android.Util;
@@ -179,7 +180,18 @@ namespace Xamarin.Forms.Platform.Android
 		[PortHandler]
 		void SetDate(DateTime date)
 		{
-			EditText.Text = date.ToString(Element.Format);
+			if (String.IsNullOrWhiteSpace(Element.Format))
+			{
+				EditText.Text = date.ToShortDateString();
+			}
+			else if (Element.Format.Contains('/'))
+			{
+				EditText.Text = date.ToString(Element.Format, CultureInfo.InvariantCulture);
+			}
+			else
+			{
+				EditText.Text = date.ToString(Element.Format);
+			}
 		}
 
 		[PortHandler]
