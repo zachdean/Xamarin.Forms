@@ -1,19 +1,18 @@
-using System;
+﻿using System;
 using System.ComponentModel;
-using Xamarin.Platform;
+using Xamarin.Forms;
 
-namespace Xamarin.Forms
+namespace Xamarin.Platform
 {
-	[PortHandler]
 	[EditorBrowsable(EditorBrowsableState.Never)]
 	public static class EffectiveFlowDirectionExtensions
 	{
-		internal static EffectiveFlowDirection ToEffectiveFlowDirection(this FlowDirection self, bool isExplicit = false)
+		public static EffectiveFlowDirection ToEffectiveFlowDirection(this FlowDirection self, bool isExplicit = false)
 		{
 			switch (self)
 			{
 				case FlowDirection.MatchParent:
-					return default(EffectiveFlowDirection);
+					return default;
 
 
 				case FlowDirection.LeftToRight:
@@ -23,7 +22,7 @@ namespace Xamarin.Forms
 					}
 					else
 					{
-						return default(EffectiveFlowDirection);
+						return default;
 					}
 
 				case FlowDirection.RightToLeft:
@@ -41,7 +40,7 @@ namespace Xamarin.Forms
 			}
 		}
 
-		internal static FlowDirection ToFlowDirection(this EffectiveFlowDirection self)
+		public static FlowDirection ToFlowDirection(this EffectiveFlowDirection self)
 		{
 			if (self.IsLeftToRight())
 				return FlowDirection.LeftToRight;

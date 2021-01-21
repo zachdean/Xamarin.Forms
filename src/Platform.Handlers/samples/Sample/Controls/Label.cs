@@ -24,5 +24,8 @@ namespace Sample
 		public TextAlignment VerticalTextAlignment { get; set; }
 		
 		public double CharacterSpacing { get; set; }
+
+		string IText.UpdateTransformedText(string source, TextTransform textTransform)
+			=> TextTransformUtilites.GetTransformedText(source, textTransform);
 	}
 }

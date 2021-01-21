@@ -1,10 +1,12 @@
 using System.ComponentModel;
+using Xamarin.Platform;
 
 namespace Xamarin.Forms.Internals
 {
 	[EditorBrowsable(EditorBrowsableState.Never)]
 	public static class TextTransformUtilites
 	{
+		[PortHandler]
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		public static string GetTransformedText(string source, TextTransform textTransform)
 		{

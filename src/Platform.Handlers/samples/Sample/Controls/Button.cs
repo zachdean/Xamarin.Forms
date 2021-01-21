@@ -53,5 +53,8 @@ namespace Sample
 			get { return HeightRequest; }
 			set { HeightRequest = value; }
 		}
+
+		string IText.UpdateTransformedText(string source, TextTransform textTransform)
+			=> TextTransformUtilites.GetTransformedText(source, textTransform);
 	}
 }

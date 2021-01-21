@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Xamarin.Forms.Internals;
+using Xamarin.Platform;
 #if __MOBILE__
 using UIKit;
 using NativeFont = UIKit.UIFont;
@@ -13,6 +14,7 @@ using NativeFont = AppKit.NSFont;
 namespace Xamarin.Forms.Platform.MacOS
 #endif
 {
+	[PortHandler]
 	public static partial class FontExtensions
 	{
 		static readonly Dictionary<ToNativeFontFontKey, NativeFont> ToUiFont = new Dictionary<ToNativeFontFontKey, NativeFont>();

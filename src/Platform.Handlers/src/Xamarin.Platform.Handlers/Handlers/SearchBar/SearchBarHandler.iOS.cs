@@ -14,9 +14,13 @@ namespace Xamarin.Platform.Handlers
 		static UIColor? DefaultTextColor;
 		static UIColor? DefaultTintColor;
 
+		static UITextField? TextField;
+
 		protected override UISearchBar CreateNativeView()
 		{
 			var searchBar = new UISearchBar(CGRect.Empty) { ShowsCancelButton = true, BarStyle = UIBarStyle.Default };
+
+			TextField = searchBar.FindDescendantView<UITextField>();
 
 			return searchBar;
 		}
@@ -54,8 +58,8 @@ namespace Xamarin.Platform.Handlers
 			CancelButtonTextColorDefaultHighlighted = cancelButton?.TitleColor(UIControlState.Highlighted);
 			CancelButtonTextColorDefaultDisabled = cancelButton?.TitleColor(UIControlState.Disabled);
 
-			var textField = nativeView.FindDescendantView<UITextField>();
-			DefaultTextColor = textField?.TextColor;
+			TextField ??= nativeView.FindDescendantView<UITextField>();
+			DefaultTextColor = TextField?.TextColor;
 		}
 
 		public static void MapSearchCommand(SearchBarHandler handler, ISearch search)
@@ -76,7 +80,7 @@ namespace Xamarin.Platform.Handlers
 		{
 			ViewHandler.CheckParameters(handler, search);
 
-			handler.TypedNativeView?.UpdateCancelButtonColor(search);
+			handler.TypedNativeView?.UpdateCancelButtonColor(search, CancelButtonTextColorDefaultNormal, CancelButtonTextColorDefaultHighlighted, CancelButtonTextColorDefaultDisabled);
 		}
 
 		public static void MapText(SearchBarHandler handler, ISearch search)
@@ -90,7 +94,7 @@ namespace Xamarin.Platform.Handlers
 		{
 			ViewHandler.CheckParameters(handler, search);
 
-			handler.TypedNativeView?.UpdateTextColor(search);
+			handler.TypedNativeView?.UpdateTextColor(TextField, search, DefaultTextColor);
 		}
 
 		public static void MapTextTransform(SearchBarHandler handler, ISearch search)
@@ -104,7 +108,7 @@ namespace Xamarin.Platform.Handlers
 		{
 			ViewHandler.CheckParameters(handler, search);
 
-			handler.TypedNativeView?.UpdateCharacterSpacing(search);
+			handler.TypedNativeView?.UpdateCharacterSpacing(TextField, search);
 		}
 
 		public static void MapPlaceholder(SearchBarHandler handler, ISearch search)
@@ -125,40 +129,43 @@ namespace Xamarin.Platform.Handlers
 		{
 			ViewHandler.CheckParameters(handler, search);
 
-			handler.TypedNativeView?.UpdateFontAttributes(search);
+			handler.TypedNativeView?.UpdateFontAttributes(TextField, search);
 		}
 
 		public static void MapFontFamily(SearchBarHandler handler, ISearch search)
 		{
 			ViewHandler.CheckParameters(handler, search);
 
-			handler.TypedNativeView?.UpdateFontFamily(search);
+			handler.TypedNativeView?.UpdateFontFamily(TextField, search);
 		}
 
 		public static void MapFontSize(SearchBarHandler handler, ISearch search)
 		{
 			ViewHandler.CheckParameters(handler, search);
 
-			handler.TypedNativeView?.UpdateFontSize(search);
+			handler.TypedNativeView?.UpdateFontSize(TextField, search);
 		}
 
 		public static void MapHorizontalTextAlignment(SearchBarHandler handler, ISearch search)
 		{
 			ViewHandler.CheckParameters(handler, search);
 
-			handler.TypedNativeView?.UpdateHorizontalTextAlignment(search);
+			handler.TypedNativeView?.UpdateHorizontalTextAlignment(TextField, search);
 		}
 
 		public static void MapVerticalTextAlignment(SearchBarHandler handler, ISearch search)
 		{
 			ViewHandler.CheckParameters(handler, search);
 
-			handler.TypedNativeView?.UpdateVerticalTextAlignment(search);
+			handler.TypedNativeView?.UpdateVerticalTextAlignment(TextField, search);
 		}
 
 		void OnCancelClicked(object sender, EventArgs args)
 		{
+			if (VirtualView != null)
+				VirtualView.Text = string.Empty;
 
+			TypedNativeView?.ResignFirstResponder();
 		}
 
 		void OnSearchButtonClicked(object sender, EventArgs e)
