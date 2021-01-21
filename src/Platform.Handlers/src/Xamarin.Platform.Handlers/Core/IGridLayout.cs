@@ -3,7 +3,7 @@
 namespace Xamarin.Platform
 {
 	public interface IGridLayout : ILayout
-	{ 
+	{
 		IReadOnlyList<IGridRowDefinition> RowDefinitions { get; }
 		IReadOnlyList<IGridColumnDefinition> ColumnDefinitions { get; }
 

@@ -46,20 +46,20 @@ namespace Sample
 		{
 			var layout = new GridLayout();
 
-			layout.AddRowDefinition(new RowDefinition() { Height = GridLength.Auto });
-			layout.AddRowDefinition(new RowDefinition() { Height = GridLength.Auto });
+			layout.AddRowDefinition(new RowDefinition() { Height = new GridLength(40) });
+			layout.AddRowDefinition(new RowDefinition() { Height = new GridLength(40) });
 
-			layout.AddColumnDefinition(new ColumnDefinition() { Width = GridLength.Auto });
-			layout.AddColumnDefinition(new ColumnDefinition() { Width = GridLength.Auto });
+			layout.AddColumnDefinition(new ColumnDefinition() { Width = new GridLength(100) });
+			layout.AddColumnDefinition(new ColumnDefinition() { Width = new GridLength(100) });
 
-			var topLeft = new Label { Text = "Top Left" };
+			var topLeft = new Label { Text = "Top Left", BackgroundColor = Color.LightBlue };
 			layout.Add(topLeft);
 
-			var bottomLeft = new Label { Text = "Bottom Left" };
+			var bottomLeft = new Label { Text = "Bottom Left", BackgroundColor = Color.Lavender };
 			layout.Add(bottomLeft);
 			layout.SetRow(bottomLeft, 1);
 
-			var topRight = new Label { Text = "Top Right" };
+			var topRight = new Label { Text = "Top Right", BackgroundColor = Color.Orange };
 			layout.Add(topRight);
 			layout.SetColumn(topRight, 1);
 

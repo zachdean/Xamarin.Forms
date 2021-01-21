@@ -23,8 +23,6 @@ namespace Xamarin.Forms
 
 		internal double MinimumWidth { get; set; }
 
-		double IGridColumnDefinition.ActualWidth => ActualWidth;
-
 		public event EventHandler SizeChanged;
 
 		void OnSizeChanged()

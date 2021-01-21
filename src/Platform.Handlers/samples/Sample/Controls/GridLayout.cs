@@ -19,22 +19,42 @@ namespace Sample
 
 		public int GetColumn(IView view)
 		{
-			return _viewInfo[view].Col;
+			if (_viewInfo.TryGetValue(view, out GridInfo gridInfo))
+			{
+				return gridInfo.Col;
+			}
+
+			return 0;
 		}
 
 		public int GetColumnSpan(IView view)
 		{
-			return _viewInfo[view].ColSpan;
+			if (_viewInfo.TryGetValue(view, out GridInfo gridInfo))
+			{
+				return gridInfo.ColSpan;
+			}
+
+			return 1;
 		}
 
 		public int GetRow(IView view)
 		{
-			return _viewInfo[view].Row;
+			if (_viewInfo.TryGetValue(view, out GridInfo gridInfo))
+			{
+				return gridInfo.Row;
+			}
+
+			return 0;
 		}
 
 		public int GetRowSpan(IView view)
 		{
-			return _viewInfo[view].RowSpan;
+			if (_viewInfo.TryGetValue(view, out GridInfo gridInfo))
+			{
+				return gridInfo.RowSpan;
+			}
+
+			return 1;
 		}
 
 		protected override ILayoutManager CreateLayoutManager() => new GridLayoutManager(this);

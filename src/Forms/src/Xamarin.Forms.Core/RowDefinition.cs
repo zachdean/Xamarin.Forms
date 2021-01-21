@@ -23,8 +23,6 @@ namespace Xamarin.Forms
 
 		internal double MinimumHeight { get; set; }
 
-		double IGridRowDefinition.ActualHeight => ActualHeight;
-
 		public event EventHandler SizeChanged;
 
 		void OnSizeChanged()
