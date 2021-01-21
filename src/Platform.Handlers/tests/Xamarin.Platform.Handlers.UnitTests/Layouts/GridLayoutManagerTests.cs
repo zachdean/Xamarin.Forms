@@ -17,15 +17,28 @@ namespace Xamarin.Platform.Handlers.UnitTests.Layouts
 		// TOOD ezhart What happens if There is row/col spacing and an auto with no controls is in the middle? is the spacing around it included (2 spacings), or just one spacing? (I think just one is least astonishing)
 
 		IGridLayout CreateGridLayout(int rowSpacing = 0, int colSpacing = 0,
-			IEnumerable<IGridRowDefinition> rows = null, IEnumerable < IGridColumnDefinition> columns = null)
+			string rows = null, string columns = null)
 		{
+			IEnumerable<IGridRowDefinition> rowDefs = null;
+			IEnumerable<IGridColumnDefinition> colDefs = null;
+
+			if (rows != null)
+			{
+				rowDefs = CreateTestRows(rows.Split(","));
+			}
+
+			if (columns != null)
+			{
+				colDefs = CreateTestColumns(columns.Split(","));
+			}
+
 			var grid = Substitute.For<IGridLayout>();
 
 			grid.RowSpacing.Returns(rowSpacing);
 			grid.ColumnSpacing.Returns(colSpacing);
 
-			SubRowDefs(grid, rows);
-			SubColDefs(grid, columns);
+			SubRowDefs(grid, rowDefs);
+			SubColDefs(grid, colDefs);
 
 			return grid;
 		}
@@ -110,7 +123,7 @@ namespace Xamarin.Platform.Handlers.UnitTests.Layouts
 		}
 
 		[Test]
-		public void SingleItem() 
+		public void OneAutoRowOneAutoColumn() 
 		{
 			// A one-row, one-column grid
 			var grid = CreateGridLayout();
@@ -139,11 +152,9 @@ namespace Xamarin.Platform.Handlers.UnitTests.Layouts
 		}
 
 		[Test]
-		public void TwoColumnsOneRowAbsolute()
+		public void TwoAbsoluteColumnsOneAbsoluteRow()
 		{
-			var colDefs = CreateTestColumns("100", "100");
-			var rowDefs = CreateTestRows("10");
-			var grid = CreateGridLayout(columns: colDefs, rows: rowDefs);
+			var grid = CreateGridLayout(columns: "100, 100", rows: "10");
 
 			var viewSize = new Size(10, 10);
 
@@ -169,11 +180,9 @@ namespace Xamarin.Platform.Handlers.UnitTests.Layouts
 		}
 
 		[Test]
-		public void TwoColumnsTwoRowsAbsolute()
+		public void TwoAbsoluteRowsAndColumns()
 		{
-			var colDefs = CreateTestColumns("100", "100");
-			var rowDefs = CreateTestRows("10", "30");
-			var grid = CreateGridLayout(columns: colDefs, rows: rowDefs);
+			var grid = CreateGridLayout(columns: "100, 100", rows: "10, 30");
 
 			var viewSize = new Size(10, 10);
 
@@ -209,10 +218,9 @@ namespace Xamarin.Platform.Handlers.UnitTests.Layouts
 		}
 
 		[Test]
-		public void TwoColumnsAbsolute()
+		public void TwoAbsoluteColumnsOneAutoRow()
 		{
-			var colDefs = CreateTestColumns("100", "100");
-			var grid = CreateGridLayout(columns: colDefs);
+			var grid = CreateGridLayout(columns: "100, 100");
 
 			var viewSize = new Size(10, 10);
 
@@ -238,10 +246,9 @@ namespace Xamarin.Platform.Handlers.UnitTests.Layouts
 		}
 
 		[Test]
-		public void TwoRowsAbsolute()
+		public void TwoAbsoluteRowsOneAutoColumn()
 		{
-			var rowDefs = CreateTestRows("100", "100");
-			var grid = CreateGridLayout(rows: rowDefs);
+			var grid = CreateGridLayout(rows: "100, 100");
 
 			var viewSize = new Size(10, 10);
 
