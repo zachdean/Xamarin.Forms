@@ -2,13 +2,11 @@
 
 namespace Xamarin.Platform
 {
-	public interface ITextInput : IText
+	public interface ITextInput : IText, IPlaceholder
 	{
 		Keyboard Keyboard { get; }
 		bool IsSpellCheckEnabled { get; }
 		int MaxLength { get; }
-		string Placeholder { get; }
-		Color PlaceholderColor { get; }
 		bool IsReadOnly { get; }
 	}
 }

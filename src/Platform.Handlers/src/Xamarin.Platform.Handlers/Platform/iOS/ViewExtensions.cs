@@ -1,4 +1,5 @@
-﻿using UIKit;
+﻿using System.Collections.Generic;
+using UIKit;
 
 namespace Xamarin.Platform
 {
@@ -24,6 +25,25 @@ namespace Xamarin.Platform
 
 			if (color != null && !color.IsDefault)
 				nativeView.BackgroundColor = color.ToNative();
+		}
+
+		public static T? FindDescendantView<T>(this UIView view) where T : UIView
+		{
+			var queue = new Queue<UIView>();
+			queue.Enqueue(view);
+
+			while (queue.Count > 0)
+			{
+				var descendantView = queue.Dequeue();
+
+				if (descendantView is T result)
+					return result;
+
+				for (var i = 0; i < descendantView.Subviews?.Length; i++)
+					queue.Enqueue(descendantView.Subviews[i]);
+			}
+
+			return null;
 		}
 	}
 }
