@@ -115,6 +115,20 @@ namespace Xamarin.Platform.Handlers
 			handler.TypedNativeView?.UpdateHorizontalTextAlignment(search);
 		}
 
+		public static void MapKeyboard(SearchBarHandler handler, ISearch search)
+		{
+			ViewHandler.CheckParameters(handler, search);
+
+			handler.TypedNativeView?.UpdateKeyboard(search);
+		}
+
+		public static void MapIsSpellCheckEnabled(SearchBarHandler handler, ISearch search)
+		{
+			ViewHandler.CheckParameters(handler, search);
+
+			handler.TypedNativeView?.UpdateIsSpellCheckEnabled(search);
+		}
+
 		public static void MapVerticalTextAlignment(SearchBarHandler handler, ISearch search)
 		{
 			ViewHandler.CheckParameters(handler, search);

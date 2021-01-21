@@ -64,6 +64,16 @@ namespace Xamarin.Platform
 
 		}
 
+		public static void UpdateKeyboard(this SearchView searchView, ISearch search)
+		{
+
+		}
+
+		public static void UpdateIsSpellCheckEnabled(this SearchView searchView, ISearch search)
+		{
+
+		}
+
 		public static void UpdateHorizontalTextAlignment(this SearchView searchView, ISearch search)
 		{
 

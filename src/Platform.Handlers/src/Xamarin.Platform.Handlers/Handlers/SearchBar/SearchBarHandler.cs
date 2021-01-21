@@ -16,6 +16,8 @@
 			[nameof(IFont.FontAttributes)] = MapFontAttributes,
 			[nameof(IFont.FontFamily)] = MapFontFamily,
 			[nameof(IFont.FontSize)] = MapFontSize,
+			[nameof(ITextInput.Keyboard)] = MapKeyboard,
+			[nameof(ITextInput.IsSpellCheckEnabled)] = MapIsSpellCheckEnabled,
 			[nameof(ITextAlignment.HorizontalTextAlignment)] = MapHorizontalTextAlignment,
 			[nameof(ITextAlignment.VerticalTextAlignment)] = MapVerticalTextAlignment
 		};

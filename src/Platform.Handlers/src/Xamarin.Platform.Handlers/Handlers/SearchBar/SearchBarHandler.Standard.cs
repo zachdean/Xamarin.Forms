@@ -18,6 +18,8 @@ namespace Xamarin.Platform.Handlers
 		public static void MapFontAttributes(IViewHandler handler, ISearch search) { }
 		public static void MapFontFamily(IViewHandler handler, ISearch search) { }
 		public static void MapFontSize(IViewHandler handler, ISearch search) { }
+		public static void MapKeyboard(IViewHandler handler, ISearch search) { }
+		public static void MapIsSpellCheckEnabled(IViewHandler handler, ISearch search) { }
 		public static void MapHorizontalTextAlignment(IViewHandler handler, ISearch search) { }
 		public static void MapVerticalTextAlignment(IViewHandler handler, ISearch search) { }
 	}

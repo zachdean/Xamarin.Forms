@@ -128,6 +128,16 @@ namespace Xamarin.Platform
 			searchBar.SetFont(textField, search);
 		}
 
+		public static void UpdateKeyboard(this UISearchBar searchBar, ISearch search)
+		{
+
+		}
+
+		public static void UpdateIsSpellCheckEnabled(this UISearchBar searchBar, ISearch search)
+		{
+
+		}
+
 		public static void UpdateHorizontalTextAlignment(this UISearchBar searchBar, ISearch search)
 		{
 			UpdateHorizontalTextAlignment(searchBar, null, search);
