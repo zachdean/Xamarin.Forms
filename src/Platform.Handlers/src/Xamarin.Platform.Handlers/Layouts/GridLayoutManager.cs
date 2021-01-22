@@ -90,6 +90,11 @@ namespace Xamarin.Platform.Layouts
 					height += rowHeight;
 				}
 
+				if (_rows.Length > 1)
+				{
+					height += (_rows.Length - 1) * _grid.RowSpacing;
+				}
+
 				return height;
 			}
 
@@ -105,6 +110,11 @@ namespace Xamarin.Platform.Layouts
 						continue;
 					}
 					width += colWidth;
+				}
+
+				if (_columns.Length > 1)
+				{
+					width += (_columns.Length - 1) * _grid.ColumnSpacing;
 				}
 
 				return width;
@@ -185,6 +195,7 @@ namespace Xamarin.Platform.Layouts
 				for (int n = 0; n < column; n++)
 				{
 					left += _columns[n].ActualWidth;
+					left += _grid.ColumnSpacing;
 				}
 
 				return left;
@@ -197,6 +208,7 @@ namespace Xamarin.Platform.Layouts
 				for (int n = 0; n < row; n++)
 				{
 					top += _rows[n].ActualHeight;
+					top += _grid.RowSpacing;
 				}
 
 				return top;

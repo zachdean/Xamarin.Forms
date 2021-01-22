@@ -259,5 +259,95 @@ namespace Xamarin.Platform.Handlers.UnitTests.Layouts
 			// Since the first row is 100 tall, we expect the view in the second row to start at y = 100
 			AssertArranged(view1, 0, 100, viewSize.Width, 100);
 		}
+
+		[Test(Description = "Row spacing shouldn't affect a single-row grid")]
+		public void SingleRowIgnoresRowSpacing()
+		{
+			var grid = CreateGridLayout(rowSpacing: 10);
+			var view = CreateTestView(new Size(100, 100));
+			AddChildren(grid, view);
+			SetLocation(grid, view);
+
+			MeasureAndArrange(grid, double.PositiveInfinity, double.PositiveInfinity);
+			AssertArranged(view, 0, 0, 100, 100);
+		}
+
+		[Test(Description = "Two rows should include the row spacing once")]
+		public void TwoRowsWithSpacing()
+		{
+			var grid = CreateGridLayout(rows: "100, 100", rowSpacing: 10);
+			var view0 = CreateTestView(new Size(100, 100));
+			var view1 = CreateTestView(new Size(100, 100));
+			AddChildren(grid, view0, view1);
+			SetLocation(grid, view0);
+			SetLocation(grid, view1, row: 1);
+
+			MeasureAndArrange(grid, double.PositiveInfinity, double.PositiveInfinity);
+			AssertArranged(view0, 0, 0, 100, 100);
+
+			// With column width 100 and spacing of 10, we expect the second column to start at 110
+			AssertArranged(view1, 0, 110, 100, 100);
+		}
+
+		[Test(Description = "Measure should include row spacing")]
+		public void MeasureTwoRowsWithSpacing()
+		{
+			var grid = CreateGridLayout(rows: "100, 100", rowSpacing: 10);
+			var view0 = CreateTestView(new Size(100, 100));
+			var view1 = CreateTestView(new Size(100, 100));
+			AddChildren(grid, view0, view1);
+			SetLocation(grid, view0);
+			SetLocation(grid, view1, row: 1);
+
+			var manager = new GridLayoutManager(grid);
+			var measure = manager.Measure(double.PositiveInfinity, double.PositiveInfinity);
+
+			Assert.That(measure.Height, Is.EqualTo(100 + 100 + 10));
+		}
+
+		[Test(Description = "Column spacing shouldn't affect a single-column grid")]
+		public void SingleColumnIgnoresColumnSpacing()
+		{
+			var grid = CreateGridLayout(colSpacing: 10);
+			var view = CreateTestView(new Size(100, 100));
+			AddChildren(grid, view);
+			SetLocation(grid, view);
+
+			MeasureAndArrange(grid, double.PositiveInfinity, double.PositiveInfinity);
+			AssertArranged(view, 0, 0, 100, 100);
+		}
+
+		[Test(Description = "Two columns should include the column spacing once")]
+		public void TwoColumnsWithSpacing()
+		{
+			var grid = CreateGridLayout(columns: "100, 100", colSpacing: 10);
+			var view0 = CreateTestView(new Size(100, 100));
+			var view1 = CreateTestView(new Size(100, 100));
+			AddChildren(grid, view0, view1);
+			SetLocation(grid, view0);
+			SetLocation(grid, view1, col: 1);
+
+			MeasureAndArrange(grid, double.PositiveInfinity, double.PositiveInfinity);
+			AssertArranged(view0, 0, 0, 100, 100);
+
+			// With column width 100 and spacing of 10, we expect the second column to start at 110
+			AssertArranged(view1, 110, 0, 100, 100);
+		}
+
+		[Test(Description = "Measure should include column spacing")]
+		public void MeasureTwoColumnsWithSpacing()
+		{
+			var grid = CreateGridLayout(columns: "100, 100", colSpacing: 10);
+			var view0 = CreateTestView(new Size(100, 100));
+			var view1 = CreateTestView(new Size(100, 100));
+			AddChildren(grid, view0, view1);
+			SetLocation(grid, view0);
+			SetLocation(grid, view1, col: 1);
+
+			var manager = new GridLayoutManager(grid);
+			var measure = manager.Measure(double.PositiveInfinity, double.PositiveInfinity);
+
+			Assert.That(measure.Width, Is.EqualTo(100 + 100 + 10));
+		}
 	}
 }

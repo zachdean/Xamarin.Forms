@@ -44,7 +44,7 @@ namespace Sample
 
 		IView CreateSampleGrid() 
 		{
-			var layout = new GridLayout();
+			var layout = new GridLayout() { ColumnSpacing = 5, RowSpacing = 8 };
 
 			layout.AddRowDefinition(new RowDefinition() { Height = new GridLength(40) });
 			layout.AddRowDefinition(new RowDefinition() { Height = new GridLength(40) });
@@ -63,7 +63,7 @@ namespace Sample
 			layout.Add(topRight);
 			layout.SetColumn(topRight, 1);
 
-			var bottomRight = new Label { Text = "Bottom Right" };
+			var bottomRight = new Label { Text = "Bottom Right", BackgroundColor = Color.MediumPurple };
 			layout.Add(bottomRight);
 			layout.SetRow(bottomRight, 1);
 			layout.SetColumn(bottomRight, 1);
