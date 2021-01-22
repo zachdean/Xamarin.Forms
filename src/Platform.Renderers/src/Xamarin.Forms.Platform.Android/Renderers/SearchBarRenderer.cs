@@ -292,6 +292,7 @@ namespace Xamarin.Forms.Platform.Android
 			}
 		}
 
+		[PortHandler]
 		void UpdateTextColor()
 		{
 			_textColorSwitcher?.UpdateTextColor(_editText, Element.TextColor);
@@ -323,6 +324,7 @@ namespace Xamarin.Forms.Platform.Android
 				Control.SetQuery(currentControlText.Substring(0, Element.MaxLength), false);
 		}
 
+		[PortHandler]
 		void UpdateInputType()
 		{
 			SearchBar model = Element;
@@ -350,6 +352,7 @@ namespace Xamarin.Forms.Platform.Android
 			}
 		}
 
+		[PortHandler]
 		protected virtual NumberKeyListener GetDigitsKeyListener(InputTypes inputTypes)
 		{
 			// Override this in a custom renderer to use a different NumberKeyListener

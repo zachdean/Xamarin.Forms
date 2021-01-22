@@ -34,7 +34,18 @@ namespace Xamarin.Platform
 
 		public static void UpdateTextColor(this SearchView searchView, ISearch search)
 		{
+			var editText = searchView.GetChildrenOfType<EditText>().FirstOrDefault();
+			var textColorSwitcher = new TextColorSwitcher(editText.TextColors);
 
+			searchView.UpdateTextColor(textColorSwitcher, editText, search);
+		}
+
+		public static void UpdateTextColor(this SearchView searchView, TextColorSwitcher? textColorSwitcher, EditText? editText, ISearch search)
+		{
+			if (searchView == null || textColorSwitcher == null || editText == null)
+				return;
+
+			textColorSwitcher.UpdateTextColor(editText, search.Color);
 		}
 
 		public static void UpdateTextTransform(this SearchView searchView, ISearch search)
@@ -67,7 +78,18 @@ namespace Xamarin.Platform
 
 		public static void UpdatePlaceholderColor(this SearchView searchView, ISearch search)
 		{
+			var editText = searchView.GetChildrenOfType<EditText>().FirstOrDefault();
+			var textColorSwitcher = new TextColorSwitcher(editText.HintTextColors);
 
+			searchView.UpdatePlaceholderColor(textColorSwitcher, editText, search);
+		}
+
+		public static void UpdatePlaceholderColor(this SearchView searchView, TextColorSwitcher? hintColorSwitcher, EditText? editText, ISearch search)
+		{
+			if (searchView == null || hintColorSwitcher == null || editText == null)
+				return;
+
+			hintColorSwitcher.UpdateTextColor(editText, search.PlaceholderColor, editText.SetHintTextColor);
 		}
 
 		public static void UpdateFontAttributes(this SearchView searchView, ISearch search)

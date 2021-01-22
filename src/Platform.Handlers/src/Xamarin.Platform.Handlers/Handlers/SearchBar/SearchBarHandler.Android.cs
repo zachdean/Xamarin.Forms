@@ -5,6 +5,9 @@ namespace Xamarin.Platform.Handlers
 {
 	public partial class SearchBarHandler : AbstractViewHandler<ISearch, SearchView>
 	{
+		static TextColorSwitcher? TextColorSwitcher;
+		static TextColorSwitcher? HintColorSwitcher;
+
 		static EditText? EditText;
 
 		QueryTextListener TextListener { get; } = new QueryTextListener();
@@ -35,6 +38,12 @@ namespace Xamarin.Platform.Handlers
 		protected override void SetupDefaults(SearchView nativeView)
 		{
 			EditText ??= nativeView.GetChildrenOfType<EditText>().FirstOrDefault();
+
+			if (EditText != null)
+			{
+				TextColorSwitcher = new TextColorSwitcher(EditText.TextColors);
+				HintColorSwitcher = new TextColorSwitcher(EditText.HintTextColors);
+			}
 		}
 
 		public static void MapCancelButtonColor(SearchBarHandler handler, ISearch search)
@@ -55,7 +64,7 @@ namespace Xamarin.Platform.Handlers
 		{
 			ViewHandler.CheckParameters(handler, search);
 
-			handler.TypedNativeView?.UpdateTextColor(search);
+			handler.TypedNativeView?.UpdateTextColor(TextColorSwitcher, EditText, search);
 		}
 
 		public static void MapTextTransform(SearchBarHandler handler, ISearch search)
@@ -83,7 +92,7 @@ namespace Xamarin.Platform.Handlers
 		{
 			ViewHandler.CheckParameters(handler, search);
 
-			handler.TypedNativeView?.UpdatePlaceholderColor(search);
+			handler.TypedNativeView?.UpdatePlaceholderColor(HintColorSwitcher, EditText, search);
 		}
 
 		public static void MapFontAttributes(SearchBarHandler handler, ISearch search)
