@@ -317,8 +317,9 @@ namespace Xamarin.Forms.Core.UnitTests
 		}
 
 
-		[Test]
-		public async Task PoppingWithQueryString()
+		[TestCase("..")]
+		[TestCase("../")]
+		public async Task PoppingWithQueryString(string input)
 		{
 			Routing.RegisterRoute("details", typeof(ShellTestPage));
 			var shell = new TestShell(CreateShellItem());
@@ -326,7 +327,7 @@ namespace Xamarin.Forms.Core.UnitTests
 			await shell.GoToAsync("details");
 			await shell.GoToAsync("ModalTestPage");
 
-			await shell.GoToAsync(new ShellNavigationState($"..?{nameof(ShellTestPage.SomeQueryParameter)}=1234"));
+			await shell.GoToAsync(new ShellNavigationState($"{input}?{nameof(ShellTestPage.SomeQueryParameter)}=1234"));
 			shell.AssertCurrentStateEquals($"//{shell.CurrentItem.CurrentItem.CurrentItem.Route}/details");
 
 			var testPage = shell.CurrentPage as ShellTestPage;
