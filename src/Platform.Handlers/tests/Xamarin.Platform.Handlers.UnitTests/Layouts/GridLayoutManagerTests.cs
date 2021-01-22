@@ -11,10 +11,10 @@ namespace Xamarin.Platform.Handlers.UnitTests.Layouts
 	[TestFixture(Category = TestCategory.Layout)]
 	public class GridLayoutManagerTests 
 	{
-		// TODO ezhart Include row/col spacing tests
-
-		// TODO ezhart Need a test to assert that auto rows/cols with no controls in them get 0
-		// TOOD ezhart What happens if There is row/col spacing and an auto with no controls is in the middle? is the spacing around it included (2 spacings), or just one spacing? (I think just one is least astonishing)
+		const string GridSpacing = "GridSpacing";
+		const string GridAutoSizing = "GridAutoSizing";
+		const string GridStarSizing = "GridStarSizing";
+		const string GridAbsoluteSizing = "GridAbsoluteSizing";
 
 		IGridLayout CreateGridLayout(int rowSpacing = 0, int colSpacing = 0,
 			string rows = null, string columns = null)
@@ -129,6 +129,7 @@ namespace Xamarin.Platform.Handlers.UnitTests.Layouts
 			view.Received().Arrange(Arg.Is(expected));
 		}
 
+		[Category(GridAutoSizing)]
 		[Test]
 		public void OneAutoRowOneAutoColumn() 
 		{
@@ -150,6 +151,7 @@ namespace Xamarin.Platform.Handlers.UnitTests.Layouts
 			AssertArranged(view, 0, 0, 100, 100);
 		}
 
+		[Category(GridAbsoluteSizing)]
 		[Test]
 		public void TwoAbsoluteColumnsOneAbsoluteRow()
 		{
@@ -175,6 +177,7 @@ namespace Xamarin.Platform.Handlers.UnitTests.Layouts
 			AssertArranged(view1, 100, 0, 100, viewSize.Height);
 		}
 
+		[Category(GridAbsoluteSizing)]
 		[Test]
 		public void TwoAbsoluteRowsAndColumns()
 		{
@@ -210,6 +213,7 @@ namespace Xamarin.Platform.Handlers.UnitTests.Layouts
 			AssertArranged(view3, 100, 10, 100, 30);
 		}
 
+		[Category(GridAbsoluteSizing), Category(GridAutoSizing)]
 		[Test]
 		public void TwoAbsoluteColumnsOneAutoRow()
 		{
@@ -235,6 +239,7 @@ namespace Xamarin.Platform.Handlers.UnitTests.Layouts
 			AssertArranged(view1, 100, 0, 100, viewSize.Height);
 		}
 
+		[Category(GridAbsoluteSizing), Category(GridAutoSizing)]
 		[Test]
 		public void TwoAbsoluteRowsOneAutoColumn()
 		{
@@ -260,6 +265,7 @@ namespace Xamarin.Platform.Handlers.UnitTests.Layouts
 			AssertArranged(view1, 0, 100, viewSize.Width, 100);
 		}
 
+		[Category(GridSpacing)]
 		[Test(Description = "Row spacing shouldn't affect a single-row grid")]
 		public void SingleRowIgnoresRowSpacing()
 		{
@@ -272,6 +278,7 @@ namespace Xamarin.Platform.Handlers.UnitTests.Layouts
 			AssertArranged(view, 0, 0, 100, 100);
 		}
 
+		[Category(GridSpacing)]
 		[Test(Description = "Two rows should include the row spacing once")]
 		public void TwoRowsWithSpacing()
 		{
@@ -289,6 +296,7 @@ namespace Xamarin.Platform.Handlers.UnitTests.Layouts
 			AssertArranged(view1, 0, 110, 100, 100);
 		}
 
+		[Category(GridSpacing)]
 		[Test(Description = "Measure should include row spacing")]
 		public void MeasureTwoRowsWithSpacing()
 		{
@@ -302,6 +310,49 @@ namespace Xamarin.Platform.Handlers.UnitTests.Layouts
 			var manager = new GridLayoutManager(grid);
 			var measure = manager.Measure(double.PositiveInfinity, double.PositiveInfinity);
 
+			Assert.That(measure.Height, Is.EqualTo(100 + 100 + 10));
+		}
+
+		[Category(GridAutoSizing)]
+		[Test(Description = "Auto rows without content have height zero")]
+		public void EmptyAutoRowsHaveNoHeight()
+		{
+			var grid = CreateGridLayout(rows: "100, auto, 100");
+			var view0 = CreateTestView(new Size(100, 100));
+			var view2 = CreateTestView(new Size(100, 100));
+
+			AddChildren(grid, view0, view2);
+			SetLocation(grid, view0);
+			SetLocation(grid, view2, row: 2);
+
+			var manager = new GridLayoutManager(grid);
+			var measure = manager.Measure(double.PositiveInfinity, double.PositiveInfinity);
+			manager.ArrangeChildren(new Rectangle(0, 0, measure.Width, measure.Height));
+
+			// Because the auto row has no content, we expect it to have height zero
+			Assert.That(measure.Height, Is.EqualTo(100 + 100));
+
+			// Verify the offset for the third row
+			AssertArranged(view2, 0, 100, 100, 100);
+		}
+
+		[Category(GridSpacing)]
+		[Test(Description = "Empty rows should not incur additional row spacing")]
+		public void RowSpacingForEmptyRows()
+		{
+			var grid = CreateGridLayout(rows: "100, auto, 100", rowSpacing: 10);
+			var view0 = CreateTestView(new Size(100, 100));
+			var view2 = CreateTestView(new Size(100, 100));
+
+			AddChildren(grid, view0, view2);
+			SetLocation(grid, view0);
+			SetLocation(grid, view2, row: 2);
+
+			var manager = new GridLayoutManager(grid);
+			var measure = manager.Measure(double.PositiveInfinity, double.PositiveInfinity);
+
+			// Because the auto row has no content, we expect it to have height zero
+			// and we expect that it won't add more row spacing 
 			Assert.That(measure.Height, Is.EqualTo(100 + 100 + 10));
 		}
 
@@ -347,6 +398,49 @@ namespace Xamarin.Platform.Handlers.UnitTests.Layouts
 			var manager = new GridLayoutManager(grid);
 			var measure = manager.Measure(double.PositiveInfinity, double.PositiveInfinity);
 
+			Assert.That(measure.Width, Is.EqualTo(100 + 100 + 10));
+		}
+
+		[Category(GridAutoSizing)]
+		[Test(Description = "Auto columns without content have width zero")]
+		public void EmptyAutoColumnsHaveNoWidth()
+		{
+			var grid = CreateGridLayout(columns: "100, auto, 100");
+			var view0 = CreateTestView(new Size(100, 100));
+			var view2 = CreateTestView(new Size(100, 100));
+
+			AddChildren(grid, view0, view2);
+			SetLocation(grid, view0);
+			SetLocation(grid, view2, col: 2);
+
+			var manager = new GridLayoutManager(grid);
+			var measure = manager.Measure(double.PositiveInfinity, double.PositiveInfinity);
+			manager.ArrangeChildren(new Rectangle(0, 0, measure.Width, measure.Height));
+
+			// Because the auto column has no content, we expect it to have width zero
+			Assert.That(measure.Width, Is.EqualTo(100 + 100));
+
+			// Verify the offset for the third column
+			AssertArranged(view2, 100, 0, 100, 100);
+		}
+
+		[Category(GridSpacing)]
+		[Test(Description = "Empty columns should not incur additional column spacing")]
+		public void ColumnSpacingForEmptyColumns()
+		{
+			var grid = CreateGridLayout(columns: "100, auto, 100", colSpacing: 10);
+			var view0 = CreateTestView(new Size(100, 100));
+			var view2 = CreateTestView(new Size(100, 100));
+
+			AddChildren(grid, view0, view2);
+			SetLocation(grid, view0);
+			SetLocation(grid, view2, col: 2);
+
+			var manager = new GridLayoutManager(grid);
+			var measure = manager.Measure(double.PositiveInfinity, double.PositiveInfinity);
+
+			// Because the auto column has no content, we expect it to have height zero
+			// and we expect that it won't add more row spacing 
 			Assert.That(measure.Width, Is.EqualTo(100 + 100 + 10));
 		}
 	}

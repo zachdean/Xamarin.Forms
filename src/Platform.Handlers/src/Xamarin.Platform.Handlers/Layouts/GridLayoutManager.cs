@@ -18,7 +18,7 @@ namespace Xamarin.Platform.Layouts
 		{
 			var structure = new GridStructure(Grid, widthConstraint, heightConstraint);
 
-			return new Size(structure.GetWidth(), structure.GetHeight());
+			return new Size(structure.GridWidth(), structure.GridHeight());
 		}
 
 		public override void ArrangeChildren(Rectangle childBounds) 
@@ -27,7 +27,8 @@ namespace Xamarin.Platform.Layouts
 
 			foreach (var view in Grid.Children)
 			{
-				view.Arrange(structure.GetTargetFrame(view));
+				var destination = structure.ComputeFrameFor(view);
+				view.Arrange(destination);
 			}
 		}
 
@@ -59,68 +60,71 @@ namespace Xamarin.Platform.Layouts
 					_columns[n] = new Column(_grid.ColumnDefinitions[n]);
 				}
 
-				CalculateAutoRowHeights();
-				CalculateAutoColumnWidths();
+				ComputeAutoRowHeights();
+				ComputeAutoColumnWidths();
 			}
 
-			public Rectangle GetTargetFrame(IView view) 
+			public Rectangle ComputeFrameFor(IView view) 
 			{
 				var row = _grid.GetRow(view);
 				var column = _grid.GetColumn(view);
 
-				double top = GetTopEdgeOfRow(row);
-				double left = GetLeftEdgeOfColumn(column);
+				double top = TopEdgeOfRow(row);
+				double left = LeftEdgeOfColumn(column);
 				double width = _columns[column].ActualWidth;
 				double height = _rows[row].ActualHeight;
 
 				return new Rectangle(left, top, width, height);
 			}
 
-			public double GetHeight()
+			public double GridHeight()
 			{
 				double height = 0;
 
 				for (int n = 0; n < _rows.Length; n++)
 				{
 					var rowHeight = _rows[n].ActualHeight;
-					if (rowHeight == -1)
+					
+					if (rowHeight <= 0)
 					{
 						continue;
 					}
+					
 					height += rowHeight;
-				}
-
-				if (_rows.Length > 1)
-				{
-					height += (_rows.Length - 1) * _grid.RowSpacing;
+					
+					if (n > 0)
+					{
+						height += _grid.RowSpacing;
+					}
 				}
 
 				return height;
 			}
 
-			public double GetWidth()
+			public double GridWidth()
 			{
 				double width = 0;
 
 				for (int n = 0; n < _columns.Length; n++)
 				{
 					var colWidth = _columns[n].ActualWidth;
-					if (colWidth == -1)
+					if (colWidth <= 0)
 					{
 						continue;
 					}
-					width += colWidth;
-				}
 
-				if (_columns.Length > 1)
-				{
-					width += (_columns.Length - 1) * _grid.ColumnSpacing;
+					width += colWidth;
+
+					if (n > 0)
+					{
+						width += _grid.ColumnSpacing;
+					}
 				}
 
 				return width;
 			}
 
-			void CalculateAutoRowHeights() 
+			void ComputeAutoRowHeights() 
 			{
 				for (int rowIndex = 0; rowIndex < _rows.Length; rowIndex++)
 				{
@@ -130,15 +134,15 @@ namespace Xamarin.Platform.Layouts
 						continue;
 					}
 
-					var availableWidth = _gridWidthConstraint - GetWidth();
-					var availableHeight = _gridHeightConstraint - GetHeight();
+					var availableWidth = _gridWidthConstraint - GridWidth();
+					var availableHeight = _gridHeightConstraint - GridHeight();
 
-					var rowHeight = CalculateAutoRowHeight(rowIndex, availableWidth, availableHeight);
+					var rowHeight = AutoRowWidth(rowIndex, availableWidth, availableHeight);
 					_rows[rowIndex].ActualHeight = rowHeight;
 				}
 			}
 
-			void CalculateAutoColumnWidths()
+			void ComputeAutoColumnWidths()
 			{
 				for (int columnIndex = 0; columnIndex < _columns.Length; columnIndex++)
 				{
@@ -148,15 +152,15 @@ namespace Xamarin.Platform.Layouts
 						continue;
 					}
 
-					var availableWidth = _gridWidthConstraint - GetWidth();
-					var availableHeight = _gridHeightConstraint - GetHeight();
+					var availableWidth = _gridWidthConstraint - GridWidth();
+					var availableHeight = _gridHeightConstraint - GridHeight();
 
-					var columnWidth = CalculateAutoColumnWidth(columnIndex, availableWidth, availableHeight);
+					var columnWidth = AutoColumnWidth(columnIndex, availableWidth, availableHeight);
 					_columns[columnIndex].ActualWidth = columnWidth;
 				}
 			}
 
-			double CalculateAutoRowHeight(int row, double availableWidth, double availableHeight) 
+			double AutoRowWidth(int row, double availableWidth, double availableHeight) 
 			{
 				double height = 0;
 				foreach (var view in _grid.Children)
@@ -172,7 +176,7 @@ namespace Xamarin.Platform.Layouts
 				return height;
 			}
 
-			double CalculateAutoColumnWidth(int column, double availableWidth, double availableHeight)
+			double AutoColumnWidth(int column, double availableWidth, double availableHeight)
 			{
 				double width = 0;
 				foreach (var view in _grid.Children)
@@ -188,7 +192,7 @@ namespace Xamarin.Platform.Layouts
 				return width;
 			}
 
-			double GetLeftEdgeOfColumn(int column)
+			double LeftEdgeOfColumn(int column)
 			{
 				double left = 0;
 
@@ -201,7 +205,7 @@ namespace Xamarin.Platform.Layouts
 				return left;
 			}
 
-			double GetTopEdgeOfRow(int row)
+			double TopEdgeOfRow(int row)
 			{
 				double top = 0;
 
