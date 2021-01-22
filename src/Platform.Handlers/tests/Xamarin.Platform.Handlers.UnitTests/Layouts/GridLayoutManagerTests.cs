@@ -116,6 +116,13 @@ namespace Xamarin.Platform.Handlers.UnitTests.Layouts
 			grid.GetColumnSpan(view).Returns(colSpan);
 		}
 
+		void MeasureAndArrange(IGridLayout grid, double widthConstraint, double heightConstraint) 
+		{
+			var manager = new GridLayoutManager(grid);
+			var measuredSize = manager.Measure(widthConstraint, heightConstraint);
+			manager.ArrangeChildren(new Rectangle(Point.Zero, measuredSize));
+		}
+
 		void AssertArranged(IView view, double x, double y, double width, double height)
 		{
 			var expected = new Rectangle(x, y, width, height);
@@ -135,20 +142,12 @@ namespace Xamarin.Platform.Handlers.UnitTests.Layouts
 			AddChildren(grid, view);
 
 			// Set up the row/column values and spans
-			grid.GetRow(view).Returns(0);
-			grid.GetRowSpan(view).Returns(1);
-			grid.GetColumn(view).Returns(0);
-			grid.GetColumnSpan(view).Returns(1);
+			SetLocation(grid, view);
 
-			var manager = new GridLayoutManager(grid);
-
-			// Assuming no constraints on space
-			var measuredSize = manager.Measure(double.PositiveInfinity, double.PositiveInfinity);
-			manager.ArrangeChildren(new Rectangle(Point.Zero, measuredSize));
+			MeasureAndArrange(grid, double.PositiveInfinity, double.PositiveInfinity);
 
 			// We expect that the only child of the grid will be given its full size
-			var expectedRectangle = new Rectangle(0, 0, 100, 100);
-			grid.Children[0].Received().Arrange(Arg.Is(expectedRectangle));
+			AssertArranged(view, 0, 0, 100, 100);
 		}
 
 		[Test]
@@ -166,11 +165,8 @@ namespace Xamarin.Platform.Handlers.UnitTests.Layouts
 			SetLocation(grid, view0);
 			SetLocation(grid, view1, col: 1);
 
-			var manager = new GridLayoutManager(grid);
-
 			// Assuming no constraints on space
-			var measuredSize = manager.Measure(double.PositiveInfinity, double.PositiveInfinity);
-			manager.ArrangeChildren(new Rectangle(Point.Zero, measuredSize));
+			MeasureAndArrange(grid, double.PositiveInfinity, double.NegativeInfinity);
 
 			// Column width is 100, so despite the view being 10 wide, we expect it to be arranged with width 100
 			AssertArranged(view0, 0, 0, 100, viewSize.Height);
@@ -198,11 +194,8 @@ namespace Xamarin.Platform.Handlers.UnitTests.Layouts
 			SetLocation(grid, view2, row: 1);
 			SetLocation(grid, view3, row: 1, col: 1);
 
-			var manager = new GridLayoutManager(grid);
-
 			// Assuming no constraints on space
-			var measuredSize = manager.Measure(double.PositiveInfinity, double.PositiveInfinity);
-			manager.ArrangeChildren(new Rectangle(Point.Zero, measuredSize));
+			MeasureAndArrange(grid, double.PositiveInfinity, double.NegativeInfinity);
 
 			// Column width is 100, so despite the view being 10 wide, we expect it to be arranged with width 100
 			AssertArranged(view0, 0, 0, 100, 10);
@@ -232,11 +225,8 @@ namespace Xamarin.Platform.Handlers.UnitTests.Layouts
 			SetLocation(grid, view0);
 			SetLocation(grid, view1, col: 1);
 
-			var manager = new GridLayoutManager(grid);
-
 			// Assuming no constraints on space
-			var measuredSize = manager.Measure(double.PositiveInfinity, double.PositiveInfinity);
-			manager.ArrangeChildren(new Rectangle(Point.Zero, measuredSize));
+			MeasureAndArrange(grid, double.PositiveInfinity, double.NegativeInfinity);
 
 			// Column width is 100, so despite the view being 10 wide, we expect it to be arranged with width 100
 			AssertArranged(view0, 0, 0, 100, viewSize.Height);
@@ -260,17 +250,13 @@ namespace Xamarin.Platform.Handlers.UnitTests.Layouts
 			SetLocation(grid, view0);
 			SetLocation(grid, view1, row: 1);
 
-			var manager = new GridLayoutManager(grid);
-
 			// Assuming no constraints on space
-			var measuredSize = manager.Measure(double.PositiveInfinity, double.PositiveInfinity);
-			manager.ArrangeChildren(new Rectangle(Point.Zero, measuredSize));
+			MeasureAndArrange(grid, double.PositiveInfinity, double.NegativeInfinity);
 
 			// Row height is 100, so despite the view being 10 tall, we expect it to be arranged with height 100
 			AssertArranged(view0, 0, 0, viewSize.Width, 100);
 
 			// Since the first row is 100 tall, we expect the view in the second row to start at y = 100
-			var expectedRectangle1 = new Rectangle(0, 100, viewSize.Width, 100);
 			AssertArranged(view1, 0, 100, viewSize.Width, 100);
 		}
 	}
