@@ -3,7 +3,7 @@ using Xamarin.Forms;
 
 namespace Xamarin.Platform
 {
-	public interface ISearch : IText, IPlaceholder, IFont, ITextAlignment
+	public interface ISearch : ITextInput 
 	{
 		public ICommand SearchCommand { get; }
 		public object SearchCommandParameter { get; }

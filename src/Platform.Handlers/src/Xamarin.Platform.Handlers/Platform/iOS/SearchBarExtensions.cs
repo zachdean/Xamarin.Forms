@@ -5,15 +5,6 @@ namespace Xamarin.Platform
 {
 	public static class SearchBarExtensions
 	{
-		public static void UpdateSearchCommand(this UISearchBar searchBar, ISearch search)
-		{
-
-		}
-
-		public static void UpdateSearchCommandParameter(this UISearchBar searchBar, ISearch search)
-		{
-
-		}
 		public static void UpdateCancelButtonColor(this UISearchBar searchBar, ISearch search)
 		{
 			searchBar.UpdateCancelButtonColor(search, null, null, null);
@@ -90,12 +81,22 @@ namespace Xamarin.Platform
 
 		public static void UpdatePlaceholder(this UISearchBar searchBar, ISearch search)
 		{
+			searchBar.UpdatePlaceholder(null, search);
+		}
 
+		public static void UpdatePlaceholder(this UISearchBar searchBar, UITextField? textField, ISearch search)
+		{
+			searchBar.SetPlaceholder(textField, search);
 		}
 
 		public static void UpdatePlaceholderColor(this UISearchBar searchBar, ISearch search)
 		{
-		
+			searchBar.UpdatePlaceholderColor(null, search);
+		}
+
+		public static void UpdatePlaceholderColor(this UISearchBar searchBar, UITextField? textField, ISearch search)
+		{
+			searchBar.SetPlaceholder(textField, search);
 		}
 
 		public static void UpdateFontAttributes(this UISearchBar searchBar, ISearch search)
@@ -126,6 +127,14 @@ namespace Xamarin.Platform
 		public static void UpdateFontSize(this UISearchBar searchBar, UITextField? textField, ISearch search)
 		{
 			searchBar.SetFont(textField, search);
+		}
+
+		public static void UpdateMaxLength(this UISearchBar searchBar, ISearch search)
+		{
+			var currentControlText = search.Text;
+
+			if (currentControlText.Length > search.MaxLength)
+				searchBar.Text = currentControlText.Substring(0, search.MaxLength);
 		}
 
 		public static void UpdateKeyboard(this UISearchBar searchBar, ISearch search)
@@ -172,6 +181,20 @@ namespace Xamarin.Platform
 		internal static void SetText(this UISearchBar searchBar, ISearch search)
 		{
 			searchBar.Text = search.UpdateTransformedText(search.Text, search.TextTransform);
+		}
+
+		internal static void SetPlaceholder(this UISearchBar searchBar, UITextField? textField, ISearch search)
+		{
+			textField ??= searchBar.FindDescendantView<UITextField>();
+
+			if (textField == null)
+				return;
+
+			// TODO: Port FormattedString & FormattedStringExtensions.
+			//var formatted = (FormattedString)search.Placeholder ?? string.Empty;
+			//var targetColor = search.PlaceholderColor;
+			//textField.AttributedPlaceholder = formatted.ToAttributed(search, targetColor.IsDefault ? ColorExtensions.PlaceholderColor.ToColor() : targetColor);
+			textField.AttributedPlaceholder?.AddCharacterSpacing(search.Placeholder, search.CharacterSpacing);
 		}
 
 		internal static void SetTextColor(this UISearchBar searchBar, UITextField? textField, ISearch search, UIColor? defaultTextColor)

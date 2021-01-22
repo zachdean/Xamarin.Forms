@@ -4,8 +4,6 @@
 	{
 		public static PropertyMapper<ISearch, SearchBarHandler> SearchBarMapper = new PropertyMapper<ISearch, SearchBarHandler>(ViewHandler.ViewMapper)
 		{
-			[nameof(ISearch.SearchCommand)] = MapSearchCommand,
-			[nameof(ISearch.SearchCommandParameter)] = MapSearchCommandParameter,
 			[nameof(ISearch.CancelButtonColor)] = MapCancelButtonColor,
 			[nameof(IText.Text)] = MapText,
 			[nameof(IText.Color)] = MapTextColor,
@@ -16,6 +14,7 @@
 			[nameof(IFont.FontAttributes)] = MapFontAttributes,
 			[nameof(IFont.FontFamily)] = MapFontFamily,
 			[nameof(IFont.FontSize)] = MapFontSize,
+			[nameof(ITextInput.MaxLength)] = MapMaxLength,
 			[nameof(ITextInput.Keyboard)] = MapKeyboard,
 			[nameof(ITextInput.IsSpellCheckEnabled)] = MapIsSpellCheckEnabled,
 			[nameof(ITextAlignment.HorizontalTextAlignment)] = MapHorizontalTextAlignment,

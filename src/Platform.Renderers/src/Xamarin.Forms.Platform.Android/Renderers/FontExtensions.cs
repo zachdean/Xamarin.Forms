@@ -4,10 +4,12 @@ using System.Diagnostics;
 using Android.Graphics;
 using Xamarin.Forms.Core;
 using Xamarin.Forms.Internals;
+using Xamarin.Platform;
 using AApplication = Android.App.Application;
 
 namespace Xamarin.Forms.Platform.Android
 {
+	[PortHandler]
 	public static class FontExtensions
 	{
 		static readonly ConcurrentDictionary<Tuple<string, FontAttributes>, Typeface> Typefaces = new ConcurrentDictionary<Tuple<string, FontAttributes>, Typeface>();

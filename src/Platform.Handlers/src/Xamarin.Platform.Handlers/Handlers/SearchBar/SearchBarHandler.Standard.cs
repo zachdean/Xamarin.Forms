@@ -6,8 +6,6 @@ namespace Xamarin.Platform.Handlers
 	{
 		protected override object CreateNativeView() => throw new NotImplementedException();
 
-		public static void MapSearchCommand(IViewHandler handler, ISearch search) { }
-		public static void MapSearchCommandParameter(IViewHandler handler, ISearch search) { }
 		public static void MapCancelButtonColor(IViewHandler handler, ISearch search) { }
 		public static void MapText(IViewHandler handler, ISearch search) { }
 		public static void MapTextColor(IViewHandler handler, ISearch search) { }
@@ -18,6 +16,7 @@ namespace Xamarin.Platform.Handlers
 		public static void MapFontAttributes(IViewHandler handler, ISearch search) { }
 		public static void MapFontFamily(IViewHandler handler, ISearch search) { }
 		public static void MapFontSize(IViewHandler handler, ISearch search) { }
+		public static void MapMaxLength(IViewHandler handler, ISearch search) { }
 		public static void MapKeyboard(IViewHandler handler, ISearch search) { }
 		public static void MapIsSpellCheckEnabled(IViewHandler handler, ISearch search) { }
 		public static void MapHorizontalTextAlignment(IViewHandler handler, ISearch search) { }

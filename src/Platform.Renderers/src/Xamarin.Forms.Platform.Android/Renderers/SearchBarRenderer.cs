@@ -183,6 +183,7 @@ namespace Xamarin.Forms.Platform.Android
 				ClearFocus(Control);
 		}
 
+		[PortHandler]
 		void UpdateHorizontalTextAlignment()
 		{
 			_editText = _editText ?? Control.GetChildrenOfType<EditText>().FirstOrDefault();
@@ -193,6 +194,7 @@ namespace Xamarin.Forms.Platform.Android
 			_editText.UpdateHorizontalAlignment(Element.HorizontalTextAlignment, Context.HasRtlSupport(), Xamarin.Forms.TextAlignment.Center.ToVerticalGravityFlags());
 		}
 
+		[PortHandler]
 		void UpdateVerticalTextAlignment()
 		{
 			_editText = _editText ?? Control.GetChildrenOfType<EditText>().FirstOrDefault();
@@ -203,6 +205,7 @@ namespace Xamarin.Forms.Platform.Android
 			_editText.UpdateVerticalAlignment(Element.VerticalTextAlignment, Xamarin.Forms.TextAlignment.Center.ToVerticalGravityFlags());
 		}
 
+		[PortHandler]
 		void UpdateCancelButtonColor()
 		{
 			int searchViewCloseButtonId = Control.Resources.GetIdentifier("android:id/search_close_btn", null, null);
@@ -243,6 +246,7 @@ namespace Xamarin.Forms.Platform.Android
 			view.ClearFocus();
 		}
 
+		[PortHandler]
 		void UpdateFont()
 		{
 			_editText = _editText ?? Control.GetChildrenOfType<EditText>().FirstOrDefault();
@@ -254,6 +258,7 @@ namespace Xamarin.Forms.Platform.Android
 			_editText.SetTextSize(ComplexUnitType.Sp, (float)Element.FontSize);
 		}
 
+		[PortHandler]
 		void UpdatePlaceholder()
 		{
 			Control.SetQueryHint(Element.Placeholder);
@@ -264,6 +269,7 @@ namespace Xamarin.Forms.Platform.Android
 			_hintColorSwitcher?.UpdateTextColor(_editText, Element.PlaceholderColor, _editText.SetHintTextColor);
 		}
 
+		[PortHandler]
 		void UpdateText()
 		{
 			string query = Control.Query;
@@ -272,6 +278,7 @@ namespace Xamarin.Forms.Platform.Android
 				Control.SetQuery(text, false);
 		}
 
+		[PortHandler]
 		void UpdateCharacterSpacing()
 		{
 			if (!Forms.IsLollipopOrNewer)
@@ -290,6 +297,7 @@ namespace Xamarin.Forms.Platform.Android
 			_textColorSwitcher?.UpdateTextColor(_editText, Element.TextColor);
 		}
 
+		[PortHandler]
 		void UpdateMaxLength()
 		{
 			_editText = _editText ?? Control.GetChildrenOfType<EditText>().FirstOrDefault();

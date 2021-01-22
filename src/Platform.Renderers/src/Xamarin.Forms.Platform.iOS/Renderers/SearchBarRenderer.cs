@@ -5,6 +5,7 @@ using CoreGraphics;
 using Foundation;
 using UIKit;
 using Xamarin.Forms.PlatformConfiguration.iOSSpecific;
+using Xamarin.Platform;
 
 namespace Xamarin.Forms.Platform.iOS
 {
@@ -31,6 +32,7 @@ namespace Xamarin.Forms.Platform.iOS
 
 		}
 
+		[PortHandler]
 		protected override void Dispose(bool disposing)
 		{
 			if (disposing)
@@ -50,6 +52,7 @@ namespace Xamarin.Forms.Platform.iOS
 			base.Dispose(disposing);
 		}
 
+		[PortHandler]
 		protected override void OnElementChanged(ElementChangedEventArgs<SearchBar> e)
 		{
 			if (e.NewElement != null)
@@ -236,6 +239,7 @@ namespace Xamarin.Forms.Platform.iOS
 			_textField.AttributedPlaceholder = _textField.AttributedPlaceholder.AddCharacterSpacing(Element.Placeholder, Element.CharacterSpacing);
 		}
 
+		[PortHandler]
 		void UpdateHorizontalTextAlignment()
 		{
 			_textField = _textField ?? Control.FindDescendantView<UITextField>();
@@ -246,6 +250,7 @@ namespace Xamarin.Forms.Platform.iOS
 			_textField.TextAlignment = Element.HorizontalTextAlignment.ToNativeTextAlignment(((IVisualElementController)Element).EffectiveFlowDirection);
 		}
 
+		[PortHandler]
 		void UpdateVerticalTextAlignment()
 		{
 			_textField = _textField ?? Control.FindDescendantView<UITextField>();
@@ -256,6 +261,7 @@ namespace Xamarin.Forms.Platform.iOS
 			_textField.VerticalAlignment = Element.VerticalTextAlignment.ToNativeTextAlignment();
 		}
 
+		[PortHandler]
 		public virtual void UpdateCancelButton()
 		{
 			Control.ShowsCancelButton = !string.IsNullOrEmpty(Control.Text);
@@ -289,6 +295,7 @@ namespace Xamarin.Forms.Platform.iOS
 			}
 		}
 
+		[PortHandler]
 		void UpdateFont()
 		{
 			_textField = _textField ?? Control.FindDescendantView<UITextField>();
@@ -352,6 +359,7 @@ namespace Xamarin.Forms.Platform.iOS
 			_textWasTyped = false;
 		}
 
+		[PortHandler]
 		void UpdateTextColor()
 		{
 			if (_textField == null)
@@ -371,6 +379,7 @@ namespace Xamarin.Forms.Platform.iOS
 			}
 		}
 
+		[PortHandler]
 		void UpdateMaxLength()
 		{
 			var currentControlText = Control.Text;
@@ -379,6 +388,7 @@ namespace Xamarin.Forms.Platform.iOS
 				Control.Text = currentControlText.Substring(0, Element.MaxLength);
 		}
 
+		[PortHandler]
 		bool ShouldChangeText(UISearchBar searchBar, NSRange range, string text)
 		{
 			var newLength = searchBar?.Text?.Length + text.Length - range.Length;

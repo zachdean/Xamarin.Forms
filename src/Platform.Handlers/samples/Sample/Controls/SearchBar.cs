@@ -36,6 +36,14 @@ namespace Sample
 
 		public TextAlignment VerticalTextAlignment { get; set; }
 
+		public Keyboard Keyboard { get; set; }
+
+		public bool IsSpellCheckEnabled { get; set; }
+
+		public int MaxLength { get; set; }
+
+		public bool IsReadOnly { get; set; }
+
 		string IText.UpdateTransformedText(string source, TextTransform textTransform)
 			=> TextTransformUtilites.GetTransformedText(source, textTransform);
 	}

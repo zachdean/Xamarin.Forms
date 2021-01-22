@@ -1,9 +1,11 @@
 using System.Collections.Generic;
+using Xamarin.Platform;
 using AView = Android.Views.View;
 using AViewGroup = Android.Views.ViewGroup;
 
 namespace Xamarin.Forms.Platform.Android
 {
+	[PortHandler]
 	internal static class ViewGroupExtensions
 	{
 		internal static IEnumerable<T> GetChildrenOfType<T>(this AViewGroup self) where T : AView

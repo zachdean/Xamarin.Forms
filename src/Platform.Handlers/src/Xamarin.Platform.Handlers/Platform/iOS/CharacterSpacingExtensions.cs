@@ -5,7 +5,7 @@ namespace Xamarin.Platform
 {
 	public static class CharacterSpacingExtensions
 	{
-		public static NSMutableAttributedString? AddCharacterSpacing(this NSAttributedString attributedString, string text, double characterSpacing)
+		public static NSMutableAttributedString? AddCharacterSpacing(this NSAttributedString attributedString, string? text, double characterSpacing)
 		{
 			if (attributedString == null && characterSpacing == 0)
 				return null;

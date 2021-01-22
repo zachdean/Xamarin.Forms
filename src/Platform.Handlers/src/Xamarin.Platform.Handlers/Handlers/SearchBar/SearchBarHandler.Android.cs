@@ -1,41 +1,40 @@
-﻿using Android.Widget;
+﻿using System.Linq;
+using Android.Widget;
 
 namespace Xamarin.Platform.Handlers
 {
 	public partial class SearchBarHandler : AbstractViewHandler<ISearch, SearchView>
 	{
+		static EditText? EditText;
+
+		QueryTextListener TextListener { get; } = new QueryTextListener();
+
 		protected override SearchView CreateNativeView()
 		{
-			return new SearchView(Context);
+			var searchView = new SearchView(Context);
+
+			searchView.SetIconifiedByDefault(false);
+
+			EditText = searchView.GetChildrenOfType<EditText>().FirstOrDefault();
+
+			return searchView;
 		}
 
 		protected override void ConnectHandler(SearchView nativeView)
 		{
-			base.ConnectHandler(nativeView);
+			TextListener.Handler = this;
+			nativeView.SetOnQueryTextListener(TextListener);
 		}
 
 		protected override void DisconnectHandler(SearchView nativeView)
 		{
-			base.DisconnectHandler(nativeView);
+			TextListener.Handler = null;
+			nativeView.SetOnQueryTextListener(null);
 		}
 
 		protected override void SetupDefaults(SearchView nativeView)
 		{
-			base.SetupDefaults(nativeView);
-		}
-
-		public static void MapSearchCommand(SearchBarHandler handler, ISearch search)
-		{
-			ViewHandler.CheckParameters(handler, search);
-
-			handler.TypedNativeView?.UpdateSearchCommand(search);
-		}
-
-		public static void MapSearchCommandParameter(SearchBarHandler handler, ISearch search)
-		{
-			ViewHandler.CheckParameters(handler, search);
-
-			handler.TypedNativeView?.UpdateSearchCommandParameter(search);
+			EditText ??= nativeView.GetChildrenOfType<EditText>().FirstOrDefault();
 		}
 
 		public static void MapCancelButtonColor(SearchBarHandler handler, ISearch search)
@@ -70,7 +69,7 @@ namespace Xamarin.Platform.Handlers
 		{
 			ViewHandler.CheckParameters(handler, search);
 
-			handler.TypedNativeView?.UpdateCharacterSpacing(search);
+			handler.TypedNativeView?.UpdateCharacterSpacing(EditText, search);
 		}
 
 		public static void MapPlaceholder(SearchBarHandler handler, ISearch search)
@@ -91,28 +90,28 @@ namespace Xamarin.Platform.Handlers
 		{
 			ViewHandler.CheckParameters(handler, search);
 
-			handler.TypedNativeView?.UpdateFontAttributes(search);
+			handler.TypedNativeView?.UpdateFontAttributes(EditText, search);
 		}
 
 		public static void MapFontFamily(SearchBarHandler handler, ISearch search)
 		{
 			ViewHandler.CheckParameters(handler, search);
 
-			handler.TypedNativeView?.UpdateFontFamily(search);
+			handler.TypedNativeView?.UpdateFontFamily(EditText, search);
 		}
 
 		public static void MapFontSize(SearchBarHandler handler, ISearch search)
 		{
 			ViewHandler.CheckParameters(handler, search);
 
-			handler.TypedNativeView?.UpdateFontSize(search);
+			handler.TypedNativeView?.UpdateFontSize(EditText, search);
 		}
-
-		public static void MapHorizontalTextAlignment(SearchBarHandler handler, ISearch search)
+				
+		public static void MapMaxLength(SearchBarHandler handler, ISearch search)
 		{
 			ViewHandler.CheckParameters(handler, search);
 
-			handler.TypedNativeView?.UpdateHorizontalTextAlignment(search);
+			handler.TypedNativeView?.UpdateMaxLength(EditText, search);
 		}
 
 		public static void MapKeyboard(SearchBarHandler handler, ISearch search)
@@ -129,11 +128,33 @@ namespace Xamarin.Platform.Handlers
 			handler.TypedNativeView?.UpdateIsSpellCheckEnabled(search);
 		}
 
+		public static void MapHorizontalTextAlignment(SearchBarHandler handler, ISearch search)
+		{
+			ViewHandler.CheckParameters(handler, search);
+
+			handler.TypedNativeView?.UpdateHorizontalTextAlignment(EditText, search);
+		}
+
 		public static void MapVerticalTextAlignment(SearchBarHandler handler, ISearch search)
 		{
 			ViewHandler.CheckParameters(handler, search);
 
-			handler.TypedNativeView?.UpdateVerticalTextAlignment(search);
+			handler.TypedNativeView?.UpdateVerticalTextAlignment(EditText, search);
+		}
+
+		public class QueryTextListener : Java.Lang.Object, SearchView.IOnQueryTextListener
+		{
+			public SearchBarHandler? Handler { get; set; }
+
+			public bool OnQueryTextChange(string? newText)
+			{
+				return true;
+			}
+
+			public bool OnQueryTextSubmit(string? query)
+			{
+				return true;
+			}
 		}
 	}
 }

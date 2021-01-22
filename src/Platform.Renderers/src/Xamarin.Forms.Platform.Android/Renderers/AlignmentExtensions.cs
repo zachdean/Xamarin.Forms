@@ -1,8 +1,10 @@
 using Android.Views;
+using Xamarin.Platform;
 using ATextAlignment = Android.Views.TextAlignment;
 
 namespace Xamarin.Forms.Platform.Android
 {
+	[PortHandler]
 	internal static class AlignmentExtensions
 	{
 		internal static ATextAlignment ToTextAlignment(this TextAlignment alignment)

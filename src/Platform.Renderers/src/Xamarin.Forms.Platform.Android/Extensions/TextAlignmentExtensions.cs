@@ -1,9 +1,11 @@
 ﻿using Android.OS;
 using Android.Widget;
+using Xamarin.Platform;
 using AGravityFlags = Android.Views.GravityFlags;
 
 namespace Xamarin.Forms.Platform.Android
 {
+	[PortHandler]
 	internal static class TextAlignmentExtensions
 	{
 		internal static void UpdateHorizontalAlignment(this EditText view, TextAlignment alignment, bool hasRtlSupport, AGravityFlags orMask = AGravityFlags.NoGravity)

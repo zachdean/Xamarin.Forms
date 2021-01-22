@@ -15,6 +15,7 @@ namespace Xamarin.Platform.Handlers
 		static UIColor? DefaultTintColor;
 
 		static UITextField? TextField;
+		static string? TypedText;
 
 		protected override UISearchBar CreateNativeView()
 		{
@@ -62,20 +63,6 @@ namespace Xamarin.Platform.Handlers
 			DefaultTextColor = TextField?.TextColor;
 		}
 
-		public static void MapSearchCommand(SearchBarHandler handler, ISearch search)
-		{
-			ViewHandler.CheckParameters(handler, search);
-
-			handler.TypedNativeView?.UpdateSearchCommand(search);
-		}
-
-		public static void MapSearchCommandParameter(SearchBarHandler handler, ISearch search)
-		{
-			ViewHandler.CheckParameters(handler, search);
-
-			handler.TypedNativeView?.UpdateSearchCommandParameter(search);
-		}
-
 		public static void MapCancelButtonColor(SearchBarHandler handler, ISearch search)
 		{
 			ViewHandler.CheckParameters(handler, search);
@@ -88,6 +75,7 @@ namespace Xamarin.Platform.Handlers
 			ViewHandler.CheckParameters(handler, search);
 
 			handler.TypedNativeView?.UpdateText(search);
+			handler.TypedNativeView?.UpdateCancelButtonColor(search);
 		}
 
 		public static void MapTextColor(SearchBarHandler handler, ISearch search)
@@ -146,6 +134,13 @@ namespace Xamarin.Platform.Handlers
 			handler.TypedNativeView?.UpdateFontSize(TextField, search);
 		}
 
+		public static void MapMaxLength(SearchBarHandler handler, ISearch search)
+		{
+			ViewHandler.CheckParameters(handler, search);
+
+			handler.TypedNativeView?.UpdateMaxLength(search);
+		}
+
 		public static void MapKeyboard(SearchBarHandler handler, ISearch search)
 		{
 			ViewHandler.CheckParameters(handler, search);
@@ -184,17 +179,22 @@ namespace Xamarin.Platform.Handlers
 
 		void OnSearchButtonClicked(object sender, EventArgs e)
 		{
-
+			//VirtualView?.OnSearchButtonPressed();
+			TypedNativeView?.ResignFirstResponder();
 		}
 
 		void OnTextChanged(object sender, UISearchBarTextChangedEventArgs a)
 		{
-
+			// This only fires when text has been typed into the SearchBar; see UpdateText()
+			// for why this is handled in this manner.
+			TypedText = a.SearchText;
+			UpdateOnTextChanged();
 		}
 
 		bool ShouldChangeText(UISearchBar searchBar, NSRange range, string text)
 		{
-			return false;
+			var newLength = searchBar?.Text?.Length + text.Length - range.Length;
+			return newLength <= VirtualView?.MaxLength;
 		}
 
 		void OnEditingStarted(object sender, EventArgs e)
@@ -205,6 +205,12 @@ namespace Xamarin.Platform.Handlers
 		void OnEditingEnded(object sender, EventArgs e)
 		{
 		
+		}
+
+		void UpdateOnTextChanged()
+		{
+			if (VirtualView != null)
+				VirtualView.Text = TypedText ?? string.Empty;
 		}
 	}
 }
