@@ -1,10 +1,9 @@
+﻿using System;
 using Android.Text;
-using Xamarin.Forms.Internals;
-using Xamarin.Platform;
+using Xamarin.Forms;
 
-namespace Xamarin.Forms.Platform.Android
+namespace Xamarin.Platform
 {
-	[PortHandler]
 	public static class KeyboardExtensions
 	{
 		public static InputTypes ToInputType(this Keyboard self)
@@ -46,7 +45,7 @@ namespace Xamarin.Forms.Platform.Android
 				if (!capitalizedSentenceEnabled && !spellcheckEnabled && suggestionsEnabled)
 				{
 					// Due to the nature of android, TextFlagAutoCorrect includes Spellcheck
-					Log.Warning(null, "On Android, KeyboardFlags.Suggestions enables KeyboardFlags.Spellcheck as well due to a platform limitation.");
+					Console.WriteLine(null, "On Android, KeyboardFlags.Suggestions enables KeyboardFlags.Spellcheck as well due to a platform limitation.");
 					result = InputTypes.ClassText | InputTypes.TextFlagAutoCorrect;
 				}
 
@@ -62,7 +61,7 @@ namespace Xamarin.Forms.Platform.Android
 				if (capitalizedSentenceEnabled && !spellcheckEnabled && suggestionsEnabled)
 				{
 					// Due to the nature of android, TextFlagAutoCorrect includes Spellcheck
-					Log.Warning(null, "On Android, KeyboardFlags.Suggestions enables KeyboardFlags.Spellcheck as well due to a platform limitation.");
+					Console.WriteLine(null, "On Android, KeyboardFlags.Suggestions enables KeyboardFlags.Spellcheck as well due to a platform limitation.");
 					result = InputTypes.ClassText | InputTypes.TextFlagCapSentences | InputTypes.TextFlagAutoCorrect;
 				}
 
@@ -77,10 +76,10 @@ namespace Xamarin.Forms.Platform.Android
 				if (custom.Flags != KeyboardFlags.All)
 				{
 					if (capitalizedWordsEnabled)
-						result = result | InputTypes.TextFlagCapWords;
+						result |= InputTypes.TextFlagCapWords;
 
 					if (capitalizedCharacterEnabled)
-						result = result | InputTypes.TextFlagCapCharacters;
+						result |= InputTypes.TextFlagCapCharacters;
 				}
 			}
 			else

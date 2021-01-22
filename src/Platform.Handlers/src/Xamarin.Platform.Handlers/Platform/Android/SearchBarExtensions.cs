@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Android.Text;
+using Android.Text.Method;
 using Android.Util;
 using Android.Widget;
 using Xamarin.Forms;
@@ -91,12 +92,12 @@ namespace Xamarin.Platform
 
 		public static void UpdateFontSize(this SearchView searchView, ISearch search)
 		{
-
+			searchView.UpdateFontSize(null, search);
 		}
 
 		public static void UpdateFontSize(this SearchView searchView, EditText? editText, ISearch search)
 		{
-
+			searchView.SetFont(editText, search);
 		}
 
 		public static void UpdateMaxLength(this SearchView searchView, ISearch search)
@@ -131,12 +132,22 @@ namespace Xamarin.Platform
 
 		public static void UpdateKeyboard(this SearchView searchView, ISearch search)
 		{
+			searchView.UpdateKeyboard(null, search);
+		}
 
+		public static void UpdateKeyboard(this SearchView searchView, EditText? editText, ISearch search)
+		{
+			searchView.SetInputType(editText, search);
 		}
 
 		public static void UpdateIsSpellCheckEnabled(this SearchView searchView, ISearch search)
 		{
+			searchView.UpdateIsSpellCheckEnabled(null, search);
+		}
 
+		public static void UpdateIsSpellCheckEnabled(this SearchView searchView, EditText? editText, ISearch search)
+		{
+			searchView.SetInputType(editText, search);
 		}
 
 		public static void UpdateHorizontalTextAlignment(this SearchView searchView, ISearch search)
@@ -188,6 +199,41 @@ namespace Xamarin.Platform
 
 			editText.Typeface = search.ToTypeface();
 			editText.SetTextSize(ComplexUnitType.Sp, (float)search.FontSize);
+		}
+
+		internal static void SetInputType(this SearchView searchView, EditText? editText, ISearch search)
+		{
+			ISearch model = search;
+			var keyboard = model.Keyboard;
+
+			var inputType = keyboard.ToInputType();
+
+			if (!(keyboard is CustomKeyboard))
+			{
+				if ((inputType & InputTypes.TextFlagNoSuggestions) != InputTypes.TextFlagNoSuggestions)
+				{
+					if (!model.IsSpellCheckEnabled)
+						inputType |= InputTypes.TextFlagNoSuggestions;
+				}
+			}
+
+			searchView.SetInputType(inputType);
+
+			if (keyboard == Keyboard.Numeric)
+			{
+				editText ??= searchView.GetChildrenOfType<EditText>().FirstOrDefault();
+
+				if (editText != null)
+					editText.KeyListener = GetDigitsKeyListener(inputType);
+			}
+		}
+
+		internal static NumberKeyListener GetDigitsKeyListener(InputTypes inputTypes)
+		{
+			// Override this in a custom renderer to use a different NumberKeyListener
+			// or to filter out input types you don't want to allow
+			// (e.g., inputTypes &= ~InputTypes.NumberFlagSigned to disallow the sign)
+			return LocalizedDigitsKeyListener.Create(inputTypes);
 		}
 	}
 }
