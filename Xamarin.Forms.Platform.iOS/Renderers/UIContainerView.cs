@@ -27,15 +27,17 @@ namespace Xamarin.Forms.Platform.iOS
 
 		internal View View => _view;
 
+		internal bool MatchHeight { get; set; }
+
 		internal double MeasuredHeight { get; private set; }
 
-		internal double? HeightRequest
+		internal double? Height
 		{
 			get;
 			set;
 		}
 
-		internal double? WidthRequest
+		internal double? Width
 		{
 			get;
 			set;
@@ -51,6 +53,7 @@ namespace Xamarin.Forms.Platform.iOS
 				ReMeasure();
 				return true;
 			}
+			
 			return false;
 		}
 
@@ -61,9 +64,9 @@ namespace Xamarin.Forms.Platform.iOS
 
 		void ReMeasure()
 		{
-			if(HeightRequest != null)
+			if(Height != null && MatchHeight)
 			{
-				MeasuredHeight = HeightRequest.Value;
+				MeasuredHeight = Height.Value;
 			}
 			else
 			{
@@ -88,7 +91,7 @@ namespace Xamarin.Forms.Platform.iOS
 
 		public override void LayoutSubviews()
 		{
-			_view.Layout(new Rectangle(0, Margin.Top, WidthRequest ?? Frame.Width, MeasuredHeight));
+			_view.Layout(new Rectangle(0, Margin.Top, Width ?? Frame.Width, Height ?? MeasuredHeight));
 		}
 
 		protected override void Dispose(bool disposing)

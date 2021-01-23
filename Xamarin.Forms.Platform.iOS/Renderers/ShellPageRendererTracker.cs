@@ -398,6 +398,7 @@ namespace Xamarin.Forms.Platform.iOS
 		{
 			public TitleViewContainer(View view) : base(view)
 			{
+				MatchHeight = true;
 			}
 
 			public override CGRect Frame
@@ -422,8 +423,8 @@ namespace Xamarin.Forms.Platform.iOS
 					if (!Forms.IsiOS11OrNewer)
 						Frame = new CGRect(Frame.X, newsuper.Bounds.Y, Frame.Width, newsuper.Bounds.Height);
 
-					HeightRequest = newsuper.Bounds.Height;
-					WidthRequest = newsuper.Bounds.Width;
+					Height = newsuper.Bounds.Height;
+					Width = newsuper.Bounds.Width;
 				}
 
 				base.WillMoveToSuperview(newsuper);
