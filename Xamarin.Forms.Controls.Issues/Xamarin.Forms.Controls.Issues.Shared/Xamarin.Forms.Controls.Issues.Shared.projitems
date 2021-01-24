@@ -1707,6 +1707,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)ShellFlyoutContentWithZeroMargin.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Issue13436.xaml.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Issue13476.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ShellFlyoutHeaderBehavior.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="$(MSBuildThisFileDirectory)Bugzilla22229.xaml">
