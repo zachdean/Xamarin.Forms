@@ -62,7 +62,7 @@ namespace Xamarin.Forms.Platform.Android
 
 			var width = Context.FromPixels(r - l);
 			var height = Context.FromPixels(b - t);
-			LayoutView(l, t, width, height);
+			LayoutView(0, 0, width, height);
 		}
 
 		protected virtual void LayoutView(double x, double y, double width, double height)
