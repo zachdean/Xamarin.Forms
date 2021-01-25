@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using Xamarin.Forms;
+﻿using Xamarin.Forms;
 using Xamarin.Platform;
 using Xamarin.Platform.Handlers;
 using RegistrarHandlers = Xamarin.Platform.Registrar;
@@ -18,16 +16,15 @@ namespace Sample
 
 			HasInit = true;
 
-			//RegistrarHandlers.Handlers.Register<Layout, LayoutHandler>();
-
 			RegistrarHandlers.Handlers.Register<Button, ButtonHandler>();
-			RegistrarHandlers.Handlers.Register<Slider, SliderHandler>();
-			RegistrarHandlers.Handlers.Register<Sample.VerticalStackLayout, LayoutHandler>();
-			RegistrarHandlers.Handlers.Register<Sample.HorizontalStackLayout, LayoutHandler>();
-			RegistrarHandlers.Handlers.Register<Xamarin.Forms.FlexLayout, LayoutHandler>();
-			RegistrarHandlers.Handlers.Register<Xamarin.Forms.StackLayout, LayoutHandler>();
-			//RegistrarHandlers.Handlers.Register<Entry, EntryHandler>();
+			RegistrarHandlers.Handlers.Register<Frame, FrameHandler>();
 			RegistrarHandlers.Handlers.Register<Label, LabelHandler>();
+			RegistrarHandlers.Handlers.Register<Slider, SliderHandler>();
+
+			RegistrarHandlers.Handlers.Register<VerticalStackLayout, LayoutHandler>();
+			RegistrarHandlers.Handlers.Register<HorizontalStackLayout, LayoutHandler>();
+			RegistrarHandlers.Handlers.Register<FlexLayout, LayoutHandler>();
+			RegistrarHandlers.Handlers.Register<Xamarin.Forms.StackLayout, LayoutHandler>();
 		}
 
 
