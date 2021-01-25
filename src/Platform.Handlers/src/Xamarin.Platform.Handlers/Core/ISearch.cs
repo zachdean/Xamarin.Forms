@@ -8,5 +8,7 @@ namespace Xamarin.Platform
 		public ICommand SearchCommand { get; }
 		public object SearchCommandParameter { get; }
 		public Color CancelButtonColor { get; }
+
+		void SearchButtonPressed();
 	}
 }

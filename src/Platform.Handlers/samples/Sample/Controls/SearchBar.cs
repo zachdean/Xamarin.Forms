@@ -1,4 +1,5 @@
-﻿using System.Windows.Input;
+﻿using System;
+using System.Windows.Input;
 using Xamarin.Forms;
 using Xamarin.Platform;
 
@@ -44,7 +45,23 @@ namespace Sample
 
 		public bool IsReadOnly { get; set; }
 
+		public Action SearchButtonPressed { get; set; }
+
 		string IText.UpdateTransformedText(string source, TextTransform textTransform)
 			=> TextTransformUtilites.GetTransformedText(source, textTransform);
+
+		void ISearch.SearchButtonPressed()
+		{
+			if (IsEnabled)
+			{
+				ICommand cmd = SearchCommand;
+
+				if (cmd != null && !cmd.CanExecute(SearchCommandParameter))
+					return;
+
+				cmd?.Execute(SearchCommandParameter);
+				SearchButtonPressed?.Invoke();
+			}
+		}
 	}
 }

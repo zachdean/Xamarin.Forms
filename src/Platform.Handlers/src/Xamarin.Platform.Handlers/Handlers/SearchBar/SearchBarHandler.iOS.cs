@@ -179,7 +179,7 @@ namespace Xamarin.Platform.Handlers
 
 		void OnSearchButtonClicked(object sender, EventArgs e)
 		{
-			//VirtualView?.OnSearchButtonPressed();
+			VirtualView?.SearchButtonPressed();
 			TypedNativeView?.ResignFirstResponder();
 		}
 

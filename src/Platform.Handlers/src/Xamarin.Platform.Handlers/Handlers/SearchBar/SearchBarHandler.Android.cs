@@ -1,16 +1,22 @@
 ﻿using System.Linq;
+using Android.Views;
 using Android.Widget;
+using Xamarin.Forms;
 
 namespace Xamarin.Platform.Handlers
 {
 	public partial class SearchBarHandler : AbstractViewHandler<ISearch, SearchView>
 	{
+		static float DefaultHeight => 42.0f;
+
 		static TextColorSwitcher? TextColorSwitcher;
 		static TextColorSwitcher? HintColorSwitcher;
 
 		static EditText? EditText;
 
 		QueryTextListener TextListener { get; } = new QueryTextListener();
+
+		FocusChangeListener FocusListener { get; } = new FocusChangeListener();
 
 		protected override SearchView CreateNativeView()
 		{
@@ -27,12 +33,18 @@ namespace Xamarin.Platform.Handlers
 		{
 			TextListener.Handler = this;
 			nativeView.SetOnQueryTextListener(TextListener);
+
+			FocusListener.Handler = this;
+			nativeView.SetOnQueryTextFocusChangeListener(FocusListener);
 		}
 
 		protected override void DisconnectHandler(SearchView nativeView)
 		{
 			TextListener.Handler = null;
 			nativeView.SetOnQueryTextListener(null);
+
+			FocusListener.Handler = null;
+			nativeView.SetOnQueryTextFocusChangeListener(null);
 		}
 
 		protected override void SetupDefaults(SearchView nativeView)
@@ -44,6 +56,18 @@ namespace Xamarin.Platform.Handlers
 				TextColorSwitcher = new TextColorSwitcher(EditText.TextColors);
 				HintColorSwitcher = new TextColorSwitcher(EditText.HintTextColors);
 			}
+		}
+
+		public override Size GetDesiredSize(double widthConstraint, double heightConstraint)
+		{
+			var size = base.GetDesiredSize(widthConstraint, heightConstraint);
+
+			if (NativeVersion.IsAtLeast(24) && heightConstraint == 0 && size.Height == 0)
+			{
+				size = new Size(size.Width, Context?.ToPixels(DefaultHeight) ?? size.Height);
+			}
+
+			return size;
 		}
 
 		public static void MapCancelButtonColor(SearchBarHandler handler, ISearch search)
@@ -151,18 +175,36 @@ namespace Xamarin.Platform.Handlers
 			handler.TypedNativeView?.UpdateVerticalTextAlignment(EditText, search);
 		}
 
+		internal void ClearFocus(SearchView view)
+		{
+			view.ClearFocus();
+		}
+
 		public class QueryTextListener : Java.Lang.Object, SearchView.IOnQueryTextListener
 		{
 			public SearchBarHandler? Handler { get; set; }
 
 			public bool OnQueryTextChange(string? newText)
 			{
+				TextTransformUtilites.SetPlainText(Handler?.VirtualView, newText ?? string.Empty);
 				return true;
 			}
 
 			public bool OnQueryTextSubmit(string? query)
 			{
+				Handler?.VirtualView?.SearchButtonPressed();
+				Handler?.TypedNativeView?.ClearFocus();
 				return true;
+			}
+		}
+
+		public class FocusChangeListener : Java.Lang.Object, View.IOnFocusChangeListener
+		{
+			public SearchBarHandler? Handler { get; set; }
+
+			public void OnFocusChange(View? v, bool hasFocus)
+			{
+				// TODO: Port KeyboardManager
 			}
 		}
 	}

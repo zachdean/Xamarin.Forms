@@ -25,7 +25,7 @@ namespace Xamarin.Forms.Internals
 			}
 		}
 
-
+		[PortHandler]
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		public static void SetPlainText(InputView inputView, string nativeText)
 		{

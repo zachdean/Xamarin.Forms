@@ -18,6 +18,7 @@ namespace Xamarin.Forms.Platform.Android
 {
 	public class SearchBarRenderer : ViewRenderer<SearchBar, SearchView>, SearchView.IOnQueryTextListener
 	{
+		[PortHandler]
 		EditText _editText;
 		InputTypes _inputType;
 		TextColorSwitcher _textColorSwitcher;
@@ -36,6 +37,7 @@ namespace Xamarin.Forms.Platform.Android
 			AutoPackage = false;
 		}
 
+		[PortHandler]
 		bool SearchView.IOnQueryTextListener.OnQueryTextChange(string newText)
 		{
 			Internals.TextTransformUtilites.SetPlainText(Element, newText);
@@ -50,6 +52,7 @@ namespace Xamarin.Forms.Platform.Android
 			return true;
 		}
 
+		[PortHandler]
 		public override SizeRequest GetDesiredSize(int widthConstraint, int heightConstraint)
 		{
 			var sizerequest = base.GetDesiredSize(widthConstraint, heightConstraint);
@@ -60,6 +63,7 @@ namespace Xamarin.Forms.Platform.Android
 			return sizerequest;
 		}
 
+		[PortHandler]
 		protected override SearchView CreateNativeControl()
 		{
 			var context = (Context as ContextThemeWrapper)?.BaseContext ?? Context;
@@ -241,6 +245,7 @@ namespace Xamarin.Forms.Platform.Android
 			}
 		}
 
+		[PortHandler]
 		void ClearFocus(SearchView view)
 		{
 			view.ClearFocus();
@@ -264,6 +269,7 @@ namespace Xamarin.Forms.Platform.Android
 			Control.SetQueryHint(Element.Placeholder);
 		}
 
+		[PortHandler]
 		void UpdatePlaceholderColor()
 		{
 			_hintColorSwitcher?.UpdateTextColor(_editText, Element.PlaceholderColor, _editText.SetHintTextColor);
