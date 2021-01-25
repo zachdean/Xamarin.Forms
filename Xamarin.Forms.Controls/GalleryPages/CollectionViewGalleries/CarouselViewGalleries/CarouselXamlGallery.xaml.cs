@@ -160,5 +160,10 @@ namespace Xamarin.Forms.Controls.GalleryPages.CollectionViewGalleries.CarouselVi
 		public string Image { get; set; }
 
 		public string FeaturedImage { get; set; }
+
+		public override string ToString()
+		{
+			return Index.ToString();
+		}
 	}
 }
