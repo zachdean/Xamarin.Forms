@@ -2,6 +2,7 @@ using System.ComponentModel;
 using System.Drawing;
 using CoreGraphics;
 using UIKit;
+using Xamarin.Platform;
 
 namespace Xamarin.Forms.Platform.iOS
 {
@@ -13,6 +14,7 @@ namespace Xamarin.Forms.Platform.iOS
 
 		UIView ITabStop.TabStop => this;
 
+		[PortHandler]
 		[Internals.Preserve(Conditional = true)]
 		public FrameRenderer()
 		{
@@ -60,6 +62,7 @@ namespace Xamarin.Forms.Platform.iOS
 				SetupLayer();
 		}
 
+		[PortHandler]
 		public virtual void SetupLayer()
 		{			
 			if (_actualView == null)
@@ -170,6 +173,7 @@ namespace Xamarin.Forms.Platform.iOS
 			}
 		}
 
+		[PortHandler]
 		[Internals.Preserve(Conditional = true)]
 		class FrameView : UIView
 		{
