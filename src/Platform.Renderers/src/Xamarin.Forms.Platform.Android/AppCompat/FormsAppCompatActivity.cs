@@ -119,24 +119,6 @@ namespace Xamarin.Forms.Platform.Android
 		// This is currently being used by the previewer please do not change or remove this
 		static void RegisterHandlers()
 		{
-			RegisterHandler(typeof(Switch), typeof(AppCompat.SwitchRenderer), typeof(SwitchRenderer));
-			RegisterHandler(typeof(Picker), typeof(AppCompat.PickerRenderer), typeof(PickerRenderer));
-			RegisterHandler(typeof(CarouselPage), typeof(AppCompat.CarouselPageRenderer), typeof(CarouselPageRenderer));
-			
-			if (Forms.Flags.Contains(Flags.UseLegacyRenderers))
-			{
-				RegisterHandler(typeof(Button), typeof(AppCompat.ButtonRenderer), typeof(ButtonRenderer));
-				RegisterHandler(typeof(Frame), typeof(AppCompat.FrameRenderer), typeof(FrameRenderer));
-			}
-			else
-			{
-				RegisterHandler(typeof(Button), typeof(FastRenderers.ButtonRenderer), typeof(ButtonRenderer));
-				RegisterHandler(typeof(Label), typeof(FastRenderers.LabelRenderer), typeof(LabelRenderer));
-				RegisterHandler(typeof(Image), typeof(FastRenderers.ImageRenderer), typeof(ImageRenderer));
-				RegisterHandler(typeof(Frame), typeof(FastRenderers.FrameRenderer), typeof(FrameRenderer));
-			}
-
-			Registrar.Registered.Register(typeof(RadioButton), typeof(RadioButtonRenderer));
 		}
 
 		protected void LoadApplication(Application application)
@@ -242,8 +224,7 @@ namespace Xamarin.Forms.Platform.Android
 				catch (global::Android.Views.InflateException ie)
 				{
 					if ((ie.Cause is Java.Lang.ClassNotFoundException || ie.Cause.Cause is Java.Lang.ClassNotFoundException) &&
-						ie.Message.Contains("Error inflating class android.support.v7.widget.Toolbar") &&
-						this.TargetSdkVersion() >= 29)
+						ie.Message.Contains("Error inflating class android.support.v7.widget.Toolbar"))
 					{
 						Internals.Log.Warning(nameof(FormsAppCompatActivity),
 							"Toolbar layout needs to be updated from android.support.v7.widget.Toolbar to androidx.appcompat.widget.Toolbar. " +
@@ -307,7 +288,10 @@ namespace Xamarin.Forms.Platform.Android
 			PreviousActivityDestroying.Reset();
 
 			if (_application != null)
+			{
+				_application.PropertyChanging -= AppOnPropertyChanging;
 				_application.PropertyChanged -= AppOnPropertyChanged;
+			}
 
 			PopupManager.Unsubscribe(this);
 

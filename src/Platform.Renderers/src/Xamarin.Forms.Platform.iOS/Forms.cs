@@ -103,6 +103,7 @@ namespace Xamarin.Forms
 			}
 		}
 
+
 		internal static bool RespondsToSetNeedsUpdateOfHomeIndicatorAutoHidden
 		{
 			get
@@ -162,7 +163,7 @@ namespace Xamarin.Forms
 			}
 
 			s_flags = (string[])flags.Clone();
-			if (s_flags.Contains ("Profile"))
+			if (s_flags.Contains("Profile"))
 				Profile.Enable();
 		}
 
@@ -172,6 +173,7 @@ namespace Xamarin.Forms
 				return;
 			IsInitialized = true;
 
+			Internals.Registrar.RegisterRendererToHandlerShim(RendererToHandlerShim.CreateShim);
 			Color.SetAccent(ColorExtensions.AccentColor.ToColor());
 
 			Log.Listeners.Add(new DelegateLogListener((c, m) => Trace.WriteLine(m, c)));
@@ -736,9 +738,9 @@ namespace Xamarin.Forms
 			}
 
 			public OSAppTheme RequestedTheme
-            {
-                get
-                {
+			{
+				get
+				{
 #if __IOS__ || __TVOS__
 					if (!IsiOS13OrNewer)
 						return OSAppTheme.Unspecified;
@@ -755,16 +757,17 @@ namespace Xamarin.Forms
 							return OSAppTheme.Unspecified;
 					};
 #else
-                    return AppearanceIsDark(NSApplication.SharedApplication.EffectiveAppearance) ? OSAppTheme.Dark : OSAppTheme.Light;
+                    return AppearanceIsDark() ? OSAppTheme.Dark : OSAppTheme.Light;
 #endif
 				}
 			}
 
 #if __MACOS__
-			bool AppearanceIsDark(NSAppearance appearance)
+			bool AppearanceIsDark()
 			{
 				if (IsMojaveOrNewer)
 				{
+					var appearance = NSApplication.SharedApplication.EffectiveAppearance;
 					var matchedAppearance = appearance.FindBestMatch(new string[] { NSAppearance.NameAqua, NSAppearance.NameDarkAqua });
 
 					return matchedAppearance == NSAppearance.NameDarkAqua;
