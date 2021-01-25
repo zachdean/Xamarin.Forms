@@ -1,4 +1,5 @@
-﻿using UIKit;
+﻿using CoreGraphics;
+using UIKit;
 using Xamarin.Forms;
 
 namespace Xamarin.Platform
@@ -139,12 +140,12 @@ namespace Xamarin.Platform
 
 		public static void UpdateKeyboard(this UISearchBar searchBar, ISearch search)
 		{
-
+			searchBar.SetKeyboard(search);
 		}
 
 		public static void UpdateIsSpellCheckEnabled(this UISearchBar searchBar, ISearch search)
 		{
-
+			searchBar.SetKeyboard(search);
 		}
 
 		public static void UpdateHorizontalTextAlignment(this UISearchBar searchBar, ISearch search)
@@ -218,6 +219,50 @@ namespace Xamarin.Platform
 				return;
 
 			textField.Font = search.ToUIFont();
+		}
+
+		internal static void SetKeyboard(this UISearchBar searchBar, ISearch search)
+		{
+			var keyboard = search.Keyboard;
+
+			searchBar.ApplyKeyboard(keyboard);
+
+			if (!(keyboard is CustomKeyboard) && !search.IsSpellCheckEnabled)
+			{
+				searchBar.SpellCheckingType = UITextSpellCheckingType.No;
+			}
+
+			// iPhone does not have an enter key on numeric keyboards
+			// TODO: Port Device class and verify that the used platform is iOS.
+			if (keyboard == Keyboard.Numeric || keyboard == Keyboard.Telephone)
+			{
+				var numericAccessoryView = CreateNumericKeyboardAccessoryView(searchBar, search);
+				searchBar.InputAccessoryView = numericAccessoryView;
+			}
+			else
+			{
+				searchBar.InputAccessoryView = null;
+			}
+
+			searchBar.ReloadInputViews();
+		}
+
+		internal static UIToolbar CreateNumericKeyboardAccessoryView(UISearchBar searchBar, ISearch search)
+		{
+			var keyboardWidth = UIScreen.MainScreen.Bounds.Width;
+			var accessoryView = new UIToolbar(new CGRect(0, 0, keyboardWidth, 44)) { BarStyle = UIBarStyle.Default, Translucent = true };
+
+			var spacer = new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace);
+
+			var searchButton = new UIBarButtonItem(UIBarButtonSystemItem.Search, (sender, args) =>
+			{
+				search?.SearchButtonPressed();
+				searchBar?.ResignFirstResponder();
+			});
+
+			accessoryView.SetItems(new[] { spacer, searchButton }, false);
+
+			return accessoryView;
 		}
 	}
 }

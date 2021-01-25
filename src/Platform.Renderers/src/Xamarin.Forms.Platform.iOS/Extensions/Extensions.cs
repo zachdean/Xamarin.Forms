@@ -8,12 +8,14 @@ namespace Xamarin.Forms.Platform.iOS
 {
 	public static class Extensions
 	{
+		[PortHandler]
 		public static void ApplyKeyboard(this IUITextInput textInput, Keyboard keyboard)
 		{
 			if(textInput is IUITextInputTraits traits)
 				ApplyKeyboard(traits, keyboard);
 		}
 
+		[PortHandler]
 		public static void ApplyKeyboard(this IUITextInputTraits textInput, Keyboard keyboard)
 		{
 			textInput.AutocapitalizationType = UITextAutocapitalizationType.None;

@@ -214,12 +214,14 @@ namespace Xamarin.Forms.Platform.iOS
 			ElementController?.SetValueFromRenderer(VisualElement.IsFocusedPropertyKey, true);
 		}
 
+		[PortHandler]
 		void OnSearchButtonClicked(object sender, EventArgs e)
 		{
 			Element?.OnSearchButtonPressed();
 			Control?.ResignFirstResponder();
 		}
 
+		[PortHandler]
 		void OnTextChanged(object sender, UISearchBarTextChangedEventArgs a)
 		{
 			// This only fires when text has been typed into the SearchBar; see UpdateText()
@@ -229,6 +231,7 @@ namespace Xamarin.Forms.Platform.iOS
 			UpdateOnTextChanged();
 		}
 
+		[PortHandler]
 		void UpdateCharacterSpacing()
 		{
 			_textField = _textField ?? Control.FindDescendantView<UITextField>();
@@ -339,6 +342,7 @@ namespace Xamarin.Forms.Platform.iOS
 			}
 		}
 
+		[PortHandler]
 		void UpdateText()
 		{
 			// There is at least one scenario where modifying the Element's Text value from TextChanged
@@ -353,6 +357,7 @@ namespace Xamarin.Forms.Platform.iOS
 			UpdateCancelButton();
 		}
 
+		[PortHandler]
 		void UpdateOnTextChanged()
 		{
 			ElementController?.SetValueFromRenderer(SearchBar.TextProperty, _typedText);
@@ -395,6 +400,7 @@ namespace Xamarin.Forms.Platform.iOS
 			return newLength <= Element?.MaxLength;
 		}
 
+		[PortHandler]
 		void UpdateKeyboard()
 		{
 			var keyboard = Element.Keyboard;
@@ -424,6 +430,7 @@ namespace Xamarin.Forms.Platform.iOS
 			Control.ReloadInputViews();
 		}
 
+		[PortHandler]
 		UIToolbar CreateNumericKeyboardAccessoryView()
 		{
 			var keyboardWidth = UIScreen.MainScreen.Bounds.Width;
