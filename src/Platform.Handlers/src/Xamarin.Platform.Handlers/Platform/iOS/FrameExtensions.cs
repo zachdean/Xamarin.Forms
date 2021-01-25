@@ -2,6 +2,11 @@
 {
 	public static class FrameExtensions
 	{
+		public static void UpdateBackgroundColor(this NativeFrame nativeFrame, IFrame frame)
+		{
+
+		}
+
 		public static void UpdateBorderColor(this NativeFrame nativeFrame, IFrame frame)
 		{
 

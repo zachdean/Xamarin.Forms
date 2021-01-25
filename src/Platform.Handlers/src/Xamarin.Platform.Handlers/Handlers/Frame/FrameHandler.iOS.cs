@@ -7,6 +7,13 @@
 			return new NativeFrame();
 		}
 
+		public static void MapBackgroundColor(FrameHandler handler, IFrame frame)
+		{
+			ViewHandler.CheckParameters(handler, frame);
+
+			handler.TypedNativeView?.UpdateBackgroundColor(frame);
+		}
+
 		public static void MapBorderColor(FrameHandler handler, IFrame frame)
 		{
 			ViewHandler.CheckParameters(handler, frame);

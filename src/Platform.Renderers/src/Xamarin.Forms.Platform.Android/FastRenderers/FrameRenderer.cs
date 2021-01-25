@@ -6,6 +6,7 @@ using Android.Graphics.Drawables;
 using Android.Views;
 using AndroidX.CardView.Widget;
 using AndroidX.Core.View;
+using Xamarin.Platform;
 using AColor = Android.Graphics.Color;
 using AView = Android.Views.View;
 
@@ -277,6 +278,7 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 			this.SetClipToOutline(shouldClip);
 		}
 
+		[PortHandler]
 		void UpdateBackgroundColor()
 		{
 			if (_disposed)
@@ -316,6 +318,7 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 			}
 		}
 
+		[PortHandler]
 		void UpdateBorderColor()
 		{
 			if (_disposed)
@@ -329,6 +332,7 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 				_backgroundDrawable.SetStroke(3, borderColor.ToAndroid());
 		}
 
+		[PortHandler]
 		void UpdateShadow()
 		{
 			if (_disposed)
@@ -345,6 +349,7 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 				CardElevation = 0f;
 		}
 
+		[PortHandler]
 		void UpdateCornerRadius()
 		{
 			if (_disposed)
