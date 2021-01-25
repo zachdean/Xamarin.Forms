@@ -66,13 +66,22 @@ namespace Xamarin.Platform.Layouts
 
 			public Rectangle ComputeFrameFor(IView view) 
 			{
-				var row = _grid.GetRow(view);
+				var rowStart = _grid.GetRow(view);
 				var column = _grid.GetColumn(view);
 
-				double top = TopEdgeOfRow(row);
+				var rowEnd = rowStart + _grid.GetRowSpan(view);
+
+				double top = TopEdgeOfRow(rowStart);
 				double left = LeftEdgeOfColumn(column);
+
 				double width = _columns[column].ActualWidth;
-				double height = _rows[row].ActualHeight;
+
+				double height = 0;
+
+				for (int n = rowStart; n < rowEnd; n++)
+				{ 
+					height += _rows[n].ActualHeight;
+				}
 
 				return new Rectangle(left, top, width, height);
 			}
@@ -137,7 +146,7 @@ namespace Xamarin.Platform.Layouts
 					var availableWidth = _gridWidthConstraint - GridWidth();
 					var availableHeight = _gridHeightConstraint - GridHeight();
 
-					var rowHeight = AutoRowWidth(rowIndex, availableWidth, availableHeight);
+					var rowHeight = AutoRowHeight(rowIndex, availableWidth, availableHeight);
 					_rows[rowIndex].ActualHeight = rowHeight;
 				}
 			}
@@ -160,7 +169,7 @@ namespace Xamarin.Platform.Layouts
 				}
 			}
 
-			double AutoRowWidth(int row, double availableWidth, double availableHeight) 
+			double AutoRowHeight(int row, double availableWidth, double availableHeight) 
 			{
 				double height = 0;
 				foreach (var view in _grid.Children)

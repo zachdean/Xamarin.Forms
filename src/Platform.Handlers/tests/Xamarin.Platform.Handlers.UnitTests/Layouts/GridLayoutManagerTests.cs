@@ -15,6 +15,7 @@ namespace Xamarin.Platform.Handlers.UnitTests.Layouts
 		const string GridAutoSizing = "GridAutoSizing";
 		const string GridStarSizing = "GridStarSizing";
 		const string GridAbsoluteSizing = "GridAbsoluteSizing";
+		const string GridSpan = "GridSpan";
 
 		IGridLayout CreateGridLayout(int rowSpacing = 0, int colSpacing = 0,
 			string rows = null, string columns = null)
@@ -116,11 +117,13 @@ namespace Xamarin.Platform.Handlers.UnitTests.Layouts
 			grid.GetColumnSpan(view).Returns(colSpan);
 		}
 
-		void MeasureAndArrange(IGridLayout grid, double widthConstraint, double heightConstraint) 
+		Size MeasureAndArrange(IGridLayout grid, double widthConstraint = double.PositiveInfinity, double heightConstraint = double.PositiveInfinity) 
 		{
 			var manager = new GridLayoutManager(grid);
 			var measuredSize = manager.Measure(widthConstraint, heightConstraint);
 			manager.ArrangeChildren(new Rectangle(Point.Zero, measuredSize));
+
+			return measuredSize;
 		}
 
 		void AssertArranged(IView view, double x, double y, double width, double height)
@@ -442,6 +445,50 @@ namespace Xamarin.Platform.Handlers.UnitTests.Layouts
 			// Because the auto column has no content, we expect it to have height zero
 			// and we expect that it won't add more row spacing 
 			Assert.That(measure.Width, Is.EqualTo(100 + 100 + 10));
+		}
+
+
+
+
+
+
+		[Category(GridSpan)]
+		[Test(Description = "Simple row spanning")]
+		public void ViewSpansRows()
+		{
+			var grid = CreateGridLayout(rows: "auto, auto");
+			var view0 = CreateTestView(new Size(100, 100));
+			AddChildren(grid, view0, view0);
+			SetLocation(grid, view0, rowSpan: 2);
+
+			var measuredSize = MeasureAndArrange(grid);
+
+			AssertArranged(view0, 0, 0, 100, 100);
+			Assert.That(measuredSize.Width, Is.EqualTo(100));
+
+			// We expect the rows to each get half the view height
+			Assert.That(measuredSize.Height, Is.EqualTo(100));
+		}
+
+		[Category(GridSpan)]
+		[Test(Description = "Simple row spanning with multiple views")]
+		public void ViewSpansRowsWhenOtherViewsPresent()
+		{
+			var grid = CreateGridLayout(rows: "auto, auto", columns: "auto, auto");
+			var view0 = CreateTestView(new Size(100, 100));
+			var view1 = CreateTestView(new Size(50, 50));
+			AddChildren(grid, view0, view1);
+			
+			SetLocation(grid, view0, rowSpan: 2);
+			SetLocation(grid, view1, row: 1, col: 1);
+
+			var measuredSize = MeasureAndArrange(grid);
+
+			Assert.That(measuredSize.Width, Is.EqualTo(150));
+			Assert.That(measuredSize.Height, Is.EqualTo(100));
+
+			AssertArranged(view0, 0, 0, 100, 100);
+			AssertArranged(view1, 100, 50, 50, 50);
 		}
 	}
 }
