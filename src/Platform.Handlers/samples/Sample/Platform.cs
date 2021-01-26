@@ -1,5 +1,4 @@
 ﻿using Xamarin.Forms;
-using Xamarin.Platform;
 using Xamarin.Platform.Handlers;
 using RegistrarHandlers = Xamarin.Platform.Registrar;
 
@@ -16,16 +15,15 @@ namespace Sample
 
 			HasInit = true;
 
-      RegistrarHandlers.Handlers.Register<Button, ButtonHandler>();
-      RegistrarHandlers.Handlers.Register<Label, LabelHandler>();
+			RegistrarHandlers.Handlers.Register<Button, ButtonHandler>();
+			RegistrarHandlers.Handlers.Register<Label, LabelHandler>();
 			RegistrarHandlers.Handlers.Register<Slider, SliderHandler>();
-      
+
 			RegistrarHandlers.Handlers.Register<VerticalStackLayout, LayoutHandler>();
 			RegistrarHandlers.Handlers.Register<HorizontalStackLayout, LayoutHandler>();
 			RegistrarHandlers.Handlers.Register<FlexLayout, LayoutHandler>();
 			RegistrarHandlers.Handlers.Register<Xamarin.Forms.StackLayout, LayoutHandler>();
 		}
-
 
 		void RegisterLegacyRendererAgainstFormsControl()
 		{
@@ -40,8 +38,7 @@ namespace Sample
 			// This registers the shim against the handler registrar
 			// So when the handler.registrar returns the RendererToHandlerShim
 			// Which will then forward the request to the old registrar
-			Registrar.Handlers.Register<Xamarin.Forms.Button, RendererToHandlerShim>();
-
+			RegistrarHandlers.Handlers.Register<Xamarin.Forms.Button, RendererToHandlerShim>();
 #endif
 		}
 	}
