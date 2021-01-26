@@ -1,7 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using Xamarin.Forms;
-using Xamarin.Platform;
+﻿using Xamarin.Forms;
 using Xamarin.Platform.Handlers;
 using RegistrarHandlers = Xamarin.Platform.Registrar;
 
@@ -18,18 +15,16 @@ namespace Sample
 
 			HasInit = true;
 
-			//RegistrarHandlers.Handlers.Register<Layout, LayoutHandler>();
-
 			RegistrarHandlers.Handlers.Register<Button, ButtonHandler>();
-			RegistrarHandlers.Handlers.Register<Slider, SliderHandler>();
-			RegistrarHandlers.Handlers.Register<Sample.VerticalStackLayout, LayoutHandler>();
-			RegistrarHandlers.Handlers.Register<Sample.HorizontalStackLayout, LayoutHandler>();
-			RegistrarHandlers.Handlers.Register<Xamarin.Forms.FlexLayout, LayoutHandler>();
-			RegistrarHandlers.Handlers.Register<Xamarin.Forms.StackLayout, LayoutHandler>();
-			//RegistrarHandlers.Handlers.Register<Entry, EntryHandler>();
 			RegistrarHandlers.Handlers.Register<Label, LabelHandler>();
-		}
+			RegistrarHandlers.Handlers.Register<Slider, SliderHandler>();
+			RegistrarHandlers.Handlers.Register<WebView, WebViewHandler>();
 
+			RegistrarHandlers.Handlers.Register<VerticalStackLayout, LayoutHandler>();
+			RegistrarHandlers.Handlers.Register<HorizontalStackLayout, LayoutHandler>();
+			RegistrarHandlers.Handlers.Register<FlexLayout, LayoutHandler>();
+			RegistrarHandlers.Handlers.Register<Xamarin.Forms.StackLayout, LayoutHandler>();
+		}
 
 		void RegisterLegacyRendererAgainstFormsControl()
 		{
@@ -45,7 +40,6 @@ namespace Sample
 			// So when the handler.registrar returns the RendererToHandlerShim
 			// Which will then forward the request to the old registrar
 			Registrar.Handlers.Register<Xamarin.Forms.Button, RendererToHandlerShim>();
-
 #endif
 		}
 	}

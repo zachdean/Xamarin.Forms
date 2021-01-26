@@ -36,6 +36,7 @@ namespace Sample
 
 			verticalStack.Add(horizontalStack);
 			verticalStack.Add(new Slider());
+			verticalStack.Add(new WebView());
 
 			return verticalStack;
 		}
