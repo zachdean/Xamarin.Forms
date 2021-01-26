@@ -8,8 +8,6 @@ namespace Xamarin.Platform
 
 		Color Color { get; }
 
-		Font Font { get; }
-
 		TextTransform TextTransform { get; }
 
 		double CharacterSpacing { get; }
