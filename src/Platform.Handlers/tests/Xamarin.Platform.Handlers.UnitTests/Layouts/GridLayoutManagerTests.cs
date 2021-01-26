@@ -173,11 +173,11 @@ namespace Xamarin.Platform.Handlers.UnitTests.Layouts
 			// Assuming no constraints on space
 			MeasureAndArrange(grid, double.PositiveInfinity, double.NegativeInfinity);
 
-			// Column width is 100, so despite the view being 10 wide, we expect it to be arranged with width 100
-			AssertArranged(view0, 0, 0, 100, viewSize.Height);
+			// Column width is 100, viewSize is less than that, so it should be able to layout out at full size
+			AssertArranged(view0, 0, 0, viewSize.Width, viewSize.Height);
 
 			// Since the first column is 100 wide, we expect the view in the second column to start at x = 100
-			AssertArranged(view1, 100, 0, 100, viewSize.Height);
+			AssertArranged(view1, 100, 0, viewSize.Width, viewSize.Height);
 		}
 
 		[Category(GridAbsoluteSizing)]
@@ -203,17 +203,16 @@ namespace Xamarin.Platform.Handlers.UnitTests.Layouts
 			// Assuming no constraints on space
 			MeasureAndArrange(grid, double.PositiveInfinity, double.NegativeInfinity);
 
-			// Column width is 100, so despite the view being 10 wide, we expect it to be arranged with width 100
-			AssertArranged(view0, 0, 0, 100, 10);
+			AssertArranged(view0, 0, 0, 10, 10);
 
 			// Since the first column is 100 wide, we expect the view in the second column to start at x = 100
-			AssertArranged(view1, 100, 0, 100, 10);
+			AssertArranged(view1, 100, 0, 10, 10);
 
-			// First column, width 100, second row, height 30 and y 10
-			AssertArranged(view2, 0, 10, 100, 30);
+			// First column, second row, so y should be 10
+			AssertArranged(view2, 0, 10, 10, 10);
 
-			// Second column, width 100 and x 100, second row, height 30
-			AssertArranged(view3, 100, 10, 100, 30);
+			// Second column, second row, so 100, 10
+			AssertArranged(view3, 100, 10, 10, 10);
 		}
 
 		[Category(GridAbsoluteSizing), Category(GridAutoSizing)]
@@ -235,11 +234,11 @@ namespace Xamarin.Platform.Handlers.UnitTests.Layouts
 			// Assuming no constraints on space
 			MeasureAndArrange(grid, double.PositiveInfinity, double.NegativeInfinity);
 
-			// Column width is 100, so despite the view being 10 wide, we expect it to be arranged with width 100
-			AssertArranged(view0, 0, 0, 100, viewSize.Height);
+			// Column width is 100, viewSize is less, so it should be able to layout at full size
+			AssertArranged(view0, 0, 0, viewSize.Width, viewSize.Height);
 
 			// Since the first column is 100 wide, we expect the view in the second column to start at x = 100
-			AssertArranged(view1, 100, 0, 100, viewSize.Height);
+			AssertArranged(view1, 100, 0, viewSize.Width, viewSize.Height);
 		}
 
 		[Category(GridAbsoluteSizing), Category(GridAutoSizing)]
@@ -261,11 +260,11 @@ namespace Xamarin.Platform.Handlers.UnitTests.Layouts
 			// Assuming no constraints on space
 			MeasureAndArrange(grid, double.PositiveInfinity, double.NegativeInfinity);
 
-			// Row height is 100, so despite the view being 10 tall, we expect it to be arranged with height 100
-			AssertArranged(view0, 0, 0, viewSize.Width, 100);
+			// Row height is 100, so full view should fit
+			AssertArranged(view0, 0, 0, viewSize.Width, viewSize.Height);
 
 			// Since the first row is 100 tall, we expect the view in the second row to start at y = 100
-			AssertArranged(view1, 0, 100, viewSize.Width, 100);
+			AssertArranged(view1, 0, 100, viewSize.Width, viewSize.Height);
 		}
 
 		[Category(GridSpacing)]
@@ -447,18 +446,13 @@ namespace Xamarin.Platform.Handlers.UnitTests.Layouts
 			Assert.That(measure.Width, Is.EqualTo(100 + 100 + 10));
 		}
 
-
-
-
-
-
 		[Category(GridSpan)]
 		[Test(Description = "Simple row spanning")]
 		public void ViewSpansRows()
 		{
 			var grid = CreateGridLayout(rows: "auto, auto");
 			var view0 = CreateTestView(new Size(100, 100));
-			AddChildren(grid, view0, view0);
+			AddChildren(grid, view0);
 			SetLocation(grid, view0, rowSpan: 2);
 
 			var measuredSize = MeasureAndArrange(grid);
@@ -484,11 +478,33 @@ namespace Xamarin.Platform.Handlers.UnitTests.Layouts
 
 			var measuredSize = MeasureAndArrange(grid);
 
-			Assert.That(measuredSize.Width, Is.EqualTo(150));
+			Assert.That(measuredSize.Width, Is.EqualTo(100 + 50));
 			Assert.That(measuredSize.Height, Is.EqualTo(100));
 
 			AssertArranged(view0, 0, 0, 100, 100);
-			AssertArranged(view1, 100, 50, 50, 50);
+			AssertArranged(view1, 100, 25, 50, 50);
+		}
+
+
+		[Category(GridSpan)]
+		[Test(Description = "Simple column spanning with multiple views")]
+		public void ViewSpansColumnsWhenOtherViewsPresent()
+		{
+			var grid = CreateGridLayout(rows: "auto, auto", columns: "auto, auto");
+			var view0 = CreateTestView(new Size(100, 100));
+			var view1 = CreateTestView(new Size(50, 50));
+			AddChildren(grid, view0, view1);
+
+			SetLocation(grid, view0, colSpan: 2);
+			SetLocation(grid, view1, row: 1, col: 1);
+
+			var measuredSize = MeasureAndArrange(grid);
+
+			Assert.That(measuredSize.Width, Is.EqualTo(100));
+			Assert.That(measuredSize.Height, Is.EqualTo(100 + 50));
+
+			AssertArranged(view0, 0, 0, 100, 100);
+			AssertArranged(view1, 25, 100, 50, 50);
 		}
 	}
 }

@@ -27,7 +27,10 @@ namespace Xamarin.Platform.Layouts
 
 			foreach (var view in Grid.Children)
 			{
-				var destination = structure.ComputeFrameFor(view);
+				var cell = structure.ComputeFrameFor(view);
+
+				// This is basically LayoutOptions.Start as a default
+				var destination = new Rectangle(cell.X, cell.Y, view.DesiredSize.Width, view.DesiredSize.Height);
 				view.Arrange(destination);
 			}
 		}
@@ -40,6 +43,9 @@ namespace Xamarin.Platform.Layouts
 
 			Row[] _rows { get; }
 			Column[] _columns { get; }
+			Cell[] _cells { get; }
+
+			readonly Dictionary<SpanKey, Span> _spans = new Dictionary<SpanKey, Span>();
 
 			public GridStructure(IGridLayout grid, double widthConstraint, double heightConstraint) 
 			{
@@ -60,8 +66,40 @@ namespace Xamarin.Platform.Layouts
 					_columns[n] = new Column(_grid.ColumnDefinitions[n]);
 				}
 
-				ComputeAutoRowHeights();
-				ComputeAutoColumnWidths();
+				_cells = new Cell[_grid.Children.Count];
+
+				InitializeCells();
+
+				MeasureCells();
+			}
+
+			void InitializeCells() 
+			{
+				for (int n = 0; n < _grid.Children.Count; n++)
+				{
+					var view = _grid.Children[n];
+					var column = _grid.GetColumn(view);
+					var columnSpan = _grid.GetColumnSpan(view);
+
+					var columnGridLengthType = GridLengthType.None;
+
+					for (int columnIndex = column; columnIndex < column + columnSpan; columnIndex++)
+					{
+						columnGridLengthType |= ToGridLengthType(_columns[columnIndex].ColumnDefinition.Width.GridUnitType);
+					}
+
+					var row = _grid.GetRow(view);
+					var rowSpan = _grid.GetRowSpan(view);
+
+					var rowGridLengthType = GridLengthType.None;
+
+					for (int rowIndex = column; rowIndex < row + rowSpan; rowIndex++)
+					{
+						rowGridLengthType |= ToGridLengthType(_rows[rowIndex].RowDefinition.Height.GridUnitType);
+					}
+
+					_cells[n] = new Cell(n, row, column, rowSpan, columnSpan, columnGridLengthType, rowGridLengthType);
+				}
 			}
 
 			public Rectangle ComputeFrameFor(IView view) 
@@ -133,12 +171,14 @@ namespace Xamarin.Platform.Layouts
 				return width;
 			}
 
-			void ComputeAutoRowHeights() 
+			void MeasureCells() 
 			{
-				for (int rowIndex = 0; rowIndex < _rows.Length; rowIndex++)
+				for (int n = 0; n < _cells.Length; n++)
 				{
-					var row = _rows[rowIndex];
-					if (row.IsMeasured || row.IsStar)
+					var cell = _cells[n];
+
+					if (cell.ColumnGridLengthType == GridLengthType.Absolute
+						&& cell.RowGridLengthType == GridLengthType.Absolute)
 					{
 						continue;
 					}
@@ -146,59 +186,113 @@ namespace Xamarin.Platform.Layouts
 					var availableWidth = _gridWidthConstraint - GridWidth();
 					var availableHeight = _gridHeightConstraint - GridHeight();
 
-					var rowHeight = AutoRowHeight(rowIndex, availableWidth, availableHeight);
-					_rows[rowIndex].ActualHeight = rowHeight;
+					var measure = _grid.Children[cell.ViewIndex].Measure(availableWidth, availableHeight);
+
+					if (cell.ColumnGridLengthType == GridLengthType.Auto)
+					{
+						if (cell.ColumnSpan == 1)
+						{
+							_columns[cell.Column].Update(measure.Width);
+						}
+						else
+						{
+							var span = new Span(cell.Column, cell.ColumnSpan, true, measure.Width);
+							TrackSpan(span);
+						}
+					}
+
+					if (cell.RowGridLengthType == GridLengthType.Auto)
+					{
+						if (cell.RowSpan == 1)
+						{
+							_rows[cell.Row].Update(measure.Height);
+						}
+						else
+						{
+							var span = new Span(cell.Row, cell.RowSpan, false, measure.Height);
+							TrackSpan(span);
+						}
+					}
+				}
+
+				ResolveSpans();
+			}
+
+			void TrackSpan(Span span) 
+			{
+				if (_spans.TryGetValue(span.Key, out Span otherSpan))
+				{
+					// This span may replace an equivalent but smaller span
+					if (span.Requested > otherSpan.Requested)
+					{
+						_spans[span.Key] = span;
+					}
+				}
+				else
+				{
+					_spans[span.Key] = span;
 				}
 			}
 
-			void ComputeAutoColumnWidths()
+			void ResolveSpans() 
 			{
-				for (int columnIndex = 0; columnIndex < _columns.Length; columnIndex++)
+				foreach (var span in _spans.Values)
 				{
-					var column = _columns[columnIndex];
-					if (column.IsMeasured || column.IsStar)
+					if (span.IsColumn)
 					{
-						continue;
+						ResolveColumnSpan(span.Start, span.Length, span.Requested);
 					}
-
-					var availableWidth = _gridWidthConstraint - GridWidth();
-					var availableHeight = _gridHeightConstraint - GridHeight();
-
-					var columnWidth = AutoColumnWidth(columnIndex, availableWidth, availableHeight);
-					_columns[columnIndex].ActualWidth = columnWidth;
+					else
+					{
+						ResolveRowSpan(span.Start, span.Length, span.Requested);
+					}
 				}
 			}
 
-			double AutoRowHeight(int row, double availableWidth, double availableHeight) 
+			void ResolveColumnSpan(int start, int length, double requested)
 			{
-				double height = 0;
-				foreach (var view in _grid.Children)
-				{
-					if (_grid.GetRow(view) != row)
-					{
-						continue;
-					}
+				double currentSize = 0;
+				var end = start + length;
 
-					height = Math.Max(height, view.Measure(availableWidth, availableHeight).Height);
+				for (int n = start; n < end; n++)
+				{
+					currentSize += _columns[n].ActualWidth;
 				}
 
-				return height;
+				if (requested <= currentSize)
+				{
+					return;
+				}
+
+				double required = requested - currentSize;
+
+				for (int n = start; n < end; n++)
+				{
+					_columns[n].ActualWidth += (required / length);
+				}
 			}
 
-			double AutoColumnWidth(int column, double availableWidth, double availableHeight)
+			void ResolveRowSpan(int start, int length, double requested) 
 			{
-				double width = 0;
-				foreach (var view in _grid.Children)
-				{
-					if (_grid.GetColumn(view) != column)
-					{
-						continue;
-					}
+				double currentSize = 0;
+				var end = start + length;
 
-					width = Math.Max(width, view.Measure(availableWidth, availableHeight).Width);
+				for (int n = start; n < end; n++)
+				{
+					currentSize += _rows[n].ActualHeight;
 				}
 
-				return width;
+				if (requested <= currentSize)
+				{
+					return;
+				}
+
+				double required = requested - currentSize;
+
+				for (int n = start; n < end; n++)
+				{
+					_rows[n].ActualHeight += (required / length);
+				}
 			}
 
 			double LeftEdgeOfColumn(int column)
@@ -228,11 +322,102 @@ namespace Xamarin.Platform.Layouts
 			}
 		}
 
+		class Span
+		{
+			public int Start { get; }
+			public int Length { get; }
+			public bool IsColumn { get; }
+			public double Requested { get; }
+
+			public SpanKey Key { get; }
+
+			public Span(int start, int length, bool isColumn, double value)
+			{
+				Start = start;
+				Length = length;
+				IsColumn = isColumn;
+				Requested = value;
+
+				Key = new SpanKey(Start, Length, IsColumn);
+			}
+		}
+
+		internal class SpanKey
+		{
+			public SpanKey(int start, int length, bool isColumn)
+			{
+				Start = start;
+				Length = length;
+				IsColumn = isColumn;
+			}
+
+			public int Start { get; }
+			public int Length { get; }
+			public bool IsColumn { get; }
+
+			public override bool Equals(object? obj)
+			{
+				return obj is SpanKey key &&
+					   Start == key.Start &&
+					   Length == key.Length &&
+					   IsColumn == key.IsColumn;
+			}
+
+			public override int GetHashCode()
+			{
+				return Start.GetHashCode() ^ Length.GetHashCode() ^ IsColumn.GetHashCode();
+			}
+		}
+
+		class Cell 
+		{ 
+			public int ViewIndex { get; }
+			public int Row { get; }
+			public int Column { get; }
+			public int RowSpan { get; }
+			public int ColumnSpan { get; }
+
+			public GridLengthType ColumnGridLengthType { get; }
+			public GridLengthType RowGridLengthType { get; }
+
+			public Cell(int viewIndex, int row, int column, int rowSpan, int columnSpan, 
+				GridLengthType columnGridLengthType, GridLengthType rowGridLengthType) 
+			{
+				ViewIndex = viewIndex;
+				Row = row;
+				Column = column;
+				RowSpan = rowSpan;
+				ColumnSpan = columnSpan;
+				ColumnGridLengthType = columnGridLengthType;
+				RowGridLengthType = rowGridLengthType;
+			}
+		}
+
+		[Flags]
+		enum GridLengthType 
+		{ 
+			None = 0, 
+			Absolute = 1,
+			Auto = 2,
+			Star = 4
+		}
+
+		static GridLengthType ToGridLengthType(GridUnitType gridUnitType) 
+		{
+			return gridUnitType switch
+			{
+				GridUnitType.Absolute => GridLengthType.Absolute,
+				GridUnitType.Star => GridLengthType.Star,
+				GridUnitType.Auto => GridLengthType.Auto,
+				_ => GridLengthType.None,
+			};
+		}
+
 		class Column 
 		{
 			public IGridColumnDefinition ColumnDefinition { get; set; }
 
-			public double ActualWidth { get; set; } = -1;
+			public double ActualWidth { get; set; }
 
 			public Column(IGridColumnDefinition columnDefinition)
 			{
@@ -243,18 +428,20 @@ namespace Xamarin.Platform.Layouts
 				}
 			}
 
-			public bool IsMeasured => ActualWidth > -1;
-
-			public bool IsStar => ColumnDefinition.Width.IsStar;
-
-			public bool IsAuto => ColumnDefinition.Width.IsAuto;
+			public void Update(double value) 
+			{
+				if (value > ActualWidth)
+				{
+					ActualWidth = value;
+				}
+			}
 		}
 
 		class Row 
 		{
 			public IGridRowDefinition RowDefinition { get; set; }
 
-			public double ActualHeight { get; set; } = -1;
+			public double ActualHeight { get; set; }
 
 			public Row(IGridRowDefinition rowDefinition) 
 			{ 
@@ -265,11 +452,13 @@ namespace Xamarin.Platform.Layouts
 				}
 			}
 
-			public bool IsMeasured => ActualHeight > -1;
-
-			public bool IsStar => RowDefinition.Height.IsStar;
-
-			public bool IsAuto => RowDefinition.Height.IsAuto;
+			public void Update(double value)
+			{
+				if (value > ActualHeight)
+				{
+					ActualHeight = value;
+				}
+			}
 		}
 	}
 }
