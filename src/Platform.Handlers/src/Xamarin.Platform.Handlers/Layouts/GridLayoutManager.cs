@@ -93,7 +93,7 @@ namespace Xamarin.Platform.Layouts
 
 					var rowGridLengthType = GridLengthType.None;
 
-					for (int rowIndex = column; rowIndex < row + rowSpan; rowIndex++)
+					for (int rowIndex = row; rowIndex < row + rowSpan; rowIndex++)
 					{
 						rowGridLengthType |= ToGridLengthType(_rows[rowIndex].RowDefinition.Height.GridUnitType);
 					}
@@ -275,6 +275,11 @@ namespace Xamarin.Platform.Layouts
 				for (int n = start; n < end; n++)
 				{
 					currentSize += _rows[n].Size;
+
+					if (n > start)
+					{
+						currentSize += _grid.RowSpacing;
+					}
 				}
 
 				if (requested <= currentSize)

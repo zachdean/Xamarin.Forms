@@ -486,6 +486,31 @@ namespace Xamarin.Platform.Handlers.UnitTests.Layouts
 		}
 
 		[Category(GridSpan)]
+		[Category(GridSpacing)]
+		[Test(Description = "Row spanning with row spacing")]
+		public void RowSpanningShouldAccountForSpacing()
+		{
+			var grid = CreateGridLayout(rows: "auto, auto", columns: "auto, auto", rowSpacing: 5);
+			var view0 = CreateTestView(new Size(100, 100));
+			var view1 = CreateTestView(new Size(50, 50));
+			var view2 = CreateTestView(new Size(50, 50));
+			AddChildren(grid, view0, view1, view2);
+
+			SetLocation(grid, view0, rowSpan: 2);
+			SetLocation(grid, view1, row: 0, col: 1);
+			SetLocation(grid, view2, row: 1, col: 1);
+
+			var measuredSize = MeasureAndArrange(grid);
+
+			Assert.That(measuredSize.Width, Is.EqualTo(150));
+			Assert.That(measuredSize.Height, Is.EqualTo(50 + 50 + 5));
+
+			AssertArranged(view0, 0, 0, 100, 100);
+			AssertArranged(view1, 100, 0, 50, 50);
+			AssertArranged(view2, 100, 55, 50, 50);
+		}
+
+		[Category(GridSpan)]
 		[Test(Description = "Simple column spanning with multiple views")]
 		public void ViewSpansColumnsWhenOtherViewsPresent()
 		{
@@ -506,8 +531,32 @@ namespace Xamarin.Platform.Handlers.UnitTests.Layouts
 			AssertArranged(view1, 25, 100, 50, 50);
 		}
 
-		// TODO ezhart Add tests for views spanning rows and columns with spacing; the spacing counts as part of the size
-		// We'll have to update ComputeFrameFor to account for spacing, as well as ResolveSpans
+		[Category(GridSpan)]
+		[Category(GridSpacing)]
+		[Test(Description = "Column spanning with column spacing")]
+		public void ColumnSpanningShouldAccountForSpacing()
+		{
+			var grid = CreateGridLayout(rows: "auto, auto", columns: "auto, auto", colSpacing: 5);
+			var view0 = CreateTestView(new Size(100, 100));
+			var view1 = CreateTestView(new Size(50, 50));
+			var view2 = CreateTestView(new Size(50, 50));
+			AddChildren(grid, view0, view1, view2);
+
+			SetLocation(grid, view0, colSpan: 2);
+			SetLocation(grid, view1, row: 1, col: 0);
+			SetLocation(grid, view2, row: 1, col: 1);
+
+			var measuredSize = MeasureAndArrange(grid);
+
+			Assert.That(measuredSize.Width, Is.EqualTo(50 + 50 + 5));
+			Assert.That(measuredSize.Height, Is.EqualTo(100 + 50));
+
+			AssertArranged(view0, 0, 0, 100, 100);
+			AssertArranged(view1, 0, 100, 50, 50);
+			AssertArranged(view2, 55, 100, 50, 50);
+		}
+
+		
 
 
 		// TODO ezhart Other tests - mix rowspan/colspan; grid measure with absolute rows/cols that have no views;
