@@ -17,7 +17,7 @@ namespace Xamarin.Forms.Platform.iOS
 
 		public override UIViewController ChildViewControllerForStatusBarStyle()
 		{
-			return ChildViewControllers?.LastOrDefault() ?? base.ChildViewControllerForStatusBarStyle();
+			return ChildViewControllers.Length > 0 ? ChildViewControllers[0] : base.ChildViewControllerForStatusBarStyle();
 		}
 	}
 
