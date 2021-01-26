@@ -485,7 +485,6 @@ namespace Xamarin.Platform.Handlers.UnitTests.Layouts
 			AssertArranged(view1, 100, 25, 50, 50);
 		}
 
-
 		[Category(GridSpan)]
 		[Test(Description = "Simple column spanning with multiple views")]
 		public void ViewSpansColumnsWhenOtherViewsPresent()
@@ -506,5 +505,13 @@ namespace Xamarin.Platform.Handlers.UnitTests.Layouts
 			AssertArranged(view0, 0, 0, 100, 100);
 			AssertArranged(view1, 25, 100, 50, 50);
 		}
+
+		// TODO ezhart Add tests for views spanning rows and columns with spacing; the spacing counts as part of the size
+		// We'll have to update ComputeFrameFor to account for spacing, as well as ResolveSpans
+
+
+		// TODO ezhart Other tests - mix rowspan/colspan; grid measure with absolute rows/cols that have no views;
+		// Row/col spans with controls in each affected row/column
+		// Row/col spans where the spanning view is smaller than the other views
 	}
 }

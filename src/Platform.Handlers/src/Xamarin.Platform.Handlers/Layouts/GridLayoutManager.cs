@@ -104,21 +104,27 @@ namespace Xamarin.Platform.Layouts
 
 			public Rectangle ComputeFrameFor(IView view) 
 			{
-				var rowStart = _grid.GetRow(view);
-				var column = _grid.GetColumn(view);
+				var firstColumn = _grid.GetColumn(view);
+				var lastColumn = firstColumn + _grid.GetColumnSpan(view);
 
-				var rowEnd = rowStart + _grid.GetRowSpan(view);
+				var firstRow = _grid.GetRow(view);
+				var lastRow = firstRow + _grid.GetRowSpan(view);
 
-				double top = TopEdgeOfRow(rowStart);
-				double left = LeftEdgeOfColumn(column);
+				double top = TopEdgeOfRow(firstRow);
+				double left = LeftEdgeOfColumn(firstColumn);
 
-				double width = _columns[column].ActualWidth;
+				double width = 0;
+
+				for (int n = firstColumn; n < lastColumn; n++)
+				{
+					width += _columns[n].Size;
+				}
 
 				double height = 0;
 
-				for (int n = rowStart; n < rowEnd; n++)
+				for (int n = firstRow; n < lastRow; n++)
 				{ 
-					height += _rows[n].ActualHeight;
+					height += _rows[n].Size;
 				}
 
 				return new Rectangle(left, top, width, height);
@@ -126,49 +132,36 @@ namespace Xamarin.Platform.Layouts
 
 			public double GridHeight()
 			{
-				double height = 0;
-
-				for (int n = 0; n < _rows.Length; n++)
-				{
-					var rowHeight = _rows[n].ActualHeight;
-					
-					if (rowHeight <= 0)
-					{
-						continue;
-					}
-					
-					height += rowHeight;
-					
-					if (n > 0)
-					{
-						height += _grid.RowSpacing;
-					}
-				}
-
-				return height;
+				return SumDefinitions(_rows, _grid.RowSpacing);
 			}
 
 			public double GridWidth()
 			{
-				double width = 0;
+				return SumDefinitions(_columns, _grid.ColumnSpacing);
+			}
 
-				for (int n = 0; n < _columns.Length; n++)
+			double SumDefinitions(Definition[] definitions, double spacing)
+			{
+				double sum = 0;
+
+				for (int n = 0; n < definitions.Length; n++)
 				{
-					var colWidth = _columns[n].ActualWidth;
-					if (colWidth <= 0)
+					var current = definitions[n].Size;
+
+					if (current <= 0)
 					{
 						continue;
 					}
 
-					width += colWidth;
+					sum += current;
 
 					if (n > 0)
 					{
-						width += _grid.ColumnSpacing;
+						sum += spacing;
 					}
 				}
 
-				return width;
+				return sum;
 			}
 
 			void MeasureCells() 
@@ -249,6 +242,8 @@ namespace Xamarin.Platform.Layouts
 				}
 			}
 
+			// TODO ezhart I think we can consolidate Resolve* to one method with the correct Definitions[] passed in
+
 			void ResolveColumnSpan(int start, int length, double requested)
 			{
 				double currentSize = 0;
@@ -256,7 +251,7 @@ namespace Xamarin.Platform.Layouts
 
 				for (int n = start; n < end; n++)
 				{
-					currentSize += _columns[n].ActualWidth;
+					currentSize += _columns[n].Size;
 				}
 
 				if (requested <= currentSize)
@@ -268,7 +263,7 @@ namespace Xamarin.Platform.Layouts
 
 				for (int n = start; n < end; n++)
 				{
-					_columns[n].ActualWidth += (required / length);
+					_columns[n].Size += (required / length);
 				}
 			}
 
@@ -279,7 +274,7 @@ namespace Xamarin.Platform.Layouts
 
 				for (int n = start; n < end; n++)
 				{
-					currentSize += _rows[n].ActualHeight;
+					currentSize += _rows[n].Size;
 				}
 
 				if (requested <= currentSize)
@@ -291,7 +286,7 @@ namespace Xamarin.Platform.Layouts
 
 				for (int n = start; n < end; n++)
 				{
-					_rows[n].ActualHeight += (required / length);
+					_rows[n].Size += (required / length);
 				}
 			}
 
@@ -301,7 +296,7 @@ namespace Xamarin.Platform.Layouts
 
 				for (int n = 0; n < column; n++)
 				{
-					left += _columns[n].ActualWidth;
+					left += _columns[n].Size;
 					left += _grid.ColumnSpacing;
 				}
 
@@ -314,7 +309,7 @@ namespace Xamarin.Platform.Layouts
 
 				for (int n = 0; n < row; n++)
 				{
-					top += _rows[n].ActualHeight;
+					top += _rows[n].Size;
 					top += _grid.RowSpacing;
 				}
 
@@ -413,50 +408,43 @@ namespace Xamarin.Platform.Layouts
 			};
 		}
 
-		class Column 
+		abstract class Definition 
+		{ 
+			public double Size { get; set; }
+
+			public void Update(double size)
+			{
+				if (size > Size)
+				{
+					Size = size;
+				}
+			}
+		}
+
+		class Column : Definition
 		{
 			public IGridColumnDefinition ColumnDefinition { get; set; }
-
-			public double ActualWidth { get; set; }
 
 			public Column(IGridColumnDefinition columnDefinition)
 			{
 				ColumnDefinition = columnDefinition;
 				if (columnDefinition.Width.IsAbsolute)
 				{
-					ActualWidth = columnDefinition.Width.Value;
-				}
-			}
-
-			public void Update(double value) 
-			{
-				if (value > ActualWidth)
-				{
-					ActualWidth = value;
+					Size = columnDefinition.Width.Value;
 				}
 			}
 		}
 
-		class Row 
+		class Row : Definition
 		{
 			public IGridRowDefinition RowDefinition { get; set; }
-
-			public double ActualHeight { get; set; }
 
 			public Row(IGridRowDefinition rowDefinition) 
 			{ 
 				RowDefinition = rowDefinition;
 				if (rowDefinition.Height.IsAbsolute)
 				{
-					ActualHeight = rowDefinition.Height.Value;
-				}
-			}
-
-			public void Update(double value)
-			{
-				if (value > ActualHeight)
-				{
-					ActualHeight = value;
+					Size = rowDefinition.Height.Value;
 				}
 			}
 		}
