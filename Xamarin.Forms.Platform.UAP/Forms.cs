@@ -49,6 +49,12 @@ namespace Xamarin.Forms
 
 			Device.SetIdiom(TargetIdiom.Tablet);
 			Device.SetFlowDirection(GetFlowDirection());
+
+			var platformServices = new WindowsPlatformServices(Window.Current.Dispatcher);
+
+			Device.PlatformServices = platformServices;
+			Device.PlatformInvalidator = platformServices;
+			
 			// TODO SHANE WINUI
 			//if(Window.Current?.DispatcherQueue != null)
 			//	Device.PlatformServices = new WindowsPlatformServices(Window.Current.DispatcherQueue);

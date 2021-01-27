@@ -1,30 +1,30 @@
 ﻿using System;
-using Android.Widget;
-using Android.App;
 using System.Collections.Generic;
-using Android.Views;
 using System.ComponentModel;
 using System.Linq;
-using Xamarin.Forms.Controls;
-using Xamarin.Forms.Platform.Android;
-using Xamarin.Forms;
-using Xamarin.Forms.ControlGallery.Android;
-using Android.Graphics.Drawables;
-using System.Threading.Tasks;
-using Android.Content;
-using Android.Runtime;
-using Android.Util;
-using AButton = Android.Widget.Button;
-using AView = Android.Views.View;
-using Android.OS;
 using System.Reflection;
+using System.Threading.Tasks;
+using Android.App;
+using Android.Content;
+using Android.Graphics.Drawables;
+using Android.OS;
+using Android.Runtime;
 using Android.Text;
 using Android.Text.Method;
+using Android.Util;
+using Android.Views;
+using Android.Widget;
+using AndroidX.AppCompat.Widget;
+using Xamarin.Forms;
+using Xamarin.Forms.ControlGallery.Android;
+using Xamarin.Forms.Controls;
 using Xamarin.Forms.Controls.Issues;
+using Xamarin.Forms.Platform.Android;
 using FragmentTransaction = AndroidX.Fragment.App.FragmentTransaction;
-using NestedScrollView = global::AndroidX.Core.Widget.NestedScrollView;
-using AMenuItemCompat = global::Android.Support.V4.View.MenuItemCompat;
+using NestedScrollView = AndroidX.Core.Widget.NestedScrollView;
+using AMenuItemCompat = AndroidX.Core.View.MenuItemCompat;
 using IOPath = System.IO.Path;
+using AView = Android.Views.View;
 
 [assembly: ExportRenderer(typeof(Issue5461.ScrollbarFadingEnabledFalseScrollView), typeof(ScrollbarFadingEnabledFalseScrollViewRenderer))]
 [assembly: ExportRenderer(typeof(Issue1942.CustomGrid), typeof(Issue1942GridRenderer))]
@@ -51,14 +51,35 @@ using IOPath = System.IO.Path;
 [assembly: ExportRenderer(typeof(Issue8801.PopupStackLayout), typeof(Issue8801StackLayoutRenderer))]
 [assembly: ExportRenderer(typeof(Xamarin.Forms.Controls.Tests.TestClasses.CustomButton), typeof(CustomButtonRenderer))]
 [assembly: ExportRenderer(typeof(ScrolView11185), typeof(ScrollViewFadeRenderer))]
+[assembly: ExportRenderer(typeof(ShellWithCustomRendererDisabledAnimations), typeof(ShellWithCustomRendererDisabledAnimationsRenderer))]
+[assembly: ExportRenderer(typeof(FlyoutPage), typeof(NativeDroidFlyoutPage))]
 
-#if PRE_APPLICATION_CLASS
-#elif FORMS_APPLICATION_ACTIVITY
-#else
-[assembly: ExportRenderer(typeof(MasterDetailPage), typeof(NativeDroidMasterDetail))]
-#endif
 namespace Xamarin.Forms.ControlGallery.Android
 {
+	public class ShellWithCustomRendererDisabledAnimationsRenderer : ShellRenderer
+	{
+		public ShellWithCustomRendererDisabledAnimationsRenderer(Context context) : base(context)
+		{
+		}
+
+		protected override IShellItemRenderer CreateShellItemRenderer(ShellItem shellItem)
+		{
+			return new ShellWithCustomRendererDisabledAnimationsShellItemRenderer(this);
+		}
+
+		public class ShellWithCustomRendererDisabledAnimationsShellItemRenderer : ShellItemRenderer
+		{
+			public ShellWithCustomRendererDisabledAnimationsShellItemRenderer(IShellContext shellContext) : base(shellContext)
+			{
+			}
+
+			protected override void SetupAnimation(ShellNavigationSource navSource, AndroidX.Fragment.App.FragmentTransaction t, Page page)
+			{
+				// Don't setup any animations
+			}
+		}
+	}
+
 	public sealed class ScrollViewFadeRenderer : ScrollViewRenderer
 	{
 		public ScrollViewFadeRenderer(Context context) : base(context)
@@ -130,7 +151,7 @@ namespace Xamarin.Forms.ControlGallery.Android
 		}
 	}
 
-	public class NonAppCompatSwitchRenderer : Xamarin.Forms.Platform.Android.SwitchRenderer
+	public class NonAppCompatSwitchRenderer : Xamarin.Forms.Platform.Android.AppCompat.SwitchRenderer
 	{
 		public NonAppCompatSwitchRenderer(Context context) : base(context)
 		{
@@ -148,7 +169,7 @@ namespace Xamarin.Forms.ControlGallery.Android
 	}
 
 	public class AttachedStateEffectLabelRenderer :
-#if TEST_EXPERIMENTAL_RENDERERS
+#if !LEGACY_RENDERERS
 		Platform.Android.FastRenderers.LabelRenderer
 #else
 		LabelRenderer
@@ -159,13 +180,13 @@ namespace Xamarin.Forms.ControlGallery.Android
 		}
 	}
 
-	public class NativeDroidMasterDetail : Xamarin.Forms.Platform.Android.AppCompat.MasterDetailPageRenderer
+	public class NativeDroidFlyoutPage : Xamarin.Forms.Platform.Android.AppCompat.MasterDetailPageRenderer
 	{
-		MasterDetailPage _page;
+		FlyoutPage _page;
 		bool _disposed;
 
 #pragma warning disable 618
-		public NativeDroidMasterDetail()
+		public NativeDroidFlyoutPage()
 #pragma warning restore 618
 		{
 			System.Diagnostics.Debug.WriteLine($">>>>> NativeDroidMasterDetail NativeDroidMasterDetail 53: This is the obsolete constructor being selected");
@@ -180,7 +201,7 @@ namespace Xamarin.Forms.ControlGallery.Android
 				return;
 			}
 
-			_page = newElement as MasterDetailPage;
+			_page = newElement as FlyoutPage;
 			_page.PropertyChanged += Page_PropertyChanged;
 			_page.LayoutChanged += Page_LayoutChanged;
 		}
@@ -607,7 +628,7 @@ namespace Xamarin.Forms.ControlGallery.Android
 	}
 
 	[Preserve]
-	public class CustomNativeButton : AButton
+	public class CustomNativeButton : AppCompatButton
 	{
 		public CustomNativeButton(IntPtr javaReference, JniHandleOwnership transfer) : base(javaReference, transfer)
 		{
@@ -624,19 +645,15 @@ namespace Xamarin.Forms.ControlGallery.Android
 		public CustomNativeButton(Context context, IAttributeSet attrs, int defStyleAttr) : base(context, attrs, defStyleAttr)
 		{
 		}
-
-		public CustomNativeButton(Context context, IAttributeSet attrs, int defStyleAttr, int defStyleRes) : base(context, attrs, defStyleAttr, defStyleRes)
-		{
-		}
 	}
 
-	public class CustomButtonRenderer : ButtonRenderer
+	public class CustomButtonRenderer : Platform.Android.AppCompat.ButtonRenderer
 	{
 		public CustomButtonRenderer(Context context) : base(context)
 		{
 		}
 
-		protected override AButton CreateNativeControl()
+		protected override AppCompatButton CreateNativeControl()
 		{
 			return new CustomNativeButton(Context);
 		}
@@ -913,11 +930,7 @@ namespace Xamarin.Forms.ControlGallery.Android
 
 #pragma warning disable CS0618 // Leaving in old constructor so we can verify it works
 	public class NoFlashTestNavigationPage
-#if FORMS_APPLICATION_ACTIVITY
-		: Xamarin.Forms.Platform.Android.NavigationRenderer
-#else
 		: Xamarin.Forms.Platform.Android.AppCompat.NavigationPageRenderer
-#endif
 	{
 #if !FORMS_APPLICATION_ACTIVITY
 		protected override void SetupPageTransition(FragmentTransaction transaction, bool isPush)
@@ -930,11 +943,7 @@ namespace Xamarin.Forms.ControlGallery.Android
 
 #pragma warning disable CS0618 // Leaving in old constructor so we can verify it works
 	public class QuickCollectNavigationPageRenderer
-#if FORMS_APPLICATION_ACTIVITY
-		: Xamarin.Forms.Platform.Android.NavigationRenderer
-#else
 		: Xamarin.Forms.Platform.Android.AppCompat.NavigationPageRenderer
-#endif
 	{
 		bool _disposed;
 		NavigationPage _page;
@@ -1021,7 +1030,7 @@ namespace Xamarin.Forms.ControlGallery.Android
 		{
 			base.Dispose(disposing);
 
-			if(disposing)
+			if (disposing)
 				SetOnTouchListener(null);
 
 			paint = null;

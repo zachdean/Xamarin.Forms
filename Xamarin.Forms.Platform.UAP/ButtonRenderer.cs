@@ -14,6 +14,7 @@ namespace Xamarin.Forms.Platform.UWP
 	public class ButtonRenderer : ViewRenderer<Button, FormsButton>
 	{
 		bool _fontApplied;
+		TextBlock _textBlock = null;
 
 		FormsButton _button;
 		PointerEventHandler _pointerPressedHandler;		
@@ -74,6 +75,15 @@ namespace Xamarin.Forms.Platform.UWP
 		void ButtonOnLoaded(object o, RoutedEventArgs routedEventArgs)
 		{
 			WireUpFormsVsm();
+			UpdateLineBreakMode();
+		}
+
+
+		void UpdateLineBreakMode()
+		{
+			_textBlock = Control.GetTextBlock(Control.Content);
+
+			_textBlock?.UpdateLineBreakMode(Element.LineBreakMode);
 		}
 
 		void WireUpFormsVsm()
@@ -124,6 +134,8 @@ namespace Xamarin.Forms.Platform.UWP
 			{
 				UpdatePadding();
 			}
+			else if (e.PropertyName == Button.LineBreakModeProperty.PropertyName)
+				UpdateLineBreakMode();
 		}
 
 		protected override void UpdateBackgroundColor()
@@ -188,8 +200,9 @@ namespace Xamarin.Forms.Platform.UWP
 			// No image, just the text
 			if (elementImage == null)
 			{
-				Control.Content = text;
+				Control.Content = new TextBlock { Text = text };
 				Element?.InvalidateMeasureNonVirtual(InvalidationTrigger.RendererReady);
+				UpdateLineBreakMode();
 				return;
 			}
 
@@ -208,7 +221,8 @@ namespace Xamarin.Forms.Platform.UWP
 			// when this happens, we want to resize the button
 			if (elementImage is BitmapImage bmp)
 			{
-				bmp.ImageOpened += (sender, args) => {
+				bmp.ImageOpened += (sender, args) =>
+				{
 					var actualSize = bmp.GetImageSourceSize();
 					image.Width = actualSize.Width;
 					image.Height = actualSize.Height;
@@ -227,12 +241,14 @@ namespace Xamarin.Forms.Platform.UWP
 			// Both image and text, so we need to build a container for them
 			Control.Content = CreateContentContainer(Element.ContentLayout, image, text);
 			Element?.InvalidateMeasureNonVirtual(InvalidationTrigger.RendererReady);
+			UpdateLineBreakMode();
 		}
 
 		static StackPanel CreateContentContainer(Button.ButtonContentLayout layout, WImage image, string text)
 		{
 			var container = new StackPanel();
-			var textBlock = new TextBlock {
+			var textBlock = new TextBlock
+			{
 				Text = text,
 				VerticalAlignment = VerticalAlignment.Center,
 				HorizontalAlignment = HorizontalAlignment.Center

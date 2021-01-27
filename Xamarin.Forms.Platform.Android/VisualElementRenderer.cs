@@ -2,14 +2,14 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using Android.Content;
-using Android.Views;
-using Xamarin.Forms.Internals;
-using AView = Android.Views.View;
-using Xamarin.Forms.Platform.Android.FastRenderers;
-using Android.Runtime;
 using Android.Content.Res;
 using Android.Graphics;
+using Android.Runtime;
+using Android.Views;
 using AndroidX.Core.View;
+using Xamarin.Forms.Internals;
+using Xamarin.Forms.Platform.Android.FastRenderers;
+using AView = Android.Views.View;
 
 
 namespace Xamarin.Forms.Platform.Android
@@ -26,7 +26,7 @@ namespace Xamarin.Forms.Platform.Android
 		ImportantForAccessibility? _defaultImportantForAccessibility;
 		string _defaultHint;
 		bool _cascadeInputTransparent = true;
-
+		bool _defaultAutomationSet;
 		VisualElementPackager _packager;
 		PropertyChangedEventHandler _propertyChangeHandler;
 
@@ -325,8 +325,8 @@ namespace Xamarin.Forms.Platform.Android
 
 				if (Element != null)
 				{
-					if (Platform.GetRenderer(Element) == this)
-						Platform.SetRenderer(Element, null);
+					if (AppCompat.Platform.GetRenderer(Element) == this)
+						AppCompat.Platform.SetRenderer(Element, null);
 
 					Element = null;
 				}
@@ -411,7 +411,7 @@ namespace Xamarin.Forms.Platform.Android
 				if (visualElement == null)
 					continue;
 
-				IVisualElementRenderer renderer = Platform.GetRenderer(visualElement);
+				IVisualElementRenderer renderer = AppCompat.Platform.GetRenderer(visualElement);
 				if (renderer == null && CompressedLayout.GetIsHeadless(visualElement))
 					UpdateLayout(visualElement.LogicalChildren);
 
@@ -434,11 +434,26 @@ namespace Xamarin.Forms.Platform.Android
 			effect.SetContainer(this);
 		}
 
+		void SetupAutomationDefaults()
+		{
+			if (!_defaultAutomationSet)
+			{
+				_defaultAutomationSet = true;
+				AutomationPropertiesProvider.SetupDefaults(this, ref _defaultContentDescription, ref _defaultHint);
+			}
+		}
+
 		protected virtual void SetAutomationId(string id)
-			=> AutomationPropertiesProvider.SetAutomationId(this, Element, id);
+		{
+			SetupAutomationDefaults();
+			AutomationPropertiesProvider.SetAutomationId(this, Element, id);
+		}
 
 		protected virtual void SetContentDescription()
-			=> AutomationPropertiesProvider.SetContentDescription(this, Element, ref _defaultContentDescription, ref _defaultHint);
+		{
+			SetupAutomationDefaults();
+			AutomationPropertiesProvider.SetContentDescription(this, Element, _defaultContentDescription, _defaultHint);
+		}
 
 		protected virtual void SetFocusable()
 			=> AutomationPropertiesProvider.SetFocusable(this, Element, ref _defaultFocusable, ref _defaultImportantForAccessibility);

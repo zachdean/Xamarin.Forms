@@ -151,22 +151,79 @@ if(bases.length == 0){
 			}
 		}
 
+		void TearDown(WWebView webView)
+		{
+			if (webView == null)
+			{
+				return;
+			}
+			webView.SeparateProcessLost -= OnSeparateProcessLost;
+			webView.NavigationStarting -= OnNavigationStarted;
+			webView.NavigationCompleted -= OnNavigationCompleted;
+			webView.NavigationFailed -= OnNavigationFailed;
+			webView.ScriptNotify -= OnScriptNotify;
+		}
+
+		void Connect(WWebView webView)
+		{
+			if (webView == null)
+			{
+				return;
+			}
+
+			webView.SeparateProcessLost += OnSeparateProcessLost;
+			webView.NavigationStarting += OnNavigationStarted;
+			webView.NavigationCompleted += OnNavigationCompleted;
+			webView.NavigationFailed += OnNavigationFailed;
+			webView.ScriptNotify += OnScriptNotify;
+		}
+
 		protected override void Dispose(bool disposing)
 		{
 			if (disposing)
 			{
-				if (Control != null)
+				TearDown(Control);
+				if (Element != null)
 				{
 					Control.NavigationStarting -= OnNavigationStarted;
 					Control.NavigationCompleted -= OnNavigationCompleted;
 
 					// TODO WINUI
-					//Control.NavigationFailed -= OnNavigationFailed;
-					//Control.ScriptNotify -= OnScriptNotify;
+					//Element.EvalRequested -= OnEvalRequested;
+					//Element.EvaluateJavaScriptRequested -= OnEvaluateJavaScriptRequested;
+					//Element.GoBackRequested -= OnGoBackRequested;
+					//Element.GoForwardRequested -= OnGoForwardRequested;
+					//Element.ReloadRequested -= OnReloadRequested;
 				}
 			}
 
 			base.Dispose(disposing);
+		}
+
+		protected virtual WWebView CreateNativeControl()
+		{
+			if (Element.IsSet(PlatformConfiguration.WindowsSpecific.WebView.ExecutionModeProperty))
+			{
+				WWebViewExecutionMode webViewExecutionMode = WWebViewExecutionMode.SameThread;
+
+				switch (Element.OnThisPlatform().GetExecutionMode())
+				{
+					case PlatformConfiguration.WindowsSpecific.WebViewExecutionMode.SameThread:
+						webViewExecutionMode = WWebViewExecutionMode.SameThread;
+						break;
+					case PlatformConfiguration.WindowsSpecific.WebViewExecutionMode.SeparateProcess:
+						webViewExecutionMode = WWebViewExecutionMode.SeparateProcess;
+						break;
+					case PlatformConfiguration.WindowsSpecific.WebViewExecutionMode.SeparateThread:
+						webViewExecutionMode = WWebViewExecutionMode.SeparateThread;
+						break;
+
+				}
+
+				return new WWebView(webViewExecutionMode);
+			}
+
+			return new WWebView();
 		}
 
 		protected override void OnElementChanged(ElementChangedEventArgs<WebView> e)
@@ -187,15 +244,8 @@ if(bases.length == 0){
 			{
 				if (Control == null)
 				{
-#pragma warning disable CS8305 // Type is for evaluation purposes only and is subject to change or removal in future updates.
-					var webView = new WebView2();
-#pragma warning restore CS8305 // Type is for evaluation purposes only and is subject to change or removal in future updates.
-					webView.NavigationStarting += OnNavigationStarted;
-					webView.NavigationCompleted += OnNavigationCompleted;
-
-					// TODO WINUI
-					//webView.NavigationFailed += OnNavigationFailed;
-					//webView.ScriptNotify += OnScriptNotify;
+					var webView = CreateNativeControl();
+					Connect(webView);
 					SetNativeControl(webView);
 				}
 
@@ -218,6 +268,10 @@ if(bases.length == 0){
 			{
 				if (!_updating)
 					Load();
+			}
+			else if (e.Is(PlatformConfiguration.WindowsSpecific.WebView.ExecutionModeProperty))
+			{
+				UpdateExecutionMode();
 			}
 		}
 
@@ -462,6 +516,20 @@ if(bases.length == 0){
 		{
 			((IWebViewController)Element).CanGoBack = Control.CanGoBack;
 			((IWebViewController)Element).CanGoForward = Control.CanGoForward;
+		}
+
+		void UpdateExecutionMode()
+		{
+			TearDown(Control);
+			var webView = CreateNativeControl();
+			Connect(webView);
+			SetNativeControl(webView);
+			Load();
+		}
+
+		void OnSeparateProcessLost(WWebView sender, WebViewSeparateProcessLostEventArgs e)
+		{
+			UpdateExecutionMode();
 		}
 	}
 }

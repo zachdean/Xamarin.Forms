@@ -25,7 +25,7 @@ using IOPath = System.IO.Path;
 
 namespace Xamarin.Forms.Platform.UWP
 {
-	internal abstract class WindowsBasePlatformServices : IPlatformServices
+	internal abstract class WindowsBasePlatformServices : IPlatformServices, IPlatformInvalidate
 	{
 		const string WrongThreadError = "RPC_E_WRONG_THREAD";
 #pragma warning disable CS8305 // Type is for evaluation purposes only and is subject to change or removal in future updates.
@@ -182,6 +182,18 @@ namespace Xamarin.Forms.Platform.UWP
 			_dispatcher.TryEnqueue(() => Application.Current?.TriggerThemeChanged(new AppThemeChangedEventArgs(Application.Current.RequestedTheme)));
 		}
 
+		public void Invalidate(VisualElement visualElement)
+		{
+			var renderer = Platform.GetRenderer(visualElement);
+			if (renderer == null)
+			{
+				return;
+			}
+
+			renderer.ContainerElement.InvalidateMeasure();
+		}
+
+		public OSAppTheme RequestedTheme => Windows.UI.Xaml.Application.Current.RequestedTheme == ApplicationTheme.Dark ? OSAppTheme.Dark : OSAppTheme.Light;
 		//async Task TryAllDispatchers(Action action)
 		//{
 		//	// Our best bet is Window.Current; most of the time, that's the Dispatcher we need

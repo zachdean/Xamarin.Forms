@@ -17,42 +17,39 @@ namespace Xamarin.Forms.Platform.UWP
 		public Task<Microsoft.UI.Xaml.Media.ImageSource> LoadImageAsync(ImageSource imagesource,
 			CancellationToken cancelationToken = default(CancellationToken))
 		{
-			throw new NotImplementedException();
-			//if (!(imagesource is FontImageSource fontsource))
-			//	return null;
+			if (!(imagesource is FontImageSource fontsource))
+				return null;
 
-			//var device = CanvasDevice.GetSharedDevice();
-			//var dpi = Math.Max(_minimumDpi, Windows.Graphics.Display.DisplayInformation.GetForCurrentView().LogicalDpi);
+			var device = CanvasDevice.GetSharedDevice();
+			var dpi = Math.Max(_minimumDpi, Windows.Graphics.Display.DisplayInformation.GetForCurrentView().LogicalDpi);
 
-			//var textFormat = new CanvasTextFormat
-			//{
-			//	FontFamily = fontsource.FontFamily,
-			//	FontSize = (float)fontsource.Size,
-			//	HorizontalAlignment = CanvasHorizontalAlignment.Center,
-			//	VerticalAlignment = CanvasVerticalAlignment.Center,
-			//	Options = CanvasDrawTextOptions.Default
-			//};
+			var textFormat = new CanvasTextFormat
+			{
+				FontFamily = GetFontSource(fontsource),
+				FontSize = (float)fontsource.Size,
+				HorizontalAlignment = CanvasHorizontalAlignment.Center,
+				VerticalAlignment = CanvasVerticalAlignment.Center,
+				Options = CanvasDrawTextOptions.Default
+			};
 
-			//using (var layout = new CanvasTextLayout(device, fontsource.Glyph, textFormat, (float)fontsource.Size, (float)fontsource.Size))
-			//{
-			//	var canvasWidth = (float)layout.LayoutBounds.Width + 2;
-			//	var canvasHeight = (float)layout.LayoutBounds.Height + 2;
+			using (var layout = new CanvasTextLayout(device, fontsource.Glyph, textFormat, (float)fontsource.Size, (float)fontsource.Size))
+			{
+				var canvasWidth = (float)layout.LayoutBounds.Width + 2;
+				var canvasHeight = (float)layout.LayoutBounds.Height + 2;
 
-			//	var imageSource = new CanvasImageSource(device, canvasWidth, canvasHeight, dpi);
-			//	using (var ds = imageSource.CreateDrawingSession(Windows.UI.Colors.Transparent))
-			//	{
-			//		var iconcolor = (fontsource.Color != Color.Default ? fontsource.Color : Color.White).ToWindowsColor();
+				var imageSource = new CanvasImageSource(device, canvasWidth, canvasHeight, dpi);
+				using (var ds = imageSource.CreateDrawingSession(Windows.UI.Colors.Transparent))
+				{
+					var iconcolor = (fontsource.Color != Color.Default ? fontsource.Color : Color.White).ToWindowsColor();
 
-			//		// offset by 1 as we added a 1 inset
-			//		var x = (float)layout.DrawBounds.X * -1;
+					// offset by 1 as we added a 1 inset
+					var x = (float)layout.DrawBounds.X * -1;
+					
+					ds.DrawTextLayout(layout, x, 1f, iconcolor);
+				}
 
-			//		ds.DrawTextLayout(layout, x, 1f, iconcolor);
-			//	}
-
-			//	return Task.FromResult< Microsoft.UI.Xaml.Media.ImageSource>(null);
-			//	// WINUII
-			//	//return Task.FromResult((Microsoft.UI.Xaml.Media.ImageSource)imageSource);
-			//}
+				return Task.FromResult((Windows.UI.Xaml.Media.ImageSource)imageSource);
+			}
 		}
 
 		public Task<Microsoft.UI.Xaml.Controls.IconSource> LoadIconSourceAsync(ImageSource imagesource, CancellationToken cancellationToken = default(CancellationToken))
@@ -68,8 +65,10 @@ namespace Xamarin.Forms.Platform.UWP
 					Foreground = fontImageSource.Color.ToBrush()
 				};
 
-				if (!string.IsNullOrEmpty(fontImageSource.FontFamily))
-					((WFontIconSource)image).FontFamily = new FontFamily(fontImageSource.FontFamily);
+				var uwpFontFamily = fontImageSource.FontFamily.ToFontFamily();
+
+				if (!string.IsNullOrEmpty(uwpFontFamily.Source))
+					((WFontIconSource)image).FontFamily = uwpFontFamily;
 			}
 
 			return Task.FromResult(image);
@@ -88,11 +87,44 @@ namespace Xamarin.Forms.Platform.UWP
 					Foreground = fontImageSource.Color.ToBrush()
 				};
 
-				if (!string.IsNullOrEmpty(fontImageSource.FontFamily))
-					((FontIcon)image).FontFamily = new FontFamily(fontImageSource.FontFamily);
+				var uwpFontFamily = fontImageSource.FontFamily.ToFontFamily();
+
+				if (!string.IsNullOrEmpty(uwpFontFamily.Source))
+					((FontIcon)image).FontFamily = uwpFontFamily;
 			}
 
 			return Task.FromResult(image);
+		}
+
+		string GetFontSource(FontImageSource fontImageSource)
+		{
+			if (fontImageSource == null)
+				return string.Empty;
+
+			var fontFamily = fontImageSource.FontFamily.ToFontFamily();
+
+			string fontSource = fontFamily.Source;
+
+			var allFamilies = fontFamily.Source.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+
+			if (allFamilies.Length > 1)
+			{       
+				// There's really no perfect solution to handle font families with fallbacks (comma-separated)	
+				// So if the font family has fallbacks, only one is taken, because CanvasTextFormat	
+				// only supports one font family
+				string source = fontImageSource.FontFamily;
+
+				foreach(var family in allFamilies)
+				{
+					if(family.Contains(source))
+					{
+						fontSource = family;
+						break;
+					}
+				}
+			}
+
+			return fontSource;
 		}
 	}
 }
