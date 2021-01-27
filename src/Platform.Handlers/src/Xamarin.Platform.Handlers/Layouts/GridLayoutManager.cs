@@ -233,65 +233,47 @@ namespace Xamarin.Platform.Layouts
 				{
 					if (span.IsColumn)
 					{
-						ResolveColumnSpan(span.Start, span.Length, span.Requested);
+						ResolveSpan(_columns, span.Start, span.Length, _grid.ColumnSpacing, span.Requested);
 					}
 					else
 					{
-						ResolveRowSpan(span.Start, span.Length, span.Requested);
+						ResolveSpan(_rows, span.Start, span.Length, _grid.RowSpacing, span.Requested);
 					}
 				}
 			}
 
-			// TODO ezhart I think we can consolidate Resolve* to one method with the correct Definitions[] passed in
-
-			void ResolveColumnSpan(int start, int length, double requested)
+			void ResolveSpan(Definition[] definitions, int start, int length, double spacing, double requestedSize) 
 			{
 				double currentSize = 0;
 				var end = start + length;
 
+				// Determine how large the spanned area currently is
 				for (int n = start; n < end; n++)
 				{
-					currentSize += _columns[n].Size;
-				}
-
-				if (requested <= currentSize)
-				{
-					return;
-				}
-
-				double required = requested - currentSize;
-
-				for (int n = start; n < end; n++)
-				{
-					_columns[n].Size += (required / length);
-				}
-			}
-
-			void ResolveRowSpan(int start, int length, double requested) 
-			{
-				double currentSize = 0;
-				var end = start + length;
-
-				for (int n = start; n < end; n++)
-				{
-					currentSize += _rows[n].Size;
+					currentSize += definitions[n].Size;
 
 					if (n > start)
 					{
-						currentSize += _grid.RowSpacing;
+						currentSize += spacing;
 					}
 				}
 
-				if (requested <= currentSize)
+				if (requestedSize <= currentSize)
 				{
+					// If our request fits in the current size, we're good
 					return;
 				}
 
-				double required = requested - currentSize;
+				// Figure out how much more space we need in this span
+				double required = requestedSize - currentSize;
 
+				// And distribute that over the rows/columns in the span
 				for (int n = start; n < end; n++)
 				{
-					_rows[n].Size += (required / length);
+					// TODO ezhart This will cause problems with absolute rows/columns
+					// write a unit test with the case where a row/col span includes an absolute
+					// the distribution should not modify absolute rows/cols
+					definitions[n].Size += (required / length);
 				}
 			}
 
@@ -342,7 +324,7 @@ namespace Xamarin.Platform.Layouts
 			}
 		}
 
-		internal class SpanKey
+		class SpanKey
 		{
 			public SpanKey(int start, int length, bool isColumn)
 			{
