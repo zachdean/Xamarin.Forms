@@ -1,16 +1,24 @@
-﻿using WebKit;
+﻿using CoreGraphics;
+using WebKit;
 using Xamarin.Forms;
 
 namespace Xamarin.Platform.Handlers
 {
-	public partial class WebViewHandler : AbstractViewHandler<IWebView, WKWebView>, IWebViewDelegate
+	public partial class WebViewHandler : AbstractViewHandler<IWebView, WKWebView>, IWebViewDelegate2
 	{
 		protected override WKWebView CreateNativeView()
 		{
-			return new WKWebView(CreateConfiguration());
+			return new WKWebView(CGRect.Empty, CreateConfiguration());
 		}
 
-		public void LoadHtml(string? html, string baseUrl)
+		public static void MapSource(WebViewHandler handler, IWebView webView)
+		{
+			ViewHandler.CheckParameters(handler, webView);
+
+			handler.TypedNativeView?.UpdateSource(webView);
+		}
+
+		public void LoadHtml(string? html, string? baseUrl)
 		{
 			throw new System.NotImplementedException();
 		}
@@ -29,18 +37,7 @@ namespace Xamarin.Platform.Handlers
 		{
 			var config = new WKWebViewConfiguration();
 
-			if (_sharedPool == null)
-			{
-				_sharedPool = config.ProcessPool;
-			}
-			else
-			{
-				config.ProcessPool = _sharedPool;
-			}
-
 			return config;
 		}
-
-
 	}
 }

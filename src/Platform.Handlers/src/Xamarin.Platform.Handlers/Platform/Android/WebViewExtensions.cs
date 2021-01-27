@@ -1,10 +1,12 @@
-﻿using System;
-namespace Xamarin.Platform.Platform.Android
+﻿using AWebView = Android.Webkit.WebView;
+
+namespace Xamarin.Platform
 {
-	public class WebViewExtensions
+	public static class WebViewExtensions
 	{
-		public WebViewExtensions()
+		public static void UpdateSource(this AWebView nativeWebView, IWebView webView)
 		{
+
 		}
 	}
 }

@@ -5,6 +5,6 @@ namespace Sample
 {
 	public class WebView : Xamarin.Forms.View, IWebView
 	{
-		public WebViewSource Source { get; }
+		public WebViewSource2 Source { get; }
 	}
 }

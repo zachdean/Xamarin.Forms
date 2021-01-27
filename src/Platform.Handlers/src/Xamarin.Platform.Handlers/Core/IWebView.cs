@@ -4,6 +4,6 @@ namespace Xamarin.Platform
 {
 	public interface IWebView : IView
 	{
-		WebViewSource Source { get; }
+		WebViewSource2 Source { get; }
 	}
 }

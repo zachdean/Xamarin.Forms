@@ -1,10 +1,12 @@
-﻿using System;
-namespace Xamarin.Platform.Platform.iOS
+﻿using WebKit;
+
+namespace Xamarin.Platform
 {
-	public class WebViewExtensions
+	public static class WebViewExtensions
 	{
-		public WebViewExtensions()
+		public static void UpdateSource(this WKWebView nativeWebView, IWebView webView)
 		{
+
 		}
 	}
 }
