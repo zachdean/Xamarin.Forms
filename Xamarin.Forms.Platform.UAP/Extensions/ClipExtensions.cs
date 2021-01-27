@@ -28,7 +28,7 @@ namespace Xamarin.Forms.Platform.UWP
 			// UIElement.Clip only support rectangle geometry to be used for clipping area sizing.
 			// If the used Build is 17763 or higher, we use Composition's APIs (CompositionGeometricClip) to allow Clip complex geometries.
 #if UWP_18362
-			var compositor = Window.Current.Compositor;
+			var compositor = Forms.MainWindow.Compositor;
 			var visual = ElementCompositionPreview.GetElementVisual(frameworkElement);
 
 			CompositionClip compositionClip = null;

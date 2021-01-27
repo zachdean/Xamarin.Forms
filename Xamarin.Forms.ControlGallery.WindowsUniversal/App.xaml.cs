@@ -54,7 +54,7 @@ namespace Xamarin.Forms.ControlGallery.WindowsUniversal
 
 			Xamarin.Forms.Forms.Init(e);
 			m_window = new MainPage();
-			//var thing = m_window.DispatcherQueue;
+			Forms.MainWindow = m_window;
 			Xamarin.Forms.Forms.InitDispatcher(m_window.DispatcherQueue);
 			(m_window as MainPage).LoadApplication();
 			m_window.Activate();

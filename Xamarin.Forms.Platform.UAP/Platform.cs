@@ -623,7 +623,7 @@ namespace Xamarin.Forms.Platform.UWP
 			}
 			catch (ArgumentException) // if the page is not in the visual tree
 			{
-				if (Window.Current.Content is FrameworkElement mainPage)
+				if (Forms.MainWindow.Content is FrameworkElement mainPage)
 					actionSheet.ShowAt(mainPage);
 			}
 		}

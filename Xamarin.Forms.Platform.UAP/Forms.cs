@@ -18,9 +18,14 @@ namespace Xamarin.Forms
 
 		//static ApplicationExecutionState s_state;
 
+		//TODO WINUI3 
+		public static Window MainWindow { get; set; }
+
 		public static bool IsInitialized { get; private set; }
 		
-		public static void Init(Microsoft.UI.Xaml.LaunchActivatedEventArgs launchActivatedEventArgs, IEnumerable<Assembly> rendererAssemblies = null)
+		public static void Init(
+			Microsoft.UI.Xaml.LaunchActivatedEventArgs launchActivatedEventArgs, 
+			IEnumerable<Assembly> rendererAssemblies = null)
 		{
 			if (IsInitialized)
 				return;
@@ -49,15 +54,6 @@ namespace Xamarin.Forms
 
 			Device.SetIdiom(TargetIdiom.Tablet);
 			Device.SetFlowDirection(GetFlowDirection());
-
-			//var platformServices = new WindowsPlatformServices(Window.Current.DispatcherQueue);
-
-			//Device.PlatformServices = platformServices;
-			//Device.PlatformInvalidator = platformServices;
-			
-			// TODO SHANE WINUI
-			//if(Window.Current?.DispatcherQueue != null)
-			//	Device.PlatformServices = new WindowsPlatformServices(Window.Current.DispatcherQueue);
 
 			Device.SetFlags(s_flags);
 			Device.Info = new WindowsDeviceInfo();

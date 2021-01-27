@@ -37,7 +37,7 @@ namespace Xamarin.Forms.Platform.UWP
 		{
 			get
 			{
-				WRect windowSize = Window.Current.Bounds;
+				WRect windowSize = Forms.MainWindow.Bounds;
 				return new Size(windowSize.Width, windowSize.Height);
 			}
 		}
