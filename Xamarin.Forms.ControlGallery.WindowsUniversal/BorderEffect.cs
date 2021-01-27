@@ -15,7 +15,7 @@ namespace Xamarin.Forms.ControlGallery.WindowsUniversal
 			if (control == null)
 				return;
 
-			control.Background = new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Colors.Aqua);
+			control.Background = new Microsoft.UI.Xaml.Media.SolidColorBrush(Microsoft.UI.Colors.Aqua);
 
 			var childLabel = (Element as ScrollView)?.Content as Label;
 			if (childLabel != null)
@@ -28,7 +28,7 @@ namespace Xamarin.Forms.ControlGallery.WindowsUniversal
 			if (control == null)
 				return;
 
-			control.Background = new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Colors.Beige);
+			control.Background = new Microsoft.UI.Xaml.Media.SolidColorBrush(Microsoft.UI.Colors.Beige);
 		}
 	}
 }

@@ -50,10 +50,10 @@ namespace Xamarin.Forms
 			Device.SetIdiom(TargetIdiom.Tablet);
 			Device.SetFlowDirection(GetFlowDirection());
 
-			var platformServices = new WindowsPlatformServices(Window.Current.DispatcherQueue);
+			//var platformServices = new WindowsPlatformServices(Window.Current.DispatcherQueue);
 
-			Device.PlatformServices = platformServices;
-			Device.PlatformInvalidator = platformServices;
+			//Device.PlatformServices = platformServices;
+			//Device.PlatformInvalidator = platformServices;
 			
 			// TODO SHANE WINUI
 			//if(Window.Current?.DispatcherQueue != null)
@@ -91,7 +91,10 @@ namespace Xamarin.Forms
 		public static void InitDispatcher(Microsoft.System.DispatcherQueue dispatcher)
 #pragma warning restore CS8305 // Type is for evaluation purposes only and is subject to change or removal in future updates.
 		{
-			Device.PlatformServices = new WindowsPlatformServices(dispatcher);
+			var platformServices = new WindowsPlatformServices(dispatcher);
+
+			Device.PlatformServices = platformServices;
+			Device.PlatformInvalidator = platformServices;
 
 			var assemblies = Device.GetAssemblies();
 			// TODO WINUI

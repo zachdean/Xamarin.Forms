@@ -38,7 +38,6 @@ namespace Xamarin.Forms.ControlGallery.WindowsUniversal
 			//ApplicationView.PreferredLaunchWindowingMode = ApplicationViewWindowingMode.PreferredLaunchViewSize;
 
 
-			_app = new Controls.App();
 
 			// When the native control gallery loads up, it'll let us know so we can add the nested native controls
 			MessagingCenter.Subscribe<NestedNativeControlGalleryPage>(this, NestedNativeControlGalleryPage.ReadyForNativeControlsMessage, AddNativeControls);
@@ -46,10 +45,13 @@ namespace Xamarin.Forms.ControlGallery.WindowsUniversal
 			// When the native binding gallery loads up, it'll let us know so we can set up the native bindings
 			MessagingCenter.Subscribe<NativeBindingGalleryPage>(this, NativeBindingGalleryPage.ReadyForNativeBindingsMessage, AddNativeBindings);
 
+		}
+
+		public void LoadApplication()
+		{
+			_app = new Controls.App();
 			LoadApplication(_app);
-
 			CoreWindow.GetForCurrentThread().KeyDown += OnKeyDown;
-
 		}
 
 		void OnKeyDown(CoreWindow coreWindow, KeyEventArgs args)

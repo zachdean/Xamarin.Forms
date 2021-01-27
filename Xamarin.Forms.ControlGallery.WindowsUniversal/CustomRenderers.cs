@@ -158,7 +158,7 @@ namespace Xamarin.Forms.ControlGallery.WindowsUniversal
 			TextBlock text = new TextBlock()
 			{
 				FontSize = 50,
-				FontWeight = Windows.UI.Text.FontWeights.Normal,
+				FontWeight = Microsoft.UI.Text.FontWeights.Normal,
 				Text = "hello world",
 				Foreground = new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(255, 255, 0, 0))
 			};

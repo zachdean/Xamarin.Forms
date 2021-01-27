@@ -9,6 +9,7 @@ using Microsoft.UI.Xaml.Media;
 using Xamarin.Forms;
 using Xamarin.Forms.ControlGallery.WindowsUniversal;
 using Xamarin.Forms.Platform.UWP;
+using Microsoft.UI;
 
 [assembly: ExportEffect(typeof(FocusEffect), "FocusEffect")]
 namespace Xamarin.Forms.ControlGallery.WindowsUniversal
