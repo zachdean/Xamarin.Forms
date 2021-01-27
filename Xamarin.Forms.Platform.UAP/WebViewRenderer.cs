@@ -1,46 +1,5 @@
-//using System;
-//using System.ComponentModel;
-//using Windows.UI.Core;
-//using Microsoft.UI.Xaml.Controls;
-//using Xamarin.Forms.Internals;
-//using static System.String;
-//using Xamarin.Forms.PlatformConfiguration.WindowsSpecific;
-//using System.Threading.Tasks;
-//using System.Net;
-//using Windows.Web.Http;
-//using System.Collections.Generic;
-//using System.Linq;
 
-//namespace Xamarin.Forms.Platform.UWP
-//{
-//#pragma warning disable CS8305 // Type is for evaluation purposes only and is subject to change or removal in future updates.
-//	public class WebViewRenderer : ViewRenderer<WebView, Microsoft.UI.Xaml.Controls.WebView2>, IWebViewDelegate
-//#pragma warning restore CS8305 // Type is for evaluation purposes only and is subject to change or removal in future updates.
-//	{
-//		public WebViewRenderer()
-//		{
-//			SetElement(new WebView());
-//		}
-
-//		protected override void OnElementChanged(ElementChangedEventArgs<WebView> e)
-//		{
-//			base.OnElementChanged(e);
-//#pragma warning disable CS8305 // Type is for evaluation purposes only and is subject to change or removal in future updates.
-//			SetNativeControl(new WebView2());
-//#pragma warning restore CS8305 // Type is for evaluation purposes only and is subject to change or removal in future updates.
-//			Control.Source = new Uri("https://www.microsoft.com");
-//		}
-
-//		public void LoadHtml(string html, string baseUrl)
-//		{
-//		}
-
-//		public void LoadUrl(string url)
-//		{
-//		}
-//	}
-//}
-
+#pragma warning disable CS8305 // Type is for evaluation purposes only and is subject to change or removal in future updates.
 using System;
 using System.ComponentModel;
 using Windows.UI.Core;
@@ -53,18 +12,18 @@ using Windows.Web.Http;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.UI.Xaml.Controls;
+using WWebView = Microsoft.UI.Xaml.Controls.WebView2;
+
+//TODO WINUI3
+//using WWebViewExecutionMode = Microsoft.UI.Xaml.Controls.WebViewExecutionMode;
 
 namespace Xamarin.Forms.Platform.UWP
 {
-#pragma warning disable CS8305 // Type is for evaluation purposes only and is subject to change or removal in future updates.
 	public class WebViewRenderer : ViewRenderer<WebView, WebView2>, IWebViewDelegate
-#pragma warning restore CS8305 // Type is for evaluation purposes only and is subject to change or removal in future updates.
 	{
 		WebNavigationEvent _eventState;
 		bool _updating;
-#pragma warning disable CS8305 // Type is for evaluation purposes only and is subject to change or removal in future updates.
 		WebView2 _internalWebView;
-#pragma warning restore CS8305 // Type is for evaluation purposes only and is subject to change or removal in future updates.
 		const string LocalScheme = "ms-appx-web:///";
 
 		// Script to insert a <base> tag into an HTML document
@@ -88,9 +47,7 @@ if(bases.length == 0){
 
 			// Set up an internal WebView we can use to load and parse the original HTML string
 			// Make _internalWebView a field instead of local variable to avoid garbage collection
-#pragma warning disable CS8305 // Type is for evaluation purposes only and is subject to change or removal in future updates.
 			_internalWebView = new WebView2();
-#pragma warning restore CS8305 // Type is for evaluation purposes only and is subject to change or removal in future updates.
 
 			// When the 'navigation' to the original HTML string is done, we can modify it to include our <base> tag
 			_internalWebView.NavigationCompleted += async (sender, args) =>
@@ -157,11 +114,11 @@ if(bases.length == 0){
 			{
 				return;
 			}
-			webView.SeparateProcessLost -= OnSeparateProcessLost;
+		//	webView.SeparateProcessLost -= OnSeparateProcessLost;
 			webView.NavigationStarting -= OnNavigationStarted;
 			webView.NavigationCompleted -= OnNavigationCompleted;
-			webView.NavigationFailed -= OnNavigationFailed;
-			webView.ScriptNotify -= OnScriptNotify;
+			//webView.NavigationFailed -= OnNavigationFailed;
+			//webView.ScriptNotify -= OnScriptNotify;
 		}
 
 		void Connect(WWebView webView)
@@ -171,11 +128,11 @@ if(bases.length == 0){
 				return;
 			}
 
-			webView.SeparateProcessLost += OnSeparateProcessLost;
+			//webView.SeparateProcessLost += OnSeparateProcessLost;
 			webView.NavigationStarting += OnNavigationStarted;
 			webView.NavigationCompleted += OnNavigationCompleted;
-			webView.NavigationFailed += OnNavigationFailed;
-			webView.ScriptNotify += OnScriptNotify;
+			//webView.NavigationFailed += OnNavigationFailed;
+			//webView.ScriptNotify += OnScriptNotify;
 		}
 
 		protected override void Dispose(bool disposing)
@@ -202,26 +159,26 @@ if(bases.length == 0){
 
 		protected virtual WWebView CreateNativeControl()
 		{
-			if (Element.IsSet(PlatformConfiguration.WindowsSpecific.WebView.ExecutionModeProperty))
-			{
-				WWebViewExecutionMode webViewExecutionMode = WWebViewExecutionMode.SameThread;
+			//if (Element.IsSet(PlatformConfiguration.WindowsSpecific.WebView.ExecutionModeProperty))
+			//{
+			//	WWebViewExecutionMode webViewExecutionMode = WWebViewExecutionMode.SameThread;
 
-				switch (Element.OnThisPlatform().GetExecutionMode())
-				{
-					case PlatformConfiguration.WindowsSpecific.WebViewExecutionMode.SameThread:
-						webViewExecutionMode = WWebViewExecutionMode.SameThread;
-						break;
-					case PlatformConfiguration.WindowsSpecific.WebViewExecutionMode.SeparateProcess:
-						webViewExecutionMode = WWebViewExecutionMode.SeparateProcess;
-						break;
-					case PlatformConfiguration.WindowsSpecific.WebViewExecutionMode.SeparateThread:
-						webViewExecutionMode = WWebViewExecutionMode.SeparateThread;
-						break;
+			//	switch (Element.OnThisPlatform().GetExecutionMode())
+			//	{
+			//		case PlatformConfiguration.WindowsSpecific.WebViewExecutionMode.SameThread:
+			//			webViewExecutionMode = WWebViewExecutionMode.SameThread;
+			//			break;
+			//		case PlatformConfiguration.WindowsSpecific.WebViewExecutionMode.SeparateProcess:
+			//			webViewExecutionMode = WWebViewExecutionMode.SeparateProcess;
+			//			break;
+			//		case PlatformConfiguration.WindowsSpecific.WebViewExecutionMode.SeparateThread:
+			//			webViewExecutionMode = WWebViewExecutionMode.SeparateThread;
+			//			break;
 
-				}
+			//	}
 
-				return new WWebView(webViewExecutionMode);
-			}
+			//	return new WWebView(webViewExecutionMode);
+			//}
 
 			return new WWebView();
 		}
@@ -453,9 +410,7 @@ if(bases.length == 0){
 			Control.Reload();
 		}
 
-#pragma warning disable CS8305 // Type is for evaluation purposes only and is subject to change or removal in future updates.
 		async void OnNavigationCompleted(WebView2 sender, WebView2NavigationCompletedEventArgs e)
-#pragma warning restore CS8305 // Type is for evaluation purposes only and is subject to change or removal in future updates.
 		{
 			//TODO WINUI
 			Uri uri = sender.Source;
@@ -474,9 +429,7 @@ if(bases.length == 0){
 		//		SendNavigated(new UrlWebViewSource { Url = e.Uri.AbsoluteUri }, _eventState, WebNavigationResult.Failure);
 		//}
 
-#pragma warning disable CS8305 // Type is for evaluation purposes only and is subject to change or removal in future updates.
 		void OnNavigationStarted(WebView2 sender, WebView2NavigationStartingEventArgs e)
-#pragma warning restore CS8305 // Type is for evaluation purposes only and is subject to change or removal in future updates.
 		{
 			Uri uri;
 			
@@ -527,9 +480,11 @@ if(bases.length == 0){
 			Load();
 		}
 
-		void OnSeparateProcessLost(WWebView sender, WebViewSeparateProcessLostEventArgs e)
-		{
-			UpdateExecutionMode();
-		}
+		// TODO WINUI3
+		//void OnSeparateProcessLost(WWebView sender, WebViewSeparateProcessLostEventArgs e)
+		//{
+		//	UpdateExecutionMode();
+		//}
 	}
 }
+#pragma warning restore CS8305 // Type is for evaluation purposes only and is subject to change or removal in future updates.

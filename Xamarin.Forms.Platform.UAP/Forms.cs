@@ -50,7 +50,7 @@ namespace Xamarin.Forms
 			Device.SetIdiom(TargetIdiom.Tablet);
 			Device.SetFlowDirection(GetFlowDirection());
 
-			var platformServices = new WindowsPlatformServices(Window.Current.Dispatcher);
+			var platformServices = new WindowsPlatformServices(Window.Current.DispatcherQueue);
 
 			Device.PlatformServices = platformServices;
 			Device.PlatformInvalidator = platformServices;

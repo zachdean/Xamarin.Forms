@@ -193,7 +193,6 @@ namespace Xamarin.Forms.Platform.UWP
 			renderer.ContainerElement.InvalidateMeasure();
 		}
 
-		public OSAppTheme RequestedTheme => Windows.UI.Xaml.Application.Current.RequestedTheme == ApplicationTheme.Dark ? OSAppTheme.Dark : OSAppTheme.Light;
 		//async Task TryAllDispatchers(Action action)
 		//{
 		//	// Our best bet is Window.Current; most of the time, that's the Dispatcher we need

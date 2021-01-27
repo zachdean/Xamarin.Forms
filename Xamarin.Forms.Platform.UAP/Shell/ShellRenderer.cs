@@ -46,10 +46,6 @@ namespace Xamarin.Forms.Platform.UWP
 			IsPaneOpen = false;
 			Content = ItemRenderer = CreateShellItemRenderer();
 			MenuItemTemplateSelector = CreateShellFlyoutTemplateSelector();
-			if (ApiInformation.IsEventPresent("Microsoft.UI.Xaml.Controls.NavigationView", "PaneClosing"))
-				PaneClosing += (s, e) => OnPaneClosed();
-			if (ApiInformation.IsEventPresent("Microsoft.UI.Xaml.Controls.NavigationView", "PaneOpening"))
-				PaneOpening += (s, e) => OnPaneOpening();
 			ItemInvoked += OnMenuItemInvoked;
 			BackRequested += OnBackRequested;
 			//Style = Microsoft.UI.Xaml.Application.Current.Resources["ShellNavigationView"] as Microsoft.UI.Xaml.Style;
@@ -95,9 +91,6 @@ namespace Xamarin.Forms.Platform.UWP
 			UpdateFlyoutBackdrop();
 			UpdateFlyoutPosition();
 			UpdateFlyoutVerticalScrollMode();
-			
-			if(ShellSplitView != null && _flyoutBehavior == FlyoutBehavior.Flyout)
-				ShellSplitView.UpdateFlyoutBackdrop();
 		}
 
 			
@@ -172,11 +165,11 @@ namespace Xamarin.Forms.Platform.UWP
 			if (element != null)
 			{
 
-				if (ApiInformation.IsEventPresent("Windows.UI.Xaml.Controls.NavigationView", "PaneClosing"))
+				if (ApiInformation.IsEventPresent("Microsoft.UI.Xaml.Controls.NavigationView", "PaneClosing"))
 					PaneClosing += OnPaneClosing;
-				if (ApiInformation.IsEventPresent("Windows.UI.Xaml.Controls.NavigationView", "PaneOpening"))
+				if (ApiInformation.IsEventPresent("Microsoft.UI.Xaml.Controls.NavigationView", "PaneOpening"))
 					PaneOpening += OnPaneOpening;
-				if (ApiInformation.IsEventPresent("Windows.UI.Xaml.Controls.NavigationView", "PaneOpened"))
+				if (ApiInformation.IsEventPresent("Microsoft.UI.Xaml.Controls.NavigationView", "PaneOpened"))
 					PaneOpened += OnPaneOpened;
 
 				ItemInvoked += OnMenuItemInvoked;
@@ -195,11 +188,11 @@ namespace Xamarin.Forms.Platform.UWP
 				Element.SizeChanged -= OnElementSizeChanged;
 				Element.PropertyChanged -= OnElementPropertyChanged;
 
-				if (ApiInformation.IsEventPresent("Windows.UI.Xaml.Controls.NavigationView", "PaneClosing"))
+				if (ApiInformation.IsEventPresent("Microsoft.UI.Xaml.Controls.NavigationView", "PaneClosing"))
 					PaneClosing -= OnPaneClosing;
-				if (ApiInformation.IsEventPresent("Windows.UI.Xaml.Controls.NavigationView", "PaneOpening"))
+				if (ApiInformation.IsEventPresent("Microsoft.UI.Xaml.Controls.NavigationView", "PaneOpening"))
 					PaneOpening -= OnPaneOpening;
-				if (ApiInformation.IsEventPresent("Windows.UI.Xaml.Controls.NavigationView", "PaneOpened"))
+				if (ApiInformation.IsEventPresent("Microsoft.UI.Xaml.Controls.NavigationView", "PaneOpened"))
 					PaneOpened -= OnPaneOpened;
 
 				ItemInvoked -= OnMenuItemInvoked;
@@ -247,16 +240,16 @@ namespace Xamarin.Forms.Platform.UWP
 				switch (Shell.FlyoutVerticalScrollMode)
 				{
 					case ScrollMode.Disabled:
-						scrollViewer.VerticalScrollMode = Windows.UI.Xaml.Controls.ScrollMode.Disabled;
-						scrollViewer.VerticalScrollBarVisibility = Windows.UI.Xaml.Controls.ScrollBarVisibility.Hidden;
+						scrollViewer.VerticalScrollMode = Microsoft.UI.Xaml.Controls.ScrollMode.Disabled;
+						scrollViewer.VerticalScrollBarVisibility = Microsoft.UI.Xaml.Controls.ScrollBarVisibility.Hidden;
 						break;
 					case ScrollMode.Enabled:
-						scrollViewer.VerticalScrollMode = Windows.UI.Xaml.Controls.ScrollMode.Enabled;
-						scrollViewer.VerticalScrollBarVisibility = Windows.UI.Xaml.Controls.ScrollBarVisibility.Visible;
+						scrollViewer.VerticalScrollMode = Microsoft.UI.Xaml.Controls.ScrollMode.Enabled;
+						scrollViewer.VerticalScrollBarVisibility = Microsoft.UI.Xaml.Controls.ScrollBarVisibility.Visible;
 						break;
 					default:
-						scrollViewer.VerticalScrollMode = Windows.UI.Xaml.Controls.ScrollMode.Auto;
-						scrollViewer.VerticalScrollBarVisibility = Windows.UI.Xaml.Controls.ScrollBarVisibility.Auto;
+						scrollViewer.VerticalScrollMode = Microsoft.UI.Xaml.Controls.ScrollMode.Auto;
+						scrollViewer.VerticalScrollBarVisibility = Microsoft.UI.Xaml.Controls.ScrollBarVisibility.Auto;
 						break;
 				}
 			}

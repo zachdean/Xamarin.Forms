@@ -22,13 +22,13 @@ namespace Xamarin.Forms.Platform.UWP
 
 			if (options.FlowDirection == Xamarin.Forms.FlowDirection.RightToLeft)
 			{
-				TitleBlock.FlowDirection = Windows.UI.Xaml.FlowDirection.RightToLeft;
-				OptionsList.FlowDirection = Windows.UI.Xaml.FlowDirection.RightToLeft;
+				TitleBlock.FlowDirection = Microsoft.UI.Xaml.FlowDirection.RightToLeft;
+				OptionsList.FlowDirection = Microsoft.UI.Xaml.FlowDirection.RightToLeft;
 			}
 			else if (options.FlowDirection == Xamarin.Forms.FlowDirection.LeftToRight)
 			{
-				TitleBlock.FlowDirection = Windows.UI.Xaml.FlowDirection.LeftToRight;
-				OptionsList.FlowDirection = Windows.UI.Xaml.FlowDirection.LeftToRight;
+				TitleBlock.FlowDirection = Microsoft.UI.Xaml.FlowDirection.LeftToRight;
+				OptionsList.FlowDirection = Microsoft.UI.Xaml.FlowDirection.LeftToRight;
 			}
 
 			if (options.FlowDirection == Xamarin.Forms.FlowDirection.RightToLeft)

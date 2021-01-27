@@ -681,11 +681,11 @@ namespace Xamarin.Forms.Platform.UWP
 
 			if (options.FlowDirection == FlowDirection.RightToLeft)
 			{
-				alertDialog.FlowDirection = Windows.UI.Xaml.FlowDirection.RightToLeft;
+				alertDialog.FlowDirection = Microsoft.UI.Xaml.FlowDirection.RightToLeft;
 			}
 			else if (options.FlowDirection == FlowDirection.LeftToRight)
 			{
-				alertDialog.FlowDirection = Windows.UI.Xaml.FlowDirection.LeftToRight;
+				alertDialog.FlowDirection = Microsoft.UI.Xaml.FlowDirection.LeftToRight;
 			}
 			else
 			{

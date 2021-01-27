@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Windows.UI.Xaml.Media;
+using Microsoft.UI.Xaml.Media;
 using WRect = Windows.Foundation.Rect;
 
 namespace Xamarin.Forms.Platform.UWP
@@ -136,7 +136,7 @@ namespace Xamarin.Forms.Platform.UWP
 
 			Size request = _content.Measure(width, height, MeasureFlags.IncludeMargins).Request;
 
-			var minSize = (double)Windows.UI.Xaml.Application.Current.Resources["NavigationViewItemOnLeftMinHeight"];
+			var minSize = (double)Microsoft.UI.Xaml.Application.Current.Resources["NavigationViewItemOnLeftMinHeight"];
 
 			if (request.Height < minSize)
 			{
