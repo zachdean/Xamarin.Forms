@@ -556,11 +556,86 @@ namespace Xamarin.Platform.Handlers.UnitTests.Layouts
 			AssertArranged(view2, 55, 100, 50, 50);
 		}
 
-		
+		[Category(GridSpan)]
+		[Test(Description = "Row-spanning views smaller than the views confined to the row should not affect row size")]
+		public void SmallerSpanningViewsShouldNotAffectRowSize() 
+		{
+			var grid = CreateGridLayout(rows: "auto, auto", columns: "auto, auto");
+			var view0 = CreateTestView(new Size(30, 30));
+			var view1 = CreateTestView(new Size(50, 50));
+			AddChildren(grid, view0, view1);
+
+			SetLocation(grid, view0, rowSpan: 2);
+			SetLocation(grid, view1, row: 0, col: 1);
+
+			var measuredSize = MeasureAndArrange(grid);
+
+			Assert.That(measuredSize.Width, Is.EqualTo(30 + 50));
+			Assert.That(measuredSize.Height, Is.EqualTo(50));
+
+			AssertArranged(view0, 0, 0, 30, 30);
+			AssertArranged(view1, 30, 0, 50, 50);
+		}
+
+		[Category(GridSpan)]
+		[Test(Description = "Column-spanning views smaller than the views confined to the column should not affect column size")]
+		public void SmallerSpanningViewsShouldNotAffectColumnSize()
+		{
+			var grid = CreateGridLayout(rows: "auto, auto", columns: "auto, auto");
+			var view0 = CreateTestView(new Size(30, 30));
+			var view1 = CreateTestView(new Size(50, 50));
+			AddChildren(grid, view0, view1);
+
+			SetLocation(grid, view0, colSpan: 2);
+			SetLocation(grid, view1, row: 1, col: 0);
+
+			var measuredSize = MeasureAndArrange(grid);
+
+			Assert.That(measuredSize.Width, Is.EqualTo(50));
+			Assert.That(measuredSize.Height, Is.EqualTo(30 + 50));
+
+			AssertArranged(view0, 0, 0, 30, 30);
+			AssertArranged(view1, 0, 30, 50, 50);
+		}
 
 
-		// TODO ezhart Other tests - mix rowspan/colspan; grid measure with absolute rows/cols that have no views;
-		// Row/col spans with controls in each affected row/column
-		// Row/col spans where the spanning view is smaller than the other views
+		[Category(GridAbsoluteSizing)]
+		[Test(Description = "Empty absolute rows/columns still affect Grid size")]
+		public void EmptyAbsoluteRowsAndColumnsAffectSize()
+		{
+			var grid = CreateGridLayout(rows: "10, 40", columns: "15, 85");
+			var view0 = CreateTestView(new Size(30, 30));
+			AddChildren(grid, view0);
+
+			SetLocation(grid, view0, row: 1, col: 1);
+
+			var measuredSize = MeasureAndArrange(grid);
+
+			Assert.That(measuredSize.Width, Is.EqualTo(15 + 85));
+			Assert.That(measuredSize.Height, Is.EqualTo(10 + 40));
+
+			AssertArranged(view0, 15, 10, 30, 30);
+		}
+
+		[Category(GridSpan)]
+		[Test(Description = "Row and column spans should be able to mix")]
+		public void MixedRowAndColumnSpans()
+		{
+			var grid = CreateGridLayout(rows: "auto, auto", columns: "auto, auto");
+			var view0 = CreateTestView(new Size(60, 30));
+			var view1 = CreateTestView(new Size(30, 60));
+			AddChildren(grid, view0, view1);
+
+			SetLocation(grid, view0, row: 0, col: 0, colSpan: 2);
+			SetLocation(grid, view1, row: 0, col: 1, rowSpan: 2);
+
+			var measuredSize = MeasureAndArrange(grid);
+
+			Assert.That(measuredSize.Width, Is.EqualTo(60));
+			Assert.That(measuredSize.Height, Is.EqualTo(60));
+
+			AssertArranged(view0, 0, 0, 60, 30);
+			AssertArranged(view1, 15, 0, 30, 60);
+		}
 	}
 }
