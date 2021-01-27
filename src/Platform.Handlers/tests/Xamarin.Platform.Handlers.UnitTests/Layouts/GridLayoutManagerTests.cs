@@ -637,5 +637,53 @@ namespace Xamarin.Platform.Handlers.UnitTests.Layouts
 			AssertArranged(view0, 0, 0, 60, 30);
 			AssertArranged(view1, 15, 0, 30, 60);
 		}
+
+		[Category(GridSpan)]
+		[Test(Description = "Row span including absolute row should not modify absolute size")]
+		public void RowSpanShouldNotModifyAbsoluteRowSize()
+		{
+			var grid = CreateGridLayout(rows: "auto, 20", columns: "auto, auto");
+			var view0 = CreateTestView(new Size(100, 100));
+			var view1 = CreateTestView(new Size(50, 10));
+			AddChildren(grid, view0, view1);
+
+			SetLocation(grid, view0, rowSpan: 2);
+			SetLocation(grid, view1, row: 1, col: 1);
+
+			var measuredSize = MeasureAndArrange(grid);
+
+			Assert.That(measuredSize.Width, Is.EqualTo(100 + 50));
+			Assert.That(measuredSize.Height, Is.EqualTo(100));
+
+			AssertArranged(view0, 0, 0, 100, 100);
+
+			// The item in the second row starts at y = 80 because the auto row above had to distribute
+			// all the extra space into row 0; row 1 is absolute, so no tinkering with it to make stuff fit
+			AssertArranged(view1, 100, 80, 50, 10);
+		}
+
+		[Category(GridSpan)]
+		[Test(Description = "Column span including absolute column should not modify absolute size")]
+		public void ColumnSpanShouldNotModifyAbsoluteColumnSize()
+		{
+			var grid = CreateGridLayout(rows: "auto, auto", columns: "auto, 20");
+			var view0 = CreateTestView(new Size(100, 100));
+			var view1 = CreateTestView(new Size(50, 10));
+			AddChildren(grid, view0, view1);
+
+			SetLocation(grid, view0, colSpan: 2);
+			SetLocation(grid, view1, row: 1, col: 1);
+
+			var measuredSize = MeasureAndArrange(grid);
+
+			Assert.That(measuredSize.Width, Is.EqualTo(100));
+			Assert.That(measuredSize.Height, Is.EqualTo(100 + 10));
+
+			AssertArranged(view0, 0, 0, 100, 100);
+
+			// The item in the second row starts at y = 80 because the auto row above had to distribute
+			// all the extra space into row 0; row 1 is absolute, so no tinkering with it to make stuff fit
+			AssertArranged(view1, 80, 100, 50, 10);
+		}
 	}
 }

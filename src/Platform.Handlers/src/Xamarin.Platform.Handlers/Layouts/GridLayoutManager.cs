@@ -181,7 +181,7 @@ namespace Xamarin.Platform.Layouts
 
 					var measure = _grid.Children[cell.ViewIndex].Measure(availableWidth, availableHeight);
 
-					if (cell.ColumnGridLengthType == GridLengthType.Auto)
+					if (cell.IsColumnSpanAuto)
 					{
 						if (cell.ColumnSpan == 1)
 						{
@@ -194,7 +194,7 @@ namespace Xamarin.Platform.Layouts
 						}
 					}
 
-					if (cell.RowGridLengthType == GridLengthType.Auto)
+					if (cell.IsRowSpanAuto)
 					{
 						if (cell.RowSpan == 1)
 						{
@@ -267,13 +267,25 @@ namespace Xamarin.Platform.Layouts
 				// Figure out how much more space we need in this span
 				double required = requestedSize - currentSize;
 
+				// And how many parts of the span to distribute that space over
+				int autoCount = 0;
+				for (int n = start; n < end; n++)
+				{
+					if (definitions[n].IsAuto)
+					{
+						autoCount += 1;
+					}
+				}
+
+				double distribution = required / autoCount;
+
 				// And distribute that over the rows/columns in the span
 				for (int n = start; n < end; n++)
 				{
-					// TODO ezhart This will cause problems with absolute rows/columns
-					// write a unit test with the case where a row/col span includes an absolute
-					// the distribution should not modify absolute rows/cols
-					definitions[n].Size += (required / length);
+					if (definitions[n].IsAuto)
+					{
+						definitions[n].Size += distribution;
+					}
 				}
 			}
 
@@ -373,6 +385,15 @@ namespace Xamarin.Platform.Layouts
 				ColumnGridLengthType = columnGridLengthType;
 				RowGridLengthType = rowGridLengthType;
 			}
+
+			public bool IsColumnSpanAuto => HasFlag(ColumnGridLengthType, GridLengthType.Auto);
+			public bool IsRowSpanAuto => HasFlag(RowGridLengthType, GridLengthType.Auto);
+
+			bool HasFlag(GridLengthType a, GridLengthType b)
+			{
+				// Avoiding Enum.HasFlag here for performance reasons; we don't need the type check
+				return (a & b) == b;
+			}
 		}
 
 		[Flags]
@@ -406,11 +427,15 @@ namespace Xamarin.Platform.Layouts
 					Size = size;
 				}
 			}
+
+			public abstract bool IsAuto { get; }
 		}
 
 		class Column : Definition
 		{
 			public IGridColumnDefinition ColumnDefinition { get; set; }
+
+			public override bool IsAuto => ColumnDefinition.Width.IsAuto;
 
 			public Column(IGridColumnDefinition columnDefinition)
 			{
@@ -425,6 +450,8 @@ namespace Xamarin.Platform.Layouts
 		class Row : Definition
 		{
 			public IGridRowDefinition RowDefinition { get; set; }
+
+			public override bool IsAuto => RowDefinition.Height.IsAuto;
 
 			public Row(IGridRowDefinition rowDefinition) 
 			{ 
