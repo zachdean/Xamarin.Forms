@@ -1,10 +1,18 @@
-﻿<Project Sdk="MSBuild.Sdk.Extras">
-  <PropertyGroup>
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <!--<PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+    <Platforms>AnyCPU;x86;x64</Platforms>
+    <RuntimeIdentifiers>win-x86;win-x64</RuntimeIdentifiers>
+    <TargetPlatformVersion>10.0.18362.0</TargetPlatformVersion>
+    <TargetPlatformMinVersion>10.0.17134.0</TargetPlatformMinVersion>
     <AssemblyName>Xamarin.Forms.Platform.UAP</AssemblyName>
     <RootNamespace>Xamarin.Forms.Platform.UAP</RootNamespace>
     <SkipMicrosoftUIXamlCheckTargetPlatformVersion>true</SkipMicrosoftUIXamlCheckTargetPlatformVersion>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <EnableDefaultPageItems>false</EnableDefaultPageItems>
+    <EnableTypeInfoReflection>false</EnableTypeInfoReflection>
+    <DisableWin2DPlatformCheck>true</DisableWin2DPlatformCheck>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -84,10 +92,6 @@
       <Generator>MSBuild:Compile</Generator>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Page>
-    <Page Include="StepperControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="TabbedPageStyle.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -97,16 +101,29 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
-  <ItemGroup Condition=" '$(OS)' == 'Windows_NT' AND $(TargetFramework.StartsWith('uap10.0')) AND $(TargetPlatformMinVersion) &gt;= '10.0.16299.0'">
+  <ItemGroup Condition=" '$(OS)' == 'Windows_NT' AND $(TargetFramework.StartsWith('uap10.0')) AND $(TargetPlatformMinVersion) &gt;= '10.0.17763.0'">
     <Page Include="Shell\ShellStyles.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
-  <ItemGroup Condition="'$(OS)' == 'Windows_NT' AND $(TargetFramework.StartsWith('uap10.0')) AND $(TargetPlatformMinVersion) &lt; '10.0.16299.0'">
+  <ItemGroup Condition="'$(OS)' == 'Windows_NT' AND $(TargetFramework.StartsWith('uap10.0')) AND $(TargetPlatformMinVersion) &lt; '10.0.17763.0'">
     <Page Remove="Shell\ShellStyles.xaml">
     </Page>
+  </ItemGroup>-->
+
+  <PropertyGroup>
+    <TargetFramework>net5.0-windows10.0.18362.0</TargetFramework>
+    <TargetPlatformMinVersion>10.0.17134.0</TargetPlatformMinVersion>
+    <RootNamespace>Xamarin.Forms.Platform.UAP</RootNamespace>
+    <RuntimeIdentifiers>win10-x86;win10-x64;win10-arm64</RuntimeIdentifiers>
+    <DefineConstants>$(DefineConstants);DEBUG;TRACE;NETFX_CORE;WINDOWS_UWP;UWP_16299</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.WinUI" Version="3.0.0-preview3.201113.0" />
   </ItemGroup>
+  
   <ItemGroup>
     <Compile Include="..\Xamarin.Forms.Core\Crc64.cs" Link="Crc64.cs" />
     <Compile Include="..\Xamarin.Forms.Core\StreamWrapper.cs" Link="StreamWrapper.cs" />
@@ -117,13 +134,5 @@
     <ProjectReference Include="..\Xamarin.Forms.Xaml\Xamarin.Forms.Xaml.csproj">
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup Condition=" '$(OS)' == 'Windows_NT' AND $(TargetFramework.StartsWith('uap10.0'))  ">
-    <!-- Conditions duplicated on PackageReference to make VS Mac happy -->
-    <PackageReference Include="Microsoft.UI.Xaml" Condition="'$(OS)' == 'Windows_NT' AND $(TargetPlatformMinVersion) &lt; '10.0.16299.0'" Version="2.1.190606001">
-    </PackageReference>
-    <PackageReference Include="Microsoft.UI.Xaml" Condition="'$(OS)' == 'Windows_NT' AND $(TargetPlatformMinVersion) &gt;= '10.0.16299.0'" Version="2.4.2">
-    </PackageReference>
-    <PackageReference Include="Win2D.uwp" Condition="'$(OS)' == 'Windows_NT'" Version="1.20.0">
-    </PackageReference>
-  </ItemGroup>
+
 </Project>

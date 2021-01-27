@@ -3,15 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Windows.Foundation.Metadata;
+//using Windows.Foundation.Metadata;
 using Windows.UI.ViewManagement;
 
-#if UWP_18362
-using Windows.UI.WindowManagement;
-#endif
+//#if UWP_18362
+//using Windows.UI.WindowManagement;
+//#endif
 
-using Windows.UI.Xaml.Hosting;
+using Microsoft.UI.Xaml.Hosting;
 using Xamarin.Forms.Platform.UWP;
+using Windows.UI.WindowManagement;
+using Windows.Foundation.Metadata;
 
 namespace Xamarin.Forms.DualScreen
 {
@@ -42,13 +44,13 @@ namespace Xamarin.Forms.DualScreen
 
             var frameworkElement = contentPage.CreateFrameworkElement();
 
-            Windows.UI.Xaml.Controls.Frame frame = new Windows.UI.Xaml.Controls.Frame()
+            Microsoft.UI.Xaml.Controls.Frame frame = new Microsoft.UI.Xaml.Controls.Frame()
             {
                 Content = frameworkElement
             };
 
             // 2. Create the pageand set the new window's content
-            ElementCompositionPreview.SetAppWindowContent(appWindow, frame);
+            //ElementCompositionPreview.SetAppWindowContent(appWindow, frame);
             CompactModeArgs args = null;
 
             // 3. Check if you can leverage the compact overlay APIs
@@ -76,7 +78,7 @@ namespace Xamarin.Forms.DualScreen
 					true);
 
 
-					void OnFrameSizeChanged(object sender, Windows.UI.Xaml.SizeChangedEventArgs e)
+					void OnFrameSizeChanged(object sender, Microsoft.UI.Xaml.SizeChangedEventArgs e)
                     {
 						if (windowClosed)
 							return;

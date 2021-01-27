@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
 
 namespace Xamarin.Forms.Platform.UWP
 {
@@ -26,7 +26,7 @@ namespace Xamarin.Forms.Platform.UWP
 			set => SetValue(IsSelectedProperty, value);
 		}
 
-		void OnDataContextChanged(Windows.UI.Xaml.FrameworkElement sender, Windows.UI.Xaml.DataContextChangedEventArgs args)
+		void OnDataContextChanged(Microsoft.UI.Xaml.FrameworkElement sender, Microsoft.UI.Xaml.DataContextChangedEventArgs args)
 		{
 			if(Content is ViewToRendererConverter.WrapperControl oldControl)
 			{				

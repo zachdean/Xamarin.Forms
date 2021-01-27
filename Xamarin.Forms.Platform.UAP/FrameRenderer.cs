@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Automation.Peers;
-using Windows.UI.Xaml.Controls;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Automation.Peers;
+using Microsoft.UI.Xaml.Controls;
 
 namespace Xamarin.Forms.Platform.UWP
 {
@@ -97,7 +97,7 @@ namespace Xamarin.Forms.Platform.UWP
 			if (Element.BorderColor != Color.Default)
 			{
 				Control.BorderBrush = Element.BorderColor.ToBrush();
-				Control.BorderThickness = new Windows.UI.Xaml.Thickness(1);
+				Control.BorderThickness = WinUIHelpers.CreateThickness(1);
 			}
 			else
 			{
@@ -112,7 +112,7 @@ namespace Xamarin.Forms.Platform.UWP
 			if (cornerRadius == -1f)
 				cornerRadius = 5f; // default corner radius
 
-			Control.CornerRadius = new Windows.UI.Xaml.CornerRadius(cornerRadius);
+			Control.CornerRadius = WinUIHelpers.CreateCornerRadius(cornerRadius);
 		}
 	}
 }

@@ -1,7 +1,49 @@
+//using System;
+//using System.ComponentModel;
+//using Windows.UI.Core;
+//using Microsoft.UI.Xaml.Controls;
+//using Xamarin.Forms.Internals;
+//using static System.String;
+//using Xamarin.Forms.PlatformConfiguration.WindowsSpecific;
+//using System.Threading.Tasks;
+//using System.Net;
+//using Windows.Web.Http;
+//using System.Collections.Generic;
+//using System.Linq;
+
+//namespace Xamarin.Forms.Platform.UWP
+//{
+//#pragma warning disable CS8305 // Type is for evaluation purposes only and is subject to change or removal in future updates.
+//	public class WebViewRenderer : ViewRenderer<WebView, Microsoft.UI.Xaml.Controls.WebView2>, IWebViewDelegate
+//#pragma warning restore CS8305 // Type is for evaluation purposes only and is subject to change or removal in future updates.
+//	{
+//		public WebViewRenderer()
+//		{
+//			SetElement(new WebView());
+//		}
+
+//		protected override void OnElementChanged(ElementChangedEventArgs<WebView> e)
+//		{
+//			base.OnElementChanged(e);
+//#pragma warning disable CS8305 // Type is for evaluation purposes only and is subject to change or removal in future updates.
+//			SetNativeControl(new WebView2());
+//#pragma warning restore CS8305 // Type is for evaluation purposes only and is subject to change or removal in future updates.
+//			Control.Source = new Uri("https://www.microsoft.com");
+//		}
+
+//		public void LoadHtml(string html, string baseUrl)
+//		{
+//		}
+
+//		public void LoadUrl(string url)
+//		{
+//		}
+//	}
+//}
+
 using System;
 using System.ComponentModel;
 using Windows.UI.Core;
-using Windows.UI.Xaml.Controls;
 using Xamarin.Forms.Internals;
 using static System.String;
 using Xamarin.Forms.PlatformConfiguration.WindowsSpecific;
@@ -10,14 +52,19 @@ using System.Net;
 using Windows.Web.Http;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.UI.Xaml.Controls;
 
 namespace Xamarin.Forms.Platform.UWP
 {
-	public class WebViewRenderer : ViewRenderer<WebView, Windows.UI.Xaml.Controls.WebView>, IWebViewDelegate
+#pragma warning disable CS8305 // Type is for evaluation purposes only and is subject to change or removal in future updates.
+	public class WebViewRenderer : ViewRenderer<WebView, WebView2>, IWebViewDelegate
+#pragma warning restore CS8305 // Type is for evaluation purposes only and is subject to change or removal in future updates.
 	{
 		WebNavigationEvent _eventState;
 		bool _updating;
-		Windows.UI.Xaml.Controls.WebView _internalWebView;
+#pragma warning disable CS8305 // Type is for evaluation purposes only and is subject to change or removal in future updates.
+		WebView2 _internalWebView;
+#pragma warning restore CS8305 // Type is for evaluation purposes only and is subject to change or removal in future updates.
 		const string LocalScheme = "ms-appx-web:///";
 
 		// Script to insert a <base> tag into an HTML document
@@ -41,7 +88,9 @@ if(bases.length == 0){
 
 			// Set up an internal WebView we can use to load and parse the original HTML string
 			// Make _internalWebView a field instead of local variable to avoid garbage collection
-			_internalWebView = new Windows.UI.Xaml.Controls.WebView();
+#pragma warning disable CS8305 // Type is for evaluation purposes only and is subject to change or removal in future updates.
+			_internalWebView = new WebView2();
+#pragma warning restore CS8305 // Type is for evaluation purposes only and is subject to change or removal in future updates.
 
 			// When the 'navigation' to the original HTML string is done, we can modify it to include our <base> tag
 			_internalWebView.NavigationCompleted += async (sender, args) =>
@@ -50,8 +99,8 @@ if(bases.length == 0){
 				var script = BaseInsertionScript.Replace("baseTag", baseTag);
 
 				// Run it and retrieve the updated HTML from our WebView
-				await sender.InvokeScriptAsync("eval", new[] { script });
-				htmlWithBaseTag = await sender.InvokeScriptAsync("eval", new[] { "document.documentElement.outerHTML;" });
+				await sender.ExecuteScriptAsync(script);
+				htmlWithBaseTag = await sender.ExecuteScriptAsync("document.documentElement.outerHTML;");
 
 				// Set the HTML for the 'real' WebView to the updated HTML
 				Control.NavigateToString(!IsNullOrEmpty(htmlWithBaseTag) ? htmlWithBaseTag : html);
@@ -79,8 +128,9 @@ if(bases.length == 0){
 
 				try
 				{
-					var httpRequestMessage = new Windows.Web.Http.HttpRequestMessage(Windows.Web.Http.HttpMethod.Get, uri);
-					Control.NavigateWithHttpRequestMessage(httpRequestMessage);
+					// TODO WINUI2
+					//var httpRequestMessage = new Windows.Web.Http.HttpRequestMessage(Windows.Web.Http.HttpMethod.Get, uri);
+					Control.Source = uri; //
 				}
 				catch (System.Exception exc)
 				{
@@ -109,8 +159,10 @@ if(bases.length == 0){
 				{
 					Control.NavigationStarting -= OnNavigationStarted;
 					Control.NavigationCompleted -= OnNavigationCompleted;
-					Control.NavigationFailed -= OnNavigationFailed;
-					Control.ScriptNotify -= OnScriptNotify;
+
+					// TODO WINUI
+					//Control.NavigationFailed -= OnNavigationFailed;
+					//Control.ScriptNotify -= OnScriptNotify;
 				}
 			}
 
@@ -135,11 +187,15 @@ if(bases.length == 0){
 			{
 				if (Control == null)
 				{
-					var webView = new Windows.UI.Xaml.Controls.WebView();
+#pragma warning disable CS8305 // Type is for evaluation purposes only and is subject to change or removal in future updates.
+					var webView = new WebView2();
+#pragma warning restore CS8305 // Type is for evaluation purposes only and is subject to change or removal in future updates.
 					webView.NavigationStarting += OnNavigationStarted;
 					webView.NavigationCompleted += OnNavigationCompleted;
-					webView.NavigationFailed += OnNavigationFailed;
-					webView.ScriptNotify += OnScriptNotify;
+
+					// TODO WINUI
+					//webView.NavigationFailed += OnNavigationFailed;
+					//webView.ScriptNotify += OnScriptNotify;
 					SetNativeControl(webView);
 				}
 
@@ -192,7 +248,7 @@ if(bases.length == 0){
 		{
 			var uri = CreateUriForCookies(url);
 			CookieContainer existingCookies = new CookieContainer();
-			var filter = new Windows.Web.Http.Filters.HttpBaseProtocolFilter();			
+			var filter = new Windows.Web.Http.Filters.HttpBaseProtocolFilter();
 			var nativeCookies = filter.CookieManager.GetCookies(uri);
 			return nativeCookies;
 		}
@@ -296,14 +352,14 @@ if(bases.length == 0){
 
 		async void OnEvalRequested(object sender, EvalRequested eventArg)
 		{
-			await Control.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, 
+			await Control.Dispatcher.RunAsync(CoreDispatcherPriority.Normal,
 				async () =>
 				{
 					try
 					{
-						await Control.InvokeScriptAsync("eval", new[] { eventArg.Script });
+						await Control.ExecuteScriptAsync(eventArg.Script);
 					}
-					catch(Exception exc)
+					catch (Exception exc)
 					{
 						Log.Warning(nameof(WebView), $"Eval of script failed: {exc} Script: {eventArg.Script}");
 					}
@@ -312,7 +368,7 @@ if(bases.length == 0){
 
 		async Task<string> OnEvaluateJavaScriptRequested(string script)
 		{
-			return await Control.InvokeScriptAsync("eval", new[] { script });
+			return await Control.ExecuteScriptAsync(script);
 		}
 
 		void OnGoBackRequested(object sender, EventArgs eventArgs)
@@ -340,31 +396,37 @@ if(bases.length == 0){
 		void OnReloadRequested(object sender, EventArgs eventArgs)
 		{
 			SyncNativeCookies(Control?.Source?.ToString());
-			Control.Refresh();
+			Control.Reload();
 		}
 
-		async void OnNavigationCompleted(Windows.UI.Xaml.Controls.WebView sender, WebViewNavigationCompletedEventArgs e)
+#pragma warning disable CS8305 // Type is for evaluation purposes only and is subject to change or removal in future updates.
+		async void OnNavigationCompleted(WebView2 sender, WebView2NavigationCompletedEventArgs e)
+#pragma warning restore CS8305 // Type is for evaluation purposes only and is subject to change or removal in future updates.
 		{
-			if (e.Uri != null)
-				SendNavigated(new UrlWebViewSource { Url = e.Uri.AbsoluteUri }, _eventState, WebNavigationResult.Success);
+			//TODO WINUI
+			Uri uri = sender.Source;
+			if (uri != null)
+				SendNavigated(new UrlWebViewSource { Url = uri.AbsoluteUri }, _eventState, WebNavigationResult.Success);
 
 			UpdateCanGoBackForward();
 
 			if (Element.OnThisPlatform().IsJavaScriptAlertEnabled())
-				await Control.InvokeScriptAsync("eval", new string[] { "window.alert = function(message){ window.external.notify(message); };" });
+				await Control.ExecuteScriptAsync("window.alert = function(message){ window.external.notify(message); };");
 		}
 
-		void OnNavigationFailed(object sender, WebViewNavigationFailedEventArgs e)
-		{
-			if (e.Uri != null)
-				SendNavigated(new UrlWebViewSource { Url = e.Uri.AbsoluteUri }, _eventState, WebNavigationResult.Failure);
-		}
+		//void OnNavigationFailed(object sender, WebViewNavigationFailedEventArgs e)
+		//{
+		//	if (e.Uri != null)
+		//		SendNavigated(new UrlWebViewSource { Url = e.Uri.AbsoluteUri }, _eventState, WebNavigationResult.Failure);
+		//}
 
-		void OnNavigationStarted(Windows.UI.Xaml.Controls.WebView sender, WebViewNavigationStartingEventArgs e)
+#pragma warning disable CS8305 // Type is for evaluation purposes only and is subject to change or removal in future updates.
+		void OnNavigationStarted(WebView2 sender, WebView2NavigationStartingEventArgs e)
+#pragma warning restore CS8305 // Type is for evaluation purposes only and is subject to change or removal in future updates.
 		{
-			Uri uri = e.Uri;
-
-			if (uri != null)
+			Uri uri;
+			
+			if (Uri.TryCreate(e.Uri, UriKind.Absolute, out uri) && uri != null)
 			{
 				var args = new WebNavigatingEventArgs(_eventState, new UrlWebViewSource { Url = uri.AbsoluteUri }, uri.AbsoluteUri);
 
@@ -377,11 +439,11 @@ if(bases.length == 0){
 			}
 		}
 
-		async void OnScriptNotify(object sender, NotifyEventArgs e)
-		{
-			if (Element.OnThisPlatform().IsJavaScriptAlertEnabled())
-				await new Windows.UI.Popups.MessageDialog(e.Value).ShowAsync();
-		}
+		//async void OnScriptNotify(object sender, NotifyEventArgs e)
+		//{
+		//	if (Element.OnThisPlatform().IsJavaScriptAlertEnabled())
+		//		await new Windows.UI.Popups.MessageDialog(e.Value).ShowAsync();
+		//}
 
 		void SendNavigated(UrlWebViewSource source, WebNavigationEvent evnt, WebNavigationResult result)
 		{

@@ -4,7 +4,7 @@ using Windows.ApplicationModel;
 
 namespace Xamarin.Forms.Platform.UWP
 {
-	public abstract class WindowsBasePage : Windows.UI.Xaml.Controls.Page
+	public abstract class WindowsBasePage : Microsoft.UI.Xaml.Window
 	{
 
 		Application _application;
@@ -13,8 +13,9 @@ namespace Xamarin.Forms.Platform.UWP
 		{
 			if (!Windows.ApplicationModel.DesignMode.DesignModeEnabled)
 			{
-				Windows.UI.Xaml.Application.Current.Suspending += OnApplicationSuspending;
-				Windows.UI.Xaml.Application.Current.Resuming += OnApplicationResuming;
+				//WINUI
+				//Microsoft.UI.Xaml.Application.Current.Suspending += OnApplicationSuspending;
+				//Microsoft.UI.Xaml.Application.Current.Resuming += OnApplicationResuming;
 			}
 		}
 
@@ -31,9 +32,9 @@ namespace Xamarin.Forms.Platform.UWP
 			Application.SetCurrentApplication(application);
 			if (_application.MainPage != null)
 				RegisterWindow(_application.MainPage);
-			application.PropertyChanged += OnApplicationPropertyChanged;
+			//application.PropertyChanged += OnApplicationPropertyChanged;
 
-			_application.SendStart();
+			//_application.SendStart();
 		}
 
 		protected void RegisterWindow(Page page)

@@ -1,6 +1,6 @@
 ﻿using System;
 using Windows.Graphics.Display;
-using Windows.UI.Xaml;
+using Microsoft.UI.Xaml;
 using Xamarin.Forms.Internals;
 using WRect = Windows.Foundation.Rect;
 

@@ -1,0 +1,14 @@
+{
+  "solution": {
+    "path": "Xamarin.Forms.sln",
+    "projects": [
+      "WinUI3Desktop\\WinUI3Desktop (Package)\\WinUI3Desktop (Package).wapproj",
+      "WinUI3Desktop\\WinUI3Desktop\\WinUI3Desktop.csproj",
+      "Xamarin.Forms.Core.Design\\Xamarin.Forms.Core.Design.csproj",
+      "Xamarin.Forms.Core\\Xamarin.Forms.Core.csproj",
+      "Xamarin.Forms.Platform.UAP\\Xamarin.Forms.Platform.UAP.csproj",
+      "Xamarin.Forms.Platform\\Xamarin.Forms.Platform.csproj",
+      "Xamarin.Forms.Xaml\\Xamarin.Forms.Xaml.csproj"
+    ]
+  }
+}

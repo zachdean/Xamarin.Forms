@@ -1,6 +1,6 @@
-﻿using Windows.UI.Xaml.Controls;
-using WBrush = Windows.UI.Xaml.Media.Brush;
-using WRectangle = Windows.UI.Xaml.Shapes.Rectangle;
+﻿using Microsoft.UI.Xaml.Controls;
+using WBrush = Microsoft.UI.Xaml.Media.Brush;
+using WRectangle = Microsoft.UI.Xaml.Shapes.Rectangle;
 
 namespace Xamarin.Forms.Platform.UWP
 {
