@@ -4,7 +4,9 @@
 	{
 		public static PropertyMapper<IWebView, WebViewHandler> WebViewMapper = new PropertyMapper<IWebView, WebViewHandler>(ViewHandler.ViewMapper)
 		{
-			[nameof(IWebView.Source)] = MapSource
+			[nameof(IWebView.Source)] = MapSource,
+			[nameof(IWebView.CanGoBack)] = MapCanGoBack,
+			[nameof(IWebView.CanGoForward)] = MapCanGoForward
 		};
 
 		public WebViewHandler() : base(WebViewMapper)

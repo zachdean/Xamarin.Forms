@@ -14,6 +14,7 @@ using ObjCRuntime;
 using UIKit;
 using WebKit;
 using Xamarin.Forms.Internals;
+using Xamarin.Platform;
 using PreserveAttribute = Foundation.PreserveAttribute;
 using Uri = System.Uri;
 
@@ -134,6 +135,7 @@ namespace Xamarin.Forms.Platform.iOS
 			Layout.LayoutChildIntoBoundingRegion(Element, new Rectangle(Element.X, Element.Y, size.Width, size.Height));
 		}
 
+		[PortHandler]
 		public void LoadHtml(string html, string baseUrl)
 		{
 			if (html != null)
@@ -169,6 +171,7 @@ namespace Xamarin.Forms.Platform.iOS
 			}
 		}
 
+		[PortHandler]
 		public async void LoadUrl(string url)
 		{
 			try
@@ -198,15 +201,16 @@ namespace Xamarin.Forms.Platform.iOS
 				// local file loading here and see if that works:
 				if (!LoadFile(url))
 				{
-					Log.Warning(nameof(WkWebViewRenderer), $"Unable to Load Url {url}: {formatException}");
+					Internals.Log.Warning(nameof(WkWebViewRenderer), $"Unable to Load Url {url}: {formatException}");
 				}
 			}
 			catch (Exception exc)
 			{
-				Log.Warning(nameof(WkWebViewRenderer), $"Unable to Load Url {url}: {exc}");
+				Internals.Log.Warning(nameof(WkWebViewRenderer), $"Unable to Load Url {url}: {exc}");
 			}
 		}
 
+		[PortHandler]
 		bool LoadFile(string url)
 		{
 			try
@@ -227,7 +231,7 @@ namespace Xamarin.Forms.Platform.iOS
 			}
 			catch (Exception ex)
 			{
-				Log.Warning(nameof(WkWebViewRenderer), $"Could not load {url} as local file: {ex}");
+				Internals.Log.Warning(nameof(WkWebViewRenderer), $"Could not load {url} as local file: {ex}");
 			}
 
 			return false;
@@ -624,12 +628,13 @@ namespace Xamarin.Forms.Platform.iOS
 			}
 			catch (Exception exc)
 			{
-				Log.Warning(nameof(WkWebViewRenderer), $"Syncing Existing Cookies Failed: {exc}");
+				Internals.Log.Warning(nameof(WkWebViewRenderer), $"Syncing Existing Cookies Failed: {exc}");
 			}
 
 			Reload();
 		}
 
+		[PortHandler]
 		void UpdateCanGoBackForward()
 		{
 			((IWebViewController)WebView).CanGoBack = CanGoBack;
@@ -737,7 +742,7 @@ namespace Xamarin.Forms.Platform.iOS
 				}
 				catch (Exception exc)
 				{
-					Log.Warning(nameof(WkWebViewRenderer), $"Failed to Sync Cookies {exc}");
+					Internals.Log.Warning(nameof(WkWebViewRenderer), $"Failed to Sync Cookies {exc}");
 				}
 
 				var args = new WebNavigatedEventArgs(_lastEvent, WebView.Source, url, WebNavigationResult.Success);

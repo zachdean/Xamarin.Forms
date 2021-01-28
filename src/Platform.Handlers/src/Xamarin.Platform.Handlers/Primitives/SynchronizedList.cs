@@ -5,10 +5,10 @@ using System.Linq;
 
 namespace Xamarin.Forms
 {
-	internal class SynchronizedList<T> : IList<T>, IReadOnlyList<T>
+	public class SynchronizedList<T> : IList<T>, IReadOnlyList<T>
 	{
 		readonly List<T> _list = new List<T>();
-		ReadOnlyCollection<T> _snapshot;
+		ReadOnlyCollection<T>? _snapshot;
 
 		public void Add(T item)
 		{
@@ -71,7 +71,7 @@ namespace Xamarin.Forms
 
 		public IEnumerator<T> GetEnumerator()
 		{
-			ReadOnlyCollection<T> snap = _snapshot;
+			ReadOnlyCollection<T>? snap = _snapshot;
 			if (snap == null)
 			{
 				lock (_list)
@@ -100,7 +100,7 @@ namespace Xamarin.Forms
 		{
 			get
 			{
-				ReadOnlyCollection<T> snap = _snapshot;
+				ReadOnlyCollection<T>? snap = _snapshot;
 				if (snap != null)
 					return snap[index];
 

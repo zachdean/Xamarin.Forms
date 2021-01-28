@@ -1,9 +1,7 @@
-using System.ComponentModel;
-using Xamarin.Platform;
+﻿using System.ComponentModel;
 
-namespace Xamarin.Forms.Internals
+namespace Xamarin.Forms
 {
-	[PortHandler]
 	[EditorBrowsable(EditorBrowsableState.Never)]
 	public abstract class LogListener
 	{

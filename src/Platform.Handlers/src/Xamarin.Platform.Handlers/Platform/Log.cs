@@ -1,10 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel;
-using Xamarin.Platform;
+using Xamarin.Forms;
 
-namespace Xamarin.Forms.Internals
+namespace Xamarin.Platform
 {
-	[PortHandler]
 	[EditorBrowsable(EditorBrowsableState.Never)]
 	public static class Log
 	{
