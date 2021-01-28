@@ -148,13 +148,11 @@ if(bases.length == 0){
 				{
 					Control.NavigationStarting -= OnNavigationStarted;
 					Control.NavigationCompleted -= OnNavigationCompleted;
-
-					// TODO WINUI3
-					//Element.EvalRequested -= OnEvalRequested;
-					//Element.EvaluateJavaScriptRequested -= OnEvaluateJavaScriptRequested;
-					//Element.GoBackRequested -= OnGoBackRequested;
-					//Element.GoForwardRequested -= OnGoForwardRequested;
-					//Element.ReloadRequested -= OnReloadRequested;
+					Element.EvalRequested -= OnEvalRequested;
+					Element.EvaluateJavaScriptRequested -= OnEvaluateJavaScriptRequested;
+					Element.GoBackRequested -= OnGoBackRequested;
+					Element.GoForwardRequested -= OnGoForwardRequested;
+					Element.ReloadRequested -= OnReloadRequested;
 				}
 			}
 
