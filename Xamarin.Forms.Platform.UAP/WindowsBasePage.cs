@@ -13,9 +13,9 @@ namespace Xamarin.Forms.Platform.UWP
 		{
 			if (!Windows.ApplicationModel.DesignMode.DesignModeEnabled)
 			{
-				//WINUI
-				//Microsoft.UI.Xaml.Application.Current.Suspending += OnApplicationSuspending;
-				//Microsoft.UI.Xaml.Application.Current.Resuming += OnApplicationResuming;
+				//TODO WINUI3
+				Microsoft.UI.Xaml.Application.Current.Suspending += OnApplicationSuspending;
+				Microsoft.UI.Xaml.Application.Current.Resuming += OnApplicationResuming;
 			}
 		}
 
@@ -32,9 +32,9 @@ namespace Xamarin.Forms.Platform.UWP
 			Application.SetCurrentApplication(application);
 			if (_application.MainPage != null)
 				RegisterWindow(_application.MainPage);
-			//application.PropertyChanged += OnApplicationPropertyChanged;
+			application.PropertyChanged += OnApplicationPropertyChanged;
 
-			//_application.SendStart();
+			_application.SendStart();
 		}
 
 		protected void RegisterWindow(Page page)

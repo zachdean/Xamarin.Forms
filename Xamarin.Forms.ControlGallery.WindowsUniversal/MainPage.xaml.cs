@@ -51,17 +51,44 @@ namespace Xamarin.Forms.ControlGallery.WindowsUniversal
 		{
 			_app = new Controls.App();
 			LoadApplication(_app);
-			CoreWindow.GetForCurrentThread().KeyDown += OnKeyDown;
+
+			_app.PropertyChanged += _app_PropertyChanged;
+			WireUpKeyDown();
 		}
 
-		void OnKeyDown(CoreWindow coreWindow, KeyEventArgs args)
+		// TODO WINUI3 not sure the best way to detect the content swap out
+		void WireUpKeyDown()
 		{
-			if (args.VirtualKey == VirtualKey.Escape)
+			this.DispatcherQueue.TryEnqueue(() =>
+			{
+				if (this.Content != null)
+				{
+					this.Content.KeyDown -= OnKeyDown;
+					this.Content.KeyDown += OnKeyDown;
+				}
+				else
+				{
+					WireUpKeyDown();
+				}
+			});
+		}
+		
+		private void _app_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+		{
+			if (e.PropertyName == "MainPage")
+			{
+				WireUpKeyDown();
+			}
+		}
+
+		void OnKeyDown(object sender, KeyRoutedEventArgs args)
+		{
+			if (args.Key == VirtualKey.Escape)
 			{
 				_app.Reset();
 				args.Handled = true;
 			}
-			else if (args.VirtualKey == VirtualKey.F1)
+			else if (args.Key == VirtualKey.F1)
 			{
 				_app.PlatformTest();
 			}
