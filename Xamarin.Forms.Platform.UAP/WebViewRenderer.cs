@@ -1,4 +1,3 @@
-
 #pragma warning disable CS8305 // Type is for evaluation purposes only and is subject to change or removal in future updates.
 using System;
 using System.ComponentModel;
@@ -85,9 +84,11 @@ if(bases.length == 0){
 
 				try
 				{
-					// TODO WINUI2
+					Control.Source = uri;
+
+					// TODO WINUI3
 					//var httpRequestMessage = new Windows.Web.Http.HttpRequestMessage(Windows.Web.Http.HttpMethod.Get, uri);
-					Control.Source = uri; //
+					//Control.NavigateWithHttpRequestMessage(httpRequestMessage);
 				}
 				catch (System.Exception exc)
 				{
@@ -114,9 +115,11 @@ if(bases.length == 0){
 			{
 				return;
 			}
-		//	webView.SeparateProcessLost -= OnSeparateProcessLost;
 			webView.NavigationStarting -= OnNavigationStarted;
 			webView.NavigationCompleted -= OnNavigationCompleted;
+
+			// TODO WINUI3
+			//	webView.SeparateProcessLost -= OnSeparateProcessLost;
 			//webView.NavigationFailed -= OnNavigationFailed;
 			//webView.ScriptNotify -= OnScriptNotify;
 		}
@@ -128,11 +131,12 @@ if(bases.length == 0){
 				return;
 			}
 
+			// TODO WINUI3
 			//webView.SeparateProcessLost += OnSeparateProcessLost;
-			webView.NavigationStarting += OnNavigationStarted;
-			webView.NavigationCompleted += OnNavigationCompleted;
 			//webView.NavigationFailed += OnNavigationFailed;
 			//webView.ScriptNotify += OnScriptNotify;
+			webView.NavigationStarting += OnNavigationStarted;
+			webView.NavigationCompleted += OnNavigationCompleted;
 		}
 
 		protected override void Dispose(bool disposing)
@@ -145,7 +149,7 @@ if(bases.length == 0){
 					Control.NavigationStarting -= OnNavigationStarted;
 					Control.NavigationCompleted -= OnNavigationCompleted;
 
-					// TODO WINUI
+					// TODO WINUI3
 					//Element.EvalRequested -= OnEvalRequested;
 					//Element.EvaluateJavaScriptRequested -= OnEvaluateJavaScriptRequested;
 					//Element.GoBackRequested -= OnGoBackRequested;
@@ -159,6 +163,7 @@ if(bases.length == 0){
 
 		protected virtual WWebView CreateNativeControl()
 		{
+			// TODO WINUI3
 			//if (Element.IsSet(PlatformConfiguration.WindowsSpecific.WebView.ExecutionModeProperty))
 			//{
 			//	WWebViewExecutionMode webViewExecutionMode = WWebViewExecutionMode.SameThread;
@@ -410,9 +415,11 @@ if(bases.length == 0){
 			Control.Reload();
 		}
 
-		async void OnNavigationCompleted(WebView2 sender, WebView2NavigationCompletedEventArgs e)
+		async void OnNavigationCompleted(WWebView sender, WebView2NavigationCompletedEventArgs e)
 		{
-			//TODO WINUI
+			// TODO WINUI3
+			//if (e.Uri != null)
+			//	SendNavigated(new UrlWebViewSource { Url = e.Uri.AbsoluteUri }, _eventState, WebNavigationResult.Success);
 			Uri uri = sender.Source;
 			if (uri != null)
 				SendNavigated(new UrlWebViewSource { Url = uri.AbsoluteUri }, _eventState, WebNavigationResult.Success);
@@ -423,16 +430,28 @@ if(bases.length == 0){
 				await Control.ExecuteScriptAsync("window.alert = function(message){ window.external.notify(message); };");
 		}
 
+		// TODO WINUI3
 		//void OnNavigationFailed(object sender, WebViewNavigationFailedEventArgs e)
 		//{
 		//	if (e.Uri != null)
 		//		SendNavigated(new UrlWebViewSource { Url = e.Uri.AbsoluteUri }, _eventState, WebNavigationResult.Failure);
 		//}
 
-		void OnNavigationStarted(WebView2 sender, WebView2NavigationStartingEventArgs e)
+		//async void OnScriptNotify(object sender, NotifyEventArgs e)
+		//{
+		//	if (Element.OnThisPlatform().IsJavaScriptAlertEnabled())
+		//		await new Windows.UI.Popups.MessageDialog(e.Value).ShowAsync();
+		//}
+
+		void OnNavigationStarted(WWebView sender, WebView2NavigationStartingEventArgs e)
 		{
+			// TODO WINUI3
+			//Uri uri = e.Uri;
+
+			//if (uri != null)
+			//{
 			Uri uri;
-			
+
 			if (Uri.TryCreate(e.Uri, UriKind.Absolute, out uri) && uri != null)
 			{
 				var args = new WebNavigatingEventArgs(_eventState, new UrlWebViewSource { Url = uri.AbsoluteUri }, uri.AbsoluteUri);
@@ -445,12 +464,6 @@ if(bases.length == 0){
 					_eventState = WebNavigationEvent.NewPage;
 			}
 		}
-
-		//async void OnScriptNotify(object sender, NotifyEventArgs e)
-		//{
-		//	if (Element.OnThisPlatform().IsJavaScriptAlertEnabled())
-		//		await new Windows.UI.Popups.MessageDialog(e.Value).ShowAsync();
-		//}
 
 		void SendNavigated(UrlWebViewSource source, WebNavigationEvent evnt, WebNavigationResult result)
 		{
@@ -487,4 +500,3 @@ if(bases.length == 0){
 		//}
 	}
 }
-#pragma warning restore CS8305 // Type is for evaluation purposes only and is subject to change or removal in future updates.
