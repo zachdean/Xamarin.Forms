@@ -2,7 +2,7 @@ using System;
 
 namespace Xamarin.Forms
 {
-	public class Switch : View, IElementConfiguration<Switch>
+	public partial class Switch : View, IElementConfiguration<Switch>
 	{
 		public const string SwitchOnVisualState = "On";
 		public const string SwitchOffVisualState = "Off";

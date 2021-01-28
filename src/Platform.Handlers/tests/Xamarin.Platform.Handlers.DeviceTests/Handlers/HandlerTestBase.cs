@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 using Xamarin.Essentials;
 using Xunit;
@@ -10,7 +8,6 @@ namespace Xamarin.Platform.Handlers.DeviceTests
 	public partial class HandlerTestBase<THandler> : TestBase
 		where THandler : IViewHandler
 	{
-
 		public Task<T> InvokeOnMainThreadAsync<T>(Func<T> func) =>
 			MainThread.InvokeOnMainThreadAsync(func);
 
@@ -35,12 +32,12 @@ namespace Xamarin.Platform.Handlers.DeviceTests
 		}
 
 		async protected Task ValidatePropertyInitValue<TValue>(
-			ISlider slider,
+			IView view,
 			Func<TValue> GetValue,
 			Func<THandler, TValue> GetNativeValue,
 			TValue expectedValue)
 		{
-			var values = await GetValueAsync(slider, (handler) =>
+			var values = await GetValueAsync(view, (handler) =>
 			{
 				return new
 				{

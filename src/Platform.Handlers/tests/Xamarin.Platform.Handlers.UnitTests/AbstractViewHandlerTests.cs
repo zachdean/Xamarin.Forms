@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 
 namespace Xamarin.Platform.Handlers.UnitTests
 {
-
 	[TestFixture]
 	public class AbstractViewHandlerTests
 	{
@@ -41,5 +37,4 @@ namespace Xamarin.Platform.Handlers.UnitTests
 			Assert.AreEqual(2, handlerStub.DisconnectHandlerCount);
 		}
 	}
-
 }

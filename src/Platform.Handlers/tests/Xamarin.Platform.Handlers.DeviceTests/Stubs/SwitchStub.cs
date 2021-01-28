@@ -1,0 +1,15 @@
+﻿using Xamarin.Forms;
+
+namespace Xamarin.Platform.Handlers.DeviceTests.Stubs
+{
+	public partial class SwitchStub : StubBase, ISwitch
+	{
+		public bool IsToggled { get; set; }
+
+		public Color OnColor { get; set; }
+
+		public Color ThumbColor { get; set; }
+
+		public void Toggled() { }
+	}
+}
