@@ -8,6 +8,7 @@ using Android.OS;
 using Android.Webkit;
 using Xamarin.Forms.Internals;
 using Xamarin.Forms.PlatformConfiguration.AndroidSpecific;
+using Xamarin.Platform;
 using AWebView = Android.Webkit.WebView;
 using MixedContentHandling = Android.Webkit.MixedContentHandling;
 
@@ -37,6 +38,7 @@ namespace Xamarin.Forms.Platform.Android
 			AutoPackage = false;
 		}
 
+		[PortHandler]
 		public void LoadHtml(string html, string baseUrl)
 		{
 			_eventState = WebNavigationEvent.NewPage;
@@ -48,6 +50,7 @@ namespace Xamarin.Forms.Platform.Android
 			LoadUrl(url, true);
 		}
 
+		[PortHandler]
 		void LoadUrl(string url, bool fireNavigatingCanceled)
 		{
 			if (!fireNavigatingCanceled || !SendNavigatingCanceled(url))
@@ -114,6 +117,7 @@ namespace Xamarin.Forms.Platform.Android
 			return new Size(Context.ToPixels(40), Context.ToPixels(40));
 		}
 
+		[PortHandler]
 		protected override AWebView CreateNativeControl()
 		{
 			var webView = new AWebView(Context);
@@ -329,6 +333,7 @@ namespace Xamarin.Forms.Platform.Android
 			}
 		}
 
+		[PortHandler]
 		void Load()
 		{
 			if (IgnoreSourceChanges)

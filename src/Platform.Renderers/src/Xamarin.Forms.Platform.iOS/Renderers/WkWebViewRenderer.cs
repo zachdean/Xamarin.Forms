@@ -575,6 +575,7 @@ namespace Xamarin.Forms.Platform.iOS
 				Load();
 		}
 
+		[PortHandler]
 		void Load()
 		{
 			if (_ignoreSourceChanges)
