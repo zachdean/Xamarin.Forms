@@ -88,14 +88,12 @@ namespace Xamarin.Forms.Platform.UWP
 				Microsoft.UI.Xaml.Application.Current.Resources.MergedDictionaries.Add(Forms.GetTabletResources());
 			}
 
-#if UWP_16299
 			if (!current.Resources.ContainsKey(ShellRenderer.ShellStyle))
 			{
 				var myResourceDictionary = new Microsoft.UI.Xaml.ResourceDictionary();
 				myResourceDictionary.Source = new Uri("ms-appx:///Xamarin.Forms.Platform.UAP/Shell/ShellStyles.xbf");
 				Microsoft.UI.Xaml.Application.Current.Resources.MergedDictionaries.Add(myResourceDictionary);
 			}
-#endif
 
 			_container = new Canvas
 			{

@@ -192,6 +192,7 @@
     <!--net5.0-windows10.0.18362.0-->
     <file src="..\src\Platform.Renderers\src\Xamarin.Forms.Platform.UAP\bin\$Configuration$\net5.0-windows10.0.18362.0\Xamarin.Forms.Platform.UAP.dll" target="lib\net5.0-windows10.0.18362.0" />
     <file src="..\src\Platform.Renderers\src\Xamarin.Forms.Platform.UAP\bin\$Configuration$\net5.0-windows10.0.18362.0\Xamarin.Forms.Platform.UAP.*pdb" target="lib\net5.0-windows10.0.18362.0" />
+    <file src="..\src\Platform.Renderers\src\Xamarin.Forms.Platform.UAP\bin\$Configuration$\net5.0-windows10.0.18362.0\Xamarin.Forms.Platform.UAP.*pri" target="lib\net5.0-windows10.0.18362.0" />
     <file src="..\src\Forms\src\Xamarin.Forms.Core\bin\$Configuration$\netstandard2.0\Xamarin.Forms.Core.dll" target="lib\net5.0-windows10.0.18362.0" />
     <file src="..\src\Forms\src\Xamarin.Forms.Core\bin\$Configuration$\netstandard2.0\Xamarin.Forms.Core.*pdb" target="lib\net5.0-windows10.0.18362.0" />
     <file src="..\eng\docs\Xamarin.Forms.Core.xml" target="lib\net5.0-windows10.0.18362.0" />
@@ -200,7 +201,7 @@
     <file src="..\eng\docs\Xamarin.Forms.Xaml.xml" target="lib\net5.0-windows10.0.18362.0" />
     <file src="..\src\Platform.Handlers\src\Xamarin.Platform.Handlers\bin\$Configuration$\netstandard2.0\Xamarin.Platform.dll" target="lib\net5.0-windows10.0.18362.0" />
     <file src="..\src\Platform.Handlers\src\Xamarin.Platform.Handlers\bin\$Configuration$\netstandard2.0\Xamarin.Platform.*pdb" target="lib\net5.0-windows10.0.18362.0" />
-    <file src="..\src\Platform.Renderers\src\Xamarin.Forms.Platform.UAP\bin\$Configuration$\net5.0-windows10.0.18362.0\Xamarin.Forms.Platform.UAP\**\*.*" target="lib\net5.0-windows10.0.18362.0\Xamarin.Forms.Platform.UAP" />
+    <file src="..\src\Platform.Renderers\src\Xamarin.Forms.Platform.UAP\bin\$Configuration$\net5.0-windows10.0.18362.0\Xamarin.Forms.Platform.UAP\**\*.xaml" target="lib\net5.0-windows10.0.18362.0\Xamarin.Forms.Platform.UAP" />
 
     <!-- iOS Localized String Resource Assemblies -->
     <file src="..\src\Platform.Renderers\src\Xamarin.Forms.Platform.iOS\bin\$Configuration$\ar\Xamarin.Forms.Platform.iOS.resources.dll" target="lib\Xamarin.iOS10\ar" />
