@@ -751,8 +751,8 @@ Task("BuildForNuget")
 
         // dual screen
 
-        // if(IsRunningOnWindows())
-        // {
+         if(IsRunningOnWindows())
+        {
         //     msbuildSettings = GetMSBuildSettings();
         //     msbuildSettings.BinaryLogger = binaryLogger;
         //     binaryLogger.FileName = $"{artifactStagingDirectory}/dualscreen-{configuration}-csproj.binlog";
@@ -770,27 +770,15 @@ Task("BuildForNuget")
 	    //                     .WithProperty("UwpMinTargetFrameworks", "uap10.0.14393")
 	    //                     .WithRestore());
 	
-	    //     msbuildSettings = GetMSBuildSettings();
-	    //     msbuildSettings.BinaryLogger = binaryLogger;
-	    //     binaryLogger.FileName = $"{artifactStagingDirectory}/win-16299-{configuration}-csproj.binlog";
-	    //     MSBuild("./Xamarin.Forms.Platform.UAP/Xamarin.Forms.Platform.UAP.csproj",
-	    //                 msbuildSettings
-	    //                     .WithRestore()
-	    //                     .WithTarget("rebuild")
-	    //                     .WithProperty("DisableEmbeddedXbf", "false")
-	    //                     .WithProperty("EnableTypeInfoReflection", "false")
-	    //                     .WithProperty("UwpMinTargetFrameworks", "uap10.0.16299"));
-	
-	    //     msbuildSettings = GetMSBuildSettings();
-	    //     msbuildSettings.BinaryLogger = binaryLogger;
-	    //     binaryLogger.FileName = $"{artifactStagingDirectory}/win-14393-{configuration}-csproj.binlog";
-	    //     MSBuild("./Xamarin.Forms.Platform.UAP/Xamarin.Forms.Platform.UAP.csproj",
-	    //                 msbuildSettings
-	    //                     .WithRestore()
-	    //                     .WithTarget("rebuild")
-	    //                     .WithProperty("DisableEmbeddedXbf", "false")
-	    //                     .WithProperty("EnableTypeInfoReflection", "false")
-	    //                     .WithProperty("UwpMinTargetFrameworks", "uap10.0.14393"));
+	        msbuildSettings = GetMSBuildSettings();
+	        msbuildSettings.BinaryLogger = binaryLogger;
+	        binaryLogger.FileName = $"{artifactStagingDirectory}/win-{configuration}-csproj.binlog";
+	        MSBuild("./src/Platform.Renderers/src/Xamarin.Forms.Platform.UAP/Xamarin.Forms.Platform.UAP.csproj",
+	                    msbuildSettings
+	                        .WithRestore()
+	                        .WithTarget("rebuild")
+	                        .WithProperty("DisableEmbeddedXbf", "false")
+	                        .WithProperty("EnableTypeInfoReflection", "false"));
 
         //     msbuildSettings = GetMSBuildSettings();
         //     msbuildSettings.BinaryLogger = binaryLogger;
@@ -805,7 +793,7 @@ Task("BuildForNuget")
         //     MSBuild("./Xamarin.Forms.Platform.MacOS/Xamarin.Forms.Platform.MacOS.csproj",
         //                 msbuildSettings
         //                     .WithTarget("rebuild"));
-        // }
+        }
 
          // XAML Tests are currently having issues compiling in Release Mode
         if(configuration == "Debug")
