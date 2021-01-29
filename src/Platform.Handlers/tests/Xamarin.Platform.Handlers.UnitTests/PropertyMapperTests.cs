@@ -1,4 +1,3 @@
-using NUnit.Framework;
 using Xamarin.Forms;
 using Xamarin.Platform.Handlers.UnitTests;
 using Xunit;

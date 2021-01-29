@@ -22,7 +22,6 @@ namespace Xamarin.Platform.Handlers.DeviceTests
 			// Tests can be inside the main assembly
 			AddTestAssembly(Assembly.GetExecutingAssembly());
 			AddTestAssembly(typeof(SliderHandlerTests).Assembly);
-			AddTestAssembly(typeof(SwitchHandlerTests).Assembly);
 
 			base.OnCreate(bundle);
 		}
