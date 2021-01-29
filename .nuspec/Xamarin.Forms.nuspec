@@ -23,6 +23,10 @@
       <group targetFramework="net5.0-windows10.0.18362.0">
         <dependency id="Microsoft.WinUI" version="3.0.0-preview3.201113.0" />
       </group>
+      <group targetFramework="netstandard2.0">
+      </group>
+      <group targetFramework="Xamarin.iOS10">
+      </group>
       <!-- <group targetFramework="tizen40">
         <dependency id="Tizen.NET" version="4.0.0"/>
         <dependency id="SkiaSharp.Views" version="2.80.2"/>
@@ -196,6 +200,7 @@
     <file src="..\eng\docs\Xamarin.Forms.Xaml.xml" target="lib\net5.0-windows10.0.18362.0" />
     <file src="..\src\Platform.Handlers\src\Xamarin.Platform.Handlers\bin\$Configuration$\netstandard2.0\Xamarin.Platform.dll" target="lib\net5.0-windows10.0.18362.0" />
     <file src="..\src\Platform.Handlers\src\Xamarin.Platform.Handlers\bin\$Configuration$\netstandard2.0\Xamarin.Platform.*pdb" target="lib\net5.0-windows10.0.18362.0" />
+    <file src="..\src\Platform.Renderers\src\Xamarin.Forms.Platform.UAP\bin\$Configuration$\net5.0-windows10.0.18362.0\Xamarin.Forms.Platform.UAP\**\*.*" target="lib\net5.0-windows10.0.18362.0\Xamarin.Forms.Platform.UAP" />
 
     <!-- iOS Localized String Resource Assemblies -->
     <file src="..\src\Platform.Renderers\src\Xamarin.Forms.Platform.iOS\bin\$Configuration$\ar\Xamarin.Forms.Platform.iOS.resources.dll" target="lib\Xamarin.iOS10\ar" />
@@ -243,6 +248,26 @@
     <file src="..\src\Forms\src\Xamarin.Forms.Xaml\bin\$Configuration$\netstandard2.0\Xamarin.Forms.Xaml.dll" target="lib\tizen40" />
     <file src="..\src\Forms\src\Xamarin.Forms.Xaml\bin\$Configuration$\netstandard2.0\Xamarin.Forms.Xaml.*pdb" target="lib\tizen40" />
     <file src="..\eng\docs\Xamarin.Forms.Xaml.xml" target="lib\tizen40" /> -->
+
+
+
+
+    <file src="..\src\Platform.Renderers\src\Xamarin.Forms.Platform.Android\bin\$Configuration$\MonoAndroid10.0\Xamarin.Forms.Platform.Android.dll" target="ref\MonoAndroid10.0" />
+    <file src="..\src\Platform.Renderers\src\Xamarin.Forms.Platform.Android.FormsViewGroup\bin\$Configuration$\FormsViewGroup.dll" target="ref\MonoAndroid10.0" />
+    <file src="..\src\Forms\src\Xamarin.Forms.Core\bin\$Configuration$\netstandard2.0\Xamarin.Forms.Core.dll" target="ref\MonoAndroid10.0" />
+    <file src="..\src\Forms\src\Xamarin.Forms.Xaml\bin\$Configuration$\netstandard2.0\Xamarin.Forms.Xaml.dll" target="ref\MonoAndroid10.0" />
+    <file src="..\src\Platform.Handlers\src\Xamarin.Platform.Handlers\bin\$Configuration$\monoandroid10.0\Xamarin.Platform.dll" target="ref\MonoAndroid10.0" />
+    
+    <file src="..\src\Platform.Renderers\src\Xamarin.Forms.Platform.iOS\bin\$Configuration$\Xamarin.Forms.Platform.iOS.dll" target="ref\Xamarin.iOS10" />
+    <file src="..\src\Forms\src\Xamarin.Forms.Core\bin\$Configuration$\netstandard2.0\Xamarin.Forms.Core.dll" target="ref\Xamarin.iOS10" />
+    <file src="..\src\Forms\src\Xamarin.Forms.Xaml\bin\$Configuration$\netstandard2.0\Xamarin.Forms.Xaml.dll" target="ref\Xamarin.iOS10" />
+    <file src="..\src\Platform.Handlers\src\Xamarin.Platform.Handlers\bin\$Configuration$\xamarin.ios10\Xamarin.Platform.dll" target="ref\Xamarin.iOS10" />
+    
+    <file src="..\src\Platform.Renderers\src\Xamarin.Forms.Platform.UAP\bin\$Configuration$\net5.0-windows10.0.18362.0\Xamarin.Forms.Platform.UAP.dll" target="ref\net5.0-windows10.0.18362.0" />
+    <file src="..\src\Forms\src\Xamarin.Forms.Core\bin\$Configuration$\netstandard2.0\Xamarin.Forms.Core.dll" target="ref\net5.0-windows10.0.18362.0" />
+    <file src="..\src\Forms\src\Xamarin.Forms.Xaml\bin\$Configuration$\netstandard2.0\Xamarin.Forms.Xaml.dll" target="ref\net5.0-windows10.0.18362.0" />
+    <file src="..\src\Platform.Handlers\src\Xamarin.Platform.Handlers\bin\$Configuration$\netstandard2.0\Xamarin.Platform.dll" target="ref\net5.0-windows10.0.18362.0" />
+    
 
   </files>
 
