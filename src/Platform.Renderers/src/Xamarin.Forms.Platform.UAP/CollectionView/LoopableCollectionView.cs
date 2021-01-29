@@ -24,45 +24,6 @@ namespace Xamarin.Forms.Platform.UWP
 			_internal = @internal;
 		}
 
-		event EventHandler<object> ICollectionView.CurrentChanged
-		{
-			add
-			{
-				throw new NotImplementedException();
-			}
-
-			remove
-			{
-				throw new NotImplementedException();
-			}
-		}
-
-		event CurrentChangingEventHandler ICollectionView.CurrentChanging
-		{
-			add
-			{
-				throw new NotImplementedException();
-			}
-
-			remove
-			{
-				throw new NotImplementedException();
-			}
-		}
-
-		event VectorChangedEventHandler<object> IObservableVector<object>.VectorChanged
-		{
-			add
-			{
-				throw new NotImplementedException();
-			}
-
-			remove
-			{
-				throw new NotImplementedException();
-			}
-		}
-
 		internal bool IsLoopingEnabled { get; set; }
 		internal bool CenterMode { get; set; }
 
@@ -216,6 +177,81 @@ namespace Xamarin.Forms.Platform.UWP
 			return ((IEnumerable)_internal).GetEnumerator();
 		}
 
+		EventHandler<object> _currentChanged;
+		event EventHandler<object> ICollectionView.CurrentChanged
+		{
+			add => _currentChanged += value;
+			remove => _currentChanged -= value;
+		}
+
+		CurrentChangingEventHandler _currentChanging;
+		event CurrentChangingEventHandler ICollectionView.CurrentChanging
+		{
+			add => _currentChanging += value;
+			remove => _currentChanging -= value;
+		}
+
+		VectorChangedEventHandler<object> _vectorChanged;
+		event VectorChangedEventHandler<object> IObservableVector<object>.VectorChanged
+		{
+			add => _vectorChanged += value;
+			remove => _vectorChanged -= value;
+		}
+
+		// TODO WINUI3
+		//EventRegistrationTokenTable<EventHandler<object>> _currentChangedTokenTable = null;
+
+		//event EventHandler<object> ICollectionView.CurrentChanged
+		//{
+		//	add
+		//	{
+		//		return EventRegistrationTokenTable<EventHandler<object>>
+		//			.GetOrCreateEventRegistrationTokenTable(ref _currentChangedTokenTable)
+		//			.AddEventHandler(value);
+		//	}
+		//	remove
+		//	{
+		//		EventRegistrationTokenTable<EventHandler<object>>
+		//			.GetOrCreateEventRegistrationTokenTable(ref _currentChangedTokenTable)
+		//			.RemoveEventHandler(value);
+		//	}
+		//}
+
+		//EventRegistrationTokenTable<CurrentChangingEventHandler> _currentChangingTokenTable = null;
+
+		//event CurrentChangingEventHandler ICollectionView.CurrentChanging
+		//{
+		//	add
+		//	{
+		//		return EventRegistrationTokenTable<CurrentChangingEventHandler>
+		//			.GetOrCreateEventRegistrationTokenTable(ref _currentChangingTokenTable)
+		//			.AddEventHandler(value);
+		//	}
+		//	remove
+		//	{
+		//		EventRegistrationTokenTable<CurrentChangingEventHandler>
+		//			.GetOrCreateEventRegistrationTokenTable(ref _currentChangingTokenTable)
+		//			.RemoveEventHandler(value);
+		//	}
+		//}
+
+		//EventRegistrationTokenTable<VectorChangedEventHandler<object>> _vectorChangedTokenTable = null;
+
+		//event VectorChangedEventHandler<object> IObservableVector<object>.VectorChanged
+		//{
+		//	add
+		//	{
+		//		return EventRegistrationTokenTable<VectorChangedEventHandler<object>>
+		//			.GetOrCreateEventRegistrationTokenTable(ref _vectorChangedTokenTable)
+		//			.AddEventHandler(value);
+		//	}
+		//	remove
+		//	{
+		//		EventRegistrationTokenTable<VectorChangedEventHandler<object>>
+		//			.GetOrCreateEventRegistrationTokenTable(ref _vectorChangedTokenTable)
+		//			.RemoveEventHandler(value);
+		//	}
+		//}
 	}
 }
 

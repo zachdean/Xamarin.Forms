@@ -4,10 +4,7 @@ using WGradientStopCollection = Microsoft.UI.Xaml.Media.GradientStopCollection;
 using WGradientStop = Microsoft.UI.Xaml.Media.GradientStop;
 using WLinearGradientBrush = Microsoft.UI.Xaml.Media.LinearGradientBrush;
 using WPoint = Windows.Foundation.Point;
-
-#if UWP_18362
-//using WRadialGradientBrush = Xamarin.Forms.Platform.UWP.RadialGradientBrush;
-#endif
+using WRadialGradientBrush = Microsoft.UI.Xaml.Media.RadialGradientBrush;
 
 namespace Xamarin.Forms.Platform.UWP
 {
@@ -40,24 +37,25 @@ namespace Xamarin.Forms.Platform.UWP
 					EndPoint = new WPoint(p2.X, p2.Y)
 				};
 			}
+
 #if UWP_18362
-			//if (brush is RadialGradientBrush radialGradientBrush)
-			//{
-			//	var wRadialGradientBrush = new WRadialGradientBrush()
-			//	{
-			//		Center = new WPoint(radialGradientBrush.Center.X, radialGradientBrush.Center.Y),
-			//		RadiusX = radialGradientBrush.Radius,
-			//		RadiusY = radialGradientBrush.Radius
-			//	};
+			if (brush is RadialGradientBrush radialGradientBrush)
+			{
+				var wRadialGradientBrush = new WRadialGradientBrush()
+				{
+					Center = new WPoint(radialGradientBrush.Center.X, radialGradientBrush.Center.Y),
+					RadiusX = radialGradientBrush.Radius,
+					RadiusY = radialGradientBrush.Radius
+				};
 
-			//	var orderedStops = radialGradientBrush.GradientStops.OrderBy(x => x.Offset).ToList();
+				var orderedStops = radialGradientBrush.GradientStops.OrderBy(x => x.Offset).ToList();
 
-			//	foreach (var gradientStop in orderedStops)
-			//		wRadialGradientBrush.GradientStops.Add(
-			//			new WGradientStop { Color = gradientStop.Color.ToWindowsColor(), Offset = gradientStop.Offset });
+				foreach (var gradientStop in orderedStops)
+					wRadialGradientBrush.GradientStops.Add(
+						new WGradientStop { Color = gradientStop.Color.ToWindowsColor(), Offset = gradientStop.Offset });
 
-			//	return wRadialGradientBrush;
-			//}
+				return wRadialGradientBrush;
+			}
 #endif
 
 			return null;
