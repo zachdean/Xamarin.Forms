@@ -55,6 +55,7 @@ namespace Xamarin.Forms.Platform.UWP
 				return;
 			}
 
+			// WINUI3 
 			//await TryAllDispatchers(action);
 		}
 
@@ -72,21 +73,6 @@ namespace Xamarin.Forms.Platform.UWP
 			IReadOnlyList<StorageFile> files = query.GetFilesAsync().AsTask().Result;
 
 			var assemblies = new List<Assembly>(files.Count);
-			//foreach (StorageFile file in files)
-			//{
-			//	try
-			//	{
-			//		Assembly assembly = Assembly.Load(new AssemblyName { Name = IOPath.GetFileNameWithoutExtension(file.Name) });
-
-			//		assemblies.Add(assembly);
-			//	}
-			//	catch (IOException)
-			//	{
-			//	}
-			//	catch (BadImageFormatException)
-			//	{
-			//	}
-			//}
 
 			LoadAllAssemblies(AppDomain.CurrentDomain.GetAssemblies(), assemblies);
 

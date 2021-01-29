@@ -13,7 +13,6 @@ namespace Xamarin.Forms.Platform.UWP
 		{
 			if (!Windows.ApplicationModel.DesignMode.DesignModeEnabled)
 			{
-				//TODO WINUI3
 				Microsoft.UI.Xaml.Application.Current.Suspending += OnApplicationSuspending;
 				Microsoft.UI.Xaml.Application.Current.Resuming += OnApplicationResuming;
 			}

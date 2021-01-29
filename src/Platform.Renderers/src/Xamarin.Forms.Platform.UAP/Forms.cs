@@ -15,10 +15,10 @@ namespace Xamarin.Forms
 	public static partial class Forms
 	{
 		const string LogFormat = "[{0}] {1}";
+		private static ApplicationExecutionState s_state;
 
-		//static ApplicationExecutionState s_state;
-
-		//TODO WINUI3 
+		//TODO WINUI3 This is set by main page currently because
+		// it's only a single window
 		public static Window MainWindow { get; set; }
 
 		public static bool IsInitialized { get; private set; }
@@ -29,7 +29,7 @@ namespace Xamarin.Forms
 		{
 			if (IsInitialized)
 				return;
-
+			
 			var accent = (WSolidColorBrush)Microsoft.UI.Xaml.Application.Current.Resources["SystemColorControlAccentBrush"];
 			Color.SetAccent(accent.ToFormsColor());
 
@@ -81,6 +81,7 @@ namespace Xamarin.Forms
 			ExpressionSearch.Default = new WindowsExpressionSearch();
 
 			Registrar.ExtraAssemblies = rendererAssemblies?.ToArray();
+			s_state = launchActivatedEventArgs.UWPLaunchActivatedEventArgs.PreviousExecutionState;
 		}
 
 #pragma warning disable CS8305 // Type is for evaluation purposes only and is subject to change or removal in future updates.
@@ -92,20 +93,11 @@ namespace Xamarin.Forms
 			Device.PlatformServices = platformServices;
 			Device.PlatformInvalidator = platformServices;
 
-			var assemblies = Device.GetAssemblies();
-			// TODO WINUI
-			//Registrar.Registered.Register(typeof(ContentPage), typeof(PageRenderer));
-			//Registrar.Registered.Register(typeof(Label), typeof(LabelRenderer));
-
-			//Registrar.Registered.Register(typeof(ContentPage), typeof(PageRenderer));
-
 			Registrar.RegisterAll(new[] { typeof(ExportRendererAttribute), typeof(ExportCellAttribute), typeof(ExportImageSourceHandlerAttribute), typeof(ExportFontAttribute) });
 
 			IsInitialized = true;
-			// TODO SHANE
-			//s_state = launchActivatedEventArgs.PreviousExecutionState;
 
-			//Platform.UWP.Platform.SubscribeAlertsAndActionSheets();
+			Platform.UWP.Platform.SubscribeAlertsAndActionSheets();
 		}
 
 		static FlowDirection GetFlowDirection()

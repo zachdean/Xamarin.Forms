@@ -27,7 +27,7 @@ namespace Xamarin.Forms.Platform.UWP
 				Func<object, EventRegistrationToken> add = a => (EventRegistrationToken)addMethod.Invoke(target, new object[] { handlerDelegate });
 				Action<EventRegistrationToken> remove = t => removeMethod.Invoke(target, new object[] { t });
 
-				// TODO WINUI
+				// TODO WINUI3
 				//WindowsRuntimeMarshal.AddEventHandler(add, remove, s_handlerinfo);
 			}
 			catch (Exception) {

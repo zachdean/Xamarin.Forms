@@ -575,9 +575,9 @@ namespace Xamarin.Forms.Platform.UWP
 
 		internal static void SubscribeAlertsAndActionSheets()
 		{
-			//MessagingCenter.Subscribe<Page, AlertArguments>(Window.Current, Page.AlertSignalName, OnPageAlert);
-			//MessagingCenter.Subscribe<Page, ActionSheetArguments>(Window.Current, Page.ActionSheetSignalName, OnPageActionSheet);
-			//MessagingCenter.Subscribe<Page, PromptArguments>(Window.Current, Page.PromptSignalName, OnPagePrompt);
+			MessagingCenter.Subscribe<Page, AlertArguments>(Forms.MainWindow, Page.AlertSignalName, OnPageAlert);
+			MessagingCenter.Subscribe<Page, ActionSheetArguments>(Forms.MainWindow, Page.ActionSheetSignalName, OnPageActionSheet);
+			MessagingCenter.Subscribe<Page, PromptArguments>(Forms.MainWindow, Page.PromptSignalName, OnPagePrompt);
 		}
 
 		static void OnPageActionSheet(Page sender, ActionSheetArguments options)
