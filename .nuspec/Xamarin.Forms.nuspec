@@ -79,6 +79,16 @@
     <file src="..\src\Forms\src\Xamarin.Forms.Xaml\bin\$Configuration$\netstandard2.0\Xamarin.Forms.Xaml.*pdb" target="lib\netstandard2.0" />
     <file src="..\src\Forms\src\Xamarin.Forms.Xaml\bin\$Configuration$\netstandard2.0\Xamarin.Forms.Xaml.*mdb" target="lib\netstandard2.0" />
 
+    
+    
+    <!--Handlers-->
+    <file src="..\src\Platform.Handlers\src\Xamarin.Platform.Handlers\bin\$Configuration$\netstandard2.1\Xamarin.Platform.dll" target="lib\netstandard2.1" />
+    <file src="..\src\Platform.Handlers\src\Xamarin.Platform.Handlers\bin\$Configuration$\netstandard2.1\Xamarin.Platform.*pdb" target="lib\netstandard2.1" />
+    <file src="..\src\Platform.Handlers\src\Xamarin.Platform.Handlers\bin\$Configuration$\netstandard2.1\Xamarin.Platform.*mdb" target="lib\netstandard2.1" />
+    <file src="..\src\Platform.Handlers\src\Xamarin.Platform.Handlers\bin\$Configuration$\netstandard2.0\Xamarin.Platform.dll" target="lib\netstandard2.0" />
+    <file src="..\src\Platform.Handlers\src\Xamarin.Platform.Handlers\bin\$Configuration$\netstandard2.0\Xamarin.Platform.*pdb" target="lib\netstandard2.0" />
+    <file src="..\src\Platform.Handlers\src\Xamarin.Platform.Handlers\bin\$Configuration$\netstandard2.0\Xamarin.Platform.*mdb" target="lib\netstandard2.0" />
+
     <!--Xamlc stuff-->
     <file src="Xamarin.Forms.targets" target="build" />
     <file src="Xamarin.Forms.props" target="build" />
@@ -126,8 +136,8 @@
     <!-- Xaml Design-time Stuff -->
     <file src="..\src\Forms\src\Xamarin.Forms.Core.Design\bin\$Configuration$\Xamarin.Forms.Core.Design.dll" target="lib\netstandard2.0\Design" />
     <file src="..\src\Forms\src\Xamarin.Forms.Xaml.Design\bin\$Configuration$\Xamarin.Forms.Xaml.Design.dll" target="lib\netstandard2.0\Design" />
-    <file src="..\src\Forms\src\Xamarin.Forms.Core.Design\bin\$Configuration$\Xamarin.Forms.Core.Design.dll" target="lib\netstandard1.0\Design" />
-    <file src="..\src\Forms\src\Xamarin.Forms.Xaml.Design\bin\$Configuration$\Xamarin.Forms.Xaml.Design.dll" target="lib\netstandard1.0\Design" />
+    <!-- <file src="..\src\Forms\src\Xamarin.Forms.Core.Design\bin\$Configuration$\Xamarin.Forms.Core.Design.dll" target="lib\netstandard1.0\Design" />
+    <file src="..\src\Forms\src\Xamarin.Forms.Xaml.Design\bin\$Configuration$\Xamarin.Forms.Xaml.Design.dll" target="lib\netstandard1.0\Design" /> -->
     <file src="..\src\Forms\src\Xamarin.Forms.Core.Design\bin\$Configuration$\Xamarin.Forms.Core.Design.dll" target="lib\MonoAndroid10.0\Design" />
     <file src="..\src\Forms\src\Xamarin.Forms.Xaml.Design\bin\$Configuration$\Xamarin.Forms.Xaml.Design.dll" target="lib\MonoAndroid10.0\Design" />
     <file src="..\src\Forms\src\Xamarin.Forms.Core.Design\bin\$Configuration$\Xamarin.Forms.Core.Design.dll" target="lib\Xamarin.iOS10\Design" />
@@ -154,6 +164,8 @@
     <file src="..\eng\docs\**\Xamarin.Forms.Xaml.xml" target="lib\MonoAndroid10.0" />
     <file src="..\src\Forms\src\Xamarin.Forms.Xaml\bin\$Configuration$\netstandard2.0\Xamarin.Forms.Xaml.dll" target="lib\MonoAndroid10.0" />
     <file src="..\src\Forms\src\Xamarin.Forms.Xaml\bin\$Configuration$\netstandard2.0\Xamarin.Forms.Xaml.*pdb" target="lib\MonoAndroid10.0" />
+    <file src="..\src\Platform.Handlers\src\Xamarin.Platform.Handlers\bin\$Configuration$\monoandroid10.0\Xamarin.Platform.dll" target="lib\MonoAndroid10.0" />
+    <file src="..\src\Platform.Handlers\src\Xamarin.Platform.Handlers\bin\$Configuration$\monoandroid10.0\Xamarin.Platform.*pdb" target="lib\MonoAndroid10.0" />
 
     <!--iPhone Unified-->
     <file src="..\src\Platform.Renderers\src\Xamarin.Forms.Platform.iOS\bin\$Configuration$\Xamarin.Forms.Platform.iOS.dll" target="lib\Xamarin.iOS10" />
@@ -169,6 +181,8 @@
     <file src="..\src\Forms\src\Xamarin.Forms.Xaml\bin\$Configuration$\netstandard2.0\Xamarin.Forms.Xaml.dll" target="lib\Xamarin.iOS10" />
     <file src="..\src\Forms\src\Xamarin.Forms.Xaml\bin\$Configuration$\netstandard2.0\Xamarin.Forms.Xaml.*pdb" target="lib\Xamarin.iOS10" />
     <file src="..\src\Forms\src\Xamarin.Forms.Xaml\bin\$Configuration$\netstandard2.0\Xamarin.Forms.Xaml.*mdb" target="lib\Xamarin.iOS10" />
+    <file src="..\src\Platform.Handlers\src\Xamarin.Platform.Handlers\bin\$Configuration$\Xamarin.iOS10\Xamarin.Platform.dll" target="lib\Xamarin.iOS10" />
+    <file src="..\src\Platform.Handlers\src\Xamarin.Platform.Handlers\bin\$Configuration$\Xamarin.iOS10\Xamarin.Platform.*pdb" target="lib\Xamarin.iOS10" />
 
     <!--net5.0-windows10.0.18362.0-->
     <file src="..\src\Platform.Renderers\src\Xamarin.Forms.Platform.UAP\bin\$Configuration$\net5.0-windows10.0.18362.0\Xamarin.Forms.Platform.UAP.dll" target="lib\net5.0-windows10.0.18362.0" />
@@ -179,6 +193,8 @@
     <file src="..\src\Forms\src\Xamarin.Forms.Xaml\bin\$Configuration$\netstandard2.0\Xamarin.Forms.Xaml.dll" target="lib\net5.0-windows10.0.18362.0" />
     <file src="..\src\Forms\src\Xamarin.Forms.Xaml\bin\$Configuration$\netstandard2.0\Xamarin.Forms.Xaml.*pdb" target="lib\net5.0-windows10.0.18362.0" />
     <file src="..\eng\docs\Xamarin.Forms.Xaml.xml" target="lib\net5.0-windows10.0.18362.0" />
+    <file src="..\src\Platform.Handlers\src\Xamarin.Platform.Handlers\bin\$Configuration$\netstandard2.0\Xamarin.Platform.dll" target="lib\net5.0-windows10.0.18362.0" />
+    <file src="..\src\Platform.Handlers\src\Xamarin.Platform.Handlers\bin\$Configuration$\netstandard2.0\Xamarin.Platform.*pdb" target="lib\net5.0-windows10.0.18362.0" />
 
     <!-- iOS Localized String Resource Assemblies -->
     <file src="..\src\Platform.Renderers\src\Xamarin.Forms.Platform.iOS\bin\$Configuration$\ar\Xamarin.Forms.Platform.iOS.resources.dll" target="lib\Xamarin.iOS10\ar" />
