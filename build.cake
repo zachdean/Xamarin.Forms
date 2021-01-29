@@ -467,13 +467,7 @@ Task ("cg-uwp-deploy")
         }
     }
 
-    var appxBundlePath = GetFiles(UWP_APP_PACKAGES_PATH + "*/*.msixbundle").FirstOrDefault ();
-
-    if(appxBundlePath == null)
-    {
-        throw new Exception("No App Bundles Found At: " + UWP_APP_PACKAGES_PATH + "*/*.msixbundle");
-    }
-
+    var appxBundlePath = GetFiles(UWP_APP_PACKAGES_PATH + "*/*.appxbundle").First ();
     Information("Installing appx: {0}", appxBundlePath);
     StartProcess ("powershell", "Add-AppxPackage -Path \"" + MakeAbsolute(appxBundlePath).FullPath + "\"");
 });
