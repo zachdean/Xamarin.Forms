@@ -23,6 +23,7 @@
     <ProjectReference Include="..\..\..\Forms\src\Xamarin.Forms.Core\Xamarin.Forms.Core.csproj" />
     <ProjectReference Include="..\..\..\Forms\test\Xamarin.Forms.CustomAttributes\Xamarin.Forms.CustomAttributes.csproj" />
     <ProjectReference Include="..\..\..\Platform.Renderers\src\Xamarin.Forms.Platform.UAP\Xamarin.Forms.Platform.UAP.csproj" />
+    <ProjectReference Include="..\..\..\Platform.Renderers\test\Xamarin.Forms.Platform.UAP.UnitTests\Xamarin.Forms.Platform.UAP.UnitTests.csproj" />
     <ProjectReference Include="..\Xamarin.Forms.Controls\Xamarin.Forms.Controls.csproj" />
   </ItemGroup>
 
