@@ -20,9 +20,10 @@ namespace Xamarin.Forms.Platform.UWP
 
 		internal Platform Platform { get; private set; }
 
+		public abstract Application CreateApplication();
 		protected abstract Platform CreatePlatform();
 
-		protected void LoadApplication(Application application)
+		public virtual void LoadApplication(Application application)
 		{
 			if (application == null)
 				throw new ArgumentNullException("application");

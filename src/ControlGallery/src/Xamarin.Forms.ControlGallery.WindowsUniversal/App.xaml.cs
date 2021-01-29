@@ -52,12 +52,8 @@ namespace Xamarin.Forms.ControlGallery.WindowsUniversal
 				Controls.App.PreloadTestCasesIssuesList = false;
 			}
 
-			Xamarin.Forms.Forms.Init(e);
 			m_window = new MainPage();
-			Forms.MainWindow = m_window;
-			Xamarin.Forms.Forms.InitDispatcher(m_window.DispatcherQueue);
-			(m_window as MainPage).LoadApplication();
-			m_window.Activate();
+			Xamarin.Forms.Forms.Init(e, m_window as MainPage);
 		}
 
         /// <summary>

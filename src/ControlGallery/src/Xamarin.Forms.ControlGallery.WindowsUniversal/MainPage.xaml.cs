@@ -47,10 +47,15 @@ namespace Xamarin.Forms.ControlGallery.WindowsUniversal
 
 		}
 
-		public void LoadApplication()
+		public override Application CreateApplication()
 		{
 			_app = new Controls.App();
-			LoadApplication(_app);
+			return _app;
+		}
+
+		public override void LoadApplication(Application application)
+		{
+			base.LoadApplication(application);
 
 			_app.PropertyChanged += _app_PropertyChanged;
 			WireUpKeyDown();

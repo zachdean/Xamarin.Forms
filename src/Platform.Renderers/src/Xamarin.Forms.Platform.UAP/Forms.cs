@@ -24,7 +24,8 @@ namespace Xamarin.Forms
 		public static bool IsInitialized { get; private set; }
 		
 		public static void Init(
-			Microsoft.UI.Xaml.LaunchActivatedEventArgs launchActivatedEventArgs, 
+			Microsoft.UI.Xaml.LaunchActivatedEventArgs launchActivatedEventArgs,
+			WindowsBasePage mainWindow,
 			IEnumerable<Assembly> rendererAssemblies = null)
 		{
 			if (IsInitialized)
@@ -82,6 +83,12 @@ namespace Xamarin.Forms
 
 			Registrar.ExtraAssemblies = rendererAssemblies?.ToArray();
 			s_state = launchActivatedEventArgs.UWPLaunchActivatedEventArgs.PreviousExecutionState;
+
+
+			MainWindow = mainWindow;
+			Xamarin.Forms.Forms.InitDispatcher(mainWindow.DispatcherQueue);
+			mainWindow.LoadApplication(mainWindow.CreateApplication());
+			mainWindow.Activate();
 		}
 
 #pragma warning disable CS8305 // Type is for evaluation purposes only and is subject to change or removal in future updates.
