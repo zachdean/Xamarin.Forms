@@ -16,7 +16,6 @@ namespace Xamarin.Platform.Handlers.DeviceTests
 		double GetNativeMaximum(SliderHandler sliderHandler) =>
 			GetNativeSlider(sliderHandler).MaxValue;
 
-
 		async Task ValidateNativeThumbColor(ISlider slider, Color color)
 		{
 			var expected = await GetValueAsync(slider, handler => GetNativeSlider(handler).ThumbTintColor.ToColor());

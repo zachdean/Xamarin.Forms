@@ -33,7 +33,7 @@ namespace Xamarin.Platform
 				}
 				else
 				{
-					aSwitch.TrackDrawable?.SetColorFilter(onColor.ToNative(), FilterMode.Multiply);
+					aSwitch.TrackDrawable?.SetColorFilter(onColor.ToNative(), FilterMode.SrcAtop);
 				}
 			}
 			else
@@ -48,7 +48,7 @@ namespace Xamarin.Platform
 
 			if (!thumbColor.IsDefault)
 			{
-				aSwitch.ThumbDrawable?.SetColorFilter(thumbColor, FilterMode.Multiply);
+				aSwitch.ThumbDrawable?.SetColorFilter(thumbColor, FilterMode.SrcAtop);
 				ChangedThumbColor = true;
 			}
 			else
@@ -59,8 +59,6 @@ namespace Xamarin.Platform
 					ChangedThumbColor = false;
 				}
 			}
-
-			aSwitch.ThumbDrawable?.SetColorFilter(thumbColor, FilterMode.Multiply);
 		}
 	}
 }
