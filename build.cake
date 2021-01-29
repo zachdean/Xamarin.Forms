@@ -751,7 +751,17 @@ Task("BuildForNuget")
 
         // dual screen
 
-         if(IsRunningOnWindows())
+
+         // XAML Tests are currently having issues compiling in Release Mode
+        if(configuration == "Debug")
+        {
+            msbuildSettings = GetMSBuildSettings();
+            msbuildSettings.BinaryLogger = binaryLogger;
+            binaryLogger.FileName = $"{artifactStagingDirectory}/Xamarin.Forms.ControlGallery-{configuration}.binlog";
+           MSBuild("./Xamarin.Forms.ControlGallery.sln", msbuildSettings.WithRestore());
+        }
+
+        if(IsRunningOnWindows())
         {
         //     msbuildSettings = GetMSBuildSettings();
         //     msbuildSettings.BinaryLogger = binaryLogger;
@@ -793,15 +803,6 @@ Task("BuildForNuget")
         //     MSBuild("./Xamarin.Forms.Platform.MacOS/Xamarin.Forms.Platform.MacOS.csproj",
         //                 msbuildSettings
         //                     .WithTarget("rebuild"));
-        }
-
-         // XAML Tests are currently having issues compiling in Release Mode
-        if(configuration == "Debug")
-        {
-            msbuildSettings = GetMSBuildSettings();
-            msbuildSettings.BinaryLogger = binaryLogger;
-            binaryLogger.FileName = $"{artifactStagingDirectory}/Xamarin.Forms.ControlGallery-{configuration}.binlog";
-            MSBuild("./Xamarin.Forms.ControlGallery.sln", msbuildSettings.WithRestore());
         }
 
     }
