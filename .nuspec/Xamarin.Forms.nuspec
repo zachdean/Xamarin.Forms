@@ -192,7 +192,7 @@
     <!--net5.0-windows10.0.18362.0-->
     <file src="..\src\Platform.Renderers\src\Xamarin.Forms.Platform.UAP\bin\$Configuration$\net5.0-windows10.0.18362.0\Xamarin.Forms.Platform.UAP.dll" target="lib\net5.0-windows10.0.18362.0" />
     <file src="..\src\Platform.Renderers\src\Xamarin.Forms.Platform.UAP\bin\$Configuration$\net5.0-windows10.0.18362.0\Xamarin.Forms.Platform.UAP.*pdb" target="lib\net5.0-windows10.0.18362.0" />
-    <file src="..\src\Platform.Renderers\src\Xamarin.Forms.Platform.UAP\bin\$Configuration$\net5.0-windows10.0.18362.0\Xamarin.Forms.Platform.UAP.*pri" target="lib\net5.0-windows10.0.18362.0" />
+    <file src="..\src\Platform.Renderers\src\Xamarin.Forms.Platform.UAP\bin\$Configuration$\net5.0-windows10.0.18362.0\Xamarin.Forms.Platform.UAP.*pri" target="runtimes\net5.0-windows10.0.18362.0\native" />
     <file src="..\src\Forms\src\Xamarin.Forms.Core\bin\$Configuration$\netstandard2.0\Xamarin.Forms.Core.dll" target="lib\net5.0-windows10.0.18362.0" />
     <file src="..\src\Forms\src\Xamarin.Forms.Core\bin\$Configuration$\netstandard2.0\Xamarin.Forms.Core.*pdb" target="lib\net5.0-windows10.0.18362.0" />
     <file src="..\eng\docs\Xamarin.Forms.Core.xml" target="lib\net5.0-windows10.0.18362.0" />
