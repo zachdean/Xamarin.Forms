@@ -882,6 +882,8 @@ Task("BuildForNuget")
             msbuildSettings.BinaryLogger = binaryLogger;
             binaryLogger.FileName = $"{artifactStagingDirectory}/Xamarin.Forms.ControlGallery-{configuration}.binlog";
             MSBuild("./Xamarin.Forms.ControlGallery.sln", msbuildSettings.WithRestore());
+            DotNetCoreRestore("./Maui.sln");
+            DotNetCoreBuild("./Maui.sln");    
         }
 
     }
