@@ -34,6 +34,7 @@ namespace Sample
 			horizontalStack.Add(button2);
 			horizontalStack.Add(new Label { Text = "And these buttons are in a HorizontalStackLayout" });
 
+			verticalStack.Add(new CheckBox());
 			verticalStack.Add(horizontalStack);
 			verticalStack.Add(new Slider());
 

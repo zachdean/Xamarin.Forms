@@ -9,6 +9,7 @@ using AndroidX.AppCompat.Widget;
 using AndroidX.Core.Widget;
 using Xamarin.Forms.Internals;
 using Xamarin.Forms.Platform.Android.FastRenderers;
+using Xamarin.Platform;
 using AAttribute = Android.Resource.Attribute;
 using AColor = Android.Graphics.Color;
 using AView = Android.Views.View;
@@ -29,6 +30,7 @@ namespace Xamarin.Forms.Platform.Android
 		IPlatformElementConfiguration<PlatformConfiguration.Android, CheckBox> _platformElementConfiguration;
 		CheckBox _checkBox;
 
+		[PortHandler]
 		static int[][] _checkedStates = new int[][]
 					{
 						new int[] { AAttribute.StateEnabled, AAttribute.StateChecked },
@@ -44,6 +46,7 @@ namespace Xamarin.Forms.Platform.Android
 
 		public CheckBoxRendererBase(Context context, int defStyleAttr) : base(context, null, defStyleAttr) => Init();
 
+		[PortHandler]
 		void Init()
 		{
 			SoundEffectsEnabled = false;
@@ -185,6 +188,7 @@ namespace Xamarin.Forms.Platform.Android
 			((IElementController)Element).SetValueFromRenderer(CheckBox.IsCheckedProperty, isChecked);
 		}
 
+		[PortHandler]
 		void UpdateIsChecked()
 		{
 			if (Element == null || Control == null)
@@ -193,6 +197,7 @@ namespace Xamarin.Forms.Platform.Android
 			Checked = Element.IsChecked;
 		}
 
+		[PortHandler]
 		protected virtual ColorStateList GetColorStateList()
 		{
 			var tintColor = Element.Color == Color.Default ? Color.Accent.ToAndroid() : Element.Color.ToAndroid();
@@ -210,6 +215,7 @@ namespace Xamarin.Forms.Platform.Android
 			return list;
 		}
 
+		[PortHandler]
 		void UpdateBackgroundColor()
 		{
 			if (Element.BackgroundColor == Color.Default)
@@ -225,6 +231,7 @@ namespace Xamarin.Forms.Platform.Android
 			this.UpdateBackground(background);
 		}
 
+		[PortHandler]
 		void UpdateOnColor()
 		{
 			if (Element == null || Control == null)

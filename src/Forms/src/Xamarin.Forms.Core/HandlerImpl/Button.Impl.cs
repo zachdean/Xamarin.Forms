@@ -11,7 +11,7 @@ namespace Xamarin.Forms
 
 		Color IText.Color
 		{
-			get => this.TextColor;
+			get => TextColor;
 		}
 
 		void IButton.Clicked()

@@ -12,9 +12,8 @@ namespace Xamarin.Platform.Handlers.DeviceTests
             // We need this to ensure the execution assembly is part of the app bundle
             AddExecutionAssembly(typeof(SliderHandlerTests).Assembly);
 
-            // tests can be inside the main assembly
+            // Tests can be inside the main assembly
             AddTestAssembly(Assembly.GetExecutingAssembly());
-
             AddTestAssembly(typeof(SliderHandlerTests).Assembly);
 
             return base.FinishedLaunching(app, options);

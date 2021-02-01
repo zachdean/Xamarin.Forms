@@ -4,7 +4,7 @@ using Xamarin.Forms;
 
 namespace Xamarin.Platform.Handlers
 {
-	public partial class AbstractViewHandler<TVirtualView, TNativeView> : IAndroidViewHandler
+	public partial class AbstractViewHandler<TVirtualView, TNativeView> : Java.Lang.Object, IAndroidViewHandler
 	{
 		public void SetContext(Context context) => Context = context;
 
