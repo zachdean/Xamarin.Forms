@@ -610,6 +610,7 @@ namespace Xamarin.Forms.Platform.iOS
 				if (ItemsView.IsVisible)
 				{
 					Layout.InvalidateLayout();
+					CollectionView.LayoutIfNeeded();
 				}
 			}
 		}
