@@ -3,6 +3,7 @@ using System.ComponentModel;
 using Android.Content;
 using Android.Views;
 using Android.Widget;
+using Xamarin.Platform;
 using AButton = Android.Widget.Button;
 
 namespace Xamarin.Forms.Platform.Android
@@ -24,6 +25,7 @@ namespace Xamarin.Forms.Platform.Android
 			AutoPackage = false;
 		}
 
+		[PortHandler]
 		protected override LinearLayout CreateNativeControl()
 		{
 			return new LinearLayout(Context)
@@ -34,6 +36,7 @@ namespace Xamarin.Forms.Platform.Android
 			};
 		}
 
+		[PortHandler]
 		protected override void OnElementChanged(ElementChangedEventArgs<Stepper> e)
 		{
 			base.OnElementChanged(e);
@@ -61,12 +64,16 @@ namespace Xamarin.Forms.Platform.Android
 			StepperRendererManager.UpdateButtons(this, _downButton, _upButton, e);
 		}
 
+		[PortHandler]
 		Stepper IStepperRenderer.Element => Element;
 
+		[PortHandler]
 		AButton IStepperRenderer.UpButton => _upButton;
 
+		[PortHandler]
 		AButton IStepperRenderer.DownButton => _downButton;
 
+		[PortHandler]
 		AButton IStepperRenderer.CreateButton()
 		{
 			var button = new AButton(Context);

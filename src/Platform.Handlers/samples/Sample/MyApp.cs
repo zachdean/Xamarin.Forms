@@ -36,6 +36,7 @@ namespace Sample
 
 			verticalStack.Add(horizontalStack);
 			verticalStack.Add(new Slider());
+			verticalStack.Add(new Stepper { Minimum = 0, Maximum = 10, Value = 5 });
 
 			return verticalStack;
 		}

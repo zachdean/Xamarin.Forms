@@ -4,7 +4,7 @@ using Xamarin.Forms.Internals;
 
 namespace Xamarin.Forms
 {
-	public class Stepper : View, IElementConfiguration<Stepper>
+	public partial class Stepper : View, IElementConfiguration<Stepper>
 	{
 		public static readonly BindableProperty MaximumProperty = BindableProperty.Create(nameof(Maximum), typeof(double), typeof(Stepper), 100.0,
 			validateValue: (bindable, value) => (double)value > ((Stepper)bindable).Minimum,
@@ -32,8 +32,9 @@ namespace Xamarin.Forms
 			},
 			propertyChanged: (bindable, oldValue, newValue) =>
 			{
+				OldValue = (double)oldValue;
 				var stepper = (Stepper)bindable;
-				stepper.ValueChanged?.Invoke(stepper, new ValueChangedEventArgs((double)oldValue, (double)newValue));
+				stepper.ValueChanged?.Invoke(stepper, new ValueChangedEventArgs(OldValue, (double)newValue));
 			});
 
 		int digits = 4;
