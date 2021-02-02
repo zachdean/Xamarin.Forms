@@ -893,7 +893,6 @@ Task("BuildForNuget")
 });
 
 Task("NET6")
-    .IsDependentOn("provision-net6sdk")
     .Description("Build NET6 projects")
     .Does(() =>
 {
