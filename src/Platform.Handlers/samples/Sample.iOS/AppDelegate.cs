@@ -32,7 +32,7 @@ namespace Sample.iOS
 			Platform.Init();
 			var page = new Pages.MainPage();
 #else
-			var (host, app) = App.CreateDefaultBuilder()
+			var app = App.CreateDefaultBuilder()
 							//.RegisterHandler<IButton, CustomHandlers.CustomPinkTextButtonHandler>()
 							//.RegisterHandlers(new Dictionary<Type, Type>
 							//{
@@ -44,9 +44,9 @@ namespace Sample.iOS
 							//.ConfigureServices(ConfigureExtraServices)
 							.Init<MyApp>();
 
-			var page = app.GetStartup() as Pages.MainPage;
+			var page = app.Windows.FirstOrDefault()?.Page;
 #endif
-			content = page.GetContentView();
+			content = page.View;
 
 			_window.RootViewController = new UIViewController
 			{

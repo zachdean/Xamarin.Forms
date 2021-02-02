@@ -4,6 +4,7 @@ using Microsoft.Extensions.Hosting;
 using Sample.Pages;
 using Sample.Services;
 using Sample.ViewModel;
+using Xamarin.Platform.Core;
 using Xamarin.Platform.Hosting;
 
 namespace Sample
@@ -14,7 +15,8 @@ namespace Sample
 		{
 			services.AddSingleton<ITextService, TextService>();
 			services.AddTransient<MainPageViewModel>();
-			services.AddTransient<IStartup, MainPage>();
+			services.AddTransient<MainPage>();
+			services.AddTransient<IWindow, MainWindow>();
 		}
 	}
 }
