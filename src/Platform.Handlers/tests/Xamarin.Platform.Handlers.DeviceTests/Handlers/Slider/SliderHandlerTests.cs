@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
+using Xamarin.Forms;
 using Xamarin.Platform.Handlers.DeviceTests.Stubs;
 using Xunit;
 
