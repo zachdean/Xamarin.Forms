@@ -60,9 +60,10 @@ namespace Xamarin.Forms.Platform.MacOS
 			if (span == null)
 				return null;
 
-			var text = span.Text;
-			if (text == null)
+			if (span.Text == null)
 				return null;
+
+			var text = span.UpdateFormsText(span.Text, span.TextTransform);
 
 			NSMutableParagraphStyle style = new NSMutableParagraphStyle();
 			lineHeight = span.LineHeight >= 0 ? span.LineHeight : lineHeight;

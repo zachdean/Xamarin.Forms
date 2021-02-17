@@ -20,10 +20,11 @@ namespace Xamarin.Forms.Platform.Android
 			for (int i = 0; i < formattedString.Spans.Count; i++)
 			{
 				Span span = formattedString.Spans[i];
-				var text = span.Text;
-				if (text == null)
+				
+				if (span.Text == null)
 					continue;
 
+				var text = span.UpdateFormsText(span.Text, span.TextTransform);
 				builder.Append(text);
 			}
 

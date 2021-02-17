@@ -52,7 +52,7 @@ namespace Xamarin.Forms.Platform.Tizen
 				var textDecorations = span.TextDecorations;
 
 				Native.Span nativeSpan = new Native.Span();
-				nativeSpan.Text = span.Text;
+				nativeSpan.Text = span.UpdateFormsText(span.Text, span.TextTransform);
 				nativeSpan.FontAttributes = span.FontAttributes;
 				nativeSpan.FontFamily = span.FontFamily;
 				nativeSpan.FontSize = span.FontSize;

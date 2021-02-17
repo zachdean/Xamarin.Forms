@@ -65,7 +65,8 @@ namespace Xamarin.Forms.Platform.GTK.Extensions
 			builder.Append(">"); // Complete opening span tag
 
 			// Text
-			builder.Append(SecurityElement.Escape(span.Text));
+			var text = span.UpdateFormsText(span.Text, span.TextTransform);
+			builder.Append(SecurityElement.Escape(text));
 			builder.Append("</span>");
 
 			return builder.ToString();

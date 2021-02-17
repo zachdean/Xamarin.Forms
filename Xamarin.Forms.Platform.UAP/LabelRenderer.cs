@@ -21,7 +21,7 @@ namespace Xamarin.Forms.Platform.UWP
 	{
 		public static Run ToRun(this Span span)
 		{
-			var run = new Run { Text = span.Text ?? string.Empty };
+			var run = new Run { Text = span.UpdateFormsText(span.Text, span.TextTransform) };
 
 			if (span.TextColor != Color.Default)
 				run.Foreground = span.TextColor.ToBrush();
